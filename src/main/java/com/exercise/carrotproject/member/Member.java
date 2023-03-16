@@ -22,6 +22,5 @@ public class Member {
     private String nickname;
     private String profPath;
     private Double mannerScore;
-    @Enumerated(EnumType.STRING)
     private Loc loc;
 }
