@@ -41,7 +41,6 @@ public class Post {
     public void prePersist(){
         this.hideState = this.hideState == null ? 0 : this.hideState;
         this.sellState = this.sellState == null ? 0 : this.sellState;
-
     }
 
 
