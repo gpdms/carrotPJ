@@ -1,8 +1,10 @@
 package com.exercise.carrotproject.post;
 
-import com.exercise.carrotproject.enumlist.Category;
 import com.exercise.carrotproject.enumlist.Loc;
-import com.exercise.carrotproject.member.Member;
+import com.exercise.carrotproject.enumlist.PostCategory;
+import com.exercise.carrotproject.enumlist.converter.LocConverter;
+import com.exercise.carrotproject.member.entity.Member;
+import com.sun.istack.NotNull;
 import lombok.*;
 import org.hibernate.annotations.ColumnDefault;
 
@@ -25,10 +27,13 @@ public class Post {
     private Member member;
     private Integer price;
     private String content;
-    @Enumerated(EnumType.STRING) //enum이름 그대로 db에 저장됨.
+    //@Enumerated(EnumType.STRING) //enum이름 그대로 db에 저장됨.
+    @NotNull
+    @Convert(converter = LocConverter.class)
     private Loc loc; //지역 enum
     @Enumerated(EnumType.STRING)
-    private Category category; //카테고리 enum
+    private PostCategory postCategory; //카테고리 enum
+
     @ColumnDefault("0") @Column(nullable = false)
     private Integer hideState; //숨김여부: 0보임,1숨김
     @ColumnDefault("0") @Column(nullable = false)

@@ -1,0 +1,41 @@
+package com.exercise.carrotproject.review.entity;
+
+import com.exercise.carrotproject.member.entity.Member;
+import com.exercise.carrotproject.review.category.ReviewBuyerIndicator;
+import lombok.*;
+import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.DynamicInsert;
+
+import javax.persistence.*;
+import javax.validation.constraints.NotNull;
+import java.sql.Timestamp;
+
+@Entity
+@NoArgsConstructor
+@AllArgsConstructor
+@Getter
+@Builder
+@ToString
+@DynamicInsert
+public class ReviewBuyerDetail {
+    @Id
+    @GeneratedValue(strategy= GenerationType.IDENTITY)
+    private Long reviewBuyerReviewId;
+
+    @NotNull
+    @ManyToOne
+    @JoinColumn(name="review_buyer_id")
+    private ReviewBuyer reviewBuyer;
+
+    @NotNull
+    @ManyToOne
+    @JoinColumn(name="buyer_id")
+    private Member member;
+
+    @Enumerated(value = EnumType.STRING)
+    private ReviewBuyerIndicator reviewBuyerIndicator;
+
+    @CreationTimestamp
+    @Column(updatable = false)
+    private Timestamp createdTime;
+}

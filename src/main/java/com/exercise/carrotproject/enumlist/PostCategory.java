@@ -1,4 +1,4 @@
-package com.example.carrotpj0316.post.entity;
+package com.exercise.carrotproject.enumlist;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
