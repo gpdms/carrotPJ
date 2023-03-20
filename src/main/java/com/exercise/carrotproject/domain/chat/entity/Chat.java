@@ -1,6 +1,6 @@
-package com.exercise.carrotproject.chat.entity;
+package com.exercise.carrotproject.domain.chat.entity;
 
-import com.exercise.carrotproject.member.Member;
+import com.exercise.carrotproject.domain.member.entity.Member;
 
 import javax.persistence.*;
 import java.util.List;

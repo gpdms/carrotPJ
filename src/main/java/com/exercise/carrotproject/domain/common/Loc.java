@@ -1,4 +1,4 @@
-package com.exercise.carrotproject.enumlist;
+package com.exercise.carrotproject.domain.common;
 
 import lombok.Getter;
 
