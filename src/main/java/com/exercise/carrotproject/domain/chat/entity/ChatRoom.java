@@ -2,11 +2,17 @@ package com.exercise.carrotproject.domain.chat.entity;
 
 import com.exercise.carrotproject.domain.member.entity.Member;
 import com.exercise.carrotproject.domain.post.entity.Post;
+import lombok.*;
 
 import javax.persistence.*;
 import java.util.List;
 
 @Entity
+@NoArgsConstructor
+@AllArgsConstructor
+@Getter
+@Builder
+@ToString
 @Table(name = "chat_room")
 public class ChatRoom {
     @Id

@@ -2,7 +2,7 @@ package com.exercise.carrotproject.domain.converter;
 
 
 
-import com.exercise.carrotproject.domain.common.enumList.ReviewState;
+import com.exercise.carrotproject.domain.enumList.ReviewState;
 
 import javax.persistence.AttributeConverter;
 import javax.persistence.Converter;

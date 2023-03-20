@@ -1,11 +1,18 @@
 package com.exercise.carrotproject.domain.chat.entity;
 
 import com.exercise.carrotproject.domain.member.entity.Member;
+import lombok.*;
+import org.hibernate.annotations.DynamicInsert;
 
 import javax.persistence.*;
 import java.util.List;
 
 @Entity
+@NoArgsConstructor
+@AllArgsConstructor
+@Getter
+@Builder
+@ToString
 public class Chat {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

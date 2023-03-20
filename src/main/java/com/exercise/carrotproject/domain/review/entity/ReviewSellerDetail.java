@@ -1,7 +1,7 @@
 package com.exercise.carrotproject.domain.review.entity;
 
 import com.exercise.carrotproject.domain.member.entity.Member;
-import com.exercise.carrotproject.domain.common.enumList.ReviewSellerIndicator;
+import com.exercise.carrotproject.domain.enumList.ReviewSellerIndicator;
 import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.DynamicInsert;
@@ -13,7 +13,6 @@ import java.sql.Timestamp;
 @NoArgsConstructor
 @AllArgsConstructor
 @Getter
-@Setter
 @Builder
 @ToString
 @DynamicInsert

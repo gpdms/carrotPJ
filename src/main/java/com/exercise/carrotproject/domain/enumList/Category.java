@@ -1,4 +1,4 @@
-package com.exercise.carrotproject.domain.common.enumList;
+package com.exercise.carrotproject.domain.enumList;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;

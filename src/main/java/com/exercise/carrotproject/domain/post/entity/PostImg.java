@@ -8,7 +8,6 @@ import javax.persistence.*;
 @AllArgsConstructor
 @NoArgsConstructor
 @Getter
-@Setter
 @Builder
 @ToString
 public class PostImg {

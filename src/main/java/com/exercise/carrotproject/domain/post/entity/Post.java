@@ -1,7 +1,7 @@
 package com.exercise.carrotproject.domain.post.entity;
 
-import com.exercise.carrotproject.domain.common.enumList.Category;
-import com.exercise.carrotproject.domain.common.enumList.Loc;
+import com.exercise.carrotproject.domain.enumList.Category;
+import com.exercise.carrotproject.domain.enumList.Loc;
 import com.exercise.carrotproject.domain.converter.CategoryConverter;
 import com.exercise.carrotproject.domain.member.entity.Member;
 import lombok.*;
@@ -13,7 +13,6 @@ import javax.persistence.*;
 @AllArgsConstructor
 @NoArgsConstructor
 @Getter
-@Setter
 @Builder
 @ToString
 public class Post {

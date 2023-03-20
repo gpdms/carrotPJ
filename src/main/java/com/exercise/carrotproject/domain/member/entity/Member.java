@@ -3,7 +3,7 @@ package com.exercise.carrotproject.domain.member.entity;
 
 
 import com.exercise.carrotproject.domain.common.entity.BaseEntity;
-import com.exercise.carrotproject.domain.common.enumList.Loc;
+import com.exercise.carrotproject.domain.enumList.Loc;
 import com.exercise.carrotproject.domain.converter.LocAttributeConverter;
 import com.exercise.carrotproject.domain.review.entity.ReviewBuyer;
 import com.exercise.carrotproject.domain.review.entity.ReviewSeller;
