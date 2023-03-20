@@ -1,9 +1,9 @@
 package com.exercise.carrotproject.domain.review.entity;
 
-import com.exercise.carrotproject.DateEntity;
+import com.exercise.carrotproject.domain.common.entity.Date;
 import com.exercise.carrotproject.domain.member.entity.Member;
 <<<<<<< Updated upstream:src/main/java/com/exercise/carrotproject/domain/review/entity/ReviewSeller.java
-import com.exercise.carrotproject.domain.review.category.converter.ReviewStateConverter;
+import com.exercise.carrotproject.domain.converter.ReviewStateConverter;
 import com.exercise.carrotproject.post.Post;
 import com.exercise.carrotproject.domain.review.category.ReviewState;
 =======
@@ -25,7 +25,7 @@ import java.util.List;
 @Builder
 @ToString
 @DynamicInsert
-public class ReviewSeller extends DateEntity {
+public class ReviewSeller extends Date {
     @Id
     @GeneratedValue(strategy= GenerationType.IDENTITY)
     private Long reviewSellerId;

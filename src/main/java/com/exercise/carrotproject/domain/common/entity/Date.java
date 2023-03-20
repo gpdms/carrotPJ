@@ -1,4 +1,4 @@
-package com.exercise.carrotproject;
+package com.exercise.carrotproject.domain.common.entity;
 
 import lombok.Getter;
 import org.hibernate.annotations.CreationTimestamp;
@@ -13,7 +13,7 @@ import java.sql.Timestamp;
 @MappedSuperclass
 @EntityListeners(AuditingEntityListener.class)
 @Getter
-public abstract class DateEntity {
+public abstract class Date {
     @CreationTimestamp
     @Column(updatable = false)
     private Timestamp createdTime;

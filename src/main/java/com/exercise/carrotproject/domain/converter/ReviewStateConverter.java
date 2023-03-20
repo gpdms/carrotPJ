@@ -1,4 +1,4 @@
-package com.exercise.carrotproject.domain.review.category.converter;
+package com.exercise.carrotproject.domain.converter;
 
 
 
