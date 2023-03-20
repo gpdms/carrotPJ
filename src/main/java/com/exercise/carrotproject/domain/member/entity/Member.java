@@ -2,18 +2,11 @@ package com.exercise.carrotproject.domain.member.entity;
 
 
 
-import com.exercise.carrotproject.DateEntity;
-<<<<<<< Updated upstream
-import com.exercise.carrotproject.enumlist.Loc;
-import com.exercise.carrotproject.domain.converter.LocConverter;
+import com.exercise.carrotproject.domain.common.entity.Date;
+import com.exercise.carrotproject.domain.common.Loc;
+import com.exercise.carrotproject.domain.converter.LocAttributeConverter;
 import com.exercise.carrotproject.domain.review.entity.ReviewBuyer;
 import com.exercise.carrotproject.domain.review.entity.ReviewSeller;
-=======
-import com.exercise.carrotproject.domain.enumlist.Loc;
-import com.exercise.carrotproject.domain.converter.LocConverter;
-import com.exercise.carrotproject.review.entity.ReviewBuyer;
-import com.exercise.carrotproject.review.entity.ReviewSeller;
->>>>>>> Stashed changes
 import lombok.*;
 import org.hibernate.annotations.ColumnDefault;
 import org.hibernate.annotations.DynamicInsert;
@@ -30,7 +23,7 @@ import java.util.List;
 @Builder
 @ToString
 @DynamicInsert
-public class Member extends DateEntity {
+public class Member extends Date {
     @Id
     @Size(min=5, max=20)
     private String memId;
@@ -53,7 +46,7 @@ public class Member extends DateEntity {
     private Double mannerScore;
 
     @NotNull
-    @Convert(converter = LocConverter.class)
+    @Convert(converter = LocAttributeConverter.class)
     private Loc loc;
 
     @PrePersist
