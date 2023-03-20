@@ -1,6 +1,6 @@
 package com.exercise.carrotproject.domain.converter;
 
-import com.exercise.carrotproject.domain.common.Loc;
+import com.exercise.carrotproject.domain.common.enumList.Loc;
 
 import javax.persistence.AttributeConverter;
 import javax.persistence.Converter;

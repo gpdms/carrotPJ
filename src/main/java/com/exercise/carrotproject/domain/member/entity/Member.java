@@ -2,8 +2,8 @@ package com.exercise.carrotproject.domain.member.entity;
 
 
 
-import com.exercise.carrotproject.domain.common.entity.Date;
-import com.exercise.carrotproject.domain.common.Loc;
+import com.exercise.carrotproject.domain.common.entity.BaseEntity;
+import com.exercise.carrotproject.domain.common.enumList.Loc;
 import com.exercise.carrotproject.domain.converter.LocAttributeConverter;
 import com.exercise.carrotproject.domain.review.entity.ReviewBuyer;
 import com.exercise.carrotproject.domain.review.entity.ReviewSeller;
@@ -23,7 +23,7 @@ import java.util.List;
 @Builder
 @ToString
 @DynamicInsert
-public class Member extends Date {
+public class Member extends BaseEntity {
     @Id
     @Size(min=5, max=20)
     private String memId;

@@ -1,6 +1,7 @@
 package com.exercise.carrotproject.domain.post.entity;
 
-import com.exercise.carrotproject.domain.common.Loc;
+import com.exercise.carrotproject.domain.common.enumList.Category;
+import com.exercise.carrotproject.domain.common.enumList.Loc;
 import com.exercise.carrotproject.domain.converter.CategoryConverter;
 import com.exercise.carrotproject.domain.member.entity.Member;
 import lombok.*;
