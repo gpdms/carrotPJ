@@ -1,10 +1,7 @@
-package com.exercise.carrotproject.post;
+package com.exercise.carrotproject.domain.post.entity;
 
-import com.exercise.carrotproject.enumlist.Loc;
-import com.exercise.carrotproject.enumlist.PostCategory;
-import com.exercise.carrotproject.enumlist.converter.LocConverter;
-import com.exercise.carrotproject.member.entity.Member;
-import com.sun.istack.NotNull;
+import com.exercise.carrotproject.domain.common.Loc;
+import com.exercise.carrotproject.domain.member.entity.Member;
 import lombok.*;
 import org.hibernate.annotations.ColumnDefault;
 
@@ -32,8 +29,7 @@ public class Post {
     @Convert(converter = LocConverter.class)
     private Loc loc; //지역 enum
     @Enumerated(EnumType.STRING)
-    private PostCategory postCategory; //카테고리 enum
-
+//    private Category category; //카테고리 enum
     @ColumnDefault("0") @Column(nullable = false)
     private Integer hideState; //숨김여부: 0보임,1숨김
     @ColumnDefault("0") @Column(nullable = false)
