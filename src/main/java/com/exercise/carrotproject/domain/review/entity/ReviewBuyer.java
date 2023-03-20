@@ -1,10 +1,10 @@
-package com.exercise.carrotproject.review.entity;
+package com.exercise.carrotproject.domain.review.entity;
 
 import com.exercise.carrotproject.DateEntity;
-import com.exercise.carrotproject.member.entity.Member;
+import com.exercise.carrotproject.domain.member.entity.Member;
+import com.exercise.carrotproject.domain.review.category.converter.ReviewStateConverter;
 import com.exercise.carrotproject.post.Post;
-import com.exercise.carrotproject.review.category.ReviewState;
-import com.exercise.carrotproject.review.category.converter.ReviewStateConverter;
+import com.exercise.carrotproject.domain.review.category.ReviewState;
 import lombok.*;
 import org.hibernate.annotations.DynamicInsert;
 

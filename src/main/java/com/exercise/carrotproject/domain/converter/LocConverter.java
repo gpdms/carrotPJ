@@ -1,4 +1,4 @@
-package com.exercise.carrotproject.enumlist.converter;
+package com.exercise.carrotproject.domain.converter;
 
 
 import com.exercise.carrotproject.enumlist.Loc;

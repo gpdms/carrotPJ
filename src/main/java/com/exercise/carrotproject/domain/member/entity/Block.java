@@ -1,4 +1,4 @@
-package com.exercise.carrotproject.member.entity;
+package com.exercise.carrotproject.domain.member.entity;
 
 import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
