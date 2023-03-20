@@ -2,15 +2,9 @@ package com.exercise.carrotproject.domain.review.entity;
 
 import com.exercise.carrotproject.domain.common.entity.Date;
 import com.exercise.carrotproject.domain.member.entity.Member;
-<<<<<<< Updated upstream:src/main/java/com/exercise/carrotproject/domain/review/entity/ReviewBuyer.java
 import com.exercise.carrotproject.domain.converter.ReviewStateConverter;
-import com.exercise.carrotproject.post.Post;
+import com.exercise.carrotproject.domain.post.entity.Post;
 import com.exercise.carrotproject.domain.review.category.ReviewState;
-=======
-import com.exercise.carrotproject.domain.post.Post;
-import com.exercise.carrotproject.review.category.ReviewState;
-import com.exercise.carrotproject.review.category.converter.ReviewStateConverter;
->>>>>>> Stashed changes:src/main/java/com/exercise/carrotproject/review/entity/ReviewBuyer.java
 import lombok.*;
 import org.hibernate.annotations.DynamicInsert;
 
