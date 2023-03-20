@@ -3,10 +3,17 @@ package com.exercise.carrotproject.domain.member.entity;
 
 
 import com.exercise.carrotproject.DateEntity;
+<<<<<<< Updated upstream
 import com.exercise.carrotproject.enumlist.Loc;
 import com.exercise.carrotproject.domain.converter.LocConverter;
 import com.exercise.carrotproject.domain.review.entity.ReviewBuyer;
 import com.exercise.carrotproject.domain.review.entity.ReviewSeller;
+=======
+import com.exercise.carrotproject.domain.enumlist.Loc;
+import com.exercise.carrotproject.domain.converter.LocConverter;
+import com.exercise.carrotproject.review.entity.ReviewBuyer;
+import com.exercise.carrotproject.review.entity.ReviewSeller;
+>>>>>>> Stashed changes
 import lombok.*;
 import org.hibernate.annotations.ColumnDefault;
 import org.hibernate.annotations.DynamicInsert;
