@@ -24,7 +24,9 @@ public class Post {
     private Member member;
     private Integer price;
     private String content;
-    @Enumerated(EnumType.STRING) //enum이름 그대로 db에 저장됨.
+    //@Enumerated(EnumType.STRING) //enum이름 그대로 db에 저장됨.
+    @NotNull
+    @Convert(converter = LocConverter.class)
     private Loc loc; //지역 enum
     @Enumerated(EnumType.STRING)
 //    private Category category; //카테고리 enum
