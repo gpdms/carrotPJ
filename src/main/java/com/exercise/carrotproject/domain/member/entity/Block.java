@@ -12,7 +12,6 @@ import java.sql.Timestamp;
 @NoArgsConstructor
 @AllArgsConstructor
 @Getter
-@Setter
 @Builder
 @ToString
 @DynamicInsert

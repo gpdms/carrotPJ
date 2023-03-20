@@ -1,8 +1,15 @@
 package com.exercise.carrotproject.domain.chat.entity;
 
+import lombok.*;
+
 import javax.persistence.*;
 
 @Entity
+@NoArgsConstructor
+@AllArgsConstructor
+@Getter
+@Builder
+@ToString
 public class ChatImg {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

@@ -4,7 +4,7 @@ import com.exercise.carrotproject.domain.common.entity.BaseEntity;
 import com.exercise.carrotproject.domain.member.entity.Member;
 import com.exercise.carrotproject.domain.converter.ReviewStateConverter;
 import com.exercise.carrotproject.domain.post.entity.Post;
-import com.exercise.carrotproject.domain.common.enumList.ReviewState;
+import com.exercise.carrotproject.domain.enumList.ReviewState;
 import lombok.*;
 import org.hibernate.annotations.DynamicInsert;
 
