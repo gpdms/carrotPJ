@@ -1,8 +1,8 @@
-package com.exercise.carrotproject.review.category.converter;
+package com.exercise.carrotproject.domain.review.category.converter;
 
 
 
-import com.exercise.carrotproject.review.category.ReviewState;
+import com.exercise.carrotproject.domain.review.category.ReviewState;
 
 import javax.persistence.AttributeConverter;
 import javax.persistence.Converter;

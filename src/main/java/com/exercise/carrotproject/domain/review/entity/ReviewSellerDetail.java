@@ -1,7 +1,11 @@
-package com.exercise.carrotproject.review.entity;
+package com.exercise.carrotproject.domain.review.entity;
 
-import com.exercise.carrotproject.member.entity.Member;
+import com.exercise.carrotproject.domain.member.entity.Member;
+<<<<<<< Updated upstream:src/main/java/com/exercise/carrotproject/domain/review/entity/ReviewSellerDetail.java
+import com.exercise.carrotproject.domain.review.category.ReviewSellerIndicator;
+=======
 import com.exercise.carrotproject.review.category.ReviewSellerIndicator;
+>>>>>>> Stashed changes:src/main/java/com/exercise/carrotproject/review/entity/ReviewSellerDetail.java
 import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.DynamicInsert;
