@@ -1,4 +1,4 @@
-package com.exercise.carrotproject.chat.entity;
+package com.exercise.carrotproject.domain.chat.entity;
 
 import javax.persistence.*;
 

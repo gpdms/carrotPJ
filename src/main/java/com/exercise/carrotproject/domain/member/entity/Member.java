@@ -1,11 +1,9 @@
-package com.exercise.carrotproject.member;
+package com.exercise.carrotproject.domain.member.entity;
 
-import com.exercise.carrotproject.enumlist.Loc;
+import com.exercise.carrotproject.domain.common.Loc;
 import lombok.*;
 
 import javax.persistence.Entity;
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
 import javax.persistence.Id;
 
 @Entity
