@@ -1,8 +1,9 @@
 package com.exercise.carrotproject.domain.post.entity;
 
-import com.exercise.carrotproject.converter.CategoryConverter;
-import com.exercise.carrotproject.enumlist.Loc;
-import com.exercise.carrotproject.member.Member;
+import com.exercise.carrotproject.domain.common.enumList.Category;
+import com.exercise.carrotproject.domain.common.enumList.Loc;
+import com.exercise.carrotproject.domain.converter.CategoryConverter;
+import com.exercise.carrotproject.domain.member.entity.Member;
 import lombok.*;
 import org.hibernate.annotations.ColumnDefault;
 

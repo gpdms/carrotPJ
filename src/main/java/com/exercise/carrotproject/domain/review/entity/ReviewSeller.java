@@ -1,16 +1,10 @@
 package com.exercise.carrotproject.domain.review.entity;
 
-import com.exercise.carrotproject.domain.common.entity.Date;
+import com.exercise.carrotproject.domain.common.entity.BaseEntity;
 import com.exercise.carrotproject.domain.member.entity.Member;
-<<<<<<< Updated upstream:src/main/java/com/exercise/carrotproject/domain/review/entity/ReviewSeller.java
 import com.exercise.carrotproject.domain.converter.ReviewStateConverter;
-import com.exercise.carrotproject.post.Post;
-import com.exercise.carrotproject.domain.review.category.ReviewState;
-=======
-import com.exercise.carrotproject.domain.post.Post;
-import com.exercise.carrotproject.review.category.ReviewState;
-import com.exercise.carrotproject.review.category.converter.ReviewStateConverter;
->>>>>>> Stashed changes:src/main/java/com/exercise/carrotproject/review/entity/ReviewSeller.java
+import com.exercise.carrotproject.domain.post.entity.Post;
+import com.exercise.carrotproject.domain.common.enumList.ReviewState;
 import lombok.*;
 import org.hibernate.annotations.DynamicInsert;
 
@@ -25,7 +19,7 @@ import java.util.List;
 @Builder
 @ToString
 @DynamicInsert
-public class ReviewSeller extends Date {
+public class ReviewSeller extends BaseEntity {
     @Id
     @GeneratedValue(strategy= GenerationType.IDENTITY)
     private Long reviewSellerId;

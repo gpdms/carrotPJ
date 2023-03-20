@@ -1,6 +1,6 @@
 package com.exercise.carrotproject.domain.post.entity;
 
-import com.exercise.carrotproject.member.Member;
+import com.exercise.carrotproject.domain.member.entity.Member;
 import lombok.*;
 
 import javax.persistence.*;
