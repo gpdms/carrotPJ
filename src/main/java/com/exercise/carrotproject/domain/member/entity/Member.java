@@ -25,15 +25,14 @@ import java.util.List;
 @DynamicInsert
 public class Member extends BaseEntity {
     @Id
-    @Size(min=5, max=20)
+    @Size(min = 6, max = 12)
     private String memId;
 
     @NotNull
-    @Size(min=5, max=20)
+    @Size(min = 8)
     private String memPwd;
 
-    @NotNull
-    @Size(min=2, max=12)
+    @Size(max = 12)
     private String nickname;
 
     @NotNull
