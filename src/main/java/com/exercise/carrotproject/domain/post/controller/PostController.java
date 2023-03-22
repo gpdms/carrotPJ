@@ -23,7 +23,9 @@ public class PostController {
     private final PostService postService;
 
     @GetMapping("/board")
-    public String board(){
+    public String board(Model model){
+
+
         return "board";
     }
     @GetMapping("/uploadPage")
