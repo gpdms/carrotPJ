@@ -1,14 +1,15 @@
 package com.exercise.carrotproject.domain.post.controller;
 
 import com.exercise.carrotproject.domain.enumList.Category;
+import com.exercise.carrotproject.domain.post.dto.PostDto;
 import com.exercise.carrotproject.domain.post.entity.Post;
+import com.exercise.carrotproject.domain.post.service.PostService;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.stereotype.Controller;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.*;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
@@ -16,10 +17,10 @@ import java.util.Map;
 
 @Controller
 @Log4j2
+@RequiredArgsConstructor
 public class PostController {
 
-    @PersistenceContext
-    EntityManager em;
+    private final PostService postService;
 
     @GetMapping("/board")
     public String board(){
@@ -27,22 +28,26 @@ public class PostController {
     }
     @GetMapping("/uploadPage")
     public String categoryOption(Model model){
-        //카테고리
-        Map<String,String> category = Category.codeAndCategory;
-        log.info(category);
-        model.addAttribute("categoryList", category);
-
         return "item_create";
     }
 
     @PostMapping("/upload")
     @ResponseBody
-    public String insPost(Post post, Model model){
+    public String insPost(@ModelAttribute PostDto postDto, Model model){
         //사용자 입력 받아오기
-        log.info(post);
+//        log.info("postDto: "+postDto);
+
+        //DB에 insert
+        postService.insertPost(postDto);
+
+        //화면에 뿌려주기
+        model.addAttribute("");
+
 
         return "board";
     }
+
+
 
 
 }

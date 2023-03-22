@@ -30,13 +30,4 @@ public enum Category {
     Integer categoryCode;
     String category;
 
-    public String getName(){
-        return name();
-    }
-
-    //map<categoryCode,category>
-    public static Map<String, String> codeAndCategory =
-            Stream.of(values()).collect(toMap(Category::getName, Category::getCategory));
-
-
 }

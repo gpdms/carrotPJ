@@ -24,58 +24,44 @@
         <form id="upload_form" class="form-item-create">
             <div class="form-group form-picture">
                 <div class="file-box">
-                    <input class="upload-name" value="파일선택" disabled="disabled">
+                    <input class="upload-name" name="" value="파일선택" disabled="disabled">
                     <label for="ex_filename" class="btn btn-secondary">업로드</label>
                     <input type="file" id="ex_filename" style="display:none;">
                 </div>
             </div>
 
             <div class="form-group form-title">
-                <input type="text" class="form-control" id="productsTitle" placeholder="제목">
+                <input type="text" class="form-control" id="productsTitle" name="title" placeholder="제목">
             </div>
             <div class="form-group form-category">
-                <select id="productsCategory" class="form-control" >
+                <select id="productsCategory" class="form-control" name="category">
                     <option value="" disabled selected>카테고리를 선택해주세요.</option>
-                    <option th:each = "categoryList:${categoryList}" th:value="${categoryList.key}" th:text="${categoryList.value}"></option>
+                    <!--thymeleaf이용해 Enum클래스 정보 바로 가져오기-->
+                    <option th:each = "categoryList:${T(com.exercise.carrotproject.domain.enumList.Category).values()}" th:value="${categoryList.name}" th:text="${categoryList.category}"></option>
 
                 </select>
             </div>
             <div class="form-group form-price">
-                <input type="number" class="form-control" id="productsPrice" min="0" step="1000" placeholder="가격을 입력해주세요. (￦)">
+                <input type="number" class="form-control" id="productsPrice" name="price" min="0" step="1000" placeholder="가격을 입력해주세요. (￦)">
             </div>
             <div class="form-group form-description">
-                <textarea class="form-control" id="productsDescription" rows="10" placeholder="제품 설명을 작성해주세요."></textarea>
+                <textarea class="form-control" id="productsDescription" name="content" rows="10" placeholder="제품 설명을 작성해주세요."></textarea>
             </div>
-            <div class="form-group form-car-model-year">
-                <select id="carModelYear" class="form-control">
-                    <option value="" disabled selected>차량 연식을 선택해주세요</option>
-                    <option value="2020">2020년</option>
-                    <option value="2019">2019년</option>
-                    <option value="2018">2018년</option>
-                    <option value="2017">2017년</option>
-                    <option value="2016">2016년</option>
-                    <option value="2015">2015년</option>
-                    <option value="2014">2014년</option>
-                    <option value="2013">2013년</option>
-                    <option value="2012">2012년</option>
-                    <option value="2011">2011년</option>
-                    <option value="2010">2010년</option>
-                </select>
-            </div>
+
             <div class="form-group form-car-mileage">
-                <input type="number" class="form-control" id="carMileage" placeholder="주행거리를 입력해주세요.(km)">
+                <input type="text" class="form-control" id="carMileage" name="wishPlace" placeholder="거래희망장소">
             </div>
-            <div class="form-group form-car-smoking">
-                <label>차량 판매자 흡연 여부</label>
-                <div class="form-check form-check-inline form-check-smoking">
-                    <input class="form-check-input" type="radio" name="smokingOptions" id="inlineSmoker" value="true">
-                    <label class="form-check-label smoker" for="inlineSmoker">예, 흡연자 입니다.</label>
-                </div>
-                <div class="form-check form-check-inline form-check-nonsmoking">
-                    <input class="form-check-input" type="radio" name="smokingOptions" id="inlineNonSmoker" value="false">
-                    <label class="form-check-label non-smoker" for="inlineNonSmoker">아니오, 비 흡연자 입니다.</label>
-                </div>
-            </div>
+<!--            <div class="form-group form-car-smoking">-->
+<!--                <label>차량 판매자 흡연 여부</label>-->
+<!--                <div class="form-check form-check-inline form-check-smoking">-->
+<!--                    <input class="form-check-input" type="radio" name="smokingOptions" id="inlineSmoker" value="true">-->
+<!--                    <label class="form-check-label smoker" for="inlineSmoker">예, 흡연자 입니다.</label>-->
+<!--                </div>-->
+<!--                <div class="form-check form-check-inline form-check-nonsmoking">-->
+<!--                    <input class="form-check-input" type="radio" name="smokingOptions" id="inlineNonSmoker" value="false">-->
+<!--                    <label class="form-check-label non-smoker" for="inlineNonSmoker">아니오, 비 흡연자 입니다.</label>-->
+<!--                </div>-->
+<!--            </div>-->
             <button type="button" id="uploadBtn" class="btn btn-primary btn-submit">상품 등록하기</button>
         </form>
     </div>
@@ -115,7 +101,9 @@
                 enctype:'multipart/form-data',
                 success: function(result){ //컨트롤러에서 return이 없을 경우 바로 새로고침해버림(?)
                     console.log(result);
-                    //나중에 화면 처리
+                    //화면 처리
+                    alert("상품이 게시되었습니다.");
+                    location.href = "/"+result;
                 },
                 error: function(jqXHR, textStatus, errorThrown){
                     console.log(textStatus);
