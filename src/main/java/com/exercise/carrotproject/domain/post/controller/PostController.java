@@ -41,7 +41,7 @@ public class PostController {
         postService.insertPost(postDto);
 
         //화면에 뿌려주기
-        model.addAttribute("");
+
 
 
         return "board";
