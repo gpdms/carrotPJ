@@ -4,6 +4,11 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 
+import java.util.Map;
+import java.util.stream.Stream;
+
+import static java.util.stream.Collectors.toMap;
+
 @Getter
 @AllArgsConstructor
 @Slf4j
@@ -21,12 +26,14 @@ public enum Category {
     SPORTS(11, "스포츠/레저"),
     ETC(12, "기타 중고물품");
 
-    //필드
-    Integer categoryCode;
-    String categoryName;
-    //생성자
-    //Getter
 
+    Integer categoryCode;
+    String category;
+
+
+    //map<categoryCode,category>
+    public static Map<Integer, String> codeAndCategory =
+            Stream.of(values()).collect(toMap(Category::getCategoryCode, Category::getCategory));
 
 
 }
