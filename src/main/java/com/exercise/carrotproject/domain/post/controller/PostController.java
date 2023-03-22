@@ -27,6 +27,11 @@ public class PostController {
         return "board";
     }
 
+    @GetMapping("/detail")
+    public String detail(){
+        return "detail";
+    }
+
 
     @GetMapping("/uploadPage")
     public String categoryOption(Model model){
