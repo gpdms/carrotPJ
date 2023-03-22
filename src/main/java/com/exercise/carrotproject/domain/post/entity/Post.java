@@ -45,7 +45,7 @@ public class Post {
         this.sellState = this.sellState == null ? 0 : this.sellState;
     }
 
-    //Dto -> Entity
+    //Dto -> Entity 변환
     public static Post toEntity(PostDto postDto) {
         return Post.builder()
                 .postId(postDto.getPostId())

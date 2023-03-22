@@ -24,10 +24,10 @@ public class PostController {
 
     @GetMapping("/board")
     public String board(Model model){
-
-
         return "board";
     }
+
+
     @GetMapping("/uploadPage")
     public String categoryOption(Model model){
         return "item_create";
@@ -41,10 +41,6 @@ public class PostController {
 
         //DB에 insert
         postService.insertPost(postDto);
-
-        //화면에 뿌려주기
-
-
 
         return "board";
     }

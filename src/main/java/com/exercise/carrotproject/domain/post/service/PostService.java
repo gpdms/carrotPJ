@@ -35,8 +35,6 @@ public class PostService {
 
     @Transactional
     public void selectPost(){
-        List<Post> postList = postRepository.findAllByOrderByIdDesc();
-        log.info("postList: " + postList);
     }
 
 }
