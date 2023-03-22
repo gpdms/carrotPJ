@@ -2,9 +2,7 @@ package com.exercise.carrotproject.domain.post.controller;
 
 import com.exercise.carrotproject.domain.enumList.Category;
 import com.exercise.carrotproject.domain.post.entity.Post;
-import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
-import org.springframework.beans.factory.annotation.Required;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -23,6 +21,10 @@ public class PostController {
     @PersistenceContext
     EntityManager em;
 
+    @GetMapping("/board")
+    public String board(){
+        return "board";
+    }
     @GetMapping("/uploadPage")
     public String categoryOption(Model model){
         //카테고리
@@ -35,11 +37,11 @@ public class PostController {
 
     @PostMapping("/upload")
     @ResponseBody
-    public String insPost(@RequestBody Post post, Model model){
+    public String insPost(Post post, Model model){
         //사용자 입력 받아오기
         log.info(post);
 
-        return "item_create";
+        return "board";
     }
 
 
