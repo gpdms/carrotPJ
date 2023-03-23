@@ -1,8 +1,11 @@
 package com.exercise.carrotproject.web.member;
 
 
-import com.exercise.carrotproject.domain.member.MemberRepository;
+import com.exercise.carrotproject.domain.member.MemberService;
+import com.exercise.carrotproject.domain.member.entity.Member;
+import com.exercise.carrotproject.domain.member.entity.MemberDto;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -11,23 +14,40 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 import javax.validation.Valid;
+import java.util.Map;
 
+@Slf4j
 @Controller
 @RequestMapping("/members")
 @RequiredArgsConstructor
 public class MemberController {
-    private final MemberRepository memberRepository;
+    private final MemberService  memberService;
 
-    @GetMapping("/join")
-    public String joinForm(@ModelAttribute("memberJoinForm") MemberJoinForm memberJoinForm) {
-        return "members/memberJoinForm";
+    @GetMapping("/signup")
+    public String signupForm(@ModelAttribute("memberSaveForm") MemberSaveForm form) {
+        return "/member/signupForm";
     }
-/*    @PostMapping("/join")
-    public String save(@Valid @ModelAttribute MemberJoinForm memberJoinForm, BindingResult bindingResult) {
-        if(bindingResult.hasErrors()) {
-            return "members/memberJoinForm";
+    @PostMapping("/signup")
+    public String signup(@Valid @ModelAttribute("memberSaveForm") MemberSaveForm form,
+                    BindingResult bindingResult) {
+        if(bindingResult.hasErrors()) {;
+            return  "/member/signupForm";
         }
-        memberRepository.save(member);
+        if (!form.getPwd().equals(form.getPwdConfirm())) {
+            bindingResult.rejectValue("pwdConfirm", "pwdConfirmInCorrect");
+            return "/member/signupForm";
+        }
+
+        Member member = Member.builder().memId(form.getMemId())
+                .memPwd(form.getPwd())
+                .nickname(form.getNickname())
+                .loc(form.getLoc()).build();
+        Map<String, Object> saveResult = memberService.saveMember(member);
+        if (saveResult.containsValue("DuplicatedMember")) {
+            bindingResult.rejectValue("memId", "duplicatedMemId");
+            return "/member/signupForm";
+        }
+
         return "redirect:/";
-    }*/
+    }
 }
