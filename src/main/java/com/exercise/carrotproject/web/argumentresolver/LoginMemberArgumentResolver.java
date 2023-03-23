@@ -26,7 +26,7 @@ public class LoginMemberArgumentResolver implements HandlerMethodArgumentResolve
     @Override //컨트롤러에서 맵핑된 메소드의 파라미터를 리턴
     public Object resolveArgument(MethodParameter parameter, ModelAndViewContainer mavContainer,
                                   NativeWebRequest webRequest, WebDataBinderFactory binderFactory) throws Exception {
-        log.info("resolveArgument 실행");
+        log.info("Login resolveArgument 실행");
         HttpServletRequest request = (HttpServletRequest)webRequest.getNativeRequest();
         HttpSession session = request.getSession(false);
         if(session == null) {

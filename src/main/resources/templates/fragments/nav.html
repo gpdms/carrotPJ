@@ -20,12 +20,18 @@
                         </ul>
                     </li>
                 </ul>
-                <form class="d-flex">
-                    <button class="btn btn-outline-dark" type="button"
-                            onclick="location.href='/member/joinForm'"
-                            th:onclick="|location.href='@{/members/join}'|">
-                        회원가입/로그인
-                    </button>
+
+                <form class="d-flex" th:if="${session.loginMember == null}">
+                    <button th:if="${session.loginMember == null}"
+                            class="btn btn-outline-dark" type="button"
+                            onclick="location.href='/member/loginForm'"
+                            th:onclick="|location.href='@{/login}'|"> 회원가입/로그인 </button>
+                </form>
+                <form class="d-flex" th:if="${session.loginMember != null}"
+                      th:action="@{/logout}" method="post">
+                <button  class="btn btn-outline-dark" type="submit"> 로그아웃 </button>
+                <button  class="btn btn-outline-dark" type="button"
+                        th:onclick="|location.href='@{/members}'|"> 회원정보 </button>
                 </form>
             </div>
         </div>

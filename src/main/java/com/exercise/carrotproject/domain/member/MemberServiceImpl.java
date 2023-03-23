@@ -25,12 +25,12 @@ public class MemberServiceImpl implements MemberService {
     public Map<String, Object> saveMember(Member member) {
         Map<String, Object> saveResult =  new HashMap<>();
         if(foundDuplicatedMember(member.getMemId())) {
-           saveResult.put("resultCode", "duplicatedMember");
+           saveResult.put("resultCode", "fail-DM");
            return saveResult;
         }
 
         Member newMember = memberRepository.save(member);
-        saveResult.put("resultCode", "saveSuccess");
+        saveResult.put("resultCode", "success");
         return saveResult;
     }
 }

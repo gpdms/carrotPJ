@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import javax.validation.Valid;
 import java.util.Map;
@@ -34,7 +35,7 @@ public class MemberController {
             return  "/member/signupForm";
         }
         if (!form.getPwd().equals(form.getPwdConfirm())) {
-            bindingResult.rejectValue("pwdConfirm", "pwdConfirmInCorrect");
+            bindingResult.rejectValue("pwdConfirm", "pwdConfirmInCorrect", "암호가 일치하지 않습니다.");
             return "/member/signupForm";
         }
 
@@ -43,8 +44,9 @@ public class MemberController {
                 .nickname(form.getNickname())
                 .loc(form.getLoc()).build();
         Map<String, Object> saveResult = memberService.saveMember(member);
-        if (saveResult.containsValue("DuplicatedMember")) {
-            bindingResult.rejectValue("memId", "duplicatedMemId");
+        //log.info("saveResult {}", saveResult.containsValue("fail-DM"));
+        if (saveResult.containsValue("fail-DM")) {
+            bindingResult.rejectValue("memId", "duplicatedMemId", "이미 존재하는 아이디입니다.");
             return "/member/signupForm";
         }
 

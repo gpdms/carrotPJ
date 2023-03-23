@@ -1,11 +1,12 @@
 package com.exercise.carrotproject.web.member;
 
 import com.exercise.carrotproject.SessionConst;
-import com.exercise.carrotproject.domain.member.LoginService;
+import com.exercise.carrotproject.domain.member.login.LoginService;
 import com.exercise.carrotproject.domain.member.entity.Member;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -20,11 +21,14 @@ import javax.validation.Valid;
 @RequiredArgsConstructor
 public class LoginController {
     private final LoginService loginService;
-    /**
-     * 로그인 이후 redirect 처리추가
-     */
+
+    @GetMapping("/login")
+    public String loginForm(@ModelAttribute("loginForm") LoginForm form) {
+        return "member/loginForm";
+    }
+
     @PostMapping("/login")
-    public String login(@Valid @ModelAttribute(name="loginForm") LoginForm form,
+    public String login(@Valid @ModelAttribute("loginForm") LoginForm form,
                           BindingResult bindingResult,
                           @RequestParam(defaultValue = "/") String redirectURL,
                           HttpServletRequest request) {
@@ -55,9 +59,5 @@ public class LoginController {
         }
         return "redirect:/";
     }
-    private void expireCookie(HttpServletResponse response, String cookieName) {
-        Cookie cookie = new Cookie(cookieName, null);
-        cookie.setMaxAge(0);
-        response.addCookie(cookie);
-    }
+
 }
