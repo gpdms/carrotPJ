@@ -19,12 +19,20 @@ class PostTest {
     @Transactional
     @Rollback(value = false)
     public void postIns(){
-        Post post = Post.builder()
-                .title("제목")
-                .content("내용")
-                .category(Category.BEAUTY)
-                .build();
-        postRepository.save(post);
+        for(int i=1; i<=30; i++){
+            Post post = Post.builder()
+                    .title("제목"+i)
+                    .content("내용"+i)
+                    .category(Category.BEAUTY)
+                    .build();
+            postRepository.save(post);
+        }
+//        Post post = Post.builder()
+//                .title("제목")
+//                .content("내용")
+//                .category(Category.BEAUTY)
+//                .build();
+//        postRepository.save(post);
 
     }
 }

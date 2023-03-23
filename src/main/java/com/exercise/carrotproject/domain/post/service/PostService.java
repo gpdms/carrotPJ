@@ -41,8 +41,10 @@ public class PostService {
 
         //Entity리스트 -> Dto 리스트
         List<PostDto> postDtoList  = postEntityList.stream().map(PostDto::entityToDto).collect(Collectors.toList());
-
 //        log.info("포스트 전체 정보: "+ postDtoList);
+
+        //페이징
+
 
         return  postDtoList;
     }
