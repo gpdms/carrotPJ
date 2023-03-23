@@ -11,4 +11,6 @@ import java.util.Map;
 public interface MemberService {
     public boolean foundDuplicatedMember(String memId);
     public Map<String,Object> saveMember(Member member);
+
+    public MemberDto findMemberForProfileEdit(String memId);
 }

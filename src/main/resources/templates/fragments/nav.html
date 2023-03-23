@@ -31,7 +31,7 @@
                       th:action="@{/logout}" method="post">
                 <button  class="btn btn-outline-dark" type="submit"> 로그아웃 </button>
                 <button  class="btn btn-outline-dark" type="button"
-                        th:onclick="|location.href='@{/members}'|"> 회원정보 </button>
+                        th:onclick="|location.href='@{/members/{memId}(memId=${session.loginMember.memId})}'|"> 회원정보 </button>
                 </form>
             </div>
         </div>

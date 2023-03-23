@@ -4,15 +4,14 @@ package com.exercise.carrotproject.web.member;
 import com.exercise.carrotproject.domain.member.MemberService;
 import com.exercise.carrotproject.domain.member.entity.Member;
 import com.exercise.carrotproject.domain.member.entity.MemberDto;
+import com.exercise.carrotproject.web.member.form.ProfileForm;
+import com.exercise.carrotproject.web.member.form.PwdUpdateForm;
+import com.exercise.carrotproject.web.member.form.SignupForm;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import java.util.Map;
@@ -25,11 +24,11 @@ public class MemberController {
     private final MemberService  memberService;
 
     @GetMapping("/signup")
-    public String signupForm(@ModelAttribute("memberSaveForm") MemberSaveForm form) {
+    public String signupForm(@ModelAttribute("signupForm") SignupForm form) {
         return "/member/signupForm";
     }
     @PostMapping("/signup")
-    public String signup(@Valid @ModelAttribute("memberSaveForm") MemberSaveForm form,
+    public String signup(@Valid @ModelAttribute("signupForm") SignupForm form,
                     BindingResult bindingResult) {
         if(bindingResult.hasErrors()) {;
             return  "/member/signupForm";
@@ -52,4 +51,39 @@ public class MemberController {
 
         return "redirect:/";
     }
+
+    @GetMapping("/{memId}")
+    public String memberInfoForm(@PathVariable String memId,
+                                 @ModelAttribute("pwdUpdateForm") PwdUpdateForm pwdUpdateForm,
+                                 @ModelAttribute("profileForm")ProfileForm profileForm) {
+        MemberDto member = memberService.findMemberForProfileEdit(memId);
+        profileForm.setProfPath(member.getProfPath());
+        profileForm.setNickname(member.getNickname());
+        profileForm.setLoc(member.getLoc());
+        return "/member/memberInfo";
+    }
+    @PostMapping("/{memId}")
+    public String memberPwdEdit(@PathVariable String memId,
+                             @ModelAttribute("pwdUpdateForm") PwdUpdateForm pwdUpdateForm,
+                             @ModelAttribute("profileForm")ProfileForm profileForm) {
+        MemberDto member = memberService.findMemberForProfileEdit(memId);
+        profileForm.setProfPath(member.getProfPath());
+        profileForm.setNickname(member.getNickname());
+        profileForm.setLoc(member.getLoc());
+
+
+        return "/member/memberInfo";
+    }
+
+    @PatchMapping("/{memId}")
+    public String memberProfEdit(@PathVariable String memId,
+                                 @ModelAttribute("pwdUpdateForm") PwdUpdateForm pwdUpdateForm,
+                                 @ModelAttribute("profileForm")ProfileForm profileForm) {
+        MemberDto member = memberService.findMemberForProfileEdit(memId);
+        profileForm.setProfPath(member.getProfPath());
+        profileForm.setNickname(member.getNickname());
+        profileForm.setLoc(member.getLoc());
+        return "/member/memberInfo";
+    }
+
 }

@@ -2,7 +2,6 @@ package com.exercise.carrotproject.domain.member;
 
 import com.exercise.carrotproject.domain.member.entity.Member;
 import com.exercise.carrotproject.domain.member.entity.MemberDto;
-import com.exercise.carrotproject.web.member.MemberSaveForm;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -20,7 +19,6 @@ public class MemberServiceImpl implements MemberService {
     public boolean foundDuplicatedMember(String memId) {
         return memberRepository.findById(memId).isEmpty() ? false : true;
     }
-
     @Override
     public Map<String, Object> saveMember(Member member) {
         Map<String, Object> saveResult =  new HashMap<>();
@@ -33,4 +31,14 @@ public class MemberServiceImpl implements MemberService {
         saveResult.put("resultCode", "success");
         return saveResult;
     }
+
+    @Override
+    public MemberDto findMemberForProfileEdit(String memId) {
+        Member member = memberRepository.findById(memId).orElse(null);
+        return  MemberDto.builder().profPath(member.getProfPath())
+                .nickname(member.getNickname())
+                .loc(member.getLoc()).build();
+    }
+
+
 }
