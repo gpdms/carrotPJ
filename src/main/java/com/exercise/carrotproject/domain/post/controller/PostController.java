@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+import java.util.List;
 import java.util.Map;
 
 @Controller
@@ -24,6 +25,10 @@ public class PostController {
 
     @GetMapping("/board")
     public String board(Model model){
+
+        List<PostDto> postList = postService.selectAllPost();
+        model.addAttribute("postList", postList);
+
         return "board";
     }
 
@@ -35,12 +40,13 @@ public class PostController {
 
     @GetMapping("/uploadPage")
     public String categoryOption(Model model){
+
         return "item_create";
     }
 
     @PostMapping("/upload")
     @ResponseBody
-    public String insPost(@ModelAttribute PostDto postDto, Model model){
+    public String insPost(PostDto postDto, Model model){
         //사용자 입력 받아오기
 //        log.info("postDto: "+postDto);
 

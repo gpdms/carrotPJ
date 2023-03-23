@@ -46,7 +46,7 @@ public class Post {
     }
 
     //Dto -> Entity 변환
-    public static Post toEntity(PostDto postDto) {
+    public static Post dtoToEntity(PostDto postDto) {
         return Post.builder()
                 .postId(postDto.getPostId())
                 .title(postDto.getTitle())
