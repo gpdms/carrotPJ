@@ -6,6 +6,10 @@ import com.exercise.carrotproject.domain.post.repository.PostRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Required;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -44,10 +48,17 @@ public class PostService {
         List<PostDto> postDtoList  = postEntityList.stream().map(PostDto::entityToDto).collect(Collectors.toList());
 //        log.info("포스트 전체 정보: "+ postDtoList);
 
-        //페이징
-
-
         return  postDtoList;
+    }
+
+    public Page<PostDto> paging(List<PostDto> postList, Pageable pageable){
+
+        //페이징
+        final int start = (int) pageable.getOffset();
+        final int end = Math.min((start + pageable.getPageSize()), postList.size());
+        final Page<PostDto> page = new PageImpl<>(postList.subList(start, end), pageable, postList.size());
+//        log.info("start:{}, end:{}, page:{}", start, end, page);
+        return page;
     }
 
 }
