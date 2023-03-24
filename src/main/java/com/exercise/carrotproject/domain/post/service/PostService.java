@@ -36,7 +36,8 @@ public class PostService {
 
 
     public List<PostDto> selectAllPost(){
-        String sql = "select p from Post p";
+        //JPQL
+        String sql = "select p from Post p order by p.postId desc";
         List<Post> postEntityList = em.createQuery(sql, Post.class).getResultList();
 
         //Entity리스트 -> Dto 리스트
