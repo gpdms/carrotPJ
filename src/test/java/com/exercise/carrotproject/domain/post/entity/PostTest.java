@@ -24,6 +24,7 @@ class PostTest {
                     .title("제목"+i)
                     .content("내용"+i)
                     .category(Category.BEAUTY)
+                    .price(5000)
                     .build();
             postRepository.save(post);
         }
