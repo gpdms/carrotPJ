@@ -64,14 +64,14 @@ public class PostController {
 
         //DB에 insert
         postService.insertPost(postDto);
-
-        for(MultipartFile uploadFile: uploadFiles){
-            String orgName = uploadFile.getOriginalFilename();
-            String savedName = orgName.substring(orgName.lastIndexOf("\\")+1);
-            log.info("fileName:"+savedName);
-            Path savePath = Paths.get("c:\\upload\\"+savedName);  //Path 임포트:java.nio.file.Path
-            uploadFile.transferTo(savePath); //throws 예외처리.
-        }
+//
+//        for(MultipartFile uploadFile: uploadFiles){
+//            String orgName = uploadFile.getOriginalFilename();
+//            String savedName = orgName.substring(orgName.lastIndexOf("\\")+1);
+//            log.info("fileName:"+savedName);
+//            Path savePath = Paths.get("c:\\upload\\"+savedName);  //Path 임포트:java.nio.file.Path
+//            uploadFile.transferTo(savePath); //throws 예외처리.
+//        }
 
 
         return "post/board";
