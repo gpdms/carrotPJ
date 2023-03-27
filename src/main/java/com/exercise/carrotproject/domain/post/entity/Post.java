@@ -4,6 +4,7 @@ import com.exercise.carrotproject.domain.enumList.Category;
 import com.exercise.carrotproject.domain.enumList.Loc;
 import com.exercise.carrotproject.domain.converter.CategoryConverter;
 import com.exercise.carrotproject.domain.member.entity.Member;
+import com.exercise.carrotproject.domain.post.dto.PostDto;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.*;
 import org.hibernate.annotations.ColumnDefault;
@@ -35,6 +36,9 @@ public class Post {
     @ColumnDefault("0") @Column(nullable = false)
     private Integer sellState; //판매여부: 0판매중,1예약중,2거래완료
     private Integer hits;
+    private String wishPlace;
+
+
 
     //ColumnDefault, nullable=false는 데이터베이스에만 적용되고 영속성컨텍스트에는 null이기때문에
     //영속 상태 되기 이전에 실행하여 영속컨텍스트에도 담아줌.
@@ -42,6 +46,23 @@ public class Post {
     public void prePersist(){
         this.hideState = this.hideState == null ? 0 : this.hideState;
         this.sellState = this.sellState == null ? 0 : this.sellState;
+    }
+
+    //Dto -> Entity 변환
+    public static Post dtoToEntity(PostDto postDto) {
+        return Post.builder()
+                .postId(postDto.getPostId())
+                .title(postDto.getTitle())
+                .member(postDto.getMember())
+                .price(postDto.getPrice())
+                .content(postDto.getContent())
+                .loc(postDto.getLoc())
+                .category(postDto.getCategory())
+                .hideState(postDto.getHideState())
+                .sellState(postDto.getSellState())
+                .hits(postDto.getHits())
+                .wishPlace(postDto.getWishPlace())
+                .build();
     }
 
 
