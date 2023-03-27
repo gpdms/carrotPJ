@@ -9,10 +9,10 @@ import javax.persistence.Converter;
 import java.util.stream.Stream;
 
 @Converter
-public class ReviewStateConverter implements AttributeConverter<ReviewState, Integer> {
+public class ReviewStateConverter implements AttributeConverter<ReviewState, String> {
 
     @Override
-    public Integer convertToDatabaseColumn(ReviewState reviewState) {
+    public String convertToDatabaseColumn(ReviewState reviewState) {
         if(reviewState == null) {
             return null;
         }
@@ -20,7 +20,7 @@ public class ReviewStateConverter implements AttributeConverter<ReviewState, Int
     }
 
     @Override
-    public ReviewState convertToEntityAttribute(Integer dbData) {
+    public ReviewState convertToEntityAttribute(String dbData) {
         if(dbData == null) {
             return null;
         }

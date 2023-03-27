@@ -1,10 +1,12 @@
 package com.exercise.carrotproject.domain.chat.entity;
 
+import com.exercise.carrotproject.domain.common.entity.BaseEntity;
 import com.exercise.carrotproject.domain.member.entity.Member;
 import com.exercise.carrotproject.domain.post.entity.Post;
 import lombok.*;
 
 import javax.persistence.*;
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity
@@ -12,9 +14,9 @@ import java.util.List;
 @AllArgsConstructor
 @Getter
 @Builder
-@ToString
+@ToString(exclude = {"chatList"})
 @Table(name = "chat_room")
-public class ChatRoom {
+public class ChatRoom extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "room_id")
@@ -32,9 +34,7 @@ public class ChatRoom {
     @JoinColumn(name = "buyer_id")
     private Member buyer;
 
-    @OneToMany(mappedBy = "room")
-    private List<Chat> chatList;
-
-    @OneToMany(mappedBy = "room")
-    private List<ChatImg> chatImgList;
+    @OneToMany(mappedBy = "room", cascade = {CascadeType.PERSIST, CascadeType.MERGE})
+    @Builder.Default
+    private List<Chat> chatList = new ArrayList<>();
 }
