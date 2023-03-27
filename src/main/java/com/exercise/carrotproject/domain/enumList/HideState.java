@@ -6,9 +6,9 @@ import lombok.Getter;
 @AllArgsConstructor
 @Getter
 public enum HideState {
-    SHOW(0, "보임"),
-    HIDE(1, "숨김");
+    SHOW("0", "보임"),
+    HIDE("1", "숨김");
 
-    private Integer hideStateCode;
+    private String hideStateCode;
     private String hideStateName;
 }
