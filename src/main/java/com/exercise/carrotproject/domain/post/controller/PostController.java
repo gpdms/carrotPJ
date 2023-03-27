@@ -35,7 +35,7 @@ public class PostController {
 
     private final PostService postService;
 
-    @GetMapping("/")
+    @GetMapping("/board")
     public String home(){
         return "redirect:/post/board";
     }
