@@ -4,6 +4,7 @@ import com.exercise.carrotproject.domain.enumList.Category;
 import com.exercise.carrotproject.domain.enumList.Loc;
 import com.exercise.carrotproject.domain.converter.CategoryConverter;
 import com.exercise.carrotproject.domain.member.entity.Member;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.*;
 import org.hibernate.annotations.ColumnDefault;
 
@@ -22,7 +23,7 @@ public class Post {
     @ColumnDefault("0")
     @Column(columnDefinition = "varchar(50)")
     private String title;
-    @ManyToOne @JoinColumn(name = "mem_id")
+    @ManyToOne @JoinColumn(name = "mem_id") @JsonIgnore
     private Member member;
     private Integer price;
     private String content;
