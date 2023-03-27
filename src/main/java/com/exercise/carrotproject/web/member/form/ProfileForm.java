@@ -1,6 +1,7 @@
 package com.exercise.carrotproject.web.member.form;
 
 import com.exercise.carrotproject.domain.enumList.Loc;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
@@ -11,15 +12,15 @@ import javax.validation.constraints.*;
 @Getter
 @Setter
 @ToString
+@AllArgsConstructor
 public class ProfileForm {
     @NotNull
     private String memId;
 
-    @ColumnDefault("'D:/pf/profile_img.png'")
     @Size(max=1000)
     private String profPath;
 
-    @Size(max = 12, message = "12자 이하여야 합니다.")
+    @Size(min=2, max = 12, message = "2자 이상, 12자 이하여야 합니다.")
     private String nickname;
 
     @NotNull

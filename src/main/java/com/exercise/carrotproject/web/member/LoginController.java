@@ -21,6 +21,7 @@ import javax.validation.Valid;
 public class LoginController {
     private final LoginService loginService;
 
+
     @GetMapping("/login")
     public String loginForm(@ModelAttribute("loginForm") LoginForm form) {
         return "member/loginForm";

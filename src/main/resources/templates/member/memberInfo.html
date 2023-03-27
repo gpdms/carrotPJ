@@ -6,7 +6,7 @@
 <head layout:fragment="head">
     <title>회원 정보 폼</title>
     <link th:href="@{/css/bootstrap.min.css}"
-          href="../css/bootstrap.min.css" rel="stylesheet">
+          href="/css/bootstrap.min.css" rel="stylesheet">
     <style>
         .form-container {
             max-width: 560px;
@@ -30,20 +30,25 @@
             <input type="hidden" name="memId" th:value="${session.loginMember.memId}" >
             <div>
                 <label for="nickname">닉네임</label>
-                <input type="text" id="nickname" class="formcontrol" th:value="${profileForm.nickname}">
+                <input type="text" id="nickname" name="nickname"
+                       class="formcontrol" th:value="${profileForm.nickname}"
+                       th:onchange="pfEditBtnActive()">
 <!--                       th:classappend="${errors?.containsKey('itemName')} ? 'fielderror' : _"-->
                 <div class="field-error" th:errors="*{profileForm.nickname}" />
             </div>
 
             <div>
-                <label for="profpath">프로필 이미지</label>
-                    <input id="profimg" type="file" name="profimg" required="required" onChange="fileChange();" style="display:none">
-                <input type="file" id="profpath"  class="formcontrol">
+                <label for="profImg">프로필 이미지</label>
+                <input type="file" id="profImg"  name="profImg"
+                       class="formcontrol"
+                       th:onchange="pfEditBtnActive()">
+<!--                <input id="profimg" type="file" name="profimg" required="required" onChange="fileChange();" style="display:none">-->
+
             </div>
 
             <div>
                 <label for="loc">내 동네</label>
-                <select id="loc">
+                <select id="loc" name="loc" th:onchange="pfEditBtnActive()">
                     <th:block th:each="locValue:${T(com.exercise.carrotproject.domain.enumList.Loc).values()}">
                         <option th:value="${locValue}" th:if="${!locValue.locCode.equals(profileForm.loc.locCode)}">
                             [[${locValue.locName}]]</option>
@@ -54,15 +59,16 @@
                 <div class="field-error" th:errors="*{profileForm.loc}" />
             </div>
 
-            <button class="w-50 btn btn-secondary btn-group-sm" id="profileEditBtn" type="button">프로필 수정</button>
+            <button class="w-50 btn btn-secondary btn-group-sm"
+                    id="pfEditBtn" disabled type="submit">프로필 수정</button>
         </form>
 
         <hr class="my-4">
 
         <h4 class="mb-3">비밀번호 수정</h4>
-        <input type="hidden" name="memId" th:value="${session.loginMember.memId}">
-        <form action="" th:action="@{/members/{memId}(memId=${session.loginMember.memId})}"
+        <form action="" th:action="@{/members/{memId}/pwdEdit(memId=${session.loginMember.memId})}"
               th:object="${pwdUpdateForm}" method="post">
+            <input type="hidden" name="memId" th:value="${session.loginMember.memId}">
             <div>
                 <label for="memPwd">비밀번호</label>
                 <input type="password" id="memPwd" th:field="*{pwd}"
@@ -82,10 +88,64 @@
 
 </div>
 
-<div layout:fragment="script" th:inline="javascript">
+<div layout:fragment="script">
 <!--    <script type="text/javascript" src="http://map.vworld.kr/js/vworldMapInit.js.do?version=2.0&apiKey=[593AE8E8-EC6D-350F-8E69-BC6C4E15A535]"></script>-->
+<script th:inline="javascript">
+    function pfEditBtnActive() {
+        const target = document.getElementById('pfEditBtn');
+        target.disabled = false;
+    }
+/*    function 특정div새로고침(){
+        $("#div의 id").load(window.location.href + "#div의 id");
+    }*/
 
-    <script th:inline="javascript">
+    const profileEditForm = document.getElementById('profileEditForm');
+    profileEditForm.addEventListener('submit', (e) => {
+        e.preventDefault();
+        let memId = /*[[${session.loginMember.memId}]]*/;
+        let url = "/members/"+memId+"/profileEdit";
+        console.log(url);
+        const formData= new FormData(profileEditForm);
+        fetch(url, {
+            method: "PATCH",
+            body: formData
+        })
+        .then ((response) => {
+            console.log(response.json())
+            if (!response.ok){
+                throw new Error('400 or 500 에러 발생');
+            }
+        })
+        .then ((data) => {
+            // console.log(data);
+        })
+        // 에러처리
+        .catch(() => {
+            console.log('에러');
+            alert("변경에 실패했습니다");
+        })
+        /*let responsePromise = sendProfileData(url);
+        responsePromise.then((res) => {
+            console.log('This is in the then ' + res);
+        }).then((data) => console.log(data))
+        .catch((res) => {
+            console.log('This is in the catch' + res);
+        })*/
+    });
 
-    </script>
+/*    async function sendProfileData(url) {
+        const formData= new FormData(profileEditForm);
+        const response = await fetch(url, {
+            method: 'PATCH',
+            body: formData
+        });
+        return response;
+    }*/
+
+    /*
+
+
+*/
+
+</script>
 </div>
