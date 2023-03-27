@@ -3,6 +3,7 @@ package com.exercise.carrotproject.web.member;
 import com.exercise.carrotproject.SessionConst;
 import com.exercise.carrotproject.domain.member.login.LoginService;
 import com.exercise.carrotproject.domain.member.entity.Member;
+import com.exercise.carrotproject.web.member.form.LoginForm;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
@@ -11,9 +12,7 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
-import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import javax.validation.Valid;
 
@@ -21,6 +20,7 @@ import javax.validation.Valid;
 @RequiredArgsConstructor
 public class LoginController {
     private final LoginService loginService;
+
 
     @GetMapping("/login")
     public String loginForm(@ModelAttribute("loginForm") LoginForm form) {

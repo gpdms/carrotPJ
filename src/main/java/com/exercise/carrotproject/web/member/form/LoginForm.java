@@ -1,4 +1,4 @@
-package com.exercise.carrotproject.web.member;
+package com.exercise.carrotproject.web.member.form;
 
 import lombok.Data;
 import lombok.Getter;

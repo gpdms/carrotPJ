@@ -21,12 +21,11 @@ public class Block {
     private Long blockId;
 
     @ManyToOne
-    @JoinColumn(name="from_mem")
+    @JoinColumn(name="from_mem", nullable = false)
     private Member fromMem;
 
-    @NotNull
     @ManyToOne
-    @JoinColumn(name="to_mem")
+    @JoinColumn(name="to_mem", nullable = false)
     private Member toMem;
 
     @CreationTimestamp

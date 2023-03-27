@@ -21,6 +21,7 @@ public class Post {
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long postId;
 
+    @ColumnDefault("0")
     @Column(columnDefinition = "varchar(50)")
     private String title;
     @ManyToOne @JoinColumn(name = "mem_id") @JsonIgnore
