@@ -37,6 +37,8 @@ public class Post {
     private Integer hits;
     private String wishPlace;
 
+
+
     //ColumnDefault, nullable=false는 데이터베이스에만 적용되고 영속성컨텍스트에는 null이기때문에
     //영속 상태 되기 이전에 실행하여 영속컨텍스트에도 담아줌.
     @PrePersist

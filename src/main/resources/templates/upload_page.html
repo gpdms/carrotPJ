@@ -24,10 +24,15 @@
         <form id="upload_form" class="form-item-create">
             <div class="form-group form-picture">
                 <div class="file-box">
-                    <input class="upload-name" name="" value="파일선택" disabled="disabled">
+                    <!--사진-->
+                    <input class="upload-name"  value="파일선택" disabled="disabled">
                     <label for="ex_filename" class="btn btn-secondary">업로드</label>
-                    <input type="file" id="ex_filename" style="display:none;">
+                    <input type="file" multiple="multiple" name="uploadFiles" id="ex_filename" style="display:none;">
                 </div>
+
+                <div class="uploadResult"></div>
+
+
             </div>
 
             <div class="form-group form-title">
@@ -88,6 +93,11 @@
             var uploadForm = $('#upload_form')[0]; //$(...) 하면 객체 하나가 리턴
             var formData = new FormData(uploadForm); //FormData에는 객체가 들어가지 못함. so객체에서 인덱스로 뽑아옴.
 
+            //formData 출력
+            // for (let key of formData.keys()) {
+            //     console.log(key, ":", formData.get(key));
+            // }
+
             //실제 업로드 부분
             //upload ajax
             //파일업로드를 위해 contentType 속성을 반드시 false로 지정한다 -> multipart/form-data 타입을 사용하기위해
@@ -111,6 +121,35 @@
 
             }); //$.ajax
         }); //end click
+
+
+
+
+
+
+        //사진 미리보기
+        function showUploadedImages(arr){
+            console.log(arr);
+
+            var divArea = $(".uploadResult");
+            var str = "";
+            for(var i=0; i<arr.length; i++){
+                //백틱.1번 앞에 있는것.
+                str += `<div>
+                       <img src=/display?fileName=${arr[i].thumbnailURL}>
+                        <button class='removeBtn' data-name=${arr[i].imageURL}>REMOVE</button>
+                    </div>`
+
+
+                // str += "<div>";
+                // str += "<img src='/display?fileName="+arr[i].thumbnailURL+"'>";
+                // str += "<button class='removeBtn' data-name='"+arr[i].imageURL+"'>REMOVE</button>"
+                // srt += "</div>";
+            }
+            divArea.append(str);
+        }
+
+
 
 
 
