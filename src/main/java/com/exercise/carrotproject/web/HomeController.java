@@ -9,9 +9,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ResponseBody;
 
-import javax.annotation.PostConstruct;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
@@ -36,7 +34,7 @@ public class HomeController {
         }
         //세션이 유지되면 로그인된 홈으로 이동
         model.addAttribute("member", loginMember);
-        return "userHome";
+        return "memberHome";
     }
 
 }

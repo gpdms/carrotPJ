@@ -14,18 +14,20 @@ import java.sql.Timestamp;
 @Getter
 @Builder
 @ToString
-@DynamicInsert
+//@DynamicInsert
 public class Block {
     @Id
     @GeneratedValue(strategy= GenerationType.IDENTITY)
     private Long blockId;
 
+    @NotNull
     @ManyToOne
-    @JoinColumn(name="from_mem", nullable = false)
+    @JoinColumn(name="from_mem")
     private Member fromMem;
 
+    @NotNull
     @ManyToOne
-    @JoinColumn(name="to_mem", nullable = false)
+    @JoinColumn(name="to_mem")
     private Member toMem;
 
     @CreationTimestamp
