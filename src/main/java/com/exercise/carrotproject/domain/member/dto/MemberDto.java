@@ -26,7 +26,7 @@ public class MemberDto extends BaseEntity {
     private String memId;
     //private String memPwd;
     private String nickname;
-    private String profPath;
+    //private String profPath;
     private Double mannerScore;
     private Loc loc;
 

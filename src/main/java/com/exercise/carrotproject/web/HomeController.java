@@ -3,6 +3,7 @@ package com.exercise.carrotproject.web;
 
 import com.exercise.carrotproject.SessionConst;
 import com.exercise.carrotproject.domain.member.MemberRepository;
+import com.exercise.carrotproject.domain.member.dto.MemberDto;
 import com.exercise.carrotproject.domain.member.entity.Member;
 import com.exercise.carrotproject.web.argumentresolver.Login;
 import lombok.RequiredArgsConstructor;
@@ -22,12 +23,16 @@ public class HomeController {
     public String init(HttpServletRequest request) {
         HttpSession session = request.getSession();
         Member loginMember = memberRepository.findById("jk65333").orElseThrow();
-        session.setAttribute(SessionConst.LOGIN_MEMBER, loginMember);
+        MemberDto loginMemberDto = MemberDto.builder().memId(loginMember.getMemId())
+                .nickname(loginMember.getNickname())
+                .mannerScore(loginMember.getMannerScore())
+                .loc(loginMember.getLoc()).build();
+        session.setAttribute(SessionConst.LOGIN_MEMBER, loginMemberDto);
         return "redirect:/";
     }
 
     @GetMapping("/")
-    public String home(@Login Member loginMember, Model model) {
+    public String home(@Login MemberDto loginMember, Model model) {
         //세션에 회원 데이터가 없으면 home
         if (loginMember == null) {
             return "home";

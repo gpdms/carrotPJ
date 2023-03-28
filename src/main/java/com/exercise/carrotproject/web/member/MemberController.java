@@ -5,6 +5,7 @@ import com.exercise.carrotproject.SessionConst;
 import com.exercise.carrotproject.domain.member.MemberRepository;
 import com.exercise.carrotproject.domain.member.MemberService;
 import com.exercise.carrotproject.domain.member.dto.BlockDto;
+import com.exercise.carrotproject.domain.member.dto.MemberDto;
 import com.exercise.carrotproject.domain.member.entity.Block;
 import com.exercise.carrotproject.domain.member.entity.Member;
 import com.exercise.carrotproject.web.member.form.ProfileForm;

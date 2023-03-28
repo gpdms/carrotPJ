@@ -1,6 +1,7 @@
 package com.exercise.carrotproject.web.argumentresolver;
 
 import com.exercise.carrotproject.SessionConst;
+import com.exercise.carrotproject.domain.member.dto.MemberDto;
 import com.exercise.carrotproject.domain.member.entity.Member;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.MethodParameter;
@@ -19,7 +20,7 @@ public class LoginMemberArgumentResolver implements HandlerMethodArgumentResolve
     public boolean supportsParameter(MethodParameter parameter) {
         log.info("supportsParameter 실행");
         boolean hasParameterAnnotation = parameter.hasParameterAnnotation(Login.class);//파라미터에 Login Anootation이 있는지
-        boolean hasMemberType = Member.class.isAssignableFrom(parameter.getParameterType());  //파라미터의 타입이 Member인지
+        boolean hasMemberType = MemberDto.class.isAssignableFrom(parameter.getParameterType());  //파라미터의 타입이 Member인지
         return hasParameterAnnotation && hasMemberType; //true면 resolveArgument 실행
     }
 
