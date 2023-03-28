@@ -43,7 +43,7 @@ public class Member extends BaseEntity {
     private String nickname;
 
     @NotNull
-//    @ColumnDefault("'D:/pf/profile_img.png'")
+//    @ColumnDefault("'C:/pf/profile_img.png'")
     @ColumnDefault("'/Users/img/pf/profile_img.png'")
     @Size(max=500)
     private String profPath;
@@ -58,8 +58,8 @@ public class Member extends BaseEntity {
 
     @PrePersist
     public void createDefault() {
-//        this.profPath = "D:/pf/profile_img.png";
-        this.profPath= "/Users/img/pf/profile_img.png";
+        this.profPath = "C:/pf/profile_img.png";
+//        this.profPath= "/Users/img/pf/profile_img.png";
         this.mannerScore = 36.5;
     }
 
