@@ -1,13 +1,11 @@
 package com.exercise.carrotproject.domain.post.service;
 
-import com.exercise.carrotproject.domain.enumList.Loc;
-import com.exercise.carrotproject.domain.member.entity.Member;
-import com.exercise.carrotproject.domain.post.entity.PostEntityDtoConverter;
+import com.exercise.carrotproject.domain.post.entity.PostEntityDtoMapper;
 import com.exercise.carrotproject.domain.post.dto.PostDto;
 import com.exercise.carrotproject.domain.post.dto.PostImgDto;
 import com.exercise.carrotproject.domain.post.entity.Post;
 import com.exercise.carrotproject.domain.post.entity.PostImg;
-import com.exercise.carrotproject.domain.post.entity.PostImgEntityDtoConverter;
+import com.exercise.carrotproject.domain.post.entity.PostImgEntityDtoMapper;
 import com.exercise.carrotproject.domain.post.repository.PostImgRepository;
 import com.exercise.carrotproject.domain.post.repository.PostRepository;
 import lombok.RequiredArgsConstructor;
@@ -50,8 +48,11 @@ public class PostServiceImpl implements PostService{
     @Override
     @Transactional
     public void insertPost(PostDto postDto, MultipartFile[] uploadFiles) throws IOException {
+
+        log.info("서비스단 postDto:",postDto);
+
         //Dto->Entity 변환
-        Post postEntity = PostEntityDtoConverter.dtoToEntity(postDto);
+        Post postEntity = PostEntityDtoMapper.dtoToEntity(postDto);
 
         em.persist(postEntity);
 
@@ -138,7 +139,7 @@ public class PostServiceImpl implements PostService{
         List<Post> postEntityList = em.createQuery(sql, Post.class).getResultList();
 
         //Entity리스트 -> Dto 리스트
-        List<PostDto> postDtoList = PostEntityDtoConverter.toDtoList(postEntityList);
+        List<PostDto> postDtoList = PostEntityDtoMapper.toDtoList(postEntityList);
 
         return  postDtoList;
     }
@@ -161,7 +162,7 @@ public class PostServiceImpl implements PostService{
         Post postEntity = em.find(Post.class, postId);
 
         //Entity -> Dto 변환
-        PostDto postDto = PostEntityDtoConverter.entityToDto(postEntity);
+        PostDto postDto = PostEntityDtoMapper.entityToDto(postEntity);
 
         return postDto;
     }
@@ -175,7 +176,7 @@ public class PostServiceImpl implements PostService{
                                     .getResultList();
 
         //Entity리스트 -> Dto 리스트
-        List<PostImgDto> postImgDtoList = PostImgEntityDtoConverter.toDtoList(postImgList);
+        List<PostImgDto> postImgDtoList = PostImgEntityDtoMapper.toDtoList(postImgList);
 
         return postImgDtoList;
     }

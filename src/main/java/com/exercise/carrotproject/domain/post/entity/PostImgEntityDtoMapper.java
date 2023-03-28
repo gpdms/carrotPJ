@@ -5,7 +5,7 @@ import com.exercise.carrotproject.domain.post.dto.PostImgDto;
 import java.util.List;
 import java.util.stream.Collectors;
 
-public class PostImgEntityDtoConverter {
+public class PostImgEntityDtoMapper {
 
     //Dto -> Entity 변환
     public static PostImg dtoToEntity(PostImgDto postImgDto){
@@ -32,7 +32,7 @@ public class PostImgEntityDtoConverter {
 
     //Entity리스트->Dto리스트
     public static List<PostImgDto> toDtoList(List<PostImg> entityList){
-        return entityList.stream().map(PostImgEntityDtoConverter::entityToDto).collect(Collectors.toList());
+        return entityList.stream().map(PostImgEntityDtoMapper::entityToDto).collect(Collectors.toList());
     }
 
 }

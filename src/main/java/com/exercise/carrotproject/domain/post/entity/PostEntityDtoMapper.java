@@ -1,21 +1,23 @@
 package com.exercise.carrotproject.domain.post.entity;
 
+import com.exercise.carrotproject.domain.member.MemberEntityDtoMapper;
 import com.exercise.carrotproject.domain.member.MemberRepository;
+import com.exercise.carrotproject.domain.member.dto.MemberDto;
+import com.exercise.carrotproject.domain.member.entity.Member;
 import com.exercise.carrotproject.domain.post.dto.PostDto;
 
 import java.util.List;
 import java.util.stream.Collectors;
 
 
-public class PostEntityDtoConverter {
-    private static MemberRepository memberRepository;
+public class PostEntityDtoMapper {
 
     //Dto -> Entity 변환
     public static Post dtoToEntity(PostDto postDto) {
         return Post.builder()
                 .postId(postDto.getPostId())
                 .title(postDto.getTitle())
-                .member(memberRepository.findById(postDto.getMemberId()).orElse(null))
+                .member(MemberEntityDtoMapper.toMemberEntity(postDto.getMember()))
                 .price(postDto.getPrice())
                 .content(postDto.getContent())
                 .loc(postDto.getLoc())
@@ -27,12 +29,15 @@ public class PostEntityDtoConverter {
                 .build();
     }
 
+
+
+
     //Entity->Dto 변환
     public static PostDto entityToDto (Post post) {
         return PostDto.builder()
                 .postId(post.getPostId())
                 .title(post.getTitle())
-                .memberId(post.getMember().getMemId())
+                .member(MemberEntityDtoMapper.toMemberDto(post.getMember()))
                 .price(post.getPrice())
                 .content(post.getContent())
                 .loc(post.getLoc())
@@ -46,7 +51,7 @@ public class PostEntityDtoConverter {
 
     //Entity리스트->Dto리스트
     public static List<PostDto> toDtoList(List<Post> postEntityList){
-        return postEntityList.stream().map(PostEntityDtoConverter::entityToDto).collect(Collectors.toList());
+        return postEntityList.stream().map(PostEntityDtoMapper::entityToDto).collect(Collectors.toList());
     }
 
 

@@ -1,5 +1,7 @@
 package com.exercise.carrotproject.domain.post.controller;
 
+import com.exercise.carrotproject.SessionConst;
+import com.exercise.carrotproject.domain.member.dto.MemberDto;
 import com.exercise.carrotproject.domain.member.entity.Member;
 import com.exercise.carrotproject.domain.post.dto.PostDto;
 import com.exercise.carrotproject.domain.post.dto.PostImgDto;
@@ -69,8 +71,10 @@ public class PostController {
 //        log.info("postDto: "+postDto);
 
         MemberDto loginMember = (MemberDto) session.getAttribute(SessionConst.LOGIN_MEMBER);
-        postDto.setMemberId(loginMember.getMemId());
+        postDto.setMember(loginMember);
         postDto.setLoc(loginMember.getLoc());
+
+        log.info("컨트롤러단 postDto:", postDto);
 
         postService.insertPost(postDto, uploadFiles);
 
