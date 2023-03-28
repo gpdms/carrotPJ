@@ -4,6 +4,9 @@ import com.exercise.carrotproject.domain.post.entity.Post;
 import com.exercise.carrotproject.domain.post.entity.PostImg;
 import lombok.*;
 
+import java.util.List;
+import java.util.stream.Collectors;
+
 @Getter
 @Setter
 @AllArgsConstructor
@@ -17,14 +20,6 @@ public class PostImgDto {
     private String savedName; //저장된파일이름
     private String savedPath; //저장경로
 
-    //Entity->Dto 변환
-    public static PostImgDto entityToDto (PostImg postImg){
-        return PostImgDto.builder()
-                .imgId(postImg.getImgId())
-                .post(postImg.getPost())
-                .orgName(postImg.getOrgName())
-                .savedName(postImg.getSavedName())
-                .savedPath(postImg.getSavedPath())
-                .build();
-    }
+
+
 }
