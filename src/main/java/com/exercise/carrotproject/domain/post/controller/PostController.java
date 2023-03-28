@@ -1,9 +1,6 @@
 package com.exercise.carrotproject.domain.post.controller;
 
-import com.exercise.carrotproject.SessionConst;
-import com.exercise.carrotproject.domain.enumList.Loc;
 import com.exercise.carrotproject.domain.member.entity.Member;
-import com.exercise.carrotproject.domain.member.entity.MemberDto;
 import com.exercise.carrotproject.domain.post.dto.PostDto;
 import com.exercise.carrotproject.domain.post.dto.PostImgDto;
 import com.exercise.carrotproject.domain.post.entity.Post;

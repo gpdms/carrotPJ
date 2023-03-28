@@ -4,31 +4,27 @@ package com.exercise.carrotproject.web.member;
 import com.exercise.carrotproject.SessionConst;
 import com.exercise.carrotproject.domain.member.MemberRepository;
 import com.exercise.carrotproject.domain.member.MemberService;
+import com.exercise.carrotproject.domain.member.dto.BlockDto;
+import com.exercise.carrotproject.domain.member.dto.MemberDto;
+import com.exercise.carrotproject.domain.member.entity.Block;
 import com.exercise.carrotproject.domain.member.entity.Member;
-import com.exercise.carrotproject.domain.member.entity.MemberDto;
 import com.exercise.carrotproject.web.member.form.ProfileForm;
 import com.exercise.carrotproject.web.member.form.PwdUpdateForm;
 import com.exercise.carrotproject.web.member.form.SignupForm;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.UrlResource;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.context.request.RequestContextHolder;
-import org.springframework.web.context.request.ServletWebRequest;
 import org.springframework.web.multipart.MultipartFile;
 
-import javax.annotation.PostConstruct;
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import javax.validation.Valid;
 import java.io.IOException;
-import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
@@ -38,13 +34,26 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class MemberController {
     private final MemberService memberService;
-    private final MemberRepository memberRepository;
 
     @GetMapping("/{memId}")
-    public String toUserHome(@PathVariable String memId, Model model){
-        Member member = memberRepository.findById(memId).orElseThrow();
-        model.addAttribute("member", member);
-        return "/userHome";
+    public String toMemberHome(@PathVariable String memId, Model model,
+                               HttpSession session){
+        Optional<Member> member = memberService.findOneMember(memId);
+        if(member.isEmpty()) {
+            return "redirect:/";
+        }
+        model.addAttribute("member", member.orElse(null));
+
+        boolean blockState = false;
+        Object loginSession = session.getAttribute(SessionConst.LOGIN_MEMBER);
+        if(loginSession != null) {
+            Member loginMember = (Member)loginSession;
+            if (memberService.findOneBlockByMemIds(loginMember.getMemId(), member.orElseThrow().getMemId()) != null) {
+                blockState = true;
+            }
+        }
+        model.addAttribute("blockState", blockState);
+        return "memberHome";
     }
 
     @GetMapping("/signup")
@@ -66,14 +75,13 @@ public class MemberController {
                 .memPwd(form.getPwd())
                 .nickname(form.getNickname())
                 .loc(form.getLoc()).build();
-        Map<String, Object> saveResult = memberService.saveMember(member);
+        Map<String, Object> saveResult = memberService.insertMember(member);
         //log.info("saveResult {}", saveResult.containsValue("fail-DM"));
         //중복된 아이디 -> field 오류로 알릴 수 있다.
         if (saveResult.containsValue("fail-DM")) {
             bindingResult.rejectValue("memId", "duplicatedMemId");
             return "/member/signupForm";
         }
-
         return "redirect:/";
     }
 
@@ -134,4 +142,23 @@ public class MemberController {
         return urlResource;
     }
 
+    @PostMapping("/{memId}/block")
+    public String blockMember(@PathVariable String memId,
+                              HttpServletRequest request,
+                            Model model){
+        HttpSession session = request.getSession(false);
+        Member loginMember = (Member)session.getAttribute(SessionConst.LOGIN_MEMBER);
+        Block block = Block.builder().fromMem(loginMember)
+                .toMem(memberService.findOneMember(memId).orElse(null)).build();
+        memberService.insertBlock(block);
+        return "redirect:/members/{memId}";
+    }
+
+    @PostMapping("/{memId}/cancelBlock")
+    public String cancelBlockMember(@PathVariable String memId,
+                                    HttpServletRequest request,
+                                    @RequestParam String loginMemId){
+        memberService.deleteBlock(loginMemId, memId);
+        return "redirect:/members/{memId}";
+    }
 }

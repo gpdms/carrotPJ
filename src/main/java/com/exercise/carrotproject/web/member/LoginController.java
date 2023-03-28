@@ -1,6 +1,7 @@
 package com.exercise.carrotproject.web.member;
 
 import com.exercise.carrotproject.SessionConst;
+import com.exercise.carrotproject.domain.member.dto.MemberDto;
 import com.exercise.carrotproject.domain.member.login.LoginService;
 import com.exercise.carrotproject.domain.member.entity.Member;
 import com.exercise.carrotproject.web.member.form.LoginForm;
@@ -41,12 +42,16 @@ public class LoginController {
             bindingResult.reject("loginFail", "아이디 또는 비밀번호가 맞지 않습니다.");
             return "member/loginForm";
         }
+        MemberDto loginMemberDto = MemberDto.builder().memId(loginMember.getMemId())
+                .nickname(loginMember.getNickname())
+                .mannerScore(loginMember.getMannerScore())
+                .loc(loginMember.getLoc()).build();
 
         //로그인 성공 처리
         //세션이 있으면 있는 세션 반환, 없으면 신규 세션을 생성
         HttpSession session = request.getSession();
         //세션에 로그인 회원 정보 보관
-        session.setAttribute(SessionConst.LOGIN_MEMBER, loginMember);
+        session.setAttribute(SessionConst.LOGIN_MEMBER, loginMemberDto);
         //로그인 성공시 이전 페이지(요청온 페이지)로 이동
         return "redirect:" + redirectURL;
     }

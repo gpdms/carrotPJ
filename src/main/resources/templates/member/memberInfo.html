@@ -95,9 +95,6 @@
         const target = document.getElementById('pfEditBtn');
         target.disabled = false;
     }
-/*    function 특정div새로고침(){
-        $("#div의 id").load(window.location.href + "#div의 id");
-    }*/
 
     const profileEditForm = document.getElementById('profileEditForm');
     profileEditForm.addEventListener('submit', (e) => {
@@ -117,12 +114,13 @@
             }
         })
         .then ((data) => {
-            // console.log(data);
+            console.log(data);
+            alert('프로필 변경에 성공했습니다');
         })
         // 에러처리
         .catch(() => {
-            console.log('에러');
-            alert("변경에 실패했습니다");
+            console.log('프로필 변경 에러');
+            alert('프로필 변경에 실패했습니다');
         })
         /*let responsePromise = sendProfileData(url);
         responsePromise.then((res) => {
