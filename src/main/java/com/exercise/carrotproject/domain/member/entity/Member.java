@@ -28,13 +28,13 @@ import java.util.List;
 @Builder
 @JsonIgnoreProperties({"blockfromMemList", "blocktoMemList", "reviewBuyerList", "reviewSellerList"})
 @ToString (exclude = {"blockfromMemList", "blocktoMemList", "reviewBuyerList", "reviewSellerList"})
-@DynamicUpdate
+//@DynamicUpdate
 public class Member extends BaseEntity {
     @Id
     @Size(min = 6, max = 12)
     private String memId;
 
-    @Column(nullable = false)
+    @NotNull
     @Size(min = 8)
     private String memPwd;
 
@@ -42,24 +42,24 @@ public class Member extends BaseEntity {
     @Size(min = 2, max = 12)
     private String nickname;
 
-    @Column(nullable = false)
-//    @ColumnDefault("'D:/pf/profile_img.png'")
+    @NotNull
+//    @ColumnDefault("'C:/pf/profile_img.png'")
     @ColumnDefault("'/Users/img/pf/profile_img.png'")
     @Size(max=500)
     private String profPath;
 
-    @Column(nullable = false)
+    @NotNull
     @ColumnDefault("36.5")
     private Double mannerScore;
 
-    @Column(nullable = false)
+    @NotNull
     @Convert(converter = LocAttributeConverter.class)
     private Loc loc;
 
     @PrePersist
     public void createDefault() {
-//        this.profPath = "D:/pf/profile_img.png";
-        this.profPath= "/Users/img/pf/profile_img.png";
+        this.profPath = "C:/pf/profile_img.png";
+//        this.profPath= "/Users/img/pf/profile_img.png";
         this.mannerScore = 36.5;
     }
 

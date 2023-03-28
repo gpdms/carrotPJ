@@ -1,7 +1,8 @@
 package com.exercise.carrotproject.domain.member;
 
+import com.exercise.carrotproject.domain.member.dto.BlockDto;
+import com.exercise.carrotproject.domain.member.entity.Block;
 import com.exercise.carrotproject.domain.member.entity.Member;
-import com.exercise.carrotproject.domain.member.entity.MemberDto;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -9,9 +10,10 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
 import java.io.File;
 import java.io.IOException;
-import java.nio.file.*;
 import java.time.LocalDate;
 import java.util.*;
 
@@ -20,9 +22,15 @@ import java.util.*;
 @RequiredArgsConstructor
 public class MemberServiceImpl implements MemberService {
     private final MemberRepository memberRepository;
+    private final BlockRepository blockRepository;
 
     @Value("${dir.img-profile}")
     private String rootProfileImgDir;
+
+    @Override
+    public Optional<Member> findOneMember(String memId) {
+       return memberRepository.findById(memId);
+    }
 
     @Override
     public boolean checkDuplicatedMember(String memId) {
@@ -30,7 +38,7 @@ public class MemberServiceImpl implements MemberService {
     }
 
     @Override
-    public Map<String, Object> saveMember(Member member) {
+    public Map<String, Object> insertMember(Member member) {
         Map<String, Object> saveResult = new HashMap<>();
         if (checkDuplicatedMember(member.getMemId())) {
             saveResult.put("resultCode", "fail-DM");
@@ -110,4 +118,27 @@ public class MemberServiceImpl implements MemberService {
         }
         return member;
     }
+
+    @Override
+    public Block findOneBlockByMemIds(String fromMemId, String toMemId){
+        Member fromMem = memberRepository.findById(fromMemId).orElse(null);
+        Member toMem = memberRepository.findById(toMemId).orElse(null);
+        if(fromMem!=null && toMem!=null) {
+          return blockRepository.findByToMemAndFromMem(toMem, fromMem).orElse(null);
+        }
+        return null;
+    }
+
+    @Override
+    public void insertBlock(Block block) {
+        blockRepository.save(block);
+    }
+
+    @Override
+    public void deleteBlock(String fromMemId, String toMemId) {
+        Block block = findOneBlockByMemIds(fromMemId, toMemId);
+        blockRepository.deleteById(block.getBlockId());
+    }
+
+
 }

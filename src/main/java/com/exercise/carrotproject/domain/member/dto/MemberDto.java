@@ -1,9 +1,10 @@
-package com.exercise.carrotproject.domain.member.entity;
+package com.exercise.carrotproject.domain.member.dto;
 
 
 import com.exercise.carrotproject.domain.common.entity.BaseEntity;
 import com.exercise.carrotproject.domain.converter.LocAttributeConverter;
 import com.exercise.carrotproject.domain.enumList.Loc;
+import com.exercise.carrotproject.domain.member.entity.Block;
 import com.exercise.carrotproject.domain.review.entity.ReviewBuyer;
 import com.exercise.carrotproject.domain.review.entity.ReviewSeller;
 import lombok.*;
@@ -23,7 +24,7 @@ import java.util.List;
 @ToString (exclude = {"blockfromMemList", "blocktoMemList", "reviewBuyerList", "reviewSellerList"})
 public class MemberDto extends BaseEntity {
     private String memId;
-    private String memPwd;
+    //private String memPwd;
     private String nickname;
     private String profPath;
     private Double mannerScore;
