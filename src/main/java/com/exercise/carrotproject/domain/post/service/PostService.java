@@ -1,6 +1,9 @@
 package com.exercise.carrotproject.domain.post.service;
 
+import com.exercise.carrotproject.domain.enumList.Loc;
+import com.exercise.carrotproject.domain.member.entity.Member;
 import com.exercise.carrotproject.domain.post.dto.PostDto;
+import com.exercise.carrotproject.domain.post.dto.PostImgDto;
 import com.exercise.carrotproject.domain.post.entity.Post;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -12,11 +15,11 @@ import java.util.List;
 
 @Service
 public interface PostService {
-    public void insertPost(PostDto postDto, MultipartFile[] uploadFiles) throws IOException;
-    public void insertPostImg(Post postEntity, MultipartFile[] uploadFiles) throws IOException;
-    public List<PostDto> selectAllPost();
-    public PostDto selectOnePost(Long postId);
-    public Page<PostDto> paging(List<PostDto> postList, Pageable pageable);
+    void insertPost(PostDto postDto, MultipartFile[] uploadFiles) throws IOException;
+    void insertPostImg(Post postEntity, MultipartFile[] uploadFiles) throws IOException;
+    List<PostDto> selectAllPost();
+    PostDto selectOnePost(Long postId);
+    Page<PostDto> paging(List<PostDto> postList, Pageable pageable);
 
-
+    List<PostImgDto> selectPostImgs(Long postId);
 }

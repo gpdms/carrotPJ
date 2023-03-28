@@ -23,7 +23,7 @@ public class HomeController {
     @GetMapping("/init")
     public String init(HttpServletRequest request) {
         HttpSession session = request.getSession();
-        Member loginMember = memberRepository.findById("jk65333").orElseThrow();
+        Member loginMember = memberRepository.findById("admin1").orElseThrow();
         session.setAttribute(SessionConst.LOGIN_MEMBER, loginMember);
         return "redirect:/";
     }

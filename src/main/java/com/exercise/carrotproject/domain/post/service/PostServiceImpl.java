@@ -1,12 +1,17 @@
 package com.exercise.carrotproject.domain.post.service;
 
+import com.exercise.carrotproject.domain.enumList.Loc;
+import com.exercise.carrotproject.domain.member.entity.Member;
+import com.exercise.carrotproject.domain.post.entity.PostEntityDtoConverter;
 import com.exercise.carrotproject.domain.post.dto.PostDto;
 import com.exercise.carrotproject.domain.post.dto.PostImgDto;
 import com.exercise.carrotproject.domain.post.entity.Post;
 import com.exercise.carrotproject.domain.post.entity.PostImg;
+import com.exercise.carrotproject.domain.post.entity.PostImgEntityDtoConverter;
+import com.exercise.carrotproject.domain.post.repository.PostImgRepository;
 import com.exercise.carrotproject.domain.post.repository.PostRepository;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.log4j.Log4j2;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
@@ -26,18 +31,18 @@ import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
-import java.util.stream.Collectors;
 
 
 @RequiredArgsConstructor
 @Service
-@Log4j2
+@Slf4j
 public class PostServiceImpl implements PostService{
 
     @PersistenceContext
     EntityManager em;
 
     private final PostRepository postRepository;
+    private final PostImgRepository postImgRepository;
 
     @Value("${file.postImg}")
     private String uploadPath;
@@ -46,7 +51,7 @@ public class PostServiceImpl implements PostService{
     @Transactional
     public void insertPost(PostDto postDto, MultipartFile[] uploadFiles) throws IOException {
         //Dto->Entity 변환
-        Post postEntity = Post.dtoToEntity(postDto);
+        Post postEntity = PostEntityDtoConverter.dtoToEntity(postDto);
 
         em.persist(postEntity);
 
@@ -63,6 +68,7 @@ public class PostServiceImpl implements PostService{
         List<PostImgDto> resultDTOList = new ArrayList<>();
 
         for(MultipartFile uploadFile: uploadFiles){
+
             //파일의 MIME 타입을 체크하여, 이미지 파일인지 여부를 확인하는 코드
             if(uploadFile.getContentType().startsWith("image")==false) {
                 log.warn("this file is not image type");
@@ -88,8 +94,7 @@ public class PostServiceImpl implements PostService{
             //로컬에 사진저장
             uploadFile.transferTo(savePath);
 
-            //postDto->Entity
-//            Post postEntity = Post.dtoToEntity(postDto);
+
             //데이터베이스에 사진정보 저장
             PostImg postImg = PostImg.builder()
                     .post(postEntity)
@@ -133,8 +138,7 @@ public class PostServiceImpl implements PostService{
         List<Post> postEntityList = em.createQuery(sql, Post.class).getResultList();
 
         //Entity리스트 -> Dto 리스트
-        List<PostDto> postDtoList  = postEntityList.stream().map(PostDto::entityToDto).collect(Collectors.toList());
-//        log.info("포스트 전체 정보: "+ postDtoList);
+        List<PostDto> postDtoList = PostEntityDtoConverter.toDtoList(postEntityList);
 
         return  postDtoList;
     }
@@ -157,9 +161,23 @@ public class PostServiceImpl implements PostService{
         Post postEntity = em.find(Post.class, postId);
 
         //Entity -> Dto 변환
-        PostDto postDto = PostDto.entityToDto(postEntity);
+        PostDto postDto = PostEntityDtoConverter.entityToDto(postEntity);
 
         return postDto;
+    }
+
+    @Override
+    public List<PostImgDto> selectPostImgs(Long postId){
+
+        String sql = "select i from PostImg i where i.post.postId = :postId";
+        List<PostImg> postImgList = em.createQuery(sql, PostImg.class)
+                                    .setParameter("postId", postId)
+                                    .getResultList();
+
+        //Entity리스트 -> Dto 리스트
+        List<PostImgDto> postImgDtoList = PostImgEntityDtoConverter.toDtoList(postImgList);
+
+        return postImgDtoList;
     }
 
     

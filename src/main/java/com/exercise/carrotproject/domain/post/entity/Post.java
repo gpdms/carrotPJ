@@ -3,6 +3,7 @@ package com.exercise.carrotproject.domain.post.entity;
 import com.exercise.carrotproject.domain.enumList.Category;
 import com.exercise.carrotproject.domain.enumList.Loc;
 import com.exercise.carrotproject.domain.converter.CategoryConverter;
+import com.exercise.carrotproject.domain.member.MemberRepository;
 import com.exercise.carrotproject.domain.member.entity.Member;
 import com.exercise.carrotproject.domain.post.dto.PostDto;
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -49,22 +50,8 @@ public class Post {
         this.sellState = this.sellState == null ? 0 : this.sellState;
     }
 
-    //Dto -> Entity 변환
-    public static Post dtoToEntity(PostDto postDto) {
-        return Post.builder()
-                .postId(postDto.getPostId())
-                .title(postDto.getTitle())
-                .member(postDto.getMember())
-                .price(postDto.getPrice())
-                .content(postDto.getContent())
-                .loc(postDto.getLoc())
-                .category(postDto.getCategory())
-                .hideState(postDto.getHideState())
-                .sellState(postDto.getSellState())
-                .hits(postDto.getHits())
-                .wishPlace(postDto.getWishPlace())
-                .build();
-    }
+
+
 
 
 }

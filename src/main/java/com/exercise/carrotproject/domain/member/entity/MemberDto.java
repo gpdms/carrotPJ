@@ -23,7 +23,7 @@ import java.util.List;
 @ToString (exclude = {"blockfromMemList", "blocktoMemList", "reviewBuyerList", "reviewSellerList"})
 public class MemberDto extends BaseEntity {
     private String memId;
-    private String memPwd;
+//    private String memPwd;
     private String nickname;
     private String profPath;
     private Double mannerScore;
