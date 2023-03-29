@@ -92,7 +92,7 @@
                                 <i class="bi-cart-fill me-1"></i>
                                 Add to cart
                             </button>
-                            <button class="btn btn-outline-dark flex-shrink-0" type="button" th:onclick="|location.href='@{/chat/{postId}(postId=${postId})}'|">채팅하기</button>
+                            <button class="btn btn-outline-dark flex-shrink-0" type="button" th:onclick="|location.href='@{/chat/post/{postId}(postId=${postId})}'|">채팅하기</button>
                         </div>
                         <a th:href="|/post/remove/${post.postId}|"> 게시글삭제</a><br/>
                         <a href="#"> 게시글숨김</a><br/>
