@@ -20,6 +20,7 @@ public interface PostService {
     List<PostDto> selectAllPost();
     PostDto selectOnePost(Long postId);
     Page<PostDto> paging(List<PostDto> postList, Pageable pageable);
-
     List<PostImgDto> selectPostImgs(Long postId);
+    PostImgDto selectOnePostImg(Long imgId);
+
 }
