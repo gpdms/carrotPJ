@@ -2,6 +2,7 @@ package com.exercise.carrotproject.domain.post.entity;
 
 import com.exercise.carrotproject.domain.post.dto.PostImgDto;
 import lombok.*;
+import org.hibernate.annotations.ColumnDefault;
 
 import javax.persistence.*;
 
@@ -22,6 +23,7 @@ public class PostImg {
     private String orgName; //원본파일이름
     private String savedName; //저장된파일이름
     private String savedPath; //저장경로
+
 
 
 }
