@@ -48,6 +48,7 @@ public class MemberServiceImpl implements MemberService {
         Member newMember = memberRepository.save(member);
         saveResult.put("resultCode", "success");
         return saveResult;
+
     }
 
     @Override
@@ -138,6 +139,7 @@ public class MemberServiceImpl implements MemberService {
     public void deleteBlock(String fromMemId, String toMemId) {
         Block block = findOneBlockByMemIds(fromMemId, toMemId);
         blockRepository.deleteById(block.getBlockId());
+
     }
 
 

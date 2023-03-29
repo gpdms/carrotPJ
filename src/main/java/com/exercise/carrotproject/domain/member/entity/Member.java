@@ -12,8 +12,6 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.*;
 import org.hibernate.annotations.ColumnDefault;
 import org.hibernate.annotations.DynamicInsert;
-import org.hibernate.annotations.DynamicUpdate;
-
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
@@ -28,7 +26,7 @@ import java.util.List;
 @Builder
 @JsonIgnoreProperties({"blockfromMemList", "blocktoMemList", "reviewBuyerList", "reviewSellerList"})
 @ToString (exclude = {"blockfromMemList", "blocktoMemList", "reviewBuyerList", "reviewSellerList"})
-//@DynamicUpdate
+@DynamicInsert
 public class Member extends BaseEntity {
     @Id
     @Size(min = 6, max = 12)
