@@ -1,5 +1,6 @@
 package com.exercise.carrotproject.domain.chat.websocket;
 
+import com.exercise.carrotproject.domain.member.dto.MemberDto;
 import com.exercise.carrotproject.domain.member.entity.Member;
 import org.springframework.http.server.ServerHttpRequest;
 import org.springframework.http.server.ServerHttpResponse;
@@ -26,7 +27,7 @@ public class MyHttpSessionHandshakeInterceptor implements HandshakeInterceptor {
             HttpServletRequest httpServletRequest = servletServerHttpRequest.getServletRequest();
 
             HttpSession httpSession = httpServletRequest.getSession(false);
-            Member member = (Member) httpSession.getAttribute(LOGIN_MEMBER);
+            MemberDto member = (MemberDto) httpSession.getAttribute(LOGIN_MEMBER);
 
             attributes.put(SESSION, member);
         }

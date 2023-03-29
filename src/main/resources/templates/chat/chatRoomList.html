@@ -6,17 +6,34 @@
     <title>채팅 테스트</title>
 </head>
 
-<div layout:fragment="content">
-    <div class="container" id="container">
-        <h1 id="title_room">채팅방리스트</h1>
-        <ul>
-        <th:block th:each="chatRoom : ${chatRoomList}">
-            <li>
-                <a th:if="${chatRoom.buyer == session.loginMember}" th:href=" @{/chat/{roomId}(roomId=${chatRoom.roomId})}">[[${chatRoom.seller.memId}]]</a>
-                <a th:unless="${chatRoom.buyer == session.loginMember}" th:href=" @{/chat/{roomId}(roomId=${chatRoom.roomId})}">[[${chatRoom.buyer.memId}]]</a>
-            </li>
-        </th:block>
-        </ul>
+<div class="container bootstrap snippets bootdey" layout:fragment="content">
+    <div class="row">
+        <div class="col-md-15 bg-white ">
+            <div class=" row border-bottom padding-sm" style="height: 40px;">
+                Member
+            </div>
+            <!-- member list -->
+            <ul class="friend-list">
+                <th:block th:each="chatRoom : ${chatRoomList}">
+                <!--<li class="active bounceInDown">-->
+                <li>
+                    <a th:href="@{/chat/{roomId}(roomId=${chatRoom.roomId})}" class="clearfix">
+                        <div class="profile_img">
+                            <img th:if="${chatRoom.buyer.memId == session.loginMember.memId}" th:src="|/members/${chatRoom.seller.memId}/profileImg|" alt="프로필이미지(판매자)">
+                            <img th:unless="${chatRoom.buyer.memId == session.loginMember.memId}" th:src="|/members/${chatRoom.buyer.memId}/profileImg|" alt="프로필이미지(구매자)">
+                        </div>
+                        <div class="friend-name">
+                            <strong th:if="${chatRoom.buyer.memId == session.loginMember.memId}">[[${chatRoom.seller.memId}]]</strong>
+                            <strong th:unless="${chatRoom.buyer.memId == session.loginMember.memId}">[[${chatRoom.buyer.memId}]]</strong>
+                        </div>
+                        <div class="last-message text-muted">Hello, Are you there?</div>
+                        <small class="time text-muted">Just now</small>
+                        <small class="chat-alert label label-danger">1</small>
+                    </a>
+                </li>
+                </th:block>
+            </ul>
+        </div>
     </div>
 </div>
 
