@@ -22,8 +22,8 @@ public class HomeController {
     @GetMapping("/init")
     public String init(HttpServletRequest request) {
         HttpSession session = request.getSession();
-//        Member loginMember = memberRepository.findById("jk65333").orElseThrow();
-        Member loginMember = memberRepository.findById("tester1").orElseThrow();
+        Member loginMember = memberRepository.findById("jk65333").orElseThrow();
+//        Member loginMember = memberRepository.findById("tester1").orElseThrow();
         MemberDto loginMemberDto = MemberDto.builder().memId(loginMember.getMemId())
                 .nickname(loginMember.getNickname())
                 .mannerScore(loginMember.getMannerScore())

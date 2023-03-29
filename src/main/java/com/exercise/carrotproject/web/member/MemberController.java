@@ -34,6 +34,7 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class MemberController {
     private final MemberService memberService;
+    private final SecurityUtils securityUtils;
 
     @GetMapping("/{memId}")
     public String toMemberHome(@PathVariable String memId, Model model,
@@ -70,9 +71,9 @@ public class MemberController {
             bindingResult.rejectValue("pwdConfirm", "pwdConfirmIncorrect");
             return "/member/signupForm";
         }
-
+        String hashedPwd = securityUtils.getHashedPwd(form.getPwd());
         Member member = Member.builder().memId(form.getMemId())
-                .memPwd(form.getPwd())
+                .memPwd(hashedPwd)
                 .nickname(form.getNickname())
                 .loc(form.getLoc()).build();
         Map<String, Object> saveResult = memberService.insertMember(member);
@@ -100,7 +101,7 @@ public class MemberController {
                             @ModelAttribute("profileForm") ProfileForm profileForm,
                             @Valid @ModelAttribute("pwdUpdateForm") PwdUpdateForm pwdUpdateForm,
                             BindingResult bindingResult) {
-        //BindingResult나 Errors는 바인딩 받는 객체 바로 다음에 선언해야 한다
+                            //BindingResult나 Errors는 바인딩 받는 객체 바로 다음에 선언해야 한다
         Member member = memberService.findMemberForProfileEdit(memId);
         profileForm.setNickname(member.getNickname());
         profileForm.setLoc(member.getLoc());
@@ -114,7 +115,8 @@ public class MemberController {
 
         //db에 업데이트 실패 -> 검증오류(PwdUpdateForm에 관한 문제) 아니고, 서버 오류일 것이다
         //bindingResult에 담아서 보내지 말아야하지 않을까?
-        boolean isPwdUpdated = memberService.isPwdUpdated(memId, pwdUpdateForm.getPwd());
+        String hashedPwd = securityUtils.getHashedPwd(pwdUpdateForm.getPwd());
+        boolean isPwdUpdated = memberService.isPwdUpdated(memId, hashedPwd);
         if (!isPwdUpdated) {
             return  "/member/memberInfo";
         }
