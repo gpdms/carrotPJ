@@ -3,6 +3,7 @@ package com.exercise.carrotproject.domain.member;
 import com.exercise.carrotproject.domain.member.dto.BlockDto;
 import com.exercise.carrotproject.domain.member.entity.Block;
 import com.exercise.carrotproject.domain.member.entity.Member;
+import com.exercise.carrotproject.web.member.SecurityUtils;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -23,9 +24,12 @@ import java.util.*;
 public class MemberServiceImpl implements MemberService {
     private final MemberRepository memberRepository;
     private final BlockRepository blockRepository;
+    private final SecurityUtils securityUtils;
+
 
     @Value("${dir.img-profile}")
     private String rootProfileImgDir;
+
 
     @Override
     public Optional<Member> findOneMember(String memId) {
@@ -33,23 +37,23 @@ public class MemberServiceImpl implements MemberService {
     }
 
     @Override
-    public boolean checkDuplicatedMember(String memId) {
+    public boolean hasDuplicatedMemberId(String memId) {
         return memberRepository.findById(memId).isEmpty() ? false : true;
     }
 
     @Override
     public Map<String, Object> insertMember(Member member) {
         Map<String, Object> saveResult = new HashMap<>();
-        if (checkDuplicatedMember(member.getMemId())) {
+        if (hasDuplicatedMemberId(member.getMemId())) {
             saveResult.put("resultCode", "fail-DM");
             return saveResult;
         }
-
         Member newMember = memberRepository.save(member);
         saveResult.put("resultCode", "success");
         return saveResult;
 
     }
+
 
     @Override
     public Member findMemberForProfileEdit(String memId) {

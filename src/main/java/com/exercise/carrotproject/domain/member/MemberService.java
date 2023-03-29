@@ -13,7 +13,7 @@ import java.util.Optional;
 @Service
 public interface MemberService {
     public Optional<Member> findOneMember(String memId);
-    public boolean checkDuplicatedMember(String memId);
+    public boolean hasDuplicatedMemberId(String memId);
     public Map<String,Object> insertMember(Member member);
 
     public Member findMemberForProfileEdit(String memId);

@@ -41,8 +41,8 @@ public class Member extends BaseEntity {
     private String nickname;
 
     @NotNull
-//    @ColumnDefault("'C:/pf/profile_img.png'")
-    @ColumnDefault("'/Users/img/pf/profile_img.png'")
+    @ColumnDefault("'C:/pf/profile_img.png'")
+    //@ColumnDefault("'/Users/img/pf/profile_img.png'")
     @Size(max=500)
     private String profPath;
 
