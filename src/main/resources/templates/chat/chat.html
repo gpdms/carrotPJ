@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout/basic.html}">
+<head layout:fragment="head">
+    <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css" rel="stylesheet">
+    <!--    <link href="/css/chat.css" rel="stylesheet" />-->
+    <title>채팅 테스트</title>
+</head>
+<div class="container bootstrap snippets bootdey" layout:fragment="content">
+    <div class="row">
+        <!-- selected chat -->
+        <div class="col-md-15 bg-white ">
+            <div class="chat-message">
+                <ul id="chatting" class="chat">
+                    <li class="left clearfix">
+                        <span class="chat-img pull-left">
+                    		<img src="https://bootdey.com/img/Content/user_3.jpg" alt="User Avatar">
+                    	</span>
+                        <div class="chat-body clearfix">
+                            <div class="header">
+                                <strong class="primary-font">John Doe</strong>
+                                <small class="pull-right text-muted"><i class="fa fa-clock-o"></i> 12 mins ago</small>
+                            </div>
+                            <p>
+                                Lorem ipsum dolor sit amet, consectetur adipiscing elit.
+                            </p>
+                        </div>
+                    </li>
+                    <li class="right clearfix">
+                        <span class="chat-img pull-right">
+                    		<img src="https://bootdey.com/img/Content/user_1.jpg" alt="User Avatar">
+                    	</span>
+                        <div class="chat-body clearfix">
+                            <div class="header">
+                                <strong class="primary-font">Sarah</strong>
+                                <small class="pull-right text-muted"><i class="fa fa-clock-o"></i> 13 mins ago</small>
+                            </div>
+                            <p>
+                                왜 안되는거지..??
+                            </p>
+                        </div>
+                    </li>
+                    <th:block th:each="chat : ${chatList}">
+                        <li th:if="${session.loginMember.memId}==${chat.from.memId}" class="right clearfix">
+                            <span class="chat-img pull-right">
+                                <img th:src="|/members/${chat.from.memId}/profileImg|" alt="User Avatar">
+                            </span>
+                            <div class="chat-body clearfix">
+                                <div class="header">
+                                    <strong class="primary-font">[[${chat.from.memId}]]</strong>
+                                    <small class="pull-right text-muted"><i class="fa fa-clock-o"></i> 12 mins ago</small>
+                                </div>
+                                <p>
+                                    [[${chat.message}]]
+                                </p>
+                            </div>
+                        </li>
+                        <li th:unless="${session.loginMember.memId}==${chat.from.memId}" class="left clearfix">
+                            <span class="chat-img pull-left">
+                                <img th:src="|/members/${chat.from.memId}/profileImg|" alt="User Avatar">
+                            </span>
+                            <div class="chat-body clearfix">
+                                <div class="header">
+                                    <strong class="primary-font">[[${chat.from.memId}]]</strong>
+                                    <small class="pull-right text-muted"><i class="fa fa-clock-o"></i> 13 mins ago</small>
+                                </div>
+                                <p>
+                                    [[${chat.message}]]
+                                </p>
+                            </div>
+                        </li>
+                    </th:block>
+                </ul>
+            </div>
+            <div class="chat-box bg-white">
+                <div class="input-group">
+                    <input id="msg" class="form-control border no-shadow no-rounded"
+                           placeholder="Type your message here">
+                    <span class="input-group-btn">
+            			<button class="btn btn-success no-rounded" type="button" th:onclick="send()">Send</button>
+            		</span>
+                </div><!-- /input-group -->
+            </div>
+        </div>
+    </div>
+</div>
+<script layout:fragment="script" th:inline="javascript">
+    console.log("script.....................");
+
+    function connect2() {
+        //StompConfig.java에 설정된 endpoint로 SockJS 객체, StompClient 객체 생성
+        var socket = new SockJS("http://localhost:8888/gs-guide-websocket");
+        //do Handshake
+        stompClient2 = Stomp.over(socket);
+
+        // connect(header,연결 성공시 콜백,에러발생시 콜백)
+        stompClient2.connect({}, function () {
+                //subscribe(subscribe url,해당 url로 메시지를 받을때마다 실행할 함수)
+                //게시글번호/판매자/구매자
+                sub = stompClient2.subscribe('/topic/chat/' + [[${postId}]] + "/" + [[${seller}]] + "/" + [[${buyer}]], function (e) {
+                    //e.body에 전송된 data가 들어있다
+                    showMessage2(JSON.parse(e.body));
+                });
+            },
+            function (e) {
+                //에러 콜백
+                alert('에러발생!!!!!!');
+            }
+        );
+    }
+
+    connect2();
+
+    //화면에 메시지를 표시하는 함수
+    function showMessage2(data) {
+        console.log('채팅메세지를 수신하였습니다.')
+        // $('#chatting').append("<p class='me'>" + data.from + " : " + data.chat + "</p>");
+        let message;
+        if ([[${session.loginMember.memId}]] == data.from) {
+            message =
+                `<li class="right clearfix">
+                        <span class="chat-img pull-right">
+                            <img src="https://bootdey.com/img/Content/user_1.jpg" alt="User Avatar">
+                        </span>
+                    <div class="chat-body clearfix">
+                        <div class="header">
+                            <strong class="primary-font">` + data.from + `</strong>
+                            <small class="pull-right text-muted"><i class="fa fa-clock-o"></i> 13 mins ago</small>
+                        </div>
+                        <p>`
+                + data.chat +
+                `</p>
+                    </div>
+                </li>`;
+        } else {
+            message =
+                `<li class="left clearfix">
+                    	<span class="chat-img pull-left">
+                    		<img src="https://bootdey.com/img/Content/user_3.jpg" alt="User Avatar">
+                    	</span>
+                    <div class="chat-body clearfix">
+                        <div class="header">
+                            <strong class="primary-font">` + data.from + `</strong>
+                            <small class="pull-right text-muted"><i class="fa fa-clock-o"></i> 12 mins ago</small>
+                        </div>
+                        <p>`
+                + data.chat +
+                `</p>
+                    </div>
+                </li>`;
+        }
+        $('#chatting').append(message);
+    }
+
+    //엔터 눌렀을때 전송
+    $('#msg').keypress(function (e) {
+        if (e.keyCode === 13) send();
+    });
+
+    //메시지 브로커로 메시지 전송
+    function send() {
+        stompClient2.send("/app/chat/" + [[${postId}]] + "/" + [[${seller}]] + "/" + [[${buyer}]], {}, $("#msg").val());
+        $("#msg").val('');
+    }
+</script>

@@ -5,9 +5,12 @@ import com.exercise.carrotproject.domain.chat.entity.ChatRoom;
 import com.exercise.carrotproject.domain.chat.repoisitory.ChatRepository;
 import com.exercise.carrotproject.domain.chat.repoisitory.ChatRoomRepository;
 import com.exercise.carrotproject.domain.chat.service.ChatService;
+import com.exercise.carrotproject.domain.member.MemberEntityDtoMapper;
 import com.exercise.carrotproject.domain.member.MemberRepository;
+import com.exercise.carrotproject.domain.member.dto.MemberDto;
 import com.exercise.carrotproject.domain.member.entity.Member;
 import com.exercise.carrotproject.domain.post.entity.Post;
+import com.exercise.carrotproject.domain.post.repository.PostRepository;
 import groovy.util.logging.Slf4j;
 import lombok.RequiredArgsConstructor;
 import org.springframework.messaging.handler.annotation.DestinationVariable;
@@ -18,9 +21,7 @@ import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Controller;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.*;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
@@ -36,6 +37,7 @@ import static org.springframework.messaging.simp.stomp.StompHeaders.SESSION;
 @Slf4j
 @Controller
 @RequiredArgsConstructor
+@RequestMapping("/chat")
 public class ChatController {
     private final MemberRepository memberRepository;
     private final ChatService chatService;
@@ -46,22 +48,35 @@ public class ChatController {
     @PersistenceContext
     EntityManager em;
 
-    @GetMapping("/chat/{roomId}")
-    public String chatTest(Model model, @PathVariable Long roomId) {
+    @GetMapping("/{roomId}")
+    public String chat(@PathVariable Long roomId, Model model, HttpSession session){
         ChatRoom chatRoom = em.find(ChatRoom.class, roomId);
-        Optional<List<Chat>> chatList = chatRepository.findByRoom(chatRoom);
-        if(chatList.isPresent()){
-            model.addAttribute("chatList", chatList.get());
-        }
-        model.addAttribute("roomId", roomId);
+        List<Chat> chatList = chatRepository.findByRoom(chatRoom);
+        Member seller = chatRoom.getSeller();
+        Member buyer = chatRoom.getBuyer();
+        model.addAttribute("seller", seller);
+        model.addAttribute("buyer", buyer);
+        model.addAttribute("chatList", chatList);
+        return "chat/chat";
+    }
 
-        return "chat/chatTest";
+    @PostMapping("/getChatNoti")
+    @ResponseBody
+    public int getChatNoti(HttpSession session){
+        MemberDto memberDto = (MemberDto) session.getAttribute(LOGIN_MEMBER);
+        Member memberEntity = MemberEntityDtoMapper.toMemberEntity(memberDto);
+        List<Chat> chatList = chatRepository.findByToAndReadState(memberEntity, 0);//미확인 메세지 조회
+        return chatList.size();
     }
 
     @GetMapping("/chatRoomList")
     public String chatRoomList(Model model, HttpSession session) {
-        Member member = (Member) session.getAttribute(LOGIN_MEMBER);
-        List<ChatRoom> chatRoomList = chatRoomRepository.findBySellerOrBuyer(member, member); //seller or buyer가 유저 아이디와 같은 채팅방 찾아야함
+        MemberDto memberDto = (MemberDto) session.getAttribute(LOGIN_MEMBER);
+        Member memberEntity = MemberEntityDtoMapper.toMemberEntity(memberDto);
+        List<ChatRoom> chatRoomList = chatRoomRepository.findBySellerOrBuyer(memberEntity, memberEntity); //seller or buyer가 유저 아이디와 같은 채팅방 찾아야함
+        chatRoomList.stream().forEach(chatRoom -> {
+            System.out.println(chatRoom);
+        });
         model.addAttribute("chatRoomList", chatRoomList);
         return "chat/chatRoomList";
     }
@@ -76,38 +91,44 @@ public class ChatController {
         return "세션테스트입니다!! >>> " + session.getAttribute(LOGIN_MEMBER);
     }
 
-    @MessageMapping("/chat/{roomId}")
+    @MessageMapping("/chat/{postId}/{seller}/{buyer}")
     @Transactional
     public void chat(
-            @DestinationVariable Long roomId,
+            @DestinationVariable Long postId,
+            @DestinationVariable String seller,
+            @DestinationVariable String buyer,
             @Payload String message,
             SimpMessageHeaderAccessor simpMessageHeaderAccessor) {
-        ChatRoom chatRoom = em.find(ChatRoom.class, roomId);
-        String seller = chatRoom.getSeller().getMemId();
-        String buyer = chatRoom.getBuyer().getMemId();
-        Member member = (Member) simpMessageHeaderAccessor.getSessionAttributes().get(SESSION);
-        Post post = em.find(Post.class, chatRoom.getPost().getPostId());
+
+        Post post = em.find(Post.class, postId);
+
+        //보내는이
+        Member from = (Member) simpMessageHeaderAccessor.getSessionAttributes().get(SESSION);
+
+        //받는이
+        Member to;
+        if (from.getMemId().equals(seller)) {
+            to = em.find(Member.class, buyer);
+        } else {
+            to = em.find(Member.class, seller);
+        }
+
         Chat chat = Chat.builder()
                 .post(post)
-                .from(member)
+                .from(from)
+                .to(to)
                 .message(message)
                 .build();
+        //채팅 저장
         chat = chatService.saveChat(chat);
 
         Map map = new HashMap();
         map.put("chat", chat.getMessage()); //채팅메세지
-        map.put("from", member.getMemId()); //보내는이
+        map.put("from", from.getMemId()); //보내는이
 
         //알림메세지 보내기
-        if (seller.equals(member.getMemId())) {
-            //판매자가 구매자에게 메세지를 보내는 경우
-            simpMessagingTemplate.convertAndSend("/topic/" + buyer, "알람메세지");
-        } else {
-            //구매자가 판매자에게 메세지를 보내는 경우
-            simpMessagingTemplate.convertAndSend("/topic/" + seller, "알람메세지");
-        }
-
+        simpMessagingTemplate.convertAndSend("/topic/chat/" + to.getMemId(), "알람메세지");
         //채팅방으로 메세지 보내기
-        simpMessagingTemplate.convertAndSend("/topic/" + roomId, map);
+        simpMessagingTemplate.convertAndSend("/topic/chat/" + postId + "/" + seller + "/" + buyer, map);
     }
 }

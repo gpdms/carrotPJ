@@ -18,7 +18,7 @@ import java.util.List;
 @Getter
 @Setter
 @Builder
-@ToString(exclude = {"room","post","from","chatImgList"})
+@ToString(exclude = {"room","post","from","to","chatImgList"})
 public class Chat extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -36,6 +36,10 @@ public class Chat extends BaseEntity {
     @ManyToOne
     @JoinColumn(name = "from_id")
     private Member from;
+
+    @ManyToOne
+    @JoinColumn(name = "to_id")
+    private Member to;
 
     @Column(name = "read_state",
             nullable = false)
