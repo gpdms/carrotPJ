@@ -10,6 +10,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
@@ -33,14 +34,16 @@ public class HomeController {
     }
 
     @GetMapping("/")
-    public String home(@Login MemberDto loginMember, Model model) {
+    public String home(@Login MemberDto loginMember, Model model,
+                       RedirectAttributes redirectAttributes ) {
         //세션에 회원 데이터가 없으면 home
         if (loginMember == null) {
             return "home";
         }
         //세션이 유지되면 로그인된 홈으로 이동
+        redirectAttributes.addAttribute("memId", loginMember.getMemId());
         model.addAttribute("member", loginMember);
-        return "memberHome";
+        return "redirect:/members/{memId}";
     }
 
 }
