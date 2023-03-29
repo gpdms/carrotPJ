@@ -96,8 +96,11 @@ public class PostController {
 
         log.info("컨트롤러단 postDto:", postDto);
         String a = postService.insertPost(postDto, uploadFiles);
-         if(a.equals("이미지확장자오류")){
+         if(a.equals("이미지타입오류")){
              new ResponseEntity<>("이미지 파일이 아닙니다.",HttpStatus.BAD_REQUEST);
+         } else if(a.equals("성공")){
+             return new ResponseEntity<>("상품이 게시되었습니다.",HttpStatus.OK);
+
          }
 
         return new ResponseEntity<>("상품이 게시되었습니다.",HttpStatus.OK);
