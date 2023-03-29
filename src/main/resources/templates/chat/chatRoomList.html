@@ -17,7 +17,7 @@
                 <th:block th:each="chatRoom : ${chatRoomList}">
                 <!--<li class="active bounceInDown">-->
                 <li>
-                    <a th:href="@{/chat/{roomId}(roomId=${chatRoom.roomId})}" class="clearfix">
+                    <a th:href="@{/chat/chatRoom/{roomId}(roomId=${chatRoom.roomId})}" class="clearfix">
                         <div class="profile_img">
                             <img th:if="${chatRoom.buyer.memId == session.loginMember.memId}" th:src="|/members/${chatRoom.seller.memId}/profileImg|" alt="프로필이미지(판매자)">
                             <img th:unless="${chatRoom.buyer.memId == session.loginMember.memId}" th:src="|/members/${chatRoom.buyer.memId}/profileImg|" alt="프로필이미지(구매자)">
