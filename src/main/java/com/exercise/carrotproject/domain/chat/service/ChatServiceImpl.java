@@ -4,6 +4,7 @@ import com.exercise.carrotproject.domain.chat.entity.Chat;
 import com.exercise.carrotproject.domain.chat.entity.ChatRoom;
 import com.exercise.carrotproject.domain.chat.repoisitory.ChatRepository;
 import com.exercise.carrotproject.domain.chat.repoisitory.ChatRoomRepository;
+import com.exercise.carrotproject.domain.member.entity.Member;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -19,8 +20,8 @@ public class ChatServiceImpl implements ChatService {
 
     @Override
     @Transactional
-    public Chat saveChat(Chat chat) {
-        Optional<ChatRoom> chatRoom = chatRoomRepository.findByPostAndBuyer(chat.getPost(), chat.getFrom());
+    public Chat saveChat(Chat chat, Member seller, Member buyer) {
+        Optional<ChatRoom> chatRoom = chatRoomRepository.findByPostAndSellerAndBuyer(chat.getPost(), seller, buyer);
         ChatRoom saveChatRoom = null;
         if (chatRoom.isEmpty()) {
             System.out.println(">>>> 채팅방이 존재하지 않는 경우입니다.");
