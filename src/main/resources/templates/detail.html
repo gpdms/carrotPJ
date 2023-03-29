@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns="http://www.w3.org/1999/html">
     <head>
         <meta charset="utf-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
@@ -13,6 +13,18 @@
         <!-- Core theme CSS (includes Bootstrap)-->
         <link href="/css/styles.css" rel="stylesheet" />
         <link href="/css/profile.css" rel="stylesheet" />
+
+        <!--detail페이지 박스슬라이더-->
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/bxslider/4.2.12/jquery.bxslider.css">
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/bxslider/4.2.12/jquery.bxslider.min.js"></script>
+
+        <script>
+            $(document).ready(function(){
+                $(".slider").bxSlider();
+            });
+        </script>
+
     </head>
     <body>
         <!-- Navigation-->
@@ -48,7 +60,15 @@
         <section class="py-5">
             <div class="container px-4 px-lg-5 my-5">
                 <div class="row gx-4 gx-lg-5 align-items-center">
-                    <div class="col-md-6"><img class="card-img-top mb-5 mb-md-0" src="https://dummyimage.com/600x700/dee2e6/6c757d.jpg" alt="..." /></div>
+                    <!--제품사진-->
+                    <div class="col-md-6">
+                        <div class="slider">
+<!--                        <li th:each="imgId:${imgIds}">-->
+                            <img class="card-img-top mb-5 mb-md-0" th:each="imgId:${imgIds}"  th:src="|/post/img/${imgId}|" th:onError="this.src='https://dummyimage.com/450x300/dee2e6/6c757d.jpg';" alt="..."
+                            style="object-fit: cover;"/>
+                        </div>
+                    </div>
+<!--                        </li>-->
                     <div class="col-md-6">
                        <!--프로필-->
                        <!--/* <p>[[${post.member.nickname}]]</p>
@@ -65,7 +85,7 @@
 <!--                            <span class="text-decoration-line-through" >$45.00</span>-->
                             <span th:text="|${post.price}원|">$40.00</span>
                         </div>
-                        <p class="lead" th:text="${post.content}">상품설명</p>
+                        <p class="lead" th:utext="${post.content}">상품설명</p>
                         <div class="d-flex">
                             <input class="form-control text-center me-3" id="inputQuantity" type="num" value="1" style="max-width: 3rem" />
                             <button class="btn btn-outline-dark flex-shrink-0" type="button">
@@ -74,14 +94,19 @@
                             </button>
                             <button class="btn btn-outline-dark flex-shrink-0" type="button" th:onclick="|location.href='@{/chat/{postId}(postId=${postId})}'|">채팅하기</button>
                         </div>
+                        <a th:href="|/post/remove/${post.postId}|"> 게시글삭제</a><br/>
+                        <a href="#"> 게시글숨김</a><br/>
+                        <a href="#"> 게시글수정</a><br/>
+
                     </div>
                 </div>
             </div>
+
         </section>
         <!-- Related items section-->
         <section class="py-5 bg-light">
             <div class="container px-4 px-lg-5 mt-5">
-                <h2 class="fw-bolder mb-4">Related products</h2>
+                <h2 class="fw-bolder mb-4" th:text="|${post.member.nickname}님의 판매상품|">Related products</h2>
                 <div class="row gx-4 gx-lg-5 row-cols-2 row-cols-md-3 row-cols-xl-4 justify-content-center">
                     <div class="col mb-5">
                         <div class="card h-100">

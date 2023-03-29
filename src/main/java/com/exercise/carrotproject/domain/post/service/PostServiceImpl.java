@@ -16,6 +16,7 @@ import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.ObjectUtils;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.persistence.EntityManager;
@@ -45,35 +46,55 @@ public class PostServiceImpl implements PostService{
     @Value("${file.postImg}")
     private String uploadPath;
 
+
+
     @Override
     @Transactional
     public void insertPost(PostDto postDto, MultipartFile[] uploadFiles) throws IOException {
-
-        log.info("서비스단 postDto:",postDto);
-
+        log.info("uploadfiles-length {}", uploadFiles.length);
+//        log.info("서비스단 postDto:",postDto);
         //Dto->Entity 변환
         Post postEntity = PostEntityDtoMapper.dtoToEntity(postDto);
 
+        for(MultipartFile file : uploadFiles) {
+            //1개이상 파일 올리고 && 이미지 타입이 아닐때 -> post에 저장하지 않는다.
+            if ( !file.isEmpty() && file.getContentType().startsWith("image") == false) {
+                return;
+            }
+        }
+        //이미지 1개이상올리고 모두 이미지타입 / 이미지 0개
+        //post에 insert
         em.persist(postEntity);
 
-        if (uploadFiles != null){
-            insertPostImg(postEntity, uploadFiles);
+        for(MultipartFile file : uploadFiles) {
+            //이미지 0개 -> post 이미지에 저장하지 않는다.
+            if( file.isEmpty() ) {
+                return;
+            }
         }
+        //이미지에 insert
+        insertPostImg(postEntity, uploadFiles);
+
 
     }
+
 
     @Override
     @Transactional
     public void insertPostImg(Post postEntity, MultipartFile[] uploadFiles) throws IOException {
+
+        
         //사진 업로드
         List<PostImgDto> resultDTOList = new ArrayList<>();
 
+        
         for(MultipartFile uploadFile: uploadFiles){
 
             //파일의 MIME 타입을 체크하여, 이미지 파일인지 여부를 확인하는 코드
             if(uploadFile.getContentType().startsWith("image")==false) {
                 log.warn("this file is not image type");
             }
+           
 
             //원본파일명
             String originalName = uploadFile.getOriginalFilename();
@@ -179,6 +200,19 @@ public class PostServiceImpl implements PostService{
         List<PostImgDto> postImgDtoList = PostImgEntityDtoMapper.toDtoList(postImgList);
 
         return postImgDtoList;
+    }
+    @Override
+    public PostImgDto selectOnePostImg(Long imgId){
+        PostImg imgEntity = postImgRepository.findById(imgId).orElse(null);
+        //entity->dto
+        PostImgDto imgDto = PostImgEntityDtoMapper.entityToDto(imgEntity);
+
+        return imgDto;
+    }
+
+    public void deletePost(Long postId){
+        Post post = postRepository.findById(postId).orElse(null);
+
     }
 
     
