@@ -74,8 +74,8 @@ public class PostServiceImpl {
         }
         //이미지에 insert
         insertPostImg(postEntity, uploadFiles);
-
         return "성공";
+
     }
 
 

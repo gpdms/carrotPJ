@@ -12,17 +12,17 @@ import java.util.Optional;
 
 @Service
 public interface MemberService {
-    public Optional<Member> findOneMember(String memId);
-    public boolean hasDuplicatedMemberId(String memId);
-    public Map<String,Object> insertMember(Member member);
+    Optional<Member> findOneMember(String memId);
+    boolean hasDuplicatedMemberId(String memId);
+    Map<String,Object> insertMember(Member member);
 
-    public Member findMemberForProfileEdit(String memId);
-    public String getProfPath(String memId);
-    public boolean isPwdUpdated(String memId, String newPwd);
-    public Member profileUpdate(Member member, MultipartFile profImg);
+    Member findMemberForProfileEdit(String memId);
+    String getProfPath(String memId);
+    boolean isPwdUpdated(String memId, String newPwd);
+    Member profileUpdate(Member member, MultipartFile profImg);
 
-    public Block findOneBlockByMemIds(String fromMemId, String toMemId);
-    public void insertBlock(Block block);
-    public void deleteBlock(String fromMemId, String toMemId);
+    Block findOneBlockByMemIds(String fromMemId, String toMemId);
+    void insertBlock(String fromMemId, String toMemId);
+    void deleteBlock(String fromMemId, String toMemId);
 
 }

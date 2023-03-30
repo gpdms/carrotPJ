@@ -23,4 +23,5 @@ public interface PostService {
     List<PostImgDto> selectPostImgs(Long postId);
     PostImgDto selectOnePostImg(Long imgId);
 
+
 }
