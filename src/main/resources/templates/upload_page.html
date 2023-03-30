@@ -112,11 +112,12 @@
                 success: function(result){ //컨트롤러에서 return이 없을 경우 바로 새로고침해버림(?)
                     console.log(result);
                     //화면 처리
-                    alert("상품이 게시되었습니다.");
-                    location.href = "/"+result;
+                    alert(result);
+                    location.href = "/post/board";
                 },
                 error: function(jqXHR, textStatus, errorThrown){
                     console.log(textStatus);
+                    alert(textStatus);
                 }
 
             }); //$.ajax

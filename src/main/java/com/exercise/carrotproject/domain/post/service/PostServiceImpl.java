@@ -35,7 +35,7 @@ import java.util.UUID;
 @RequiredArgsConstructor
 @Service
 @Slf4j
-public class PostServiceImpl implements PostService{
+public class PostServiceImpl {
 
     @PersistenceContext
     EntityManager em;
@@ -48,9 +48,9 @@ public class PostServiceImpl implements PostService{
 
 
 
-    @Override
+//    @Override
     @Transactional
-    public void insertPost(PostDto postDto, MultipartFile[] uploadFiles) throws IOException {
+    public String insertPost(PostDto postDto, MultipartFile[] uploadFiles) throws IOException {
         log.info("uploadfiles-length {}", uploadFiles.length);
 //        log.info("서비스단 postDto:",postDto);
         //Dto->Entity 변환
@@ -59,7 +59,7 @@ public class PostServiceImpl implements PostService{
         for(MultipartFile file : uploadFiles) {
             //1개이상 파일 올리고 && 이미지 타입이 아닐때 -> post에 저장하지 않는다.
             if ( !file.isEmpty() && file.getContentType().startsWith("image") == false) {
-                return;
+                return "이미지타입오류";
             }
         }
         //이미지 1개이상올리고 모두 이미지타입 / 이미지 0개
@@ -69,16 +69,17 @@ public class PostServiceImpl implements PostService{
         for(MultipartFile file : uploadFiles) {
             //이미지 0개 -> post 이미지에 저장하지 않는다.
             if( file.isEmpty() ) {
-                return;
+                return "성공";
             }
         }
         //이미지에 insert
         insertPostImg(postEntity, uploadFiles);
+        return "성공";
 
     }
 
 
-    @Override
+//    @Override
     @Transactional
     public void insertPostImg(Post postEntity, MultipartFile[] uploadFiles) throws IOException {
 
@@ -152,7 +153,7 @@ public class PostServiceImpl implements PostService{
         return folderPath;
     }
 
-    @Override
+//    @Override
     public List<PostDto> selectAllPost(){
         //JPQL
         String sql = "select p from Post p order by p.postId desc";
@@ -165,7 +166,7 @@ public class PostServiceImpl implements PostService{
     }
 
 
-    @Override
+//    @Override
     public Page<PostDto> paging(List<PostDto> postList, Pageable pageable){
 
         //페이징
@@ -177,7 +178,7 @@ public class PostServiceImpl implements PostService{
     }
 
 
-    @Override
+//    @Override
     public PostDto selectOnePost(Long postId){
         Post postEntity = em.find(Post.class, postId);
 
@@ -187,7 +188,7 @@ public class PostServiceImpl implements PostService{
         return postDto;
     }
 
-    @Override
+//    @Override
     public List<PostImgDto> selectPostImgs(Long postId){
 
         String sql = "select i from PostImg i where i.post.postId = :postId";
@@ -200,7 +201,7 @@ public class PostServiceImpl implements PostService{
 
         return postImgDtoList;
     }
-    @Override
+//    @Override
     public PostImgDto selectOnePostImg(Long imgId){
         PostImg imgEntity = postImgRepository.findById(imgId).orElse(null);
         //entity->dto

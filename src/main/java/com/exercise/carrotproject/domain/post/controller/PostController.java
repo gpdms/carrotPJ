@@ -15,6 +15,8 @@ import org.springframework.core.io.UrlResource;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -33,7 +35,7 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class PostController {
 
-    private final PostService postService;
+    private final PostServiceImpl postService;
 
     @GetMapping("/board")
     public String home(){
@@ -64,11 +66,13 @@ public class PostController {
         List<PostImgDto> postImgDtoList = postService.selectPostImgs(postId);
         //이미지 아이디만 담은 리스트
         List<Long> postImgIdList = postImgDtoList.stream().map(PostImgDto::getImgId).collect(Collectors.toList());
-        log.info("컨트롤러단 이미지아이디 리스트:{}",postImgIdList);
+        log.info("컨트롤러단 이미지아이디 리스트:{}",postImgIdList.size());
 
         model.addAttribute("post", postDto);
+        if (postImgIdList.size() == 0) {
+           postImgIdList.add(0L);
+        }
         model.addAttribute("imgIds", postImgIdList);
-
         return "detail";
     }
 
@@ -81,8 +85,8 @@ public class PostController {
 
 
     @PostMapping("/post/upload")
-    @ResponseBody
-    public String insPost(PostDto postDto, @RequestParam MultipartFile[] uploadFiles, HttpSession session) throws IOException {
+//    @ResponseBody
+    public ResponseEntity<String> insPost(PostDto postDto, @RequestParam MultipartFile[] uploadFiles, HttpSession session) throws IOException {
 //        log.info("postDto: "+postDto);
         log.info("controller uploadfiles-length {}", uploadFiles.length);
         MemberDto loginMember = (MemberDto) session.getAttribute(SessionConst.LOGIN_MEMBER);
@@ -91,9 +95,12 @@ public class PostController {
         postDto.setContent(postDto.getContent().replace("\r\n","<br>")); //줄개행
 
         log.info("컨트롤러단 postDto:", postDto);
-         postService.insertPost(postDto, uploadFiles);
+        String a = postService.insertPost(postDto, uploadFiles);
+         if(a.equals("이미지확장자오류")){
+             new ResponseEntity<>("이미지 파일이 아닙니다.",HttpStatus.BAD_REQUEST);
+         }
 
-        return "post/board";
+        return new ResponseEntity<>("상품이 게시되었습니다.",HttpStatus.OK);
     }
 
     //첫번째 이미지 urlresource 반환
@@ -104,7 +111,11 @@ public class PostController {
         List<PostImgDto> postImgDtoList = postService.selectPostImgs(postId);
 //        log.info("컨트롤러단 postImgDtoList:{}", postImgDtoList);
 
-        String firstImgPath = postImgDtoList.get(0).getSavedPath();
+        String firstImgPath = "C:/upload/default_image.png";
+        if(!postImgDtoList.isEmpty()) {
+            firstImgPath = postImgDtoList.get(0).getSavedPath();
+        }
+
 
         UrlResource urlResource = new UrlResource("file:"+ firstImgPath);
         return urlResource;
@@ -114,11 +125,15 @@ public class PostController {
     @GetMapping("/post/img/{imgId}")
     @ResponseBody
     public UrlResource postImgUrl(@PathVariable Long imgId) throws MalformedURLException {
+        String imgPath = "C:/upload/default_image.png";
 
-        PostImgDto postImgDtoList = postService.selectOnePostImg(imgId);
-//        log.info("컨트롤러단 postImgDtoList:", postImgDtoList);
-        UrlResource urlResource = new UrlResource("file:"+ postImgDtoList.getSavedPath());
+        if(imgId != 0) {
+            PostImgDto postImgDto = postService.selectOnePostImg(imgId);
+            log.info("컨트롤러단 postImgDto:{}", postImgDto);
+            imgPath = postImgDto.getSavedPath();
+        }
 
+        UrlResource urlResource = new UrlResource("file:"+ imgPath);
         return urlResource;
     }
 
