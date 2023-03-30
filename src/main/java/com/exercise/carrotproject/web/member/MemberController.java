@@ -8,6 +8,8 @@ import com.exercise.carrotproject.domain.member.dto.BlockDto;
 import com.exercise.carrotproject.domain.member.dto.MemberDto;
 import com.exercise.carrotproject.domain.member.entity.Block;
 import com.exercise.carrotproject.domain.member.entity.Member;
+import com.exercise.carrotproject.domain.post.repository.PostRepository;
+import com.exercise.carrotproject.domain.post.service.PostService;
 import com.exercise.carrotproject.web.member.form.ProfileForm;
 import com.exercise.carrotproject.web.member.form.PwdUpdateForm;
 import com.exercise.carrotproject.web.member.form.SignupForm;
@@ -35,6 +37,7 @@ import java.util.Optional;
 public class MemberController {
     private final MemberService memberService;
     private final SecurityUtils securityUtils;
+    private final PostRepository postRepository;
 
     @GetMapping("/{memId}")
     public String toMemberHome(@PathVariable String memId, Model model,
@@ -43,17 +46,26 @@ public class MemberController {
         if(member.isEmpty()) {
             return "redirect:/";
         }
-        model.addAttribute("member", member.orElse(null));
 
         boolean blockState = false;
         Object loginSession = session.getAttribute(SessionConst.LOGIN_MEMBER);
         if(loginSession != null) {
-            Member loginMember = (Member)loginSession;
+            MemberDto loginMember = (MemberDto)loginSession;
             if (memberService.findOneBlockByMemIds(loginMember.getMemId(), member.orElseThrow().getMemId()) != null) {
                 blockState = true;
             }
         }
+
+        Long countPost = 0L;
+        if(!blockState) {
+            countPost = postRepository.countByMember(member.orElse(null));
+            log.info("countPost{}", countPost);
+        }
+
+        model.addAttribute("member", member.orElse(null));
+        model.addAttribute("countPost", countPost);
         model.addAttribute("blockState", blockState);
+
         return "memberHome";
     }
 
@@ -149,10 +161,8 @@ public class MemberController {
                               HttpServletRequest request,
                             Model model){
         HttpSession session = request.getSession(false);
-        Member loginMember = (Member)session.getAttribute(SessionConst.LOGIN_MEMBER);
-        Block block = Block.builder().fromMem(loginMember)
-                .toMem(memberService.findOneMember(memId).orElse(null)).build();
-        memberService.insertBlock(block);
+        MemberDto loginMember = (MemberDto)session.getAttribute(SessionConst.LOGIN_MEMBER);
+        memberService.insertBlock(loginMember.getMemId(), memId);
         return "redirect:/members/{memId}";
     }
 

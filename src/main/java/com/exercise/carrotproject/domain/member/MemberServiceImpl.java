@@ -26,7 +26,6 @@ public class MemberServiceImpl implements MemberService {
     private final BlockRepository blockRepository;
     private final SecurityUtils securityUtils;
 
-
     @Value("${dir.img-profile}")
     private String rootProfileImgDir;
 
@@ -38,7 +37,7 @@ public class MemberServiceImpl implements MemberService {
 
     @Override
     public boolean hasDuplicatedMemberId(String memId) {
-        return memberRepository.findById(memId).isEmpty() ? false : true;
+        return memberRepository.existsById(memId) ? true : false;
     }
 
     @Override
@@ -129,13 +128,17 @@ public class MemberServiceImpl implements MemberService {
         Member fromMem = memberRepository.findById(fromMemId).orElse(null);
         Member toMem = memberRepository.findById(toMemId).orElse(null);
         if(fromMem!=null && toMem!=null) {
-          return blockRepository.findByToMemAndFromMem(toMem, fromMem).orElse(null);
+          return blockRepository.findByFromMemAndToMem(fromMem, toMem).orElse(null);
         }
         return null;
     }
 
+
+
     @Override
-    public void insertBlock(Block block) {
+    public void insertBlock(String fromMemId, String toMemId) {
+        Block block = Block.builder().fromMem(memberRepository.findById(fromMemId).orElse(null))
+                .toMem(memberRepository.findById(toMemId).orElse(null)).build();
         blockRepository.save(block);
     }
 
@@ -143,8 +146,8 @@ public class MemberServiceImpl implements MemberService {
     public void deleteBlock(String fromMemId, String toMemId) {
         Block block = findOneBlockByMemIds(fromMemId, toMemId);
         blockRepository.deleteById(block.getBlockId());
-
     }
+
 
 
 }
