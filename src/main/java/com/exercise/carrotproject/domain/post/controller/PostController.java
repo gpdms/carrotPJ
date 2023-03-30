@@ -67,7 +67,7 @@ public class PostController {
         List<PostImgDto> postImgDtoList = postService.selectPostImgs(postId);
         //이미지 아이디만 담은 리스트
         List<Long> postImgIdList = postImgDtoList.stream().map(PostImgDto::getImgId).collect(Collectors.toList());
-        log.info("컨트롤러단 이미지아이디 리스트:{}",postImgIdList.size());
+//        log.info("컨트롤러단 이미지아이디 리스트:{}",postImgIdList.size());
 
         model.addAttribute("post", postDto);
         if (postImgIdList.size() == 0) {
@@ -142,7 +142,7 @@ public class PostController {
 
         if(imgId != 0) {
             PostImgDto postImgDto = postService.selectOnePostImg(imgId);
-            log.info("컨트롤러단 postImgDto:{}", postImgDto);
+//            log.info("컨트롤러단 postImgDto:{}", postImgDto);
             imgPath = postImgDto.getSavedPath();
         }
 
@@ -174,7 +174,9 @@ public class PostController {
 
     //게시글 수정한 것 업로드
     @PostMapping("/post/updatePost/{postId}")
-    public String udtPost(){
+    public String udtPost(PostDto postDto, @RequestParam MultipartFile[] uploadFiles){
+        log.info("게시글수정 컨트롤러에 온 postDto:{}", postDto);
+
         return "redirect:/post/board";
     }
 
