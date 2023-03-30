@@ -55,7 +55,8 @@ class ChatServiceImplTest {
                 .build();
         em.persist(post);
     }
-/*    @Test
+
+   /* @Test
     @Transactional
     @Rollback(value = false)
     public void saveChatTest(){

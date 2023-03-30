@@ -15,7 +15,7 @@ import java.util.List;
 
 @Service
 public interface PostService {
-    void insertPost(PostDto postDto, MultipartFile[] uploadFiles) throws IOException;
+    String insertPost(PostDto postDto, MultipartFile[] uploadFiles) throws IOException;
     void insertPostImg(Post postEntity, MultipartFile[] uploadFiles) throws IOException;
     List<PostDto> selectAllPost();
     PostDto selectOnePost(Long postId);
