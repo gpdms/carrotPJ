@@ -1,4 +1,4 @@
-package com.exercise.carrotproject.web.interceptor;
+package com.exercise.carrotproject.domain.config.interceptor;
 
 import com.exercise.carrotproject.SessionConst;
 import lombok.extern.slf4j.Slf4j;
