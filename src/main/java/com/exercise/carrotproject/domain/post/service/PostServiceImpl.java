@@ -1,13 +1,11 @@
 package com.exercise.carrotproject.domain.post.service;
 
-import com.exercise.carrotproject.domain.post.entity.PostEntityDtoMapper;
+import com.exercise.carrotproject.domain.post.entity.*;
 import com.exercise.carrotproject.domain.post.dto.PostDto;
 import com.exercise.carrotproject.domain.post.dto.PostImgDto;
-import com.exercise.carrotproject.domain.post.entity.Post;
-import com.exercise.carrotproject.domain.post.entity.PostImg;
-import com.exercise.carrotproject.domain.post.entity.PostImgEntityDtoMapper;
 import com.exercise.carrotproject.domain.post.repository.PostImgRepository;
 import com.exercise.carrotproject.domain.post.repository.PostRepository;
+import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -21,6 +19,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+import javax.persistence.Query;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Path;
@@ -42,6 +41,7 @@ public class PostServiceImpl {
 
     private final PostRepository postRepository;
     private final PostImgRepository postImgRepository;
+    private final JPAQueryFactory jpaQueryFactory; //QuerydslConfig파일에 bean등록함
 
     @Value("${file.postImg}")
     private String uploadPath;
@@ -191,8 +191,8 @@ public class PostServiceImpl {
 //    @Override
     public List<PostImgDto> selectPostImgs(Long postId){
 
-        String sql = "select i from PostImg i where i.post.postId = :postId";
-        List<PostImg> postImgList = em.createQuery(sql, PostImg.class)
+        String jpql = "select i from PostImg i where i.post.postId = :postId";
+        List<PostImg> postImgList = em.createQuery(jpql, PostImg.class)
                                     .setParameter("postId", postId)
                                     .getResultList();
 
@@ -210,8 +210,29 @@ public class PostServiceImpl {
         return imgDto;
     }
 
+    @Transactional
     public void deletePost(Long postId){
+        //postId로 post엔티티 조회
         Post post = postRepository.findById(postId).orElse(null);
+        //게시글 이미지 삭제
+        postImgRepository.deleteByPost(post);
+
+        //QueryDSL시도하다가...
+//        QPostImg qPostImg = QPostImg.postImg;
+//
+//        jpaQueryFactory.delete(qPostImg)
+//                .where(qPostImg.post.postId(postId))
+//                .execute();
+
+
+        //JPQL 게시글 이미지 삭제
+//        String jpql = "delete from PostImg i where i.post.postId = :postId";
+//        Query query = em.createQuery(jpql).setParameter("postId", postId);
+//        int rows = query.executeUpdate(); //제거한 행의 수 반환
+//        log.info("Query반환값이 뭔지 확인해보자:{}", query);
+        
+        //게시글 삭제
+        postRepository.deleteById(postId);
 
     }
 

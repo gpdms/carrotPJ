@@ -60,7 +60,7 @@
                     <div class="col mb-5" th:each = "post:${list}" 0>
                         <div class="card h-100" th:onclick="|location.href='@{|/post/detail/${post.postId}|}'|" style="cursor: pointer;">
                             <!-- 제품사진-->
-                            <img class="card-img-top" th:src="|/post/firstImg/${post.postId}|" th:onError="this.src='https://dummyimage.com/450x300/dee2e6/6c757d.jpg';" alt="제품사진" />
+                            <img class="card-img-top" th:src="|/post/firstImg/${post.postId}|" alt="제품사진" />
                             <!-- Product details-->
                             <div class="card-body p-4">
                                 <div class="text-center">
