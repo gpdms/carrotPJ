@@ -1,13 +1,12 @@
-package com.exercise.carrotproject;
+package com.exercise.carrotproject.domain.config;
 
 import com.exercise.carrotproject.web.argumentresolver.LoginMemberArgumentResolver;
-import com.exercise.carrotproject.web.interceptor.LoginCheckInterceptor;
+import com.exercise.carrotproject.domain.config.interceptor.LoginCheckInterceptor;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.method.support.HandlerMethodArgumentResolver;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
-import javax.servlet.Filter;
 import java.util.List;
 
 @Configuration

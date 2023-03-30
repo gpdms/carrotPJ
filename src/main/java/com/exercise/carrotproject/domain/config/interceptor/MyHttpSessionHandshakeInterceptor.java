@@ -1,7 +1,6 @@
-package com.exercise.carrotproject.domain.chat.websocket;
+package com.exercise.carrotproject.domain.config.interceptor;
 
 import com.exercise.carrotproject.domain.member.dto.MemberDto;
-import com.exercise.carrotproject.domain.member.entity.Member;
 import org.springframework.http.server.ServerHttpRequest;
 import org.springframework.http.server.ServerHttpResponse;
 import org.springframework.http.server.ServletServerHttpRequest;
@@ -10,7 +9,6 @@ import org.springframework.web.socket.server.HandshakeInterceptor;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
-import java.util.Enumeration;
 import java.util.Map;
 
 import static com.exercise.carrotproject.SessionConst.LOGIN_MEMBER;
