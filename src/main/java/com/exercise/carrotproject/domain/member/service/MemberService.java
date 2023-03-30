@@ -1,4 +1,4 @@
-package com.exercise.carrotproject.domain.member;
+package com.exercise.carrotproject.domain.member.service;
 
 
 import com.exercise.carrotproject.domain.member.dto.BlockDto;

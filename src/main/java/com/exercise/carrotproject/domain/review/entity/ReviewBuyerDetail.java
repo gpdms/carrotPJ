@@ -16,26 +16,19 @@ import java.sql.Timestamp;
 @Getter
 @Builder
 @ToString
-@DynamicInsert
+//@DynamicInsert
 public class ReviewBuyerDetail {
-    @Id
-    @GeneratedValue(strategy= GenerationType.IDENTITY)
+    @Id @GeneratedValue(strategy= GenerationType.IDENTITY)
     private Long reviewBuyerReviewId;
 
-    @NotNull
-    @ManyToOne
-    @JoinColumn(name="review_buyer_id")
+    @NotNull @ManyToOne @JoinColumn(name="review_buyer_id")
     private ReviewBuyer reviewBuyer;
-
-    @NotNull
-    @ManyToOne
-    @JoinColumn(name="buyer_id")
+    @NotNull @ManyToOne @JoinColumn(name="buyer_id")
     private Member member;
 
     @Enumerated(value = EnumType.STRING)
     private ReviewBuyerIndicator reviewBuyerIndicator;
 
-    @CreationTimestamp
-    @Column(updatable = false)
+    @CreationTimestamp @Column(updatable = false)
     private Timestamp createdTime;
 }

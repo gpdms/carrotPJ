@@ -1,16 +1,12 @@
-package com.exercise.carrotproject.web.member;
+package com.exercise.carrotproject.web.member.controller;
 
 
 import com.exercise.carrotproject.SessionConst;
-import com.exercise.carrotproject.domain.member.MemberRepository;
-import com.exercise.carrotproject.domain.member.MemberService;
-import com.exercise.carrotproject.domain.member.MemberServiceImpl;
-import com.exercise.carrotproject.domain.member.dto.BlockDto;
+import com.exercise.carrotproject.domain.enumList.Loc;
+import com.exercise.carrotproject.domain.member.service.MemberServiceImpl;
 import com.exercise.carrotproject.domain.member.dto.MemberDto;
-import com.exercise.carrotproject.domain.member.entity.Block;
 import com.exercise.carrotproject.domain.member.entity.Member;
 import com.exercise.carrotproject.domain.post.repository.PostRepository;
-import com.exercise.carrotproject.domain.post.service.PostService;
 import com.exercise.carrotproject.web.member.form.ProfileForm;
 import com.exercise.carrotproject.web.member.form.PwdUpdateForm;
 import com.exercise.carrotproject.web.member.form.SignupForm;
@@ -39,10 +35,11 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class MemberController {
     private final MemberServiceImpl memberService;
-    private final SecurityUtils securityUtils;
+    private final com.exercise.carrotproject.web.member.SecurityUtils securityUtils;
     private final PostRepository postRepository;
     @Value("${dir.img-profile}")
     private String rootProfileImgDir;
+
 
     @GetMapping("/{memId}")
     public String toMemberHome(@PathVariable String memId, Model model,

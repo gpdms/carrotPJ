@@ -1,9 +1,6 @@
 package com.exercise.carrotproject.domain.post.entity;
 
 import com.exercise.carrotproject.domain.member.MemberEntityDtoMapper;
-import com.exercise.carrotproject.domain.member.MemberRepository;
-import com.exercise.carrotproject.domain.member.dto.MemberDto;
-import com.exercise.carrotproject.domain.member.entity.Member;
 import com.exercise.carrotproject.domain.post.dto.PostDto;
 
 import java.util.List;

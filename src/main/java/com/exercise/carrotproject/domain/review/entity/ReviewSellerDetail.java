@@ -15,7 +15,7 @@ import java.sql.Timestamp;
 @Getter
 @Builder
 @ToString
-@DynamicInsert
+//@DynamicInsert
 public class ReviewSellerDetail {
     @Id
     @GeneratedValue(strategy= GenerationType.IDENTITY)
@@ -24,6 +24,7 @@ public class ReviewSellerDetail {
     @ManyToOne
     @JoinColumn(name="review_seller_id")
     private ReviewSeller reviewSeller;
+
     @ManyToOne
     @JoinColumn(name="seller_id")
     private Member seller;

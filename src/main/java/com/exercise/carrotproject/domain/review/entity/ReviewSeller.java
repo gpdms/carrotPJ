@@ -18,10 +18,9 @@ import java.util.List;
 @Getter
 @Builder
 @ToString
-@DynamicInsert
+//@DynamicInsert
 public class ReviewSeller extends BaseEntity {
-    @Id
-    @GeneratedValue(strategy= GenerationType.IDENTITY)
+    @Id @GeneratedValue(strategy= GenerationType.IDENTITY)
     private Long reviewSellerId;
     @NotNull @ManyToOne @JoinColumn(name="post_id")
     private Post post;
@@ -35,6 +34,7 @@ public class ReviewSeller extends BaseEntity {
     @NotNull @Convert(converter = ReviewStateConverter.class)
     private ReviewState reviewState;
 
-    @OneToMany(mappedBy="reviewSeller", fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)
-    private List<ReviewSellerDetail> reviewSellerDetailList;
+    //Detail 테이블
+//    @OneToMany(mappedBy="reviewSeller", fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)
+//    private List<ReviewSellerDetail> reviewSellerDetailList;
 }

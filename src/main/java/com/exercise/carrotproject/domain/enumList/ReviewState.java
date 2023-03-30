@@ -14,5 +14,4 @@ public enum ReviewState {
     private final String description;
     private final boolean access;
     private final Double score;
-
 }

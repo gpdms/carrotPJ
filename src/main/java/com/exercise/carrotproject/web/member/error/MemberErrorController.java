@@ -1,7 +1,6 @@
 package com.exercise.carrotproject.web.member.error;
 
-import com.exercise.carrotproject.web.member.MemberController;
-import com.exercise.carrotproject.web.member.error.ErrorResult;
+import com.exercise.carrotproject.web.member.controller.MemberController;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
