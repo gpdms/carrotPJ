@@ -1,5 +1,6 @@
 package com.exercise.carrotproject.domain.post.entity;
 
+import com.exercise.carrotproject.domain.converter.LocAttributeConverter;
 import com.exercise.carrotproject.domain.enumList.Category;
 import com.exercise.carrotproject.domain.enumList.Loc;
 import com.exercise.carrotproject.domain.converter.CategoryConverter;
@@ -27,9 +28,10 @@ public class Post {
     private String title;
     @ManyToOne @JoinColumn(name = "mem_id") @JsonIgnore
     private Member member;
+    @ColumnDefault("0") @Column(nullable = false)
     private Integer price;
     private String content;
-    @Enumerated(EnumType.STRING)
+    @Convert(converter = LocAttributeConverter.class)
     private Loc loc; //지역 enum
     @Convert(converter = CategoryConverter.class)
     private Category category; //카테고리 enum
@@ -46,6 +48,7 @@ public class Post {
     //영속 상태 되기 이전에 실행하여 영속컨텍스트에도 담아줌.
     @PrePersist
     public void prePersist(){
+        this.price = this.price == null ? 0 : this.price;
         this.hideState = this.hideState == null ? 0 : this.hideState;
         this.sellState = this.sellState == null ? 0 : this.sellState;
     }

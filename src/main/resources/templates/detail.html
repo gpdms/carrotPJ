@@ -64,8 +64,7 @@
                     <div class="col-md-6">
                         <div class="slider">
 <!--                        <li th:each="imgId:${imgIds}">-->
-                            <img class="card-img-top mb-5 mb-md-0" th:each="imgId:${imgIds}" th:src="|/post/img/${imgId}|" th:onError="this.src='https://dummyimage.com/450x300/dee2e6/6c757d.jpg';" alt="..."
-                            style="object-fit: cover;"/>
+                            <img class="card-img-top mb-5 mb-md-0" th:each="imgId:${imgIds}" th:src="|/post/img/${imgId}|" alt="..." style="object-fit: cover;"/>
                         </div>
                     </div>
 <!--                        </li>-->
@@ -96,7 +95,7 @@
                         </div>
                         <a th:href="|/post/remove/${post.postId}|"> 게시글삭제</a><br/>
                         <a href="#"> 게시글숨김</a><br/>
-                        <a href="#"> 게시글수정</a><br/>
+                        <a th:href="|/post/updatePost/${post.postId}|"> 게시글수정</a><br/>
 
                     </div>
                 </div>

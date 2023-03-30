@@ -55,6 +55,7 @@ public class PostController {
         return "board";
     }
 
+    //게시글 상세정보 detail
     @GetMapping("/post/detail/{postId}")
     public String postDetail(@PathVariable Long postId, Model model){
         //Post하나 불러오기
@@ -66,7 +67,7 @@ public class PostController {
         List<PostImgDto> postImgDtoList = postService.selectPostImgs(postId);
         //이미지 아이디만 담은 리스트
         List<Long> postImgIdList = postImgDtoList.stream().map(PostImgDto::getImgId).collect(Collectors.toList());
-        log.info("컨트롤러단 이미지아이디 리스트:{}",postImgIdList.size());
+//        log.info("컨트롤러단 이미지아이디 리스트:{}",postImgIdList.size());
 
         model.addAttribute("post", postDto);
         if (postImgIdList.size() == 0) {
@@ -83,21 +84,33 @@ public class PostController {
         return "upload_page";
     }
 
-
+    //게시글 업로드
     @PostMapping("/post/upload")
 //    @ResponseBody
     public ResponseEntity<String> insPost(PostDto postDto, @RequestParam MultipartFile[] uploadFiles, HttpSession session) throws IOException {
-//        log.info("postDto: "+postDto);
-        log.info("controller uploadfiles-length {}", uploadFiles.length);
+//        log.info("컨트롤러단 postDto:", postDto);
+//        log.info("controller uploadfiles-length {}", uploadFiles.length);
+
+        //제목, 카테고리, 내용 null체크
+        if(postDto.getTitle().isEmpty() || postDto.getCategory()==null || postDto.getContent().isEmpty()){
+            return new ResponseEntity<>("제목, 카테고리, 내용을 입력해주세요.", HttpStatus.BAD_REQUEST);
+        }
+
+        
+        //작성자 정보 세팅
         MemberDto loginMember = (MemberDto) session.getAttribute(SessionConst.LOGIN_MEMBER);
         postDto.setMember(loginMember);
         postDto.setLoc(loginMember.getLoc());
+        //게시글 내용 개행 처리
         postDto.setContent(postDto.getContent().replace("\r\n","<br>")); //줄개행
 
-        log.info("컨트롤러단 postDto:", postDto);
+        //DB에 insert
         String a = postService.insertPost(postDto, uploadFiles);
-         if(a.equals("이미지확장자오류")){
-             new ResponseEntity<>("이미지 파일이 아닙니다.",HttpStatus.BAD_REQUEST);
+         if(a.equals("이미지타입오류")){
+             return new ResponseEntity<>("이미지 파일이 아닙니다.",HttpStatus.BAD_REQUEST);
+         } else if(a.equals("성공")){
+             return new ResponseEntity<>("상품이 게시되었습니다.",HttpStatus.OK);
+
          }
 
         return new ResponseEntity<>("상품이 게시되었습니다.",HttpStatus.OK);
@@ -129,7 +142,7 @@ public class PostController {
 
         if(imgId != 0) {
             PostImgDto postImgDto = postService.selectOnePostImg(imgId);
-            log.info("컨트롤러단 postImgDto:{}", postImgDto);
+//            log.info("컨트롤러단 postImgDto:{}", postImgDto);
             imgPath = postImgDto.getSavedPath();
         }
 
@@ -137,16 +150,35 @@ public class PostController {
         return urlResource;
     }
 
+    //게시글 삭제
     @GetMapping("/post/remove/{postId}")
-    @ResponseBody
-    public String delPost(){
+    public String delPost(@PathVariable Long postId){
 
+        postService.deletePost(postId);
 
+        return "redirect:/post/board";
+    }
+    
+    //게시글 수정페이지
+    @GetMapping("/post/updatePost/{postId}")
+    public String udtPostPage(@PathVariable Long postId, Model model){
+        //게시글 하나 정보 불러오기
+        PostDto postDto = postService.selectOnePost(postId);
+        //게시글 내용 개행처리
+        postDto.setContent(postDto.getContent().replace("<br>","\r\n"));
 
-        return "post/board";
+        model.addAttribute("post", postDto);
+
+        return "update_post";
     }
 
+    //게시글 수정한 것 업로드
+    @PostMapping("/post/updatePost/{postId}")
+    public String udtPost(PostDto postDto, @RequestParam MultipartFile[] uploadFiles){
+        log.info("게시글수정 컨트롤러에 온 postDto:{}", postDto);
 
+        return "redirect:/post/board";
+    }
 
 
 
