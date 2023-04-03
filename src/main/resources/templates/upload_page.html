@@ -8,6 +8,54 @@
 <!--    <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">-->
 <!--    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-slider/10.6.2/css/bootstrap-slider.min.css" integrity="sha256-G3IAYJYIQvZgPksNQDbjvxd/Ca1SfCDFwu2s2lt0oGo=" crossorigin="anonymous" />-->
 <!--    <link rel="stylesheet" type="text/css" href="css/style.css">-->
+    <style>
+
+        .inputFile,
+        #Preview,
+        #Preview li{
+            float:left
+        }
+        .inputFile{
+            margin-bottom: 10px;
+        }
+        .addImgBtn{
+            width: 80px !important;
+            height: 80px !important;
+            line-height: 71px !important;
+            background-color: #fff !important;
+            color: #b7b7b7 !important;
+            border: 2px solid #b7b7b7;
+            font-size: 35px !important;
+            padding: 0 !important;
+        }
+
+        #Preview{
+            margin-left: 20px;
+            width: 650px;
+        }
+        #Preview li{
+            list-style: none;
+            margin-left: 10px;
+            margin-bottom: 10px;
+            position: relative;
+            border: 1px solid #ececec;
+            cursor:move
+        }
+        .delBtn{
+            position: absolute;
+            top: 0;
+            right: 0;
+            font-size: 13px;
+            background-color: #000;
+            color: #fff;
+            width: 18px;
+            height: 18px;
+            line-height: 16px;
+            display: inline-block;
+            text-align: center;
+            cursor: pointer;
+        }
+    </style>
 </head>
 <body>
 <!--    <nav class="navbar nav-global fixed-top navbar-expand-sm">-->
@@ -20,22 +68,31 @@
 
     <div class="container container-sm container-item-create">
         <h5 class="container-headline">중고거래 글쓰기</h5>
-
         <form id="upload_form" class="form-item-create">
+
             <div class="form-group form-picture">
                 <div class="file-box">
-                    <!--사진-->
+                <!--사진-->
 <!--                    <input class="upload-name"  value="파일선택" disabled="disabled">-->
 <!--                    <label for="ex_filename" class="btn btn-secondary">업로드</label>-->
-                    <input type="file" multiple="multiple" name="uploadFiles">
+                    <div class="inputFile">
+                    <label for='inputImage' class="addImgBtn">+</label>
+                    <input type="file" multiple="multiple" name="uploadFiles" id='inputImage' accept="image/*">
+                    </div>
+                <!--사진 미리보기-->
+<!--                    <img src="https://i0.wp.com/adventure.co.kr/wp-content/uploads/2020/09/no-image.jpg" class="image-box"-->
+<!--                    style=" width: 200px;height: 200px;object-fit: cover;display: block;margin: 20px auto;"/>-->
+                    <ul id="Preview" class="sortable"></ul>
+<!--                    <div id="preview"></div>-->
                 </div>
-
                 <div class="uploadResult"></div>
 
 
             </div>
 
-            <div class="form-group form-title">
+
+
+        <div class="form-group form-title">
                 <input type="text" class="form-control" id="productsTitle" name="title" placeholder="제목">
             </div>
             <div class="form-group form-category">
@@ -86,8 +143,201 @@
 
 <!--jquery CDN-->
 <script src="https://code.jquery.com/jquery-3.6.4.js" integrity="sha256-a9jBBRygX1Bh5lt8GZjXDzyOB+bWve9EiO7tROUtj/E=" crossorigin="anonymous"></script>
+<!--jquery UI CDN(드래그앤드롭)-->
+<script src="https://code.jquery.com/ui/1.13.2/jquery-ui.min.js" integrity="sha256-lSjKY0/srUM9BE3dPm+c4fBo1dky2v27Gdjm2uoZaL0=" crossorigin="anonymous"></script>
 
     <script>
+
+        // const handler = {
+        //     init() {
+        //         const fileInput = document.querySelector('#inputImage');
+        //         const preview = document.querySelector('#preview');
+        //         fileInput.addEventListener('change', () => {
+        //             console.dir(fileInput)
+        //             const files = Array.from(fileInput.files)
+        //             files.forEach(file => {
+        //                 preview.innerHTML += `
+        //                 <p id="${file.lastModified}">
+        //                     ${file.name}
+        //                     <button data-index='${file.lastModified}' class='file-remove'>X</button>
+        //                 </p>`;
+        //             });
+        //         });
+        //     },
+        //
+        //
+        //     removeFile: () => {
+        //         document.addEventListener('click', (e) => {
+        //             if(e.target.className !== 'file-remove') return;
+        //             const removeTargetId = e.target.dataset.index;
+        //             const removeTarget = document.getElementById(removeTargetId);
+        //             const files = document.querySelector('#inputImage').files;
+        //             const dataTranster = new DataTransfer();
+        //
+        //             // document.querySelector('#file-input').files =
+        //             //             Array.from(files).filter(file => file.lastModified !== removeTarget);
+        //
+        //
+        //             Array.from(files)
+        //                 .filter(file => file.lastModified != removeTargetId)
+        //                 .forEach(file => {
+        //                     dataTranster.items.add(file);
+        //                 });
+        //
+        //             document.querySelector('#inputImage').files = dataTranster.files;
+        //
+        //             removeTarget.remove();
+        //         })
+        //     }
+        // }
+        //
+        // handler.init()
+        // handler.removeFile()
+
+
+
+
+        //미리보기 이미지------------------------------------------------
+
+            //드래그 앤 드롭
+            // $(".sortable").sortable();
+
+            //이미지 등록
+            $("#inputImage").change(function(e){
+                //div 내용 비워주기
+                $('#Preview').empty();
+
+                // const fileInput = document.querySelector('#inputImage');
+                var files = e.target.files; //선택한 파일을 가져옴.
+                var arr = Array.from(files);
+
+                // var arr = Array.prototype.slice.call(files);
+                //Array 객체의 slice() 메서드를 사용하여 객체(files)를 배열(arr)로 변환.
+                //call() 메소드를 사용하여 slice() 메소드를 호출하면, 인수로 전달된 객체가 slice() 메소드의 this 값이 됨.
+
+                //업로드 가능 파일인지 체크
+                for(var i=0; i<files.length; i++){
+                    if(!checkExtension(files[i].name,files[i].size)){
+                        return false;
+                    }
+                }
+                preview(arr);
+
+                function checkExtension(fileName,fileSize){
+                    // var regex = new RegExp("(.*?)\.(exe|sh|zip|alz)$");
+                    var maxSize = 20971520;  //20MB
+
+                    if(fileSize >= maxSize){
+                        alert('이미지 크기가 초과되었습니다.');
+                        $("#inputImage").val("");  //파일 초기화
+                        return false;
+                    }
+
+                    // if(regex.test(fileName)){
+                    //     alert('확장자명을 확인해주세요.');
+                    //     $("#inputImage").val("");  //파일 초기화
+                    //     return false;
+                    // }
+                    return true;
+                }
+
+                function preview(arr){
+                    arr.forEach(function(f){
+
+                        //div에 이미지 추가
+                        // var str = '<li class="ui-state-default">';
+
+                        //이미지 파일 미리보기
+                        if(f.type.match('image.*')){
+                            //파일을 읽기 위한 FileReader객체 생성
+                            var reader = new FileReader();
+                            reader.onload = function (e) {
+                                //파일 읽어들이기를 성공했을때 호출되는 이벤트 핸들러
+                                // str += `<img id="${f.lastModified}" src="${e.target.result}" title="${f.name}" width=80 height=80>`;
+                                // str += `<span data-index="${f.lastModified}" class="delBtn" onclick="delImg(this)">x</span>`;
+                                // str += '</li>';
+
+                                var str = `<li class="ui-state-default">
+                                           <img id="${f.lastModified}" src="${e.target.result}" title="${f.name}" width=80 height=80>
+                                           <span data-index="${f.lastModified}" class="delBtn" onclick="delImg(this)">x</span>
+                                           </li>`
+                                $(str).appendTo('#Preview');
+
+                            }
+                            reader.readAsDataURL(f); //reader에게 e.target.files[0](업로드된 파일)를 URL로 읽으라고 명령
+
+                        }else{
+                            //이미지 파일 아닐 경우
+                            alert('이미지가 아닌 파일은 업로드할 수 없습니다.');
+
+                        }
+                    })
+                }
+            })
+
+        //미리보기 이미지 삭제
+        function delImg(e){
+            console.log(e.className);
+
+            if(e.className !== 'delBtn') return;
+                        const removeTargetId = e.dataset.index;
+                        const removeTarget = document.getElementById(removeTargetId);
+                        const files = document.querySelector('#inputImage').files;
+                        const dataTransfer = new DataTransfer();
+
+                        // document.querySelector('#file-input').files =
+                        //             Array.from(files).filter(file => file.lastModified !== removeTarget);
+
+
+                        Array.from(files)
+                            .filter(file => file.lastModified != removeTargetId)
+                            .forEach(file => {
+                                dataTransfer.items.add(file);
+                            });
+
+                        document.querySelector('#inputImage').files = dataTransfer.files;
+
+                        removeTarget.remove();
+
+                        $(e).parent('li').remove();
+        }
+
+        //미리보기 삭제----------------------------------------------
+
+        // const files = $('#inputImage')[0].files;
+        //
+        // // const delImg = (fileNum) => {	//fileNum은 li 의 index 값
+        // function delImg(fileNum) {
+        //     const index = $(fileNum).parent('li').index(); // 해당 요소의 부모 li 요소 선택
+        //     // const index = $li.index(); // li 요소의 인덱스 구하기
+        //
+        //     console.log("delImg진입")
+        //     console.log("index:"+index)
+        //
+        //     const dataTransfer = new DataTransfer();
+        //
+        //     let files = $('#inputImage')[0].files;	//사용자가 입력한 파일을 변수에 할당
+        //
+        //     let fileArray = Array.from(files);	//변수에 할당된 파일을 배열로 변환(FileList -> Array)
+        //
+        //     fileArray.splice(index, 1);	//해당하는 index의 파일을 배열에서 제거
+        //
+        //     fileArray.forEach(file => { dataTransfer.items.add(file); });
+        //     //남은 배열을 dataTransfer로 처리(Array -> FileList)
+        //
+        //     $('#inputImage')[0].files = dataTransfer.files;	//제거 처리된 FileList를 돌려줌
+        //
+        //     $(fileNum).parent('li').remove();
+        //
+        //
+        //     console.log("files:"+files);
+        // }
+        //
+        //
+
+
+
+        //게시글 업로드-----------------------------------------------
         $('#uploadBtn').click(function( ) {
 
             var uploadForm = $('#upload_form')[0]; //$(...) 하면 객체 하나가 리턴
@@ -124,49 +374,6 @@
         }); //end click
 
 
-
-
-
-
-        //사진 미리보기
-        function showUploadedImages(arr){
-            console.log(arr);
-
-            var divArea = $(".uploadResult");
-            var str = "";
-            for(var i=0; i<arr.length; i++){
-                //백틱.1번 앞에 있는것.
-                str += `<div>
-                       <img src=/display?fileName=${arr[i].thumbnailURL}>
-                        <button class='removeBtn' data-name=${arr[i].imageURL}>REMOVE</button>
-                    </div>`
-
-
-                // str += "<div>";
-                // str += "<img src='/display?fileName="+arr[i].thumbnailURL+"'>";
-                // str += "<button class='removeBtn' data-name='"+arr[i].imageURL+"'>REMOVE</button>"
-                // srt += "</div>";
-            }
-            divArea.append(str);
-        }
-
-
-
-
-
-        // $(document).ready(function(){
-        //     var fileTarget = $('.file-box .upload-hidden');
-        //
-        //     fileTarget.on('change', function(){
-        //         if(window.FileReader){
-        //             var filename = $(this)[0].files[0].name;
-        //         } else {
-        //             var filename = $(this).val().split('/').pop().split('\\').pop();
-        //         }
-        //
-        //         $(this).siblings('.upload-name').val(filename);
-        //     });
-        // });
 
 
     </script>
