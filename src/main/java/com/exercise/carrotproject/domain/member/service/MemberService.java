@@ -1,4 +1,4 @@
-package com.exercise.carrotproject.domain.member;
+package com.exercise.carrotproject.domain.member.service;
 
 
 import com.exercise.carrotproject.domain.member.dto.BlockDto;
@@ -10,7 +10,7 @@ import org.springframework.web.multipart.MultipartFile;
 import java.util.Map;
 import java.util.Optional;
 
-@Service
+//@Service
 public interface MemberService {
     Optional<Member> findOneMember(String memId);
     boolean hasDuplicatedMemberId(String memId);

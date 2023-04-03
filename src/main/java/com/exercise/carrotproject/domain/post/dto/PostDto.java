@@ -29,9 +29,4 @@ public class PostDto {
     private Integer hits;
     private String wishPlace;
 
-
-
-
-
-
 }

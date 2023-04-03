@@ -20,5 +20,5 @@ public class SellList {
     @ManyToOne @JoinColumn(name = "seller_id")
     private Member seller;
     @ManyToOne @JoinColumn(name = "buyer_id")
-    private Member Buyer;
+    private Member buyer;
 }

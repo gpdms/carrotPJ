@@ -4,24 +4,47 @@
       layout:decorate="~{layout/basic.html}">
 <head layout:fragment="head">
     <title>홈 화면</title>
-    <link href="/css/profile.css" rel="stylesheet" />
+    <style>
+        .profile_container{
+            width: 200px;
+            margin: auto;
+        }
+        .profile-img{
+            width: 150px;
+            height: 150px;
+            overflow: hidden;
+            border-radius: 50%;
+            margin: 0 auto 20px;
+        }
+        .profile-img img{
+            width: 100%;
+            height: 100%;
+        }
+        .profile_container button{
+            width: 170px;
+            margin: 0 auto;
+            display: block;
+        }
+    </style>
 </head>
 
 <div layout:fragment="content">
-    <div class="profile_img">
-        <img th:src="|/members/${member.memId}/profileImg|" alt="프로필이미지">
+    <div class="profile_container">
+        <div class="profile-img">
+            <img th:src="|/members/${member.memId}/profileImg|" alt="프로필이미지">
+        </div>
+        <button th:if="${session?.loginMember.memId == member.memId}"> 프로필 편집 </button>
+        <form th:action="|/members/${member.memId}/block|" th:method="post">
+            <button th:if="${session?.loginMember.memId != member.memId && !blockState}" type="submit">
+                차단하기</button>
+        </form>
+        <form th:action="|/members/${member.memId}/cancelBlock|" th:method="post">
+            <input type="hidden" name="loginMemId" th:value="${session.loginMember.memId}">
+            <button th:if="${blockState}" type="submit">
+                차단해제</button>
+        </form>
     </div>
-    <br>
-    <button th:if="${session?.loginMember.memId == member.memId }"> 프로필 편집 </button>
-    <form th:action="|/members/${member.memId}/block|" th:method="post">
-        <button th:if="${session?.loginMember.memId != member.memId && !blockState}" type="submit">
-          차단하기</button>
-    </form>
-    <form th:action="|/members/${member.memId}/cancelBlock|" th:method="post">
-        <input type="hidden" name="loginMemId" th:value="${session.loginMember.memId}">
-        <button th:if="${blockState}" type="submit">
-            차단해제</button>
-    </form>
+    <hr>
 
     <h3 th:text="|${member.memId}님|"></h3>
     <p th:text="|${member.nickname}님의 매너온도 : ${member.mannerScore}|"></p>

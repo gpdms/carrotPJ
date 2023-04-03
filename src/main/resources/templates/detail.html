@@ -71,7 +71,7 @@
                     <div class="col-md-6">
                        <!--프로필-->
                         <p>[[${post.member.nickname}]]</p>
-                        <div class="profile_img">
+                        <div class="profile-img">
                             <a th:href="@{/members/{memId}(memId=${post.member.memId})}">
                              <img th:src="|/members/${post.member.memId}/profileImg|" alt="프로필이미지"/>
                             </a>
@@ -97,6 +97,10 @@
                         <a href="#"> 게시글숨김</a><br/>
                         <a th:href="|/post/updatePost/${post.postId}|"> 게시글수정</a><br/>
 
+                        <!--임시 판매 완료 버튼(for 리뷰)-->
+                        <form action="/review/">
+                        <button type="submit">판매완료 (임시)</button>
+                        </form>
                     </div>
                 </div>
             </div>

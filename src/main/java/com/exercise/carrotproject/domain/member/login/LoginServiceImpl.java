@@ -1,8 +1,7 @@
 package com.exercise.carrotproject.domain.member.login;
 
-import com.exercise.carrotproject.domain.member.MemberRepository;
+import com.exercise.carrotproject.domain.member.repository.MemberRepository;
 import com.exercise.carrotproject.domain.member.entity.Member;
-import com.exercise.carrotproject.domain.member.login.LoginService;
 import lombok.RequiredArgsConstructor;
 import org.mindrot.jbcrypt.BCrypt;
 import org.springframework.stereotype.Service;

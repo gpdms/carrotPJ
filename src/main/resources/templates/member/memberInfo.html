@@ -6,9 +6,10 @@
 <head layout:fragment="head">
     <title>회원 정보 폼</title>
     <link th:href="@{/css/bootstrap.min.css}"
-          href="/css/bootstrap.min.css" rel="stylesheet">
+          href="/css/bootstrap.min.css" rel="stylesheet"/>
+    <link href="/css/profile.css" rel="stylesheet" />
     <style>
-        .form-container {
+        .form_container {
             max-width: 560px;
             padding-left: 100px;
         }
@@ -20,7 +21,7 @@
 </head>
 
 <div layout:fragment="content">
-    <div class="form-container">
+    <div class="form_container">
         <div class="py-5 text-center">
             <h2>개인정보 수정</h2>
         </div>
@@ -39,11 +40,14 @@
 
             <div>
                 <label for="profImg">프로필 이미지</label>
+                <div class="profile-img">
+                    <img th:src="|/members /${member.memId}/profileImg|" alt="프로필이미지">
+                </div>
                 <input type="file" id="profImg"  name="profImg"
                        class="formcontrol"
                        th:onchange="pfEditBtnActive()">
 <!--                <input id="profimg" type="file" name="profimg" required="required" onChange="fileChange();" style="display:none">-->
-
+                
             </div>
 
             <div>

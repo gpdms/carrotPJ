@@ -1,20 +1,18 @@
-package com.exercise.carrotproject.web.member;
+package com.exercise.carrotproject.web.member.controller;
 
 
 import com.exercise.carrotproject.SessionConst;
-import com.exercise.carrotproject.domain.member.MemberRepository;
-import com.exercise.carrotproject.domain.member.MemberService;
-import com.exercise.carrotproject.domain.member.dto.BlockDto;
+import com.exercise.carrotproject.domain.enumList.Loc;
+import com.exercise.carrotproject.domain.member.service.MemberServiceImpl;
 import com.exercise.carrotproject.domain.member.dto.MemberDto;
-import com.exercise.carrotproject.domain.member.entity.Block;
 import com.exercise.carrotproject.domain.member.entity.Member;
 import com.exercise.carrotproject.domain.post.repository.PostRepository;
-import com.exercise.carrotproject.domain.post.service.PostService;
 import com.exercise.carrotproject.web.member.form.ProfileForm;
 import com.exercise.carrotproject.web.member.form.PwdUpdateForm;
 import com.exercise.carrotproject.web.member.form.SignupForm;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.UrlResource;
 import org.springframework.stereotype.Controller;
@@ -23,6 +21,7 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.persistence.EntityManager;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 import javax.validation.Valid;
@@ -35,9 +34,12 @@ import java.util.Optional;
 @RequestMapping("/members")
 @RequiredArgsConstructor
 public class MemberController {
-    private final MemberService memberService;
-    private final SecurityUtils securityUtils;
+    private final MemberServiceImpl memberService;
+    private final com.exercise.carrotproject.web.member.SecurityUtils securityUtils;
     private final PostRepository postRepository;
+    @Value("${dir.img-profile}")
+    private String rootProfileImgDir;
+
 
     @GetMapping("/{memId}")
     public String toMemberHome(@PathVariable String memId, Model model,
@@ -95,7 +97,7 @@ public class MemberController {
             bindingResult.rejectValue("memId", "duplicatedMemId");
             return "/member/signupForm";
         }
-        return "redirect:/";
+        return "redirect:/login";
     }
 
     @GetMapping("/{memId}/edit")
@@ -152,6 +154,9 @@ public class MemberController {
     @GetMapping("/{memId}/profileImg")
     public Resource viewProfileImg(@PathVariable("memId") String memId) throws IOException {
         String profPath = memberService.getProfPath(memId);
+        if(profPath == null) {
+            profPath = rootProfileImgDir+"profile_img.png";
+        }
         UrlResource urlResource = new UrlResource("file:" + profPath);
         return urlResource;
     }

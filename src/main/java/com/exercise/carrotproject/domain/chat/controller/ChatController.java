@@ -6,7 +6,7 @@ import com.exercise.carrotproject.domain.chat.repoisitory.ChatRepository;
 import com.exercise.carrotproject.domain.chat.repoisitory.ChatRoomRepository;
 import com.exercise.carrotproject.domain.chat.service.ChatService;
 import com.exercise.carrotproject.domain.member.MemberEntityDtoMapper;
-import com.exercise.carrotproject.domain.member.MemberRepository;
+import com.exercise.carrotproject.domain.member.repository.MemberRepository;
 import com.exercise.carrotproject.domain.member.dto.MemberDto;
 import com.exercise.carrotproject.domain.member.entity.Member;
 import com.exercise.carrotproject.domain.post.entity.Post;

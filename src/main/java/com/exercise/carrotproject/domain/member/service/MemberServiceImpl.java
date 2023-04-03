@@ -1,8 +1,9 @@
-package com.exercise.carrotproject.domain.member;
+package com.exercise.carrotproject.domain.member.service;
 
-import com.exercise.carrotproject.domain.member.dto.BlockDto;
 import com.exercise.carrotproject.domain.member.entity.Block;
 import com.exercise.carrotproject.domain.member.entity.Member;
+import com.exercise.carrotproject.domain.member.repository.BlockRepository;
+import com.exercise.carrotproject.domain.member.repository.MemberRepository;
 import com.exercise.carrotproject.web.member.SecurityUtils;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -11,8 +12,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
 import java.io.File;
 import java.io.IOException;
 import java.time.LocalDate;
@@ -21,7 +20,7 @@ import java.util.*;
 @Slf4j
 @Service
 @RequiredArgsConstructor
-public class MemberServiceImpl implements MemberService {
+public class MemberServiceImpl {
     private final MemberRepository memberRepository;
     private final BlockRepository blockRepository;
     private final SecurityUtils securityUtils;
@@ -30,17 +29,17 @@ public class MemberServiceImpl implements MemberService {
     private String rootProfileImgDir;
 
 
-    @Override
+    //@Override
     public Optional<Member> findOneMember(String memId) {
        return memberRepository.findById(memId);
     }
 
-    @Override
+    //@Override
     public boolean hasDuplicatedMemberId(String memId) {
         return memberRepository.existsById(memId) ? true : false;
     }
 
-    @Override
+    //@Override
     public Map<String, Object> insertMember(Member member) {
         Map<String, Object> saveResult = new HashMap<>();
         if (hasDuplicatedMemberId(member.getMemId())) {
@@ -53,8 +52,7 @@ public class MemberServiceImpl implements MemberService {
 
     }
 
-
-    @Override
+    //@Override
     public Member findMemberForProfileEdit(String memId) {
         Member member = memberRepository.findById(memId).orElse(null);
         return Member.builder().profPath(member.getProfPath())
@@ -62,12 +60,12 @@ public class MemberServiceImpl implements MemberService {
                 .loc(member.getLoc()).build();
     }
 
-    @Override
+   // @Override
     public String getProfPath(String memId) {
         return memberRepository.findById(memId).orElseThrow().getProfPath();
     }
 
-    @Override
+    //@Override
     @Transactional
     public boolean isPwdUpdated(String memId, String newPwd) {
         Member member = memberRepository.findById(memId).orElseThrow(
@@ -108,7 +106,7 @@ public class MemberServiceImpl implements MemberService {
         }
     }
 
-    @Override
+    //@Override
     @Transactional
     public Member profileUpdate(Member updateMember, MultipartFile profImg) {
         String profPath = createProfPath(profImg);
@@ -123,7 +121,7 @@ public class MemberServiceImpl implements MemberService {
         return member;
     }
 
-    @Override
+    //@Override
     public Block findOneBlockByMemIds(String fromMemId, String toMemId){
         Member fromMem = memberRepository.findById(fromMemId).orElse(null);
         Member toMem = memberRepository.findById(toMemId).orElse(null);
@@ -135,14 +133,14 @@ public class MemberServiceImpl implements MemberService {
 
 
 
-    @Override
+    //@Override
     public void insertBlock(String fromMemId, String toMemId) {
         Block block = Block.builder().fromMem(memberRepository.findById(fromMemId).orElse(null))
                 .toMem(memberRepository.findById(toMemId).orElse(null)).build();
         blockRepository.save(block);
     }
 
-    @Override
+    //@Override
     public void deleteBlock(String fromMemId, String toMemId) {
         Block block = findOneBlockByMemIds(fromMemId, toMemId);
         blockRepository.deleteById(block.getBlockId());
