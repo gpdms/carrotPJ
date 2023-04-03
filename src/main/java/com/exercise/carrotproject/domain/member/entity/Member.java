@@ -43,7 +43,7 @@ public class Member extends BaseEntity {
     @Size(max=500)
     private String profPath;
 
-    @NotNull
+    @Column(nullable = false)
     @ColumnDefault("36.5")
     private Double mannerScore;
 

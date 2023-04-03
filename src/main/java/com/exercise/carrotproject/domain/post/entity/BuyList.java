@@ -21,5 +21,4 @@ public class BuyList {
     private Member buyer;
     @ManyToOne @JoinColumn(name = "seller_id")
     private Member seller;
-
 }
