@@ -2,6 +2,7 @@ package com.exercise.carrotproject.domain.chat.controller;
 
 import com.exercise.carrotproject.domain.chat.entity.Chat;
 import com.exercise.carrotproject.domain.chat.entity.ChatRoom;
+import com.exercise.carrotproject.domain.chat.entity.QChat;
 import com.exercise.carrotproject.domain.chat.repoisitory.ChatRepository;
 import com.exercise.carrotproject.domain.chat.repoisitory.ChatRoomRepository;
 import com.exercise.carrotproject.domain.chat.service.ChatService;
@@ -10,6 +11,7 @@ import com.exercise.carrotproject.domain.member.repository.MemberRepository;
 import com.exercise.carrotproject.domain.member.dto.MemberDto;
 import com.exercise.carrotproject.domain.member.entity.Member;
 import com.exercise.carrotproject.domain.post.entity.Post;
+import com.querydsl.jpa.impl.JPAQueryFactory;
 import groovy.util.logging.Slf4j;
 import lombok.RequiredArgsConstructor;
 import org.springframework.messaging.handler.annotation.DestinationVariable;
@@ -18,17 +20,17 @@ import org.springframework.messaging.handler.annotation.Payload;
 import org.springframework.messaging.simp.SimpMessageHeaderAccessor;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Controller;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
 import javax.servlet.http.HttpSession;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import static com.exercise.carrotproject.SessionConst.LOGIN_MEMBER;
+import static com.exercise.carrotproject.web.common.SessionConst.LOGIN_MEMBER;
 import static org.springframework.messaging.simp.stomp.StompHeaders.SESSION;
 
 @Slf4j
@@ -41,9 +43,8 @@ public class ChatController {
     private final ChatRoomRepository chatRoomRepository;
     private final ChatRepository chatRepository;
     private final SimpMessagingTemplate simpMessagingTemplate;
-
-    @PersistenceContext
-    EntityManager em;
+    private final JPAQueryFactory jpaQueryFactory;
+    private final EntityManager em;
 
     @GetMapping("/post/{postId}")
     public String chatStart(@PathVariable Long postId, HttpSession session, Model model) {
@@ -56,7 +57,9 @@ public class ChatController {
     }
 
     @GetMapping("/chatRoom/{roomId}")
-    public String chat(@PathVariable Long roomId, Model model){
+    @Transactional
+    public String chat(@PathVariable Long roomId, Model model, HttpSession session) {
+        getChatMsg(roomId, session);//미확인메세지 업데이트
         ChatRoom chatRoom = em.find(ChatRoom.class, roomId);
         List<Chat> chatList = chatRepository.findByRoom(chatRoom);
         String seller = chatRoom.getSeller().getMemId();
@@ -70,7 +73,7 @@ public class ChatController {
 
     @PostMapping("/getChatNoti")
     @ResponseBody
-    public int getChatNoti(HttpSession session){
+    public int getChatNoti(HttpSession session) {
         MemberDto memberDto = (MemberDto) session.getAttribute(LOGIN_MEMBER);
         Member memberEntity = MemberEntityDtoMapper.toMemberEntity(memberDto);
         List<Chat> chatList = chatRepository.findByToAndReadState(memberEntity, 0);//미확인 메세지 조회
@@ -84,16 +87,6 @@ public class ChatController {
         List<ChatRoom> chatRoomList = chatRoomRepository.findBySellerOrBuyer(memberEntity, memberEntity); //seller or buyer가 유저 아이디와 같은 채팅방 찾아야함
         model.addAttribute("chatRoomList", chatRoomList);
         return "chat/chatRoomList";
-    }
-
-    @GetMapping("/sessionTest")
-    @ResponseBody
-    public String sessionTest(HttpSession session) {
-        Member member = memberRepository.findById("tester")
-                .filter(m -> m.getMemPwd().equals("12345678"))
-                .orElse(null);
-        session.setAttribute(LOGIN_MEMBER, member);
-        return "세션테스트입니다!! >>> " + session.getAttribute(LOGIN_MEMBER);
     }
 
     @MessageMapping("/chat/{postId}/{seller}/{buyer}")
@@ -132,10 +125,22 @@ public class ChatController {
         Map map = new HashMap();
         map.put("chat", chat.getMessage()); //채팅메세지
         map.put("from", memberDto.getMemId()); //보내는이
+        map.put("room", chat.getRoom().getRoomId()); //채팅방 id
 
         //알림메세지 보내기
         simpMessagingTemplate.convertAndSend("/topic/chat/" + chat.getTo().getMemId(), "알람메세지");
         //채팅방으로 메세지 보내기
         simpMessagingTemplate.convertAndSend("/topic/chat/" + postId + "/" + seller + "/" + buyer, map);
+    }
+
+    @PostMapping("/getChatMsg/{roomId}")
+    @ResponseBody
+    @Transactional
+    public String getChatMsg(@PathVariable Long roomId, HttpSession session) {
+        long updateResult = jpaQueryFactory.update(QChat.chat)
+                .set(QChat.chat.readState, 1)
+                .where(QChat.chat.room.roomId.eq(roomId), QChat.chat.to.memId.eq(((MemberDto) session.getAttribute(LOGIN_MEMBER)).getMemId()), QChat.chat.readState.eq(0))
+                .execute();
+        return "성공!";
     }
 }

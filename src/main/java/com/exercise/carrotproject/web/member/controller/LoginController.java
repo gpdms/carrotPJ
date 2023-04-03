@@ -1,6 +1,6 @@
-package com.exercise.carrotproject.web.member;
+package com.exercise.carrotproject.web.member.controller;
 
-import com.exercise.carrotproject.SessionConst;
+import com.exercise.carrotproject.web.common.SessionConst;
 import com.exercise.carrotproject.domain.member.dto.MemberDto;
 import com.exercise.carrotproject.domain.member.login.LoginService;
 import com.exercise.carrotproject.domain.member.entity.Member;

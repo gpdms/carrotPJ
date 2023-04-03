@@ -1,8 +1,7 @@
 package com.exercise.carrotproject.web.argumentresolver;
 
-import com.exercise.carrotproject.SessionConst;
+import com.exercise.carrotproject.web.common.SessionConst;
 import com.exercise.carrotproject.domain.member.dto.MemberDto;
-import com.exercise.carrotproject.domain.member.entity.Member;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.MethodParameter;
 import org.springframework.web.bind.support.WebDataBinderFactory;

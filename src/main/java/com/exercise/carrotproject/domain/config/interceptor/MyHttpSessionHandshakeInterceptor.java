@@ -11,7 +11,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 import java.util.Map;
 
-import static com.exercise.carrotproject.SessionConst.LOGIN_MEMBER;
+import static com.exercise.carrotproject.web.common.SessionConst.LOGIN_MEMBER;
 import static org.springframework.messaging.simp.stomp.StompHeaders.SESSION;
 
 public class MyHttpSessionHandshakeInterceptor implements HandshakeInterceptor {
