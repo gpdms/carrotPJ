@@ -1,13 +1,9 @@
 package com.exercise.carrotproject.domain.post.controller;
 
-import com.exercise.carrotproject.SessionConst;
+import com.exercise.carrotproject.web.common.SessionConst;
 import com.exercise.carrotproject.domain.member.dto.MemberDto;
-import com.exercise.carrotproject.domain.member.entity.Member;
 import com.exercise.carrotproject.domain.post.dto.PostDto;
 import com.exercise.carrotproject.domain.post.dto.PostImgDto;
-import com.exercise.carrotproject.domain.post.entity.Post;
-import com.exercise.carrotproject.domain.post.entity.PostImg;
-import com.exercise.carrotproject.domain.post.service.PostService;
 import com.exercise.carrotproject.domain.post.service.PostServiceImpl;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -22,11 +18,9 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
-import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 import java.io.IOException;
 import java.net.MalformedURLException;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 

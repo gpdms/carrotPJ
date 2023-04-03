@@ -1,15 +1,15 @@
 package com.exercise.carrotproject.web.member.controller;
 
 
-import com.exercise.carrotproject.SessionConst;
-import com.exercise.carrotproject.domain.enumList.Loc;
-import com.exercise.carrotproject.domain.member.service.MemberServiceImpl;
 import com.exercise.carrotproject.domain.member.dto.MemberDto;
 import com.exercise.carrotproject.domain.member.entity.Member;
+import com.exercise.carrotproject.domain.member.service.MemberServiceImpl;
 import com.exercise.carrotproject.domain.post.repository.PostRepository;
+import com.exercise.carrotproject.web.common.SessionConst;
 import com.exercise.carrotproject.web.member.form.ProfileForm;
 import com.exercise.carrotproject.web.member.form.PwdUpdateForm;
 import com.exercise.carrotproject.web.member.form.SignupForm;
+import com.exercise.carrotproject.web.member.util.SecurityUtils;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -21,7 +21,6 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
-import javax.persistence.EntityManager;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 import javax.validation.Valid;
@@ -35,7 +34,7 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class MemberController {
     private final MemberServiceImpl memberService;
-    private final com.exercise.carrotproject.web.member.SecurityUtils securityUtils;
+    private final SecurityUtils securityUtils;
     private final PostRepository postRepository;
     @Value("${dir.img-profile}")
     private String rootProfileImgDir;

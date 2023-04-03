@@ -1,13 +1,13 @@
 package com.exercise.carrotproject.web.common.controller;
 
 
-import com.exercise.carrotproject.SessionConst;
 import com.exercise.carrotproject.domain.enumList.Loc;
-import com.exercise.carrotproject.domain.member.repository.MemberRepository;
 import com.exercise.carrotproject.domain.member.dto.MemberDto;
 import com.exercise.carrotproject.domain.member.entity.Member;
+import com.exercise.carrotproject.domain.member.repository.MemberRepository;
 import com.exercise.carrotproject.web.argumentresolver.Login;
-import com.exercise.carrotproject.web.member.SecurityUtils;
+import com.exercise.carrotproject.web.common.SessionConst;
+import com.exercise.carrotproject.web.member.util.SecurityUtils;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -17,7 +17,6 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import javax.annotation.PostConstruct;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
-import java.util.Optional;
 
 @Controller
 @RequiredArgsConstructor

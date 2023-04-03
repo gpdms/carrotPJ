@@ -1,8 +1,6 @@
 package com.exercise.carrotproject.web.review;
 
-import com.exercise.carrotproject.SessionConst;
 import com.exercise.carrotproject.domain.enumList.Category;
-import com.exercise.carrotproject.domain.enumList.Loc;
 import com.exercise.carrotproject.domain.member.dto.MemberDto;
 import com.exercise.carrotproject.domain.member.entity.Member;
 import com.exercise.carrotproject.domain.member.service.MemberServiceImpl;
@@ -14,10 +12,10 @@ import com.exercise.carrotproject.domain.post.repository.PostRepository;
 import com.exercise.carrotproject.domain.post.repository.SellListRepository;
 import com.exercise.carrotproject.domain.review.dto.ReviewBuyerDetailDto;
 import com.exercise.carrotproject.domain.review.service.ReviewServiceImpl;
+import com.exercise.carrotproject.web.common.SessionConst;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -27,8 +25,6 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import javax.persistence.EntityManager;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
-import java.net.http.HttpRequest;
-import java.util.Optional;
 
 
 @Slf4j

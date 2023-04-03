@@ -1,6 +1,6 @@
 package com.exercise.carrotproject.domain.config.interceptor;
 
-import com.exercise.carrotproject.SessionConst;
+import com.exercise.carrotproject.web.common.SessionConst;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.servlet.HandlerInterceptor;
 
