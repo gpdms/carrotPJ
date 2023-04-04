@@ -1,0 +1,45 @@
+.inputFile,
+#Preview,
+#Preview li{
+    float:left
+}
+.inputFile{
+    margin-bottom: 10px;
+}
+.addImgBtn{
+    width: 80px !important;
+    height: 80px !important;
+    line-height: 71px !important;
+    background-color: #fff !important;
+    color: #b7b7b7 !important;
+    border: 2px solid #b7b7b7;
+    font-size: 35px !important;
+    padding: 0 !important;
+}
+
+#Preview{
+    margin-left: 20px;
+    width: 650px;
+}
+#Preview li{
+    list-style: none;
+    margin-left: 10px;
+    margin-bottom: 10px;
+    position: relative;
+    border: 1px solid #ececec;
+    cursor:move
+}
+.delBtn{
+    position: absolute;
+    top: 0;
+    right: 0;
+    font-size: 13px;
+    background-color: #000;
+    color: #fff;
+    width: 18px;
+    height: 18px;
+    line-height: 16px;
+    display: inline-block;
+    text-align: center;
+    cursor: pointer;
+}

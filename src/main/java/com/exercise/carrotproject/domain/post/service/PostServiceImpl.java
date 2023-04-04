@@ -8,6 +8,7 @@ import com.exercise.carrotproject.domain.post.repository.PostRepository;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.hibernate.annotations.DynamicUpdate;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
@@ -188,6 +189,7 @@ public class PostServiceImpl {
         return postDto;
     }
 
+    //게시글의 모든 이미지 반환
 //    @Override
     public List<PostImgDto> selectPostImgs(Long postId){
 
@@ -201,6 +203,8 @@ public class PostServiceImpl {
 
         return postImgDtoList;
     }
+    
+    //게시글의 첫번째 이미지 반환
 //    @Override
     public PostImgDto selectOnePostImg(Long imgId){
         PostImg imgEntity = postImgRepository.findById(imgId).orElse(null);
@@ -210,6 +214,26 @@ public class PostServiceImpl {
         return imgDto;
     }
 
+    //게시글 이미지 삭제
+//    @Override
+    @Transactional
+    public void deleteOnePostImg(Long imgId){
+        postImgRepository.deleteById(imgId);
+    }
+
+    //게시글 업데이트
+//    @Override
+    @Transactional
+    public void updatePost(PostDto postDto){
+        //Dto -> Enity
+        Post post = PostEntityDtoMapper.dtoToEntity(postDto);
+
+        Post rs = postRepository.save(post);
+        log.info("게시글 업데이트 성공?:{}",rs);
+    }
+
+    //게시글 삭제
+//    @Override
     @Transactional
     public void deletePost(Long postId){
         //postId로 post엔티티 조회

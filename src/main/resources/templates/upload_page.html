@@ -8,54 +8,9 @@
 <!--    <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">-->
 <!--    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-slider/10.6.2/css/bootstrap-slider.min.css" integrity="sha256-G3IAYJYIQvZgPksNQDbjvxd/Ca1SfCDFwu2s2lt0oGo=" crossorigin="anonymous" />-->
 <!--    <link rel="stylesheet" type="text/css" href="css/style.css">-->
-    <style>
+    <!--이미지 미리보기 css-->
+    <link rel="stylesheet" href="/css/previewImg.css">
 
-        .inputFile,
-        #Preview,
-        #Preview li{
-            float:left
-        }
-        .inputFile{
-            margin-bottom: 10px;
-        }
-        .addImgBtn{
-            width: 80px !important;
-            height: 80px !important;
-            line-height: 71px !important;
-            background-color: #fff !important;
-            color: #b7b7b7 !important;
-            border: 2px solid #b7b7b7;
-            font-size: 35px !important;
-            padding: 0 !important;
-        }
-
-        #Preview{
-            margin-left: 20px;
-            width: 650px;
-        }
-        #Preview li{
-            list-style: none;
-            margin-left: 10px;
-            margin-bottom: 10px;
-            position: relative;
-            border: 1px solid #ececec;
-            cursor:move
-        }
-        .delBtn{
-            position: absolute;
-            top: 0;
-            right: 0;
-            font-size: 13px;
-            background-color: #000;
-            color: #fff;
-            width: 18px;
-            height: 18px;
-            line-height: 16px;
-            display: inline-block;
-            text-align: center;
-            cursor: pointer;
-        }
-    </style>
 </head>
 <body>
 <!--    <nav class="navbar nav-global fixed-top navbar-expand-sm">-->
@@ -69,7 +24,6 @@
     <div class="container container-sm container-item-create">
         <h5 class="container-headline">중고거래 글쓰기</h5>
         <form id="upload_form" class="form-item-create">
-
             <div class="form-group form-picture">
                 <div class="file-box">
                 <!--사진-->
@@ -280,26 +234,26 @@
             console.log(e.className);
 
             if(e.className !== 'delBtn') return;
-                        const removeTargetId = e.dataset.index;
-                        const removeTarget = document.getElementById(removeTargetId);
-                        const files = document.querySelector('#inputImage').files;
-                        const dataTransfer = new DataTransfer();
+            const removeTargetId = e.dataset.index;
+            const removeTarget = document.getElementById(removeTargetId);
+            const files = document.querySelector('#inputImage').files;
+            const dataTransfer = new DataTransfer();
 
-                        // document.querySelector('#file-input').files =
-                        //             Array.from(files).filter(file => file.lastModified !== removeTarget);
+            // document.querySelector('#file-input').files =
+            //             Array.from(files).filter(file => file.lastModified !== removeTarget);
 
 
-                        Array.from(files)
-                            .filter(file => file.lastModified != removeTargetId)
-                            .forEach(file => {
-                                dataTransfer.items.add(file);
-                            });
+            Array.from(files)
+                .filter(file => file.lastModified != removeTargetId)
+                .forEach(file => {
+                    dataTransfer.items.add(file);
+                });
 
-                        document.querySelector('#inputImage').files = dataTransfer.files;
+            document.querySelector('#inputImage').files = dataTransfer.files;
 
-                        removeTarget.remove();
+            removeTarget.remove();
 
-                        $(e).parent('li').remove();
+            $(e).parent('li').remove();
         }
 
         //미리보기 삭제----------------------------------------------

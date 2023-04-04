@@ -161,17 +161,54 @@ public class PostController {
         //게시글 내용 개행처리
         postDto.setContent(postDto.getContent().replace("<br>","\r\n"));
 
+        //이미지 리스트 반환
+        List<PostImgDto> postImgDtoList = postService.selectPostImgs(postId);
+
+
         model.addAttribute("post", postDto);
+        model.addAttribute("postImgs", postImgDtoList);
+
+
 
         return "update_post";
     }
 
     //게시글 수정한 것 업로드
     @PostMapping("/post/updatePost/{postId}")
-    public String udtPost(PostDto postDto, @RequestParam MultipartFile[] uploadFiles){
+    public ResponseEntity<String> udtPost(PostDto postDto, @RequestParam List<Long> imgIdList, @RequestParam MultipartFile[] uploadFiles, HttpSession session){
         log.info("게시글수정 컨트롤러에 온 postDto:{}", postDto);
+        log.info("게시글수정 컨트롤러에 온 imgId:{}", imgIdList);
 
-        return "redirect:/post/board";
+        //제목, 카테고리, 내용 null체크
+        if(postDto.getTitle().isEmpty() || postDto.getCategory()==null || postDto.getContent().isEmpty()){
+            return new ResponseEntity<>("제목, 카테고리, 내용을 입력해주세요.", HttpStatus.BAD_REQUEST);
+        }
+
+        //작성자 정보 세팅
+        MemberDto loginMember = (MemberDto) session.getAttribute(SessionConst.LOGIN_MEMBER);
+        postDto.setMember(loginMember);
+        postDto.setLoc(loginMember.getLoc());
+        //게시글 내용 개행 처리
+        postDto.setContent(postDto.getContent().replace("\r\n","<br>")); //줄개행
+
+
+
+        //DB에 update
+        postService.updatePost(postDto);
+
+        //기존 이미지 삭제
+        for(Long imgId : imgIdList){
+            postService.deleteOnePostImg(imgId);
+        }
+
+        //새 이미지 추가
+
+
+
+
+
+        return new ResponseEntity<>("상품이 게시되었습니다.",HttpStatus.OK);
+
     }
 
 
