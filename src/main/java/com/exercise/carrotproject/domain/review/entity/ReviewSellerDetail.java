@@ -14,6 +14,7 @@ import java.sql.Timestamp;
 @AllArgsConstructor
 @Builder
 @ToString
+@Getter
 //@DynamicInsert
 public class ReviewSellerDetail {
     @Id

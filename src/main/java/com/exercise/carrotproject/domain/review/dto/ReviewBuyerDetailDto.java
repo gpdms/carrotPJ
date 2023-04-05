@@ -40,4 +40,6 @@ public class ReviewBuyerDetailDto {
         this.buyerId = buyerId;
         this.reviewBuyerIndicator = reviewBuyerIndicator;
     }
+
+
 }

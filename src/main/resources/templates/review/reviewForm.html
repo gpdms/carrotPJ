@@ -61,7 +61,7 @@
                     <div id="positiveSellerIndicator">
                         <h5>어떤 점이 좋았나요?</h5>
                         <th:block th:each="RS:${T(com.exercise.carrotproject.domain.enumList.ReviewSellerIndicator).values()}">
-                            <label th:if="${RS.name().contains('PS')}">
+                            <label th:if="${RS.name().contains('P')}">
                                 <input type="checkbox" th:name="indicator" th:value="${RS}">
                                 [[${RS.description}]]
                             </label>
@@ -70,7 +70,7 @@
                     <div id="negativeSellerIndicator">
                         <h5>어떤 점이 별로였나요?</h5>
                         <th:block th:each="RS:${T(com.exercise.carrotproject.domain.enumList.ReviewSellerIndicator).values()}">
-                            <label th:if="${RS.name().contains('NS')}">
+                            <label th:if="${RS.name().contains('N')}">
                                 <input type="checkbox" th:name="indicator" th:value="${RS}">
                                 [[${RS.description}]]
                             </label>
@@ -123,7 +123,7 @@
                         <div id="positiveBuyerIndicator">
                             <h5>어떤 점이 좋았나요?</h5>
                             <th:block th:each="RB:${T(com.exercise.carrotproject.domain.enumList.ReviewBuyerIndicator).values()}">
-                               <label th:if="${RB.name().contains('PB')}">
+                               <label th:if="${RB.name().contains('P')}">
                                    <input type="checkbox" th:name="indicator" th:value="${RB}">
                                    [[${RB.description}]]
                                </label>
@@ -132,7 +132,7 @@
                         <div id="negativeBuyerIndicator">
                             <h5>어떤 점이 별로였나요?</h5>
                             <th:block th:each="RB:${T(com.exercise.carrotproject.domain.enumList.ReviewBuyerIndicator).values()}">
-                                <label th:if="${RB.name().contains('NB')}">
+                                <label th:if="${RB.name().contains('N')}">
                                     <input type="checkbox" th:name="indicator" th:value="${RB}">
                                     [[${RB.description}]]
                                 </label>

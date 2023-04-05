@@ -88,16 +88,17 @@ public class ReviewController {
     @ResponseBody
     public String addSellerReview(@RequestBody ReviewForm reviewForm) {
         log.info("reviewSellerForm----{}", reviewForm);
+        List<ReviewSellerIndicator> indicatorList = ReviewSellerIndicator.findAllByEnumName(reviewForm.getIndicators());
         ReviewSeller reviewSeller = ReviewSeller.builder()
                 .seller(memberService.findOneMember(reviewForm.getSellerId()).orElse(null))
                 .buyer(memberService.findOneMember(reviewForm.getBuyerId()).orElse(null))
                 .post(postRepository.findById(reviewForm.getPostId()).orElse(null))
                 .reviewState(ReviewState.findByStateCode(reviewForm.getReviewStateCode()))
+                .totalScore(ReviewSellerIndicator.sumScore(indicatorList))
                 .message(reviewForm.getMessage())
                 .build();
-        List<ReviewSellerIndicator> indicatorList = ReviewSellerIndicator.findAllByEnumName(reviewForm.getIndicators());
-        log.info("indicatorList --- {}", indicatorList);
-        return "review/reviewForm";
+        reviewService.insertReviewSeller(reviewSeller, indicatorList);
+        return "성공";
     }
 
    @GetMapping("/buyer")

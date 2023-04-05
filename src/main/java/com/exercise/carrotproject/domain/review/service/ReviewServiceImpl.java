@@ -1,8 +1,10 @@
 package com.exercise.carrotproject.domain.review.service;
 
 
+import com.exercise.carrotproject.domain.enumList.ReviewSellerIndicator;
 import com.exercise.carrotproject.domain.member.entity.Member;
 import com.exercise.carrotproject.domain.review.entity.ReviewSeller;
+import com.exercise.carrotproject.domain.review.entity.ReviewSellerDetail;
 import com.exercise.carrotproject.domain.review.repository.ReviewBuyerCustomRepository;
 import com.exercise.carrotproject.domain.review.repository.ReviewBuyerDetailCustomRepository;
 import com.exercise.carrotproject.domain.review.repository.ReviewSellerCustomRepository;
@@ -13,8 +15,11 @@ import com.exercise.carrotproject.domain.review.repository.basic.ReviewSellerDet
 import com.exercise.carrotproject.domain.review.repository.basic.ReviewSellerRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
 
 
 @Service
@@ -30,7 +35,25 @@ public class ReviewServiceImpl {
     private final ReviewBuyerRepository reviewBuyerRepository;
     private final ReviewBuyerDetailRepository reviewBuyerDetailRepository;
 
-    public void insertReviewSeller() {
+
+    @Transactional
+    public void insertReviewSeller(ReviewSeller reviewSeller, List<ReviewSellerIndicator> indicatorList) {
+        ReviewSeller newReviewSeller = reviewSellerRepository.save(reviewSeller);
+        insertReviewSellerDetail(newReviewSeller, indicatorList);
     }
 
+    @Transactional
+    public void insertReviewSellerDetail(ReviewSeller newReviewSeller, List<ReviewSellerIndicator> indicatorList) {
+        for (ReviewSellerIndicator reviewSellerIndicator : indicatorList) {
+            ReviewSellerDetail reviewSellerDetail = ReviewSellerDetail.builder().reviewSeller(newReviewSeller)
+                    .reviewSellerIndicator(reviewSellerIndicator)
+                    .seller(newReviewSeller.getSeller())
+                    .build();
+           reviewSellerDetailRepository.save(reviewSellerDetail);
+        }
+    }
+
+//    public Map<ReviewSellerIndicator, Long> () {
+//
+//    }
 }

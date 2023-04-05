@@ -17,6 +17,7 @@ import java.util.List;
 @AllArgsConstructor
 @Builder
 @ToString
+@Getter
 //@DynamicInsert
 public class ReviewSeller extends BaseEntity {
     @Id @GeneratedValue(strategy= GenerationType.IDENTITY)
