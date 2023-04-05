@@ -11,7 +11,6 @@ import java.sql.Timestamp;
 @Entity
 @NoArgsConstructor
 @AllArgsConstructor
-@Getter
 @Builder
 @ToString
 //@DynamicInsert
@@ -33,4 +32,23 @@ public class Block {
     @CreationTimestamp
     @Column(updatable = false)
     private Timestamp createdTime;
+
+    public Long getBlockId() {
+        return Long.valueOf(blockId);
+    }
+    public Member getFromMem() {
+        return Member.builder().memId(getFromMem().getMemId())
+                .loc(getFromMem().getLoc())
+                .nickname(getFromMem().getNickname())
+                .mannerScore(getFromMem().getMannerScore()).build();
+    }
+    public Member getToMem() {
+        return Member.builder().memId(getToMem().getMemId())
+                .loc(getToMem().getLoc())
+                .nickname(getToMem().getNickname())
+                .mannerScore(getToMem().getMannerScore()).build();
+    }
+    public Timestamp getCreatedTime() {
+        return createdTime;
+    }
 }

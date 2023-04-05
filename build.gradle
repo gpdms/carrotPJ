@@ -45,20 +45,19 @@ dependencies {
     //validation
     implementation 'org.springframework.boot:spring-boot-starter-validation'
     //query parameter log
-    implementation 'com.github.gavlyukovskiy:p6spy-spring-boot-starter:1.5.6'
-    //암호화 알고리즘 Bcrypt 라이브러리
+    implementation 'com.github.gavlyukovskiy:p6spy-spring-boot-starter:1.5.8'
+    //암호화 알고리즘 Bcrypt
     implementation group: 'org.mindrot', name: 'jbcrypt', version: '0.4'
-    // querydsl 디펜던시 추가
+    //querydsl
     implementation "com.querydsl:querydsl-jpa:${queryDslVersion}"
     implementation "com.querydsl:querydsl-apt:${queryDslVersion}"
-
 }
 
 tasks.named('test') {
     useJUnitPlatform()
 }
 
-// querydsl 사용할 경로 지정합니다. 현재 지정한 부분은 .gitignore에 포함되므로 git에 올라가지 않습니다.
+// querydsl 사용할 경로 지정합니다. 현재 지정한 부분(build폴더)은 .gitignore에 포함되므로 git에 올라가지 않습니다.
 def querydslDir = "$buildDir/generated/'querydsl'"
 
 // JPA 사용여부 및 사용 경로 설정
@@ -71,7 +70,6 @@ querydsl {
 sourceSets {
     main.java.srcDir querydslDir
 }
-
 
 // querydsl 컴파일 시 사용할 옵션 설정
 compileQuerydsl {

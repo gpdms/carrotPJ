@@ -1,7 +1,13 @@
 package com.exercise.carrotproject.domain.enumList;
 
+import com.exercise.carrotproject.domain.review.repository.basic.ReviewSellerRepository;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Getter
 @AllArgsConstructor
@@ -28,4 +34,21 @@ public enum ReviewSellerIndicator {
     private final String description;
     private final Double score;
 
+    public static List<ReviewSellerIndicator> findAllByEnumName(List<String> searchCodes){
+        return searchCodes.stream()
+                .map(ReviewSellerIndicator::findByStateCode)
+                .collect(Collectors.toList());
+        //= return searchCodes.stream()
+        //            .map(code -> Arrays.stream(ReviewSellerIndicator.values())
+        //                    .filter(indicator -> indicator.name().equals(code))
+        //                    .findFirst()
+        //                    .orElse(null))
+        //            .collect(Collectors.toList());
+    }
+    public static ReviewSellerIndicator findByStateCode(String searchCode){
+        return Arrays.stream(values())
+                .filter(value -> value.name().equals(searchCode))
+                .findAny()
+                .orElse(null);
+    }
 }

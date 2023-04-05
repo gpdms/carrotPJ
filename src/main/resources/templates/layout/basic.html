@@ -40,6 +40,7 @@
         <script src="https://cdn.jsdelivr.net/npm/sockjs-client@1/dist/sockjs.min.js"></script>
         <!--STOMP-->
         <script src="https://cdnjs.cloudflare.com/ajax/libs/stomp.js/2.3.3/stomp.min.js"></script>
+        <th:block layout:fragment="script"> </th:block>
         <script th:inline="javascript">
             /*로그인 한 경우 동작*/
             if ([[${session.loginMember}]]["memId"] != null) {
@@ -80,6 +81,5 @@
                 connect();
             }
         </script>
-        <th:block layout:fragment="script"> </th:block>
     </body>
 </html>

@@ -1,0 +1,283 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout/basic.html}">
+
+<head layout:fragment="head">
+    <title>리뷰 폼</title>
+    <link th:href="@{/css/bootstrap.min.css}"
+          href="/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        .form-container {
+            max-width: 560px;
+            padding-left: 100px;
+        }
+        .field-error {
+            border-color: #dc3545;
+            color: #dc3545;
+        }
+        #positiveBuyerIndicator,
+        #negativeBuyerIndicator,
+        #positiveSellerIndicator,
+        #negativeSellerIndicator {
+            display: none;
+        }
+        #reviewSellerMessage, #reviewBuyerMessage textarea {
+            height: 300px;
+            width: 500px;
+        }
+
+    </style>
+</head>
+
+<div layout:fragment="content">
+    <div class="form-container">
+        <div class="py-5 text-center">
+            <h2>리뷰</h2>
+        </div>
+        <h4 class="mb-3">리뷰 작성</h4>
+
+        <div th:if="${#httpServletRequest.servletPath =='/reviews/seller'}">
+            <form id="reviewSellerForm">
+                <input type="hidden" th:name="postId" th:value="${reviewForm.postId}"/>
+                <input type="hidden" th:name="sellerId" th:value="${reviewForm.sellerId}"/>
+                <input type="hidden" th:name="buyerId" th:value="${reviewForm.buyerId}"/>
+                <div>
+                    <p>구매 후기 남기기</p>
+                    <p th:text="|${reviewForm.buyerId}님, |"></p>
+                    <p th:text="|${reviewForm.sellerId}님과의 거래가 어땠나요?|"></p>
+                </div>
+
+                <label for="sellerReviewState">평가</label>
+                <div id="sellerReviewState">
+                    <th:block th:each="RSValue:${T(com.exercise.carrotproject.domain.enumList.ReviewState).values()}"  >
+                        <button type="button" th:text="${RSValue.description}" th:onclick="viewSellerForm([[${RSValue.stateCode}]])"></button>
+                    </th:block>
+                    <div class="reviewStateCode"></div>
+                </div>
+
+
+                <div id="sellerIndicators">
+                    <div id="positiveSellerIndicator">
+                        <h5>어떤 점이 좋았나요?</h5>
+                        <th:block th:each="RS:${T(com.exercise.carrotproject.domain.enumList.ReviewSellerIndicator).values()}">
+                            <label th:if="${RS.name().contains('PS')}">
+                                <input type="checkbox" th:name="indicator" th:value="${RS}">
+                                [[${RS.description}]]
+                            </label>
+                        </th:block>
+                    </div>
+                    <div id="negativeSellerIndicator">
+                        <h5>어떤 점이 별로였나요?</h5>
+                        <th:block th:each="RS:${T(com.exercise.carrotproject.domain.enumList.ReviewSellerIndicator).values()}">
+                            <label th:if="${RS.name().contains('NS')}">
+                                <input type="checkbox" th:name="indicator" th:value="${RS}">
+                                [[${RS.description}]]
+                            </label>
+                        </th:block>
+                    </div>
+                </div>
+
+                <hr class="my-4">
+                <div id="reviewSellerMessage"></div>
+
+                <hr class="my-4">
+                <div class="row">
+                    <div class="col">
+                        <button class="w-100 btn btn-secondary btn-lg"
+                                onclick="history.go(-1); return false;"
+                                type="button">이전으로</button>
+                    </div>
+                    <div class="col">
+                        <button class="w-100 btn btn-secondary btn-lg"
+                                type="button"
+                                th:onclick="reviewSeller()">리뷰 남기기</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+
+        <div th:if="${#httpServletRequest.servletPath.equals('/reviews/buyer')}">
+            <form id="reviewBuyerForm">
+                <input type="hidden" th:name="postId" th:value="${reviewForm.postId}"/>
+                <input type="hidden" th:name="sellerId" th:value="${reviewForm.sellerId}"/>
+                <input type="hidden" th:name="buyerId" th:value="${reviewForm.buyerId}"/>
+                <div>
+                    <p>판매 후기 남기기</p>
+                    <p th:text="|${reviewForm.sellerId}님, |"></p>
+                    <p th:text="|${reviewForm.buyerId}님과의 거래가 어땠나요?|"></p>
+                </div>
+
+               <label for="buyerReviewState">평가</label>
+               <div id="buyerReviewState">
+                    <th:block th:each="RSValue:${T(com.exercise.carrotproject.domain.enumList.ReviewState).values()}"  >
+                        <button type="button" th:text="${RSValue.description}"
+                                th:onclick="viewBuyerForm([[${RSValue.stateCode}]])">
+                        </button>
+                    </th:block>
+                   <div class="reviewStateCode"></div>
+               </div>
+
+                <div id="buyerForm">
+                   <div id="buyerIndicators">
+                        <div id="positiveBuyerIndicator">
+                            <h5>어떤 점이 좋았나요?</h5>
+                            <th:block th:each="RB:${T(com.exercise.carrotproject.domain.enumList.ReviewBuyerIndicator).values()}">
+                               <label th:if="${RB.name().contains('PB')}">
+                                   <input type="checkbox" th:name="indicator" th:value="${RB}">
+                                   [[${RB.description}]]
+                               </label>
+                            </th:block>
+                        </div>
+                        <div id="negativeBuyerIndicator">
+                            <h5>어떤 점이 별로였나요?</h5>
+                            <th:block th:each="RB:${T(com.exercise.carrotproject.domain.enumList.ReviewBuyerIndicator).values()}">
+                                <label th:if="${RB.name().contains('NB')}">
+                                    <input type="checkbox" th:name="indicator" th:value="${RB}">
+                                    [[${RB.description}]]
+                                </label>
+                            </th:block>
+                        </div>
+                   </div>
+                   <hr class="my-4">
+                   <div id="reviewBuyerMessage"> </div>
+                </div>
+
+               <hr class="my-4">
+               <div class="row">
+                   <div class="col">
+                       <button class="w-100 btn btn-secondary btn-lg"
+                               onclick="history.go(-1); return false;"
+                               type="button">이전으로</button>
+                   </div>
+                   <div class="col">
+                       <button class="w-100 btn btn-secondary btn-lg"
+                               type="button"
+                       th:onclick="reviewBuyer()">리뷰 남기기</button>
+                   </div>
+               </div>
+
+           </form>
+        </div>
+
+    </div> <!-- /form-container -->
+</div>
+
+<div layout:fragment="script">
+    <script th:inline="javascript">
+        let reviewStateCode = '0';
+
+        function createMessage(reviewStateNum) {
+            if(reviewStateNum == '0') {
+                return `<h5>아쉬웠던 점을 망고마켓 팀에 알려주세요</h5>
+                    <p>상대방에게 전달되지 않으니 안심하세요 </p>
+                    <textarea name="message"
+                              className="formcontrol" placeholder="여기에 적어주세요. (선택사항)"> </textarea>`;
+            }else{
+                return `<h5>따뜻한 거래경험을 알려주세요!</h5>
+                    <p>남겨주신 거래후기는 상대방의 프로필에 공개돼요</p>
+                    <textarea name="message"
+                           class="formcontrol"> 여기에 적어주세요. (선택사항)</textarea>`;
+            }
+        }
+        function viewSellerForm(reviewStateNum) {
+            let message = createMessage(reviewStateNum);
+            if(reviewStateNum == '0') {
+                $("#negativeSellerIndicator").css("display", "block");
+                $("#positiveSellerIndicator").css("display", "none");
+                $("#reviewSellerMessage").empty();
+                $("#reviewSellerMessage").append(message);
+            } else {
+                reviewStateCode = reviewStateNum=='1' ? '1' : '2';
+                $("#negativeSellerIndicator").css("display", "none");
+                $("#positiveSellerIndicator").css("display", "block");
+                $("#reviewSellerMessage").empty();
+                $("#reviewSellerMessage").append(message);
+            }
+        }
+
+        function viewBuyerForm(reviewStateNum) {
+            let message = createMessage(reviewStateNum);
+            if(reviewStateNum == '0') {
+                $("#negativeBuyerIndicator").css("display", "block");
+                $("#positiveBuyerIndicator").css("display", "none");
+                $("#reviewBuyerMessage").empty();
+                $("#reviewBuyerMessage").append(message);
+            } else {
+                reviewStateCode = reviewStateNum == '1' ? '1' : '2';
+                $("#negativeBuyerIndicator").css("display", "none");
+                $("#positiveBuyerIndicator").css("display", "block");
+                $("#reviewBuyerMessage").empty();
+                $("#reviewBuyerMessage").append(message);
+            }
+        }
+
+        function isCheckedBox() {
+            if ($('input:checkbox[name="indicator"]:checked').length == 0) {
+                alert("최소 1개 이상의 지표에 체크해주세요.");
+                throw new Error();
+            }
+        }
+        function getCheckedList() {
+            let checkedArr = new Array();
+            $('input:checkbox[name="indicator"]').each(function() {
+                if(this.checked){//checked 처리된 항목의 값
+                    checkedArr.push(this.value);
+                }
+            });
+            return checkedArr;
+        }
+        function formToJson(formData, checkedList) {
+            return JSON.stringify({
+                sellerId: formData.get("sellerId"),
+                buyerId: formData.get("buyerId"),
+                postId: formData.get("postId"),
+                reviewStateCode : formData.get("reviewStateCode"),
+                indicators: checkedList,
+                message : formData.get("message")
+            })
+        }
+        function reviewSeller() {
+            isCheckedBox();
+            let formData =  new FormData($("#reviewSellerForm")[0]);
+            formData.delete("indicator");
+            formData.append("reviewStateCode", reviewStateCode);
+            let jsonData = formToJson(formData, getCheckedList())
+            $.ajax({
+                type: 'post',
+                url: '/reviews/seller',
+                data: jsonData,
+                contentType: "application/json",
+                success: function (data) {
+                    alert("리뷰가 등록되었습니다.");
+                },
+                error: function (err) {
+                    console.log(err);
+                    alert("리뷰를 등록할 수 없습니다.");
+                }
+            })
+        }
+
+        function reviewBuyer() {
+            isCheckedBox();
+            let formData =  new FormData($("#reviewBuyerForm")[0]);
+            formData.delete("indicator");
+            formData.append("reviewStateCode", reviewStateCode);
+            let jsonData = formToJson(formData, getCheckedList())
+            $.ajax({
+                type: 'post',
+                url: '/reviews/buyer',
+                data: jsonData,
+                contentType: "application/json",
+                success: function (data) {
+                    alert("리뷰가 등록되었습니다.");
+                },
+                error: function (err) {
+                    console.log(err);
+                    alert("리뷰를 등록할 수 없습니다.");
+                }
+            })
+        }
+
+    </script>
+</div>

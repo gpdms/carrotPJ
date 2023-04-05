@@ -3,6 +3,8 @@ package com.exercise.carrotproject.domain.enumList;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
+import java.util.Arrays;
+
 @Getter
 @AllArgsConstructor
 public enum ReviewState {
@@ -14,4 +16,11 @@ public enum ReviewState {
     private final String description;
     private final boolean access;
     private final Double score;
+
+    public static ReviewState findByStateCode(String searchCode){
+        return Arrays.stream(values())
+                .filter(value -> value.stateCode.equals(searchCode))
+                .findAny()
+                .orElse(null);
+    }
 }

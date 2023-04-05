@@ -1,10 +1,19 @@
 package com.exercise.carrotproject.web.member.controller;
 
 
+import com.exercise.carrotproject.domain.member.MemberEntityDtoMapper;
 import com.exercise.carrotproject.domain.member.dto.MemberDto;
 import com.exercise.carrotproject.domain.member.entity.Member;
 import com.exercise.carrotproject.domain.member.service.MemberServiceImpl;
+import com.exercise.carrotproject.domain.post.dto.BuyListDto;
+import com.exercise.carrotproject.domain.post.dto.PostDto;
+import com.exercise.carrotproject.domain.post.dto.SellListDto;
+import com.exercise.carrotproject.domain.post.entity.BuyList;
+import com.exercise.carrotproject.domain.post.entity.PostEntityDtoMapper;
+import com.exercise.carrotproject.domain.post.entity.SellList;
+import com.exercise.carrotproject.domain.post.repository.BuyListRepository;
 import com.exercise.carrotproject.domain.post.repository.PostRepository;
+import com.exercise.carrotproject.domain.post.repository.SellListRepository;
 import com.exercise.carrotproject.web.common.SessionConst;
 import com.exercise.carrotproject.web.member.form.ProfileForm;
 import com.exercise.carrotproject.web.member.form.PwdUpdateForm;
@@ -25,6 +34,8 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 import javax.validation.Valid;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
@@ -39,6 +50,9 @@ public class MemberController {
     @Value("${dir.img-profile}")
     private String rootProfileImgDir;
 
+    //for Review
+    private final SellListRepository sellListRepository;
+    private final BuyListRepository buyListRepository;
 
     @GetMapping("/{memId}")
     public String toMemberHome(@PathVariable String memId, Model model,
@@ -176,5 +190,32 @@ public class MemberController {
                                     @RequestParam String loginMemId){
         memberService.deleteBlock(loginMemId, memId);
         return "redirect:/members/{memId}";
+    }
+
+    //buyList
+    @GetMapping("/{memId}/buyList")
+    private String buyList(@PathVariable String memId, Model model) {
+        Member buyer = memberService.findOneMember(memId).orElse(null);
+        List<BuyList> buyList = buyListRepository.findByBuyer(buyer);
+        List<BuyListDto> buyDtoList = new ArrayList<>();
+        for (BuyList buyOne : buyList) {
+            BuyListDto buyOneDto = new BuyListDto(buyOne.getBuyId(), buyOne.getPost(), buyOne.getBuyer().getMemId(), buyOne.getSeller().getMemId());
+            buyDtoList.add(buyOneDto);
+        }
+        model.addAttribute("buyList", buyDtoList);
+        return "/member/buyList";
+    }
+    //sellList
+    @GetMapping("/{memId}/sellList")
+    private String sellList(@PathVariable String memId, Model model) {
+        Member seller= memberService.findOneMember(memId).orElse(null);
+        List<SellList> sellList = sellListRepository.findBySeller(seller);
+        List<SellListDto> sellDtoList = new ArrayList<>();
+        for (SellList sellOne : sellList) {
+            SellListDto sellOneDto = new SellListDto(sellOne.getSellId(), sellOne.getPost(), sellOne.getBuyer().getMemId(), sellOne.getSeller().getMemId());
+            sellDtoList.add(sellOneDto);
+        }
+        model.addAttribute("sellList", sellDtoList);
+        return "/member/sellList";
     }
 }

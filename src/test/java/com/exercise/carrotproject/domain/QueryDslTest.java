@@ -12,7 +12,7 @@ import javax.persistence.PersistenceContext;
 import java.util.List;
 
 
-@SpringBootTest
+//@SpringBootTest
 public class QueryDslTest {
 
     private JPAQueryFactory jpaQueryFactory;

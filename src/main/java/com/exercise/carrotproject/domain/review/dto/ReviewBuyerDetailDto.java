@@ -20,15 +20,12 @@ import java.sql.Timestamp;
 public class ReviewBuyerDetailDto {
     private Long reviewBuyerReviewId;
 
-    @NotNull
-    //private String ReviewBuyer reviewBuyer;
+    //private ReviewBuyer reviewBuyer;
     private String reviewBuyerId;
 
-    @NotNull
-    //private String Member buyer;
+    //private Member buyer;
     private String buyerId;
 
-    @NotNull
     //@Enumerated(value = EnumType.STRING)
     private ReviewBuyerIndicator reviewBuyerIndicator;
 

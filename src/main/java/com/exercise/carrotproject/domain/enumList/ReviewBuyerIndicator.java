@@ -3,6 +3,10 @@ package com.exercise.carrotproject.domain.enumList;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
+import java.util.Arrays;
+import java.util.List;
+import java.util.stream.Collectors;
+
 
 @AllArgsConstructor
 @Getter
@@ -25,4 +29,17 @@ public enum ReviewBuyerIndicator {
 
     private final String description;
     private final Double score;
+
+    public static List<ReviewBuyerIndicator> findAllByEnumName(List<String> searchCodes){
+        return searchCodes.stream()
+                .map(ReviewBuyerIndicator::findByEnumName)
+                .collect(Collectors.toList());
+    }
+    public static ReviewBuyerIndicator findByEnumName(String searchCode){
+        return Arrays.stream(values())
+                .filter(value -> value.name().equals(searchCode))
+                .findAny()
+                .orElse(null);
+    }
+
 }

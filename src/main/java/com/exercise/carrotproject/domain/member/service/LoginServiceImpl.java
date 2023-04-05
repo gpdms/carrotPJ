@@ -1,4 +1,4 @@
-package com.exercise.carrotproject.domain.member.login;
+package com.exercise.carrotproject.domain.member.service;
 
 import com.exercise.carrotproject.domain.member.repository.MemberRepository;
 import com.exercise.carrotproject.domain.member.entity.Member;

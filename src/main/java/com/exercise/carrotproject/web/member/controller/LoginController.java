@@ -2,7 +2,7 @@ package com.exercise.carrotproject.web.member.controller;
 
 import com.exercise.carrotproject.web.common.SessionConst;
 import com.exercise.carrotproject.domain.member.dto.MemberDto;
-import com.exercise.carrotproject.domain.member.login.LoginService;
+import com.exercise.carrotproject.domain.member.service.LoginService;
 import com.exercise.carrotproject.domain.member.entity.Member;
 import com.exercise.carrotproject.web.member.form.LoginForm;
 import lombok.RequiredArgsConstructor;
@@ -22,7 +22,6 @@ import javax.validation.Valid;
 public class LoginController {
     private final LoginService loginService;
 
-
     @GetMapping("/login")
     public String loginForm(@ModelAttribute("loginForm") LoginForm form) {
         return "member/loginForm";
@@ -36,7 +35,6 @@ public class LoginController {
         if (bindingResult.hasErrors()) {
             return "member/loginForm";
         }
-
         Member loginMember = loginService.login(form.getLoginId(), form.getPwd());
         if (loginMember == null) {
             bindingResult.reject("loginFail", "아이디 또는 비밀번호가 맞지 않습니다.");
