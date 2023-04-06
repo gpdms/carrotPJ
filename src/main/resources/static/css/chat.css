@@ -29,6 +29,7 @@ body {
 }
 
 .friend-list li a {
+  text-decoration: none;
   position: relative;
   display: block;
   padding: 10px;
@@ -39,7 +40,12 @@ body {
   -o-transition: all .2s ease;
 }
 
+/*
 .friend-list li.active a {
+  background-color: #f1f5fc;
+}
+*/
+.friend-list li:hover {
   background-color: #f1f5fc;
 }
 
@@ -191,7 +197,9 @@ img {
   color: #3c8dbc;
 }
 
+/*
 a:hover, a:active, a:focus {
   text-decoration: none;
   outline: 0;
 }
+*/

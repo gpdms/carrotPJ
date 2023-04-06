@@ -38,7 +38,7 @@ public class WebConfig implements WebMvcConfigurer {
 //                        "/members/error");
     }
 
-    //j-session 삭제
+
     @Bean
     public ServletContextInitializer clearJsession() {
         return new ServletContextInitializer() {
