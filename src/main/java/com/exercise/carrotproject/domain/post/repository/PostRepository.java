@@ -14,4 +14,5 @@ public interface PostRepository extends JpaRepository<Post,Long> {
 
     //포스트 갯수 메소드
     Long countByMember(Member member);
+
 }

@@ -2,10 +2,12 @@ package com.exercise.carrotproject.domain.review.dto;
 
 import com.exercise.carrotproject.domain.common.entity.BaseEntity;
 import com.exercise.carrotproject.domain.converter.ReviewStateConverter;
+import com.exercise.carrotproject.domain.enumList.ReviewSellerIndicator;
 import com.exercise.carrotproject.domain.enumList.ReviewState;
 import com.exercise.carrotproject.domain.member.entity.Member;
 import com.exercise.carrotproject.domain.post.entity.Post;
 import com.exercise.carrotproject.domain.review.entity.ReviewSellerDetail;
+import com.querydsl.core.annotations.QueryProjection;
 import lombok.*;
 import org.hibernate.annotations.DynamicInsert;
 
@@ -15,7 +17,6 @@ import java.sql.Timestamp;
 import java.util.List;
 
 @NoArgsConstructor
-@AllArgsConstructor
 @Getter
 @Builder
 @ToString
@@ -23,23 +24,20 @@ import java.util.List;
 public class ReviewSellerDto {
     private Long reviewSellerId;
 
-    @NotNull
     //private Post post;
-    private String post_id;
+    private String postId;
 
-    @NotNull
     //private Member buyer;
-    private String buyer_id;
+    private String buyerId;
 
-    @NotNull
+
     //private Member seller;
-    private String seller_id;
+    private String sellerId;
 
     //@NotNull
     private Double totalScore;
     private String message;
 
-    @NotNull
     //@Convert(converter = ReviewStateConverter.class)
     private ReviewState reviewState;
 
@@ -49,4 +47,16 @@ public class ReviewSellerDto {
     //Detail테이블
     //private List<ReviewSellerDetail> reviewSellerDetailList;
 
+    @QueryProjection
+    public ReviewSellerDto(Long reviewSellerId, String postId, String buyerId, String sellerId, Double totalScore, String message, ReviewState reviewState, Timestamp createdTime, Timestamp updatedTime) {
+        this.reviewSellerId = reviewSellerId;
+        this.postId = postId;
+        this.buyerId = buyerId;
+        this.sellerId = sellerId;
+        this.totalScore = totalScore;
+        this.message = message;
+        this.reviewState = reviewState;
+        this.createdTime = createdTime;
+        this.updatedTime = updatedTime;
+    }
 }

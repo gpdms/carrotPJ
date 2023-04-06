@@ -38,6 +38,7 @@ public class WebConfig implements WebMvcConfigurer {
 //                        "/members/error");
     }
 
+
     @Bean
     public ServletContextInitializer clearJsession() {
         return new ServletContextInitializer() {

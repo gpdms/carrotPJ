@@ -10,5 +10,4 @@ import java.util.Optional;
 @Repository
 public interface BlockRepository extends JpaRepository<Block, Long> {
     Optional<Block> findByFromMemAndToMem(Member fromMem, Member toMem);
-    //boolean existsBlockByFromMemAndToMem(Member fromMem, Member toMem);
 }

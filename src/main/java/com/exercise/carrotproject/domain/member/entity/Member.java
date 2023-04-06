@@ -18,11 +18,11 @@ import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Entity
 @NoArgsConstructor
 @AllArgsConstructor
-@Getter
 @Builder
 @JsonIgnoreProperties({"blockfromMemList", "blocktoMemList", "reviewBuyerList", "reviewSellerList"})
 @ToString (exclude = {"blockfromMemList", "blocktoMemList", "reviewBuyerList", "reviewSellerList"})
@@ -78,4 +78,38 @@ public class Member extends BaseEntity {
     @OneToMany(mappedBy="seller", fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)
     private List<ReviewSeller> reviewSellerList = new ArrayList<>();
 
+    public String getMemId() {
+        return new String(memId);
+    }
+    public String getMemPwd() {
+        return new String(memPwd);
+    }
+    public String getNickname() {
+        return nickname;
+    }
+    public String getProfPath() {
+        return profPath;
+    }
+    public Double getMannerScore() {
+        return mannerScore;
+    }
+    public Loc getLoc() {
+        return loc;
+    }
+    public List<Block> getBlockfromMemList() {
+        return blockfromMemList.stream().
+                collect(Collectors.toUnmodifiableList());
+    }
+    public List<Block> getBlocktoMemList() {
+        return blocktoMemList.stream().
+                collect(Collectors.toUnmodifiableList());
+    }
+    public List<ReviewBuyer> getReviewBuyerList() {
+        return reviewBuyerList.stream().
+                collect(Collectors.toUnmodifiableList());
+    }
+    public List<ReviewSeller> getReviewSellerList() {
+        return reviewSellerList.stream().
+                collect(Collectors.toUnmodifiableList());
+    }
 }

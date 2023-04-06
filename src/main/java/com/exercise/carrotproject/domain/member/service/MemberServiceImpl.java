@@ -30,8 +30,9 @@ public class MemberServiceImpl {
 
 
     //@Override
-    public Optional<Member> findOneMember(String memId) {
-       return memberRepository.findById(memId);
+    public Member findOneMember(String memId) {
+        return memberRepository.findById(memId)
+               .orElseThrow(() -> new NoSuchElementException("Member Not Found"));
     }
 
     //@Override
