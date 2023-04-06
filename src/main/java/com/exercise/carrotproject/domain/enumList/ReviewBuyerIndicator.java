@@ -50,7 +50,7 @@ public enum ReviewBuyerIndicator {
                 .map(value -> value.getScore())
                 .mapToDouble(Double::doubleValue)
                 .sum();
-        return (double)Math.round(sum*100)/100;
+        return (double)Math.round(sum*1000)/1000;
     }
 
 }

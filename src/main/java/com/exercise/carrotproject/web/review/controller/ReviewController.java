@@ -19,6 +19,8 @@ import com.exercise.carrotproject.web.review.form.ReviewDetailForm;
 import com.exercise.carrotproject.web.review.form.ReviewForm;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -26,8 +28,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
-import java.util.List;
-import java.util.NoSuchElementException;
+import java.util.*;
 
 
 @Slf4j
@@ -100,7 +101,6 @@ public class ReviewController {
         reviewSellerService.insertReviewSeller(reviewSeller, indicatorList);
         return "성공";
     }
-
     @GetMapping("/seller/{reviewSellerId}")
     public String reviewSellerDetail (@PathVariable String reviewSellerId, Model model) {
         ReviewSeller reviewSeller = reviewSellerService.findOneReviewSeller(Long.valueOf(reviewSellerId));
@@ -114,6 +114,11 @@ public class ReviewController {
                 .build();
         model.addAttribute("reviewDetailForm", detailForm);
         return "review/reviewDetail";
+    }
+    @DeleteMapping("/seller/{reviewSellerId}")
+    public ResponseEntity<Map<String, Object>>  deleteSellerReview(@PathVariable String reviewSellerId) {
+       reviewSellerService.deleteReviewSeller(Long.valueOf(reviewSellerId));
+       return new ResponseEntity<Map<String, Object>>(Collections.singletonMap("message", "삭제에 성공했습니다."), HttpStatus.OK);
     }
 
 
@@ -161,6 +166,12 @@ public class ReviewController {
         model.addAttribute("reviewDetailForm", detailForm);
         return "review/reviewDetail";
     }
+    @DeleteMapping("/buyer/{reviewBuyerId}")
+    public ResponseEntity<Map<String, Object>> deleteBuyerReview(@PathVariable String reviewBuyerId) {
+        reviewBuyerService.deleteReviewBuyer(Long.valueOf(reviewBuyerId));
+        return new ResponseEntity<Map<String, Object>>(Collections.singletonMap("message", "삭제에 성공했습니다."), HttpStatus.OK);
+    }
+
 
 
 }

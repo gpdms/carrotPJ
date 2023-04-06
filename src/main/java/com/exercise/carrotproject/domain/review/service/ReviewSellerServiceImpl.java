@@ -4,7 +4,9 @@ package com.exercise.carrotproject.domain.review.service;
 import com.exercise.carrotproject.domain.enumList.ReviewBuyerIndicator;
 import com.exercise.carrotproject.domain.enumList.ReviewSellerIndicator;
 import com.exercise.carrotproject.domain.member.entity.Member;
+import com.exercise.carrotproject.domain.post.entity.BuyList;
 import com.exercise.carrotproject.domain.post.entity.Post;
+import com.exercise.carrotproject.domain.post.repository.BuyListRepository;
 import com.exercise.carrotproject.domain.review.entity.ReviewBuyer;
 import com.exercise.carrotproject.domain.review.entity.ReviewBuyerDetail;
 import com.exercise.carrotproject.domain.review.entity.ReviewSeller;
@@ -21,6 +23,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
@@ -36,8 +40,6 @@ public class ReviewSellerServiceImpl {
 
     private final ReviewSellerRepository reviewSellerRepository;
     private final ReviewSellerDetailRepository reviewSellerDetailRepository;
-
-
 
     @Transactional
     public void insertReviewSeller(ReviewSeller reviewSeller, List<ReviewSellerIndicator> indicatorList) {
@@ -70,6 +72,11 @@ public class ReviewSellerServiceImpl {
     public Long findReviewSellerIdByPost (Post post) {
         ReviewSeller reviewSeller = reviewSellerRepository.findByPost(post);
         return reviewSellerRepository.findByPost(post) != null? reviewSeller.getReviewSellerId() : 0L;
+    }
+
+    @Transactional
+    public void deleteReviewSeller(Long reviewSellerId) {
+        reviewSellerRepository.deleteById(reviewSellerId);
     }
 
 //    public Map<ReviewSellerIndicator, Long> () {

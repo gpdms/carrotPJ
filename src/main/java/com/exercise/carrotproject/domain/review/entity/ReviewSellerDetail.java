@@ -15,7 +15,6 @@ import java.sql.Timestamp;
 @Builder
 @ToString
 @Getter
-//@DynamicInsert
 public class ReviewSellerDetail {
     @Id
     @GeneratedValue(strategy= GenerationType.IDENTITY)

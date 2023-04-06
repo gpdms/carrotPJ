@@ -78,7 +78,7 @@
         <hr class="my-4">
 
         <h4 class="mb-3">비밀번호 수정</h4>
-        <form action="" th:action="@{/members/{memId}/pwdEdit(memId=${pwdUpdateForm.memId})}"
+        <form action="" th:action="@{/members/{memId}/edit/pwd(memId=${pwdUpdateForm.memId})}"
               th:object="${pwdUpdateForm}" method="post">
             <input type="hidden" name="memId" th:value="${pwdUpdateForm.memId}">
             <div>
@@ -110,7 +110,7 @@
     profileEditForm.addEventListener('submit', (e) => {
         e.preventDefault();
         let memId = [[${profileForm.memId}]];
-        let url = "/members/"+memId+"/profileEdit";
+        let url = `/members/${memId}/edit/profile`;
         console.log(url);
         const formData= new FormData(profileEditForm);
         fetch(url, {

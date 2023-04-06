@@ -16,9 +16,8 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-@ToString
+@ToString (exclude = "reviewSellerDetailList")
 @Getter
-//@DynamicInsert
 public class ReviewSeller extends BaseEntity {
     @Id @GeneratedValue(strategy= GenerationType.IDENTITY)
     private Long reviewSellerId;
@@ -35,6 +34,6 @@ public class ReviewSeller extends BaseEntity {
     private ReviewState reviewState;
 
     //Detail 테이블
-//    @OneToMany(mappedBy="reviewSeller", fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)
-//    private List<ReviewSellerDetail> reviewSellerDetailList;
+    @OneToMany(mappedBy="reviewSeller", fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)
+    private List<ReviewSellerDetail> reviewSellerDetailList;
 }

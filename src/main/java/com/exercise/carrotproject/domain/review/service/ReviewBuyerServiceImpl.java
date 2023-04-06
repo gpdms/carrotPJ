@@ -3,7 +3,9 @@ package com.exercise.carrotproject.domain.review.service;
 
 import com.exercise.carrotproject.domain.enumList.ReviewBuyerIndicator;
 import com.exercise.carrotproject.domain.enumList.ReviewSellerIndicator;
+import com.exercise.carrotproject.domain.post.entity.BuyList;
 import com.exercise.carrotproject.domain.post.entity.Post;
+import com.exercise.carrotproject.domain.post.repository.BuyListRepository;
 import com.exercise.carrotproject.domain.review.entity.ReviewBuyer;
 import com.exercise.carrotproject.domain.review.entity.ReviewBuyerDetail;
 import com.exercise.carrotproject.domain.review.entity.ReviewSeller;
@@ -34,11 +36,17 @@ public class ReviewBuyerServiceImpl {
     private final ReviewBuyerRepository reviewBuyerRepository;
     private final ReviewBuyerDetailRepository reviewBuyerDetailRepository;
 
+    private final BuyListRepository buyListRepository;
 
     @Transactional
     public void insertReviewBuyer(ReviewBuyer reviewBuyer, List<ReviewBuyerIndicator> indicatorList) {
         ReviewBuyer newReviewBuyer = reviewBuyerRepository.save(reviewBuyer);
         insertReviewBuyerDetail(newReviewBuyer, indicatorList);
+        //구매자에 대한 리뷰등록시 상대편의 구매목록에 추가
+        BuyList buyList = BuyList.builder().post(reviewBuyer.getPost())
+                .buyer(reviewBuyer.getBuyer())
+                .seller(reviewBuyer.getSeller()).build();
+        buyListRepository.save(buyList);
     }
     @Transactional
     public void insertReviewBuyerDetail(ReviewBuyer newReviewBuyer, List<ReviewBuyerIndicator> indicatorList) {
@@ -67,6 +75,14 @@ public class ReviewBuyerServiceImpl {
                 .map(ReviewBuyerDetail::getReviewBuyerIndicator)
                 .collect(Collectors.toList());
     }
+
+    @Transactional
+    public void deleteReviewBuyer(Long reviewBuyerId) {
+        reviewBuyerRepository.deleteById(reviewBuyerId);
+        //구매자에 대한 리뷰 삭제시, 상대편의 구매목록에서도 삭제
+        buyListRepository.deleteByPost(findOneReviewBuyer(reviewBuyerId).getPost());
+    }
+
 //    public Map<ReviewSellerIndicator, Long> () {
 //
 //    }

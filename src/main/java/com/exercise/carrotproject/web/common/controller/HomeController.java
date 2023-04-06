@@ -37,7 +37,7 @@ public class HomeController {
     }
     @GetMapping("/init")
     public String init(HttpServletRequest request) {
-        Member loginMember = memberRepository.findById("tester1").orElse(null);
+        Member loginMember = memberRepository.findById("tester2").orElse(null);
         MemberDto loginMemberDto = MemberDto.builder().memId(loginMember.getMemId())
                 .nickname(loginMember.getNickname())
                 .mannerScore(loginMember.getMannerScore())
@@ -57,7 +57,7 @@ public class HomeController {
         //세션이 유지되면 로그인된 홈으로 이동
         redirectAttributes.addAttribute("memId", loginMember.getMemId());
         model.addAttribute("member", loginMember);
-        return "redirect:/members/{memId}";
+        return "redirect:/members/home/{memId}";
     }
 
 }

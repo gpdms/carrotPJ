@@ -1,5 +1,6 @@
 package com.exercise.carrotproject.domain.config;
 
+import com.exercise.carrotproject.domain.config.interceptor.MemberInfoCheckInterceptor;
 import com.exercise.carrotproject.web.argumentresolver.LoginMemberArgumentResolver;
 import com.exercise.carrotproject.domain.config.interceptor.LoginCheckInterceptor;
 import org.springframework.boot.web.servlet.ServletContextInitializer;
@@ -32,10 +33,18 @@ public class WebConfig implements WebMvcConfigurer {
 
         registry.addInterceptor(new LoginCheckInterceptor())
                 .order(1)
-                .addPathPatterns("/members/**/edit");
-//                .excludePathPatterns("/members/signup",
-//                        "/members/css/**","/members/js/**","/members/assets/**",
-//                        "/members/error");
+                .addPathPatterns("/members/**")
+                .excludePathPatterns("/members/signup",
+                        "/members/css/**","/members/js/**","/members/assets/**",
+                        "/members/error");
+
+        registry.addInterceptor(new MemberInfoCheckInterceptor())
+                .order(2)
+                .addPathPatterns("/members/**/")
+                .excludePathPatterns("/members/signup",
+                        "/members/css/**","/members/js/**","/members/assets/**",
+                        "/members/error");
+
     }
 
     @Bean
