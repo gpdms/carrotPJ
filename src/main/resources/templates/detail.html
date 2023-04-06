@@ -99,10 +99,13 @@
                         </div>
 
 
-                        <!--임시 판매 완료 버튼(for 리뷰)-->
-                        <form action="/review/">
-                        <button type="submit">판매완료 (임시)</button>
-                        </form>
+                        <!--판매여부-->
+                        <select th:if="${session.loginMember.memId}==${post.member.memId}" name="sellState">
+                            <!--thymeleaf이용해 Enum클래스 정보 바로 가져오기-->
+                            <option th:each = "sellStateEnum:${T(com.exercise.carrotproject.domain.enumList.SellState).values()}" th:value="${sellStateEnum.name()}" th:text="${sellStateEnum.getSellStateName()}" th:selected="${sellStateEnum}==${post.sellState}"></option>
+
+                        </select>
+
                     </div>
                 </div>
             </div>

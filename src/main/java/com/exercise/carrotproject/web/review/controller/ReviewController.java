@@ -55,14 +55,14 @@ public class ReviewController {
 
        for(int i = 1 ; i <= 10; i++ ){
            if(i% 2  == 0 ){
-               Post postBuild1 = Post.builder().title("글" + i).member(seller1).price(i * 1000).category(Category.ETC).loc(seller1.getLoc()).hideState(HideState.SHOW).sellState(2).content("내용" + i).build();
+               Post postBuild1 = Post.builder().title("글" + i).member(seller1).price(i * 1000).category(Category.ETC).loc(seller1.getLoc()).hideState(HideState.SHOW).sellState(SellState.SOLD).content("내용" + i).build();
                Post post1 = postRepository.save(postBuild1);
                BuyList buyList= BuyList.builder().post(post1).buyer(buyer).seller(seller1).build();
                buyListRepository.save(buyList);
                SellList sellList = SellList.builder().post(post1).buyer(buyer).seller(seller1).build();
                sellListRepository.save(sellList);
            } else {
-               Post postBuild2 = Post.builder().title("글" + i).member(seller2).price(i * 1000).category(Category.DIGITAL_DEVICE).loc(seller2.getLoc()).hideState(HideState.SHOW).sellState(2).content("내용" + i).build();
+               Post postBuild2 = Post.builder().title("글" + i).member(seller2).price(i * 1000).category(Category.DIGITAL_DEVICE).loc(seller2.getLoc()).hideState(HideState.SHOW).sellState(SellState.ON_SALE).content("내용" + i).build();
                Post post2 = postRepository.save(postBuild2);
                BuyList buyList= BuyList.builder().post(post2).buyer(buyer).seller(seller2).build();
                buyListRepository.save(buyList);
