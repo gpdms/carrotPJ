@@ -12,7 +12,6 @@ import com.exercise.carrotproject.domain.post.repository.PostRepository;
 import com.exercise.carrotproject.domain.post.repository.SellListRepository;
 import com.exercise.carrotproject.domain.review.service.ReviewBuyerServiceImpl;
 import com.exercise.carrotproject.domain.review.service.ReviewSellerServiceImpl;
-import com.exercise.carrotproject.domain.review.service.ReviewServiceImpl;
 import com.exercise.carrotproject.web.common.SessionConst;
 import com.exercise.carrotproject.web.member.form.*;
 import com.exercise.carrotproject.web.member.form.memberInfo.MyBuyListForm;

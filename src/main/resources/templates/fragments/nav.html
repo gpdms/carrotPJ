@@ -36,7 +36,7 @@
                 <button  class="btn btn-outline-dark" type="button"
                         th:onclick="|location.href='@{/members/{memId}/edit(memId=${session.loginMember.memId})}'|"> 회원정보 </button>
                 </form>
-                <button class="btn btn-outline-dark" type="button"
+                <button th:if="${not #strings.isEmpty(session.loginMember)}" class="btn btn-outline-dark" type="button"
                         th:onclick="|location.href='@{/chat/chatRoomList}'|"> 채팅 <span id="chat">0</span>
                 </button>
         </div>
