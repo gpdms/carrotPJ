@@ -40,6 +40,7 @@
         <script src="https://cdn.jsdelivr.net/npm/sockjs-client@1/dist/sockjs.min.js"></script>
         <!--STOMP-->
         <script src="https://cdnjs.cloudflare.com/ajax/libs/stomp.js/2.3.3/stomp.min.js"></script>
+        <th:block layout:fragment="script"> </th:block>
         <script th:inline="javascript">
             /*로그인 한 경우 동작*/
             if ([[${session.loginMember}]]["memId"] != null) {
@@ -63,7 +64,7 @@
                     // connect(header,연결 성공시 콜백,에러발생시 콜백)
                     stompClient.connect({}, function () {
                             //subscribe(subscribe url,해당 url로 메시지를 받을때마다 실행할 함수)
-                            sub = stompClient.subscribe('/topic/chat/'+[[${session.loginMember}]]["memId"], function (e) {
+                            sub = stompClient.subscribe('/topic/chatNoti/'+[[${session.loginMember}]]["memId"], function (e) {
                                 //e.body에 전송된 data가 들어있다
                                 console.log("알림메세지를 수신하였습니다.");
                                 $('#chat').text(Number($('#chat').text())+1);
@@ -80,6 +81,5 @@
                 connect();
             }
         </script>
-        <th:block layout:fragment="script"> </th:block>
     </body>
 </html>

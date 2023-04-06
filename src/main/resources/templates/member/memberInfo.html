@@ -26,9 +26,17 @@
             <h2>개인정보 수정</h2>
         </div>
 
-        <h4 class="mb-3">프로필 수정</h4>
+
+        <button class="w-50 btn btn-secondary btn-group-sm"
+                type="button"  th:onclick="|location.href='@{/members/{memId}/buyList(memId=${session.loginMember.memId})}'|">구매내역 보기</button>
+        <div style="height: 10px"></div>
+        <button class="w-50 btn btn-secondary btn-group-sm"
+                 type="button" th:onclick="|location.href='@{/members/{memId}/sellList(memId=${session.loginMember.memId})}'|">판매완료내역 보기</button>
+
+
+        <h4 class="mb-3"> 프로필 수정 </h4>
         <form id="profileEditForm">
-            <input type="hidden" name="memId" th:value="${session.loginMember.memId}" >
+            <input type="hidden" name="memId" th:value="${profileForm.memId}" >
             <div>
                 <label for="nickname">닉네임</label>
                 <input type="text" id="nickname" name="nickname"
@@ -41,7 +49,7 @@
             <div>
                 <label for="profImg">프로필 이미지</label>
                 <div class="profile-img">
-                    <img th:src="|/members /${member.memId}/profileImg|" alt="프로필이미지">
+                    <img th:src="|/members/${profileForm.memId}/profileImg|" alt="프로필이미지">
                 </div>
                 <input type="file" id="profImg"  name="profImg"
                        class="formcontrol"
@@ -70,9 +78,9 @@
         <hr class="my-4">
 
         <h4 class="mb-3">비밀번호 수정</h4>
-        <form action="" th:action="@{/members/{memId}/pwdEdit(memId=${session.loginMember.memId})}"
+        <form action="" th:action="@{/members/{memId}/pwdEdit(memId=${pwdUpdateForm.memId})}"
               th:object="${pwdUpdateForm}" method="post">
-            <input type="hidden" name="memId" th:value="${session.loginMember.memId}">
+            <input type="hidden" name="memId" th:value="${pwdUpdateForm.memId}">
             <div>
                 <label for="memPwd">비밀번호</label>
                 <input type="password" id="memPwd" th:field="*{pwd}"
@@ -98,11 +106,10 @@
         const target = document.getElementById('pfEditBtn');
         target.disabled = false;
     }
-
     const profileEditForm = document.getElementById('profileEditForm');
     profileEditForm.addEventListener('submit', (e) => {
         e.preventDefault();
-        let memId = /*[[${session.loginMember.memId}]]*/;
+        let memId = [[${profileForm.memId}]];
         let url = "/members/"+memId+"/profileEdit";
         console.log(url);
         const formData= new FormData(profileEditForm);
@@ -125,28 +132,47 @@
             console.log('프로필 변경 에러');
             alert('프로필 변경에 실패했습니다');
         })
-        /*let responsePromise = sendProfileData(url);
-        responsePromise.then((res) => {
-            console.log('This is in the then ' + res);
-        }).then((data) => console.log(data))
-        .catch((res) => {
-            console.log('This is in the catch' + res);
-        })*/
     });
 
-/*    async function sendProfileData(url) {
-        const formData= new FormData(profileEditForm);
-        const response = await fetch(url, {
-            method: 'PATCH',
-            body: formData
-        });
-        return response;
+
+    function buyListView() {
+        l
+    }
+
+/*function buyListView() {
+    let memId = [[${session.loginMember.memId}]];
+    let url = '/members/buyList'+memId
+    $.ajax({
+        type: 'get',
+        url: url,
+        success: function (data) {
+            $("#buyList").replaceWith(`
+                                    `);
+
+        },
+        error: function (err) {
+        }
+    })
+}
+
+    function sellListView() {
+        let memId = [[${session.loginMember.memId}]];
+        let url = '/members/sellList'+memId
+        $.ajax({
+            type: 'get',
+            url: url,
+            success: function (data) {
+                $("#buyList").replaceWith(`<div class="user_name" id="user_nick"> ${nickname} </div>`
+                );
+
+                $("#sellList").replaceWith(`<div id="modal_nick"> ${nickname}님의 프로필 </div>`);
+            },
+            error: function (err) {
+            }
+        })
     }*/
 
-    /*
 
-
-*/
 
 
 </script>

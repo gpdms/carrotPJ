@@ -10,4 +10,5 @@ import org.springframework.stereotype.Repository;
 public class ReviewBuyerCustomRepository {
     private final JPAQueryFactory queryFactory;
 
+
 }

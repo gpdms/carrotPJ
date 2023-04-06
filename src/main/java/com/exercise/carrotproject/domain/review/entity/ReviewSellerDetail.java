@@ -12,9 +12,9 @@ import java.sql.Timestamp;
 @Entity
 @NoArgsConstructor
 @AllArgsConstructor
-@Getter
 @Builder
 @ToString
+@Getter
 //@DynamicInsert
 public class ReviewSellerDetail {
     @Id

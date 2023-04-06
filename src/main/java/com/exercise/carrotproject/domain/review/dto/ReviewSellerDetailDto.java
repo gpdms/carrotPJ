@@ -3,6 +3,7 @@ package com.exercise.carrotproject.domain.review.dto;
 import com.exercise.carrotproject.domain.enumList.ReviewSellerIndicator;
 import com.exercise.carrotproject.domain.member.entity.Member;
 import com.exercise.carrotproject.domain.review.entity.ReviewSeller;
+import com.querydsl.core.annotations.QueryProjection;
 import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.DynamicInsert;
@@ -13,24 +14,28 @@ import java.sql.Timestamp;
 
 
 @NoArgsConstructor
-@AllArgsConstructor
 @Getter
 @Builder
 @ToString
 public class ReviewSellerDetailDto {
     private Long reviewSellerReviewId;
 
-    @NotNull
     //private ReviewSeller reviewSeller;
-    private String reviewSeller_id;
+    private String reviewSellerId;
 
-    @NotNull
     //private Member seller;
-    private String seller_id;
+    private String sellerId;
 
-    @NotNull
     //@Enumerated(value = EnumType.STRING)
     private ReviewSellerIndicator reviewSellerIndicator;
 
     //private Timestamp createdTime;
+
+    @QueryProjection
+    public ReviewSellerDetailDto(Long reviewSellerReviewId, String reviewSellerId, String sellerId, ReviewSellerIndicator reviewSellerIndicator) {
+        this.reviewSellerReviewId = reviewSellerReviewId;
+        this.reviewSellerId = reviewSellerId;
+        this.sellerId = sellerId;
+        this.reviewSellerIndicator = reviewSellerIndicator;
+    }
 }

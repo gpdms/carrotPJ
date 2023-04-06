@@ -13,9 +13,9 @@ import java.sql.Timestamp;
 @Entity
 @NoArgsConstructor
 @AllArgsConstructor
-@Getter
 @Builder
 @ToString
+@Getter
 //@DynamicInsert
 public class ReviewBuyerDetail {
     @Id @GeneratedValue(strategy= GenerationType.IDENTITY)
@@ -24,7 +24,7 @@ public class ReviewBuyerDetail {
     @NotNull @ManyToOne @JoinColumn(name="review_buyer_id")
     private ReviewBuyer reviewBuyer;
     @NotNull @ManyToOne @JoinColumn(name="buyer_id")
-    private Member member;
+    private Member buyer;
 
     @Enumerated(value = EnumType.STRING)
     private ReviewBuyerIndicator reviewBuyerIndicator;

@@ -1,16 +1,19 @@
 package com.exercise.carrotproject.domain.chat.controller;
 
+import com.exercise.carrotproject.domain.chat.dto.ChatRoomDto;
 import com.exercise.carrotproject.domain.chat.entity.Chat;
 import com.exercise.carrotproject.domain.chat.entity.ChatRoom;
 import com.exercise.carrotproject.domain.chat.entity.QChat;
+import com.exercise.carrotproject.domain.chat.entity.QChatRoom;
 import com.exercise.carrotproject.domain.chat.repoisitory.ChatRepository;
-import com.exercise.carrotproject.domain.chat.repoisitory.ChatRoomRepository;
 import com.exercise.carrotproject.domain.chat.service.ChatService;
 import com.exercise.carrotproject.domain.member.MemberEntityDtoMapper;
-import com.exercise.carrotproject.domain.member.repository.MemberRepository;
 import com.exercise.carrotproject.domain.member.dto.MemberDto;
 import com.exercise.carrotproject.domain.member.entity.Member;
 import com.exercise.carrotproject.domain.post.entity.Post;
+import com.querydsl.core.types.ExpressionUtils;
+import com.querydsl.core.types.Projections;
+import com.querydsl.jpa.JPAExpressions;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import groovy.util.logging.Slf4j;
 import lombok.RequiredArgsConstructor;
@@ -38,9 +41,7 @@ import static org.springframework.messaging.simp.stomp.StompHeaders.SESSION;
 @RequiredArgsConstructor
 @RequestMapping("/chat")
 public class ChatController {
-    private final MemberRepository memberRepository;
     private final ChatService chatService;
-    private final ChatRoomRepository chatRoomRepository;
     private final ChatRepository chatRepository;
     private final SimpMessagingTemplate simpMessagingTemplate;
     private final JPAQueryFactory jpaQueryFactory;
@@ -84,7 +85,40 @@ public class ChatController {
     public String chatRoomList(Model model, HttpSession session) {
         MemberDto memberDto = (MemberDto) session.getAttribute(LOGIN_MEMBER);
         Member memberEntity = MemberEntityDtoMapper.toMemberEntity(memberDto);
-        List<ChatRoom> chatRoomList = chatRoomRepository.findBySellerOrBuyer(memberEntity, memberEntity); //seller or buyer가 유저 아이디와 같은 채팅방 찾아야함
+
+        List<Long> ids = jpaQueryFactory.select(QChat.chat.chatId.max())
+                .from(QChat.chat)
+                .groupBy(QChat.chat.room.roomId)
+                .fetch();
+
+        List<ChatRoomDto> chatRoomList = jpaQueryFactory
+                .select(Projections.constructor(ChatRoomDto.class,
+                                QChatRoom.chatRoom.roomId,
+                                QChatRoom.chatRoom.seller.memId.as("sellerId"),
+                                QChatRoom.chatRoom.buyer.memId.as("buyerId"),
+                                QChat.chat.message,
+                                QChat.chat.createdTime,
+                                ExpressionUtils.as(
+                                        JPAExpressions.select(QChat.chat.chatId.count())
+                                                .from(QChat.chat)
+                                                .where(QChat.chat.room.eq(QChatRoom.chatRoom)
+                                                        .and(QChat.chat.readState.eq(0))
+                                                        .and(QChat.chat.from.ne(memberEntity))
+                                                ),
+                                        "unacknowledgedMessageCount"
+                                )
+                        )
+                )
+                .from(QChatRoom.chatRoom)
+                .leftJoin(QChat.chat)
+                .on(QChatRoom.chatRoom.roomId.eq(QChat.chat.room.roomId))
+                .where(
+                        (QChatRoom.chatRoom.seller.eq(memberEntity)
+                            .or(QChatRoom.chatRoom.buyer.eq(memberEntity))
+                        )
+                        .and(QChat.chat.chatId.in(ids))
+                )
+                .fetch();
         model.addAttribute("chatRoomList", chatRoomList);
         return "chat/chatRoomList";
     }
@@ -128,9 +162,11 @@ public class ChatController {
         map.put("room", chat.getRoom().getRoomId()); //채팅방 id
 
         //알림메세지 보내기
-        simpMessagingTemplate.convertAndSend("/topic/chat/" + chat.getTo().getMemId(), "알람메세지");
+        simpMessagingTemplate.convertAndSend("/topic/chatNoti/" + chat.getTo().getMemId(), "알람메세지");
         //채팅방으로 메세지 보내기
         simpMessagingTemplate.convertAndSend("/topic/chat/" + postId + "/" + seller + "/" + buyer, map);
+        //채팅목록으로 메세지 보내기
+        simpMessagingTemplate.convertAndSend("/topic/chatRoomList/" + chat.getTo().getMemId(), "채팅목록으로 전송 테스트");
     }
 
     @PostMapping("/getChatMsg/{roomId}")

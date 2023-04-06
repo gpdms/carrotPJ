@@ -1,4 +1,4 @@
-package com.exercise.carrotproject.web.member.form;
+package com.exercise.carrotproject.web.member.form.memberInfo;
 
 import com.exercise.carrotproject.domain.enumList.Loc;
 import lombok.Getter;

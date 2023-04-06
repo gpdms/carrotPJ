@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout/basic.html}">
+
+<head layout:fragment="head">
+    <title>리뷰 보기</title>
+    <link th:href="@{/css/bootstrap.min.css}"
+          href="/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        .form-container {
+            max-width: 560px;
+            padding-left: 100px;
+        }
+        .field-error {
+            border-color: #dc3545;
+            color: #dc3545;
+        }
+    </style>
+</head>
+
+<div layout:fragment="content">
+    <div class="form-container">
+    </div>
+</div>
+
+<div layout:fragment="script" th:inline="javascript">
+    <script th:inline="javascript">
+    </script>
+</div>
