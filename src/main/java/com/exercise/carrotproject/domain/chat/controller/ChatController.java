@@ -6,6 +6,7 @@ import com.exercise.carrotproject.domain.chat.entity.ChatRoom;
 import com.exercise.carrotproject.domain.chat.entity.QChat;
 import com.exercise.carrotproject.domain.chat.entity.QChatRoom;
 import com.exercise.carrotproject.domain.chat.repoisitory.ChatRepository;
+import com.exercise.carrotproject.domain.chat.repoisitory.ChatRoomRepository;
 import com.exercise.carrotproject.domain.chat.service.ChatService;
 import com.exercise.carrotproject.domain.member.MemberEntityDtoMapper;
 import com.exercise.carrotproject.domain.member.dto.MemberDto;
@@ -32,6 +33,7 @@ import javax.servlet.http.HttpSession;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 import static com.exercise.carrotproject.web.common.SessionConst.LOGIN_MEMBER;
 import static org.springframework.messaging.simp.stomp.StompHeaders.SESSION;
@@ -46,14 +48,24 @@ public class ChatController {
     private final SimpMessagingTemplate simpMessagingTemplate;
     private final JPAQueryFactory jpaQueryFactory;
     private final EntityManager em;
+    private final ChatRoomRepository chatRoomRepository;
 
     @GetMapping("/post/{postId}")
+    @Transactional
     public String chatStart(@PathVariable Long postId, HttpSession session, Model model) {
         Post post = em.find(Post.class, postId);
-        String seller = post.getMember().getMemId();
-        String buyer = ((MemberDto) session.getAttribute(LOGIN_MEMBER)).getMemId();
-        model.addAttribute("seller", seller);
-        model.addAttribute("buyer", buyer);
+        Member seller = post.getMember();
+        MemberDto memberDto = (MemberDto) session.getAttribute(LOGIN_MEMBER);
+        Member buyer = MemberEntityDtoMapper.toMemberEntity(memberDto);
+
+        //기생성된 채팅방이 존재하면 redirect
+        Optional<ChatRoom> chatRoom = chatRoomRepository.findByPostAndSellerAndBuyer(post, seller, buyer);
+        if (chatRoom.isPresent()) {
+            return "redirect:/chat/chatRoom/"+chatRoom.get().getRoomId();
+        }
+
+        model.addAttribute("seller", seller.getMemId());
+        model.addAttribute("buyer", buyer.getMemId());
         return "chat/chat";
     }
 
@@ -79,6 +91,16 @@ public class ChatController {
         Member memberEntity = MemberEntityDtoMapper.toMemberEntity(memberDto);
         List<Chat> chatList = chatRepository.findByToAndReadState(memberEntity, 0);//미확인 메세지 조회
         return chatList.size();
+    }
+
+    @GetMapping("/chatRoomListByPost/{postId}")
+    public String chatRoomListByPost(Model model, @PathVariable Long postId) {
+        //chatRoom select, where by postId
+
+        //만약 생성된 채팅이 없으면 이동하지 않고 오류메세지 출력하도록 해야함. 그럼.. ajax 써야하나..??
+
+        //html파일 만들어야함..
+        return "chat/chatRoomListByPost";
     }
 
     @GetMapping("/chatRoomList")
@@ -118,6 +140,7 @@ public class ChatController {
                         )
                         .and(QChat.chat.chatId.in(ids))
                 )
+                .orderBy(QChat.chat.createdTime.desc())
                 .fetch();
         model.addAttribute("chatRoomList", chatRoomList);
         return "chat/chatRoomList";
@@ -166,9 +189,10 @@ public class ChatController {
         //채팅방으로 메세지 보내기
         simpMessagingTemplate.convertAndSend("/topic/chat/" + postId + "/" + seller + "/" + buyer, map);
         //채팅목록으로 메세지 보내기
-        simpMessagingTemplate.convertAndSend("/topic/chatRoomList/" + chat.getTo().getMemId(), "채팅목록으로 전송 테스트");
+        simpMessagingTemplate.convertAndSend("/topic/chatRoomList/" + chat.getTo().getMemId(), chat.getRoom().getRoomId());
     }
 
+    //메시지 확인 처리 메소드
     @PostMapping("/getChatMsg/{roomId}")
     @ResponseBody
     @Transactional
@@ -178,5 +202,46 @@ public class ChatController {
                 .where(QChat.chat.room.roomId.eq(roomId), QChat.chat.to.memId.eq(((MemberDto) session.getAttribute(LOGIN_MEMBER)).getMemId()), QChat.chat.readState.eq(0))
                 .execute();
         return "성공!";
+    }
+
+    @PostMapping("/getChatRoom/{roomId}")
+    @ResponseBody
+    public ChatRoomDto getChatRoom(@PathVariable Long roomId, HttpSession session){
+        MemberDto memberDto = (MemberDto) session.getAttribute(LOGIN_MEMBER);
+        Member memberEntity = MemberEntityDtoMapper.toMemberEntity(memberDto);
+
+        Long maxChatId = jpaQueryFactory.select(QChat.chat.chatId.max())
+                .from(QChat.chat)
+                .where(QChat.chat.room.roomId.eq(roomId))
+                .fetchOne();
+
+        ChatRoomDto chatRoomDto = jpaQueryFactory
+                .select(Projections.constructor(ChatRoomDto.class,
+                                QChatRoom.chatRoom.roomId,
+                                QChatRoom.chatRoom.seller.memId.as("sellerId"),
+                                QChatRoom.chatRoom.buyer.memId.as("buyerId"),
+                                QChat.chat.message,
+                                QChat.chat.createdTime,
+                                ExpressionUtils.as(
+                                        JPAExpressions.select(QChat.chat.chatId.count())
+                                                .from(QChat.chat)
+                                                .where(QChat.chat.room.eq(QChatRoom.chatRoom)
+                                                        .and(QChat.chat.readState.eq(0))
+                                                        .and(QChat.chat.from.ne(memberEntity))
+                                                ),
+                                        "unacknowledgedMessageCount"
+                                )
+                        )
+                )
+                .from(QChatRoom.chatRoom)
+                .leftJoin(QChat.chat)
+                .on(QChatRoom.chatRoom.roomId.eq(QChat.chat.room.roomId))
+                .where(
+                        QChatRoom.chatRoom.roomId.eq(roomId)
+                                .and(QChat.chat.chatId.eq(maxChatId))
+                )
+                .fetchOne();
+
+        return chatRoomDto;
     }
 }

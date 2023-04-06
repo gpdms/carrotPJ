@@ -25,11 +25,14 @@ public class DateUtil {
         long diffTime = (curTime - regTime) / 1000;
 
         if (diffTime < SEC) {
-            msg = diffTime + "초 전";
+//            msg = diffTime + "초 전";
+            msg = new SimpleDateFormat("HH:mm").format(ts);
         } else if ((diffTime /= SEC) < MIN) {
-            msg = diffTime + "분 전";
+//            msg = diffTime + "분 전";
+            msg = new SimpleDateFormat("HH:mm").format(ts);
         } else if ((diffTime /= MIN) < HOUR) {
-            msg = (diffTime) + "시간 전";
+//            msg = (diffTime) + "시간 전";
+            msg = new SimpleDateFormat("HH:mm").format(ts);
         } else if ((diffTime /= HOUR) < DAY) {
             msg = (diffTime) + "일 전";
         } else if ((diffTime /= DAY) < MONTH) {
