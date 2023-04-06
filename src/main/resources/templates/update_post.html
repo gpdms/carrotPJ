@@ -52,7 +52,7 @@
             <div class="form-group form-category">
                 <select id="productsCategory" class="form-control" name="category">
                     <!--카테고리-->
-                    <option th:each = "categoryList:${T(com.exercise.carrotproject.domain.enumList.Category).values()}" th:selected="${categoryList}==${post.category}" th:value="${categoryList.name}" th:text="${categoryList.category}"></option>
+                    <option th:each = "categoryList:${T(com.exercise.carrotproject.domain.enumList.Category).values()}" th:value="${categoryList.name}" th:text="${categoryList.category}" th:selected="${categoryList}==${post.category}"></option>
 
                 </select>
             </div>
