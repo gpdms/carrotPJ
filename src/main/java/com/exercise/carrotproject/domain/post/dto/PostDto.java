@@ -4,6 +4,7 @@ import com.exercise.carrotproject.domain.enumList.Category;
 import com.exercise.carrotproject.domain.enumList.HideState;
 import com.exercise.carrotproject.domain.enumList.Loc;
 
+import com.exercise.carrotproject.domain.enumList.SellState;
 import com.exercise.carrotproject.domain.member.dto.MemberDto;
 import com.exercise.carrotproject.domain.member.entity.Member;
 import lombok.*;
@@ -26,7 +27,7 @@ public class PostDto {
     private Loc loc;
     private Category category;
     private HideState hideState;
-    private Integer sellState;
+    private SellState sellState;
     private Integer hits;
     private String wishPlace;
 

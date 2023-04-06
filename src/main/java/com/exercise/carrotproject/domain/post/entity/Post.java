@@ -2,10 +2,12 @@ package com.exercise.carrotproject.domain.post.entity;
 
 import com.exercise.carrotproject.domain.converter.HideStateConverter;
 import com.exercise.carrotproject.domain.converter.LocAttributeConverter;
+import com.exercise.carrotproject.domain.converter.SellStateConverter;
 import com.exercise.carrotproject.domain.enumList.Category;
 import com.exercise.carrotproject.domain.enumList.HideState;
 import com.exercise.carrotproject.domain.enumList.Loc;
 import com.exercise.carrotproject.domain.converter.CategoryConverter;
+import com.exercise.carrotproject.domain.enumList.SellState;
 import com.exercise.carrotproject.domain.member.entity.Member;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.*;
@@ -39,7 +41,8 @@ public class Post {
     @Convert(converter = HideStateConverter.class)
     private HideState hideState; //숨김여부: 0보임,1숨김
     @ColumnDefault("0") @Column(nullable = false)
-    private Integer sellState; //판매여부: 0판매중,1예약중,2거래완료
+    @Convert(converter = SellStateConverter.class)
+    private SellState sellState; //판매여부: 0판매중,1예약중,2거래완료
     private Integer hits;
     private String wishPlace;
 
@@ -50,7 +53,7 @@ public class Post {
     public void prePersist(){
         this.price = this.price == null ? 0 : this.price;
         this.hideState = this.hideState == null ? HideState.SHOW : this.hideState;
-        this.sellState = this.sellState == null ? 0 : this.sellState;
+        this.sellState = this.sellState == null ? SellState.ON_SALE : this.sellState;
     }
 
 
