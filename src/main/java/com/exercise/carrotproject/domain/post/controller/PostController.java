@@ -1,6 +1,7 @@
 package com.exercise.carrotproject.domain.post.controller;
 
 import com.exercise.carrotproject.domain.enumList.HideState;
+import com.exercise.carrotproject.domain.enumList.SellState;
 import com.exercise.carrotproject.web.common.SessionConst;
 import com.exercise.carrotproject.domain.member.dto.MemberDto;
 import com.exercise.carrotproject.domain.post.dto.PostDto;
@@ -228,7 +229,23 @@ public class PostController {
 
     }
 
+    //sellState 판매여부 변경
+    @PostMapping("/post/sellState")
+    @ResponseBody
+    public String udtSellState(@RequestParam Long postId, @RequestParam String sellStateName){
+        log.info("컨트롤러 도착 sellState!!!!!!!postId:{}, sellState:{}", postId, sellStateName);
 
+        if(sellStateName.equals("판매중")){
+
+        }
+        if(sellStateName.equals("예약중")){
+            
+        }
+        if(sellStateName.equals("판매완료")){
+
+        }
+        return "실패";
+    }
 
 
 

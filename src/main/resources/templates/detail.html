@@ -100,9 +100,9 @@
 
 
                         <!--판매여부-->
-                        <select th:if="${session.loginMember.memId}==${post.member.memId}" name="sellState">
+                        <select th:if="${session.loginMember.memId}==${post.member.memId}" th:onchange="sellState([[${post.postId}]])">
                             <!--thymeleaf이용해 Enum클래스 정보 바로 가져오기-->
-                            <option th:each = "sellStateEnum:${T(com.exercise.carrotproject.domain.enumList.SellState).values()}" th:value="${sellStateEnum.name()}" th:text="${sellStateEnum.getSellStateName()}" th:selected="${sellStateEnum}==${post.sellState}"></option>
+                            <option id="optSellState" th:each = "sellStateEnum:${T(com.exercise.carrotproject.domain.enumList.SellState).values()}" th:value="${sellStateEnum.getSellStateName()}" th:text="${sellStateEnum.getSellStateName()}" th:selected="${sellStateEnum}==${post.sellState}"></option>
 
                         </select>
 
@@ -267,6 +267,12 @@
 
         <script>
 
+            //모달창 띄우기
+            function viewModal() {
+                const modal = new bootstrap.Modal(document.querySelector(".modal"));
+                modal.show();
+            }
+
             //게시물 숨기기/보이기
             function hideState(postId, hideStateName){
                 console.log("postId:",postId,"hideState:",hideStateName);
@@ -312,15 +318,34 @@
                         }
                     }); //$.ajax
                 }
-
-
             }
 
-            //모달창 띄우기
-            function viewModal() {
-                const modal = new bootstrap.Modal(document.querySelector(".modal"));
-                modal.show();
+            //판매여부 변경
+            function sellState(postId){
+                console.log("postId:",postId);
+
+                let optSellState = $("#optSellState").val();
+                let data = {"postId" : postId, "sellStateName": optSellState};
+
+                $.ajax({
+                    url: '/post/sellState',
+                    type: 'POST',
+                    data: data,
+                    success: function(result){
+                        console.log(result);
+                        //화면 처리
+                        // alert(result);
+                        // location.reload();
+                    },
+                    error: function(jqXHR, textStatus, errorThrown){
+                        console.log(jqXHR.statusText);
+                        alert(textStatus);
+                    }
+                }); //$.ajax
             }
+
+
+
         </script>
 
     </body>
