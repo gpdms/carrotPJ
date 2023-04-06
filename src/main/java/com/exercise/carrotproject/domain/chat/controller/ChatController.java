@@ -93,6 +93,16 @@ public class ChatController {
         return chatList.size();
     }
 
+    @GetMapping("/chatRoomListByPost/{postId}")
+    public String chatRoomListByPost(Model model, @PathVariable Long postId) {
+        //chatRoom select, where by postId
+
+        //만약 생성된 채팅이 없으면 이동하지 않고 오류메세지 출력하도록 해야함. 그럼.. ajax 써야하나..??
+
+        //html파일 만들어야함..
+        return "chat/chatRoomListByPost";
+    }
+
     @GetMapping("/chatRoomList")
     public String chatRoomList(Model model, HttpSession session) {
         MemberDto memberDto = (MemberDto) session.getAttribute(LOGIN_MEMBER);
