@@ -21,10 +21,45 @@
 
 <div layout:fragment="content">
     <div class="form-container">
+        <div class="py-5 text-center">
+            <h2>리뷰</h2>
+        </div>
+        <hr class="my-4">
+
+        <div th:if="${#httpServletRequest.servletPath.contains('/reveiws/seller/')}">
+            <div th:if="${reviewDetailForm.reviewState.stateCode == 0}">
+
+            <h4 th:text="|${reviewDetailForm.sellerId}님에게 아쉬운 후기를 남겼어요|"></h4>
+            <h6 th:text="|${reviewDetailForm.sellerId}|님과 ${reviewDetailForm.postTitle}을 거래했어요"> </h6>
+            <p>메시지는 운영 팀에게만 전달돼요</p>>
+            <p th:text="${reviewDetailForm.message}"> </p>
+            <ul>
+                <th:block th:each="buyerIndicator : ${reviewDetailForm.sellerIndicatorList}">
+                    <li th:text="${buyerIndicator.description}"></li>
+                </th:block>
+            </ul>
+         </div>
+            <div th:if="${reviewDetailForm.reviewState.stateCode > 0}">
+                <h4 th:text="|${reviewDetailForm.sellerId}님에게 따뜻한 거래후기를 보냈어요|"></h4>
+                <h6 th:text="|${reviewDetailForm.sellerId}|님과 ${reviewDetailForm.postTitle}을 거래했어요"> </h6>
+                <p th:text="${reviewDetailForm.message}"> </p>
+                <ul>
+                    <th:block th:each="buyerIndicator : ${reviewDetailForm.sellerIndicatorList}">
+                        <li th:text="${buyerIndicator.description}"></li>
+                    </th:block>
+                </ul>
+            </div>
+        </div>
+
+
+        <div th:if="${#httpServletRequest.servletPath.contains('/reveiws/buyer/')}">
+
+        </div>
     </div>
 </div>
 
 <div layout:fragment="script" th:inline="javascript">
     <script th:inline="javascript">
+
     </script>
 </div>

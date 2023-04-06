@@ -22,6 +22,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.NoSuchElementException;
+import java.util.stream.Collectors;
 
 
 @Service
@@ -58,6 +59,13 @@ public class ReviewBuyerServiceImpl {
     public Long findReviewBuyerIdByPost(Post post) {
         ReviewBuyer reviewBuyer = reviewBuyerRepository.findByPost(post);
         return reviewBuyerRepository.findByPost(post) != null? reviewBuyer.getReviewBuyerId() : 0L;
+    }
+
+    public List<ReviewBuyerIndicator> getReviewBuyerIndicatorsByReview(ReviewBuyer reviewBuyer){
+        List<ReviewBuyerDetail> reviewBuyerDetails = reviewBuyerDetailRepository.findByReviewBuyer(reviewBuyer);
+        return reviewBuyerDetails.stream()
+                .map(ReviewBuyerDetail::getReviewBuyerIndicator)
+                .collect(Collectors.toList());
     }
 //    public Map<ReviewSellerIndicator, Long> () {
 //

@@ -25,6 +25,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.NoSuchElementException;
+import java.util.stream.Collectors;
 
 
 @Service
@@ -59,10 +60,12 @@ public class ReviewSellerServiceImpl {
                 .orElseThrow(() -> new NoSuchElementException("reviewSeller Not Found"));
     }
 
-/*    public List<ReviewSellerDetail> findReviewSellerIndicatorsBy(Long reviewSellerId){
-        return reviewSellerRepository.findById(reviewSellerId)
-                .orElseThrow(() -> new NoSuchElementException("reviewSeller Not Found"));
-    }*/
+    public List<ReviewSellerIndicator> getReviewSellerIndicatorsByReview(ReviewSeller reviewSeller){
+        List<ReviewSellerDetail> reviewSellerDetails = reviewSellerDetailRepository.findByReviewSeller(reviewSeller);
+        return reviewSellerDetails.stream()
+                .map(ReviewSellerDetail::getReviewSellerIndicator)
+                .collect(Collectors.toList());
+    }
 
     public Long findReviewSellerIdByPost (Post post) {
         ReviewSeller reviewSeller = reviewSellerRepository.findByPost(post);

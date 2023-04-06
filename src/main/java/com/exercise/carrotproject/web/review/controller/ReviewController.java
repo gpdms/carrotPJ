@@ -10,8 +10,6 @@ import com.exercise.carrotproject.domain.post.entity.SellList;
 import com.exercise.carrotproject.domain.post.repository.BuyListRepository;
 import com.exercise.carrotproject.domain.post.repository.PostRepository;
 import com.exercise.carrotproject.domain.post.repository.SellListRepository;
-import com.exercise.carrotproject.domain.post.service.PostService;
-import com.exercise.carrotproject.domain.post.service.PostServiceImpl;
 import com.exercise.carrotproject.domain.review.entity.ReviewBuyer;
 import com.exercise.carrotproject.domain.review.entity.ReviewSeller;
 import com.exercise.carrotproject.domain.review.service.ReviewBuyerServiceImpl;
@@ -104,16 +102,17 @@ public class ReviewController {
     }
 
     @GetMapping("/seller/{reviewSellerId}")
-    public String reviewSellerDetail (@PathVariable String reviewSellerId) {
+    public String reviewSellerDetail (@PathVariable String reviewSellerId, Model model) {
         ReviewSeller reviewSeller = reviewSellerService.findOneReviewSeller(Long.valueOf(reviewSellerId));
-
-       /* ReviewDetailForm.builder()
+        ReviewDetailForm detailForm = ReviewDetailForm.builder()
                 .postTitle(reviewSeller.getPost().getTitle())
                 .reviewState(reviewSeller.getReviewState())
                 .buyerId(reviewSeller.getBuyer().getMemId())
                 .sellerId(reviewSeller.getSeller().getMemId())
                 .reviewSellerId(Long.valueOf(reviewSellerId))
-                .build()*/
+                .sellerIndicatorList(reviewSellerService.getReviewSellerIndicatorsByReview(reviewSeller))
+                .build();
+        model.addAttribute("reviewDetailForm", detailForm);
         return "review/reviewDetail";
     }
 
@@ -148,7 +147,18 @@ public class ReviewController {
         return "review/reviewForm";
     }
     @GetMapping("/buyer/{reviewBuyerId}")
-    public String reviewBuyerDetail (@PathVariable String reviewBuyerId) {
+    public String reviewBuyerDetail (@PathVariable String reviewBuyerId, Model model) {
+        ReviewBuyer reviewBuyer = reviewBuyerService.findOneReviewBuyer(Long.valueOf(reviewBuyerId));
+        ReviewDetailForm detailForm = ReviewDetailForm.builder()
+                .postTitle(reviewBuyer.getPost().getTitle())
+                .reviewState(reviewBuyer.getReviewState())
+                .buyerId(reviewBuyer.getBuyer().getMemId())
+                .sellerId(reviewBuyer.getSeller().getMemId())
+                .reviewBuyerId(Long.valueOf(reviewBuyerId))
+                .buyerIndicatorList(reviewBuyerService.getReviewBuyerIndicatorsByReview(reviewBuyer))
+                .message(reviewBuyer.getMessage())
+                .build();
+        model.addAttribute("reviewDetailForm", detailForm);
         return "review/reviewDetail";
     }
 
