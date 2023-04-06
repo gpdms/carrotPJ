@@ -1,6 +1,7 @@
 package com.exercise.carrotproject.web.review;
 
 import com.exercise.carrotproject.domain.enumList.Category;
+import com.exercise.carrotproject.domain.enumList.HideState;
 import com.exercise.carrotproject.domain.member.dto.MemberDto;
 import com.exercise.carrotproject.domain.member.entity.Member;
 import com.exercise.carrotproject.domain.member.service.MemberServiceImpl;
@@ -55,12 +56,12 @@ public class ReviewController {
 
        for(int i = 1 ; i <= 10; i++ ){
            if(i% 2  == 0 ){
-               Post postBuild = Post.builder().title("글" + i).member(seller1).price(i * 1000).category(Category.ETC).loc(seller1.getLoc()).hideState(0).sellState(2).content("내용" + i).build();
+               Post postBuild = Post.builder().title("글" + i).member(seller1).price(i * 1000).category(Category.ETC).loc(seller1.getLoc()).hideState(HideState.SHOW).sellState(2).content("내용" + i).build();
                Post post1 = postRepository.save(postBuild);
                BuyList buyList= BuyList.builder().post(post1).buyer(buyer).seller(seller1).build();
                buyListRepository.save(buyList);
            }
-           Post postBuild = Post.builder().title("글" + i).member(seller2).price(i * 1000).category(Category.DIGITAL_DEVICE).loc(seller2.getLoc()).hideState(0).sellState(2).content("내용" + i).build();
+           Post postBuild = Post.builder().title("글" + i).member(seller2).price(i * 1000).category(Category.DIGITAL_DEVICE).loc(seller2.getLoc()).hideState(HideState.SHOW).sellState(2).content("내용" + i).build();
            Post post2 = postRepository.save(postBuild);
            SellList sellList = SellList.builder().post(post2).buyer(buyer).seller(seller2).build();
            sellListRepository.save(sellList);

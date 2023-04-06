@@ -1,5 +1,6 @@
 package com.exercise.carrotproject.domain.post.controller;
 
+import com.exercise.carrotproject.domain.enumList.HideState;
 import com.exercise.carrotproject.web.common.SessionConst;
 import com.exercise.carrotproject.domain.member.dto.MemberDto;
 import com.exercise.carrotproject.domain.post.dto.PostDto;
@@ -63,11 +64,14 @@ public class PostController {
         List<Long> postImgIdList = postImgDtoList.stream().map(PostImgDto::getImgId).collect(Collectors.toList());
 //        log.info("컨트롤러단 이미지아이디 리스트:{}",postImgIdList.size());
 
-        model.addAttribute("post", postDto);
         if (postImgIdList.size() == 0) {
            postImgIdList.add(0L);
         }
+
+        model.addAttribute("post", postDto);
         model.addAttribute("imgIds", postImgIdList);
+
+
         return "detail";
     }
 
@@ -145,17 +149,18 @@ public class PostController {
     }
 
     //게시글 삭제
-    @GetMapping("/post/remove/{postId}")
-    public String delPost(@PathVariable Long postId){
+    @PostMapping("/post/remove")
+    public ResponseEntity<String> delPost(@RequestParam Long postId){
 
         postService.deletePost(postId);
 
-        return "redirect:/post/board";
+        return new ResponseEntity<>("게시글이 삭제되었습니다.",HttpStatus.OK);
     }
     
     //게시글 수정페이지
     @GetMapping("/post/updatePost/{postId}")
     public String udtPostPage(@PathVariable Long postId, Model model){
+
         //게시글 하나 정보 불러오기
         PostDto postDto = postService.selectOnePost(postId);
         //게시글 내용 개행처리
@@ -175,7 +180,7 @@ public class PostController {
 
     //게시글 수정한 것 업로드
     @PostMapping("/post/updatePost/{postId}")
-    public ResponseEntity<String> udtPost(PostDto postDto, @RequestParam List<Long> imgIdList, @RequestParam MultipartFile[] uploadFiles, HttpSession session){
+    public ResponseEntity<String> udtPost(PostDto postDto, @RequestParam List<Long> imgIdList, @RequestParam MultipartFile[] uploadFiles, HttpSession session) throws IOException {
         log.info("게시글수정 컨트롤러에 온 postDto:{}", postDto);
         log.info("게시글수정 컨트롤러에 온 imgId:{}", imgIdList);
 
@@ -192,24 +197,54 @@ public class PostController {
         postDto.setContent(postDto.getContent().replace("\r\n","<br>")); //줄개행
 
 
-
-        //DB에 update
-        postService.updatePost(postDto);
-
         //기존 이미지 삭제
         for(Long imgId : imgIdList){
             postService.deleteOnePostImg(imgId);
         }
 
-        //새 이미지 추가
+        //DB에 내용 update, 새 이미지 추가
+        postService.updatePost(postDto, uploadFiles);
 
-
-
-
-
-        return new ResponseEntity<>("상품이 게시되었습니다.",HttpStatus.OK);
+        return new ResponseEntity<>("수정되었습니다.",HttpStatus.OK);
 
     }
+
+
+    //hideState 숨김여부 변경
+    @PostMapping("/post/hideState")
+    public ResponseEntity<String> udtHideState(@RequestParam Long postId, @RequestParam String hideStateName){
+//        log.info("컨트롤러 udtHideState()로 넘어온 postId:{}, hideStateName:{}", postId, hideStateName);
+
+        if(hideStateName.equals("보임")){
+            postService.updateHideState(postId, HideState.HIDE);
+            return new ResponseEntity<>("게시물이 이웃에게 보이지 않게 숨깁니다.",HttpStatus.OK);
+        }
+        if(hideStateName.equals("숨김")){
+            postService.updateHideState(postId, HideState.SHOW);
+            return new ResponseEntity<>("게시물이 이웃에게 다시 보입니다.",HttpStatus.OK);
+
+        }
+        return new ResponseEntity<>("숨김/보이기 처리에 실패했습니다.",HttpStatus.BAD_REQUEST);
+
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 

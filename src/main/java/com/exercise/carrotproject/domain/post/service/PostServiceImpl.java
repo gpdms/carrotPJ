@@ -1,10 +1,13 @@
 package com.exercise.carrotproject.domain.post.service;
 
+import com.exercise.carrotproject.domain.enumList.HideState;
 import com.exercise.carrotproject.domain.post.entity.*;
 import com.exercise.carrotproject.domain.post.dto.PostDto;
 import com.exercise.carrotproject.domain.post.dto.PostImgDto;
+import com.exercise.carrotproject.domain.post.repository.CustomPostRepository;
 import com.exercise.carrotproject.domain.post.repository.PostImgRepository;
 import com.exercise.carrotproject.domain.post.repository.PostRepository;
+import com.exercise.carrotproject.domain.post.repository.PostRepositoryImpl;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -43,6 +46,8 @@ public class PostServiceImpl {
     private final PostRepository postRepository;
     private final PostImgRepository postImgRepository;
     private final JPAQueryFactory jpaQueryFactory; //QuerydslConfig파일에 bean등록함
+//    private final PostRepositoryImpl customPostRepository; //후에 CustomPostRepository로 바꿔주기
+
 
     @Value("${file.postImg}")
     private String uploadPath;
@@ -73,8 +78,10 @@ public class PostServiceImpl {
                 return "성공";
             }
         }
-        //이미지에 insert
+        //이미지 테이블에 insert
         insertPostImg(postEntity, uploadFiles);
+
+        
         return "성공";
 
     }
@@ -224,12 +231,16 @@ public class PostServiceImpl {
     //게시글 업데이트
 //    @Override
     @Transactional
-    public void updatePost(PostDto postDto){
+    public void updatePost(PostDto postDto, MultipartFile[] uploadFiles) throws IOException {
         //Dto -> Enity
         Post post = PostEntityDtoMapper.dtoToEntity(postDto);
 
         Post rs = postRepository.save(post);
         log.info("게시글 업데이트 성공?:{}",rs);
+
+        //새이미지 추가
+        insertPostImg(post, uploadFiles);
+
     }
 
     //게시글 삭제
@@ -261,8 +272,21 @@ public class PostServiceImpl {
     }
 
     
+    //hideState 변경
+//    @Override
+    @Transactional
+    public void updateHideState(Long postId, HideState hideState){
+        QPost qpost = QPost.post;
 
+        long resultCount = jpaQueryFactory
+                .update(qpost)
+                .set(qpost.hideState, hideState)
+                .where(qpost.postId.eq(postId))
+                .execute();
 
+//        log.info("update hideState 결과>>>>>>>>>>{}", resultCount);
+
+    }
 
 
 

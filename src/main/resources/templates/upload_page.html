@@ -198,19 +198,13 @@
                 function preview(arr){
                     arr.forEach(function(f){
 
-                        //div에 이미지 추가
-                        // var str = '<li class="ui-state-default">';
-
                         //이미지 파일 미리보기
                         if(f.type.match('image.*')){
                             //파일을 읽기 위한 FileReader객체 생성
                             var reader = new FileReader();
                             reader.onload = function (e) {
                                 //파일 읽어들이기를 성공했을때 호출되는 이벤트 핸들러
-                                // str += `<img id="${f.lastModified}" src="${e.target.result}" title="${f.name}" width=80 height=80>`;
-                                // str += `<span data-index="${f.lastModified}" class="delBtn" onclick="delImg(this)">x</span>`;
-                                // str += '</li>';
-
+                                //div에 이미지 추가
                                 var str = `<li class="ui-state-default">
                                            <img id="${f.lastModified}" src="${e.target.result}" title="${f.name}" width=80 height=80>
                                            <span data-index="${f.lastModified}" class="delBtn" onclick="delImg(this)">x</span>

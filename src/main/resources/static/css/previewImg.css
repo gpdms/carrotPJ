@@ -1,5 +1,7 @@
 .inputFile,
 #Preview,
+#prePreview,
+#prePreview li,
 #Preview li{
     float:left
 }
@@ -21,6 +23,7 @@
     margin-left: 20px;
     width: 650px;
 }
+#prePreview li,
 #Preview li{
     list-style: none;
     margin-left: 10px;
