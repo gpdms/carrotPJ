@@ -1,6 +1,7 @@
 package com.exercise.carrotproject.domain.post.dto;
 
 import com.exercise.carrotproject.domain.enumList.Category;
+import com.exercise.carrotproject.domain.enumList.HideState;
 import com.exercise.carrotproject.domain.enumList.Loc;
 
 import com.exercise.carrotproject.domain.member.dto.MemberDto;
@@ -24,7 +25,7 @@ public class PostDto {
     private String content;
     private Loc loc;
     private Category category;
-    private Integer hideState;
+    private HideState hideState;
     private Integer sellState;
     private Integer hits;
     private String wishPlace;

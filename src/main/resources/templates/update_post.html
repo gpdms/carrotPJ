@@ -8,6 +8,8 @@
 <!--    <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">-->
 <!--    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-slider/10.6.2/css/bootstrap-slider.min.css" integrity="sha256-G3IAYJYIQvZgPksNQDbjvxd/Ca1SfCDFwu2s2lt0oGo=" crossorigin="anonymous" />-->
 <!--    <link rel="stylesheet" type="text/css" href="css/style.css">-->
+    <!--이미지 미리보기 css-->
+    <link rel="stylesheet" href="/css/previewImg.css">
 </head>
 <body>
 <!--    <nav class="navbar nav-global fixed-top navbar-expand-sm">-->
@@ -20,13 +22,23 @@
 
     <div class="container container-sm container-item-create">
         <h5 class="container-headline">게시글 수정</h5>
-
         <form id="upload_form" class="form-item-create">
             <div class="form-group form-picture">
                 <div class="file-box">
-                    <!--사진-->
+                    <!--이미지-->
+                    <div class="inputFile">
+                        <label for='inputImage' class="addImgBtn">+</label>
+                        <input type="file" multiple="multiple" name="uploadFiles" id='inputImage' accept="image/*">
+                    </div>
+                    <!--이미지 미리보기-->
+                    <ul id="prePreview" class="sortable" >
+                        <li class="ui-state-default" th:each="img:${postImgs}" >
+                            <img th:src="|/post/img/${img.imgId}|" width=80 height=80>
+                            <span th:id="${img.imgId}" class="delBtn" onclick="delPreImg(this)">x</span>
+                        </li>
+                    </ul>
+                    <ul id="Preview" class="sortable"></ul>
 
-                    <input type="file" multiple="multiple" name="uploadFiles">
                 </div>
 
                 <div class="uploadResult"></div>
@@ -54,7 +66,11 @@
             <div class="form-group form-car-mileage">
                 <input type="text" class="form-control" id="carMileage" name="wishPlace" th:value="${post.wishPlace}">
             </div>
-<!--            <div class="form-group form-car-smoking">-->
+            <!--숨김여부, 판매여부 hidden-->
+            <input type="hidden" name="hideState" th:value="${post.hideState}" />
+            <input type="hidden" name="sellState" th:value="${post.sellState}" />
+
+            <!--            <div class="form-group form-car-smoking">-->
 <!--                <label>차량 판매자 흡연 여부</label>-->
 <!--                <div class="form-check form-check-inline form-check-smoking">-->
 <!--                    <input class="form-check-input" type="radio" name="smokingOptions" id="inlineSmoker" value="true">-->
@@ -86,30 +102,114 @@
 <script src="https://code.jquery.com/jquery-3.6.4.js" integrity="sha256-a9jBBRygX1Bh5lt8GZjXDzyOB+bWve9EiO7tROUtj/E=" crossorigin="anonymous"></script>
 
     <script>
+
+        //삭제한 미리보기 이미지들을 담는 리스트
+        var imgIdList = new Array();
+
+        //미리보기 이미지 삭제
+        function delPreImg(e){
+            console.log("e.id(이미지아이디)"+e.id);
+            $(e).parent('li').remove();
+            imgIdList.push(JSON.parse(e.id));
+            console.log("imgIdList:"+imgIdList);
+        }
+
+        //새로운 이미지 추가
+        //드래그 앤 드롭
+        // $(".sortable").sortable();
+
+        //이미지 등록
+        $("#inputImage").change(function(e){
+            //div 내용 비워주기
+            $('#Preview').empty();
+
+            // const fileInput = document.querySelector('#inputImage');
+            var files = e.target.files; //선택한 파일을 가져옴.
+            var arr = Array.from(files);
+
+            // var arr = Array.prototype.slice.call(files);
+            //Array 객체의 slice() 메서드를 사용하여 객체(files)를 배열(arr)로 변환.
+            //call() 메소드를 사용하여 slice() 메소드를 호출하면, 인수로 전달된 객체가 slice() 메소드의 this 값이 됨.
+
+            //업로드 가능 파일인지 체크
+            for(var i=0; i<files.length; i++){
+                if(!checkExtension(files[i].name,files[i].size)){
+                    return false;
+                }
+            }
+            preview(arr);
+
+            function checkExtension(fileName,fileSize){
+                // var regex = new RegExp("(.*?)\.(exe|sh|zip|alz)$");
+                var maxSize = 20971520;  //20MB
+
+                if(fileSize >= maxSize){
+                    alert('이미지 크기가 초과되었습니다.');
+                    $("#inputImage").val("");  //파일 초기화
+                    return false;
+                }
+
+                // if(regex.test(fileName)){
+                //     alert('확장자명을 확인해주세요.');
+                //     $("#inputImage").val("");  //파일 초기화
+                //     return false;
+                // }
+                return true;
+            }
+
+            function preview(arr){
+                arr.forEach(function(f){
+
+                    //이미지 파일 미리보기
+                    if(f.type.match('image.*')){
+                        //파일을 읽기 위한 FileReader객체 생성
+                        var reader = new FileReader();
+                        reader.onload = function (e) {
+                            //파일 읽어들이기를 성공했을때 호출되는 이벤트 핸들러
+                            //div에 이미지 추가
+                            var str = `<li class="ui-state-default">
+                                           <img id="${f.lastModified}" src="${e.target.result}" title="${f.name}" width=80 height=80>
+                                           <span data-index="${f.lastModified}" class="delBtn" onclick="delImg(this)">x</span>
+                                           </li>`
+                            $(str).appendTo('#Preview');
+
+                        }
+                        reader.readAsDataURL(f); //reader에게 e.target.files[0](업로드된 파일)를 URL로 읽으라고 명령
+
+                    }else{
+                        //이미지 파일 아닐 경우
+                        alert('이미지가 아닌 파일은 업로드할 수 없습니다.');
+
+                    }
+                })
+            }
+        })
+
+
+
+        //게시글 업로드
         $('#uploadBtn').click(function( ) {
 
-            var uploadForm = $('#upload_form')[0]; //$(...) 하면 객체 하나가 리턴
-            var formData = new FormData(uploadForm); //FormData에는 객체가 들어가지 못함. so객체에서 인덱스로 뽑아옴.
-
+            var uploadForm = $('#upload_form')[0];
+            var formData = new FormData(uploadForm);
+            formData.append("imgIdList", imgIdList)
             //formData 출력
             // for (let key of formData.keys()) {
             //     console.log(key, ":", formData.get(key));
             // }
 
             //실제 업로드 부분
-            //upload ajax
-            //파일업로드를 위해 contentType 속성을 반드시 false로 지정한다 -> multipart/form-data 타입을 사용하기위해
             let postId = [[${post.postId}]];
             console.log("postId:"+postId);
             $.ajax({
                 url: '/post/updatePost/' + postId,
                 type: 'POST',
                 data: formData,
-                processData: false, //processData : false로 선언 시 formData를 string으로 변환하지 않음
-                contentType: false, //contentType : false 로 선언 시 content-type 헤더가 multipart/form-data로 전송되게 함
+                processData: false,
+                contentType: false,
                 // dataType:'json',
                 enctype:'multipart/form-data',
-                success: function(result){ //컨트롤러에서 return이 없을 경우 바로 새로고침해버림(?)
+                success: function(result){
                     console.log(result);
                     //화면 처리
                     alert(result);
@@ -124,49 +224,6 @@
         }); //end click
 
 
-
-
-
-
-        //사진 미리보기
-        function showUploadedImages(arr){
-            console.log(arr);
-
-            var divArea = $(".uploadResult");
-            var str = "";
-            for(var i=0; i<arr.length; i++){
-                //백틱.1번 앞에 있는것.
-                str += `<div>
-                       <img src=/display?fileName=${arr[i].thumbnailURL}>
-                        <button class='removeBtn' data-name=${arr[i].imageURL}>REMOVE</button>
-                    </div>`
-
-
-                // str += "<div>";
-                // str += "<img src='/display?fileName="+arr[i].thumbnailURL+"'>";
-                // str += "<button class='removeBtn' data-name='"+arr[i].imageURL+"'>REMOVE</button>"
-                // srt += "</div>";
-            }
-            divArea.append(str);
-        }
-
-
-
-
-
-        // $(document).ready(function(){
-        //     var fileTarget = $('.file-box .upload-hidden');
-        //
-        //     fileTarget.on('change', function(){
-        //         if(window.FileReader){
-        //             var filename = $(this)[0].files[0].name;
-        //         } else {
-        //             var filename = $(this).val().split('/').pop().split('\\').pop();
-        //         }
-        //
-        //         $(this).siblings('.upload-name').val(filename);
-        //     });
-        // });
 
 
     </script>

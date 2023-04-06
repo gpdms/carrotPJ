@@ -1,13 +1,17 @@
 package com.exercise.carrotproject.domain.post.service;
 
+import com.exercise.carrotproject.domain.enumList.HideState;
 import com.exercise.carrotproject.domain.post.entity.*;
 import com.exercise.carrotproject.domain.post.dto.PostDto;
 import com.exercise.carrotproject.domain.post.dto.PostImgDto;
+import com.exercise.carrotproject.domain.post.repository.CustomPostRepository;
 import com.exercise.carrotproject.domain.post.repository.PostImgRepository;
 import com.exercise.carrotproject.domain.post.repository.PostRepository;
+import com.exercise.carrotproject.domain.post.repository.PostRepositoryImpl;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.hibernate.annotations.DynamicUpdate;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
@@ -42,6 +46,8 @@ public class PostServiceImpl {
     private final PostRepository postRepository;
     private final PostImgRepository postImgRepository;
     private final JPAQueryFactory jpaQueryFactory; //QuerydslConfig파일에 bean등록함
+//    private final PostRepositoryImpl customPostRepository; //후에 CustomPostRepository로 바꿔주기
+
 
     @Value("${file.postImg}")
     private String uploadPath;
@@ -72,8 +78,10 @@ public class PostServiceImpl {
                 return "성공";
             }
         }
-        //이미지에 insert
+        //이미지 테이블에 insert
         insertPostImg(postEntity, uploadFiles);
+
+        
         return "성공";
 
     }
@@ -188,6 +196,7 @@ public class PostServiceImpl {
         return postDto;
     }
 
+    //게시글의 모든 이미지 반환
 //    @Override
     public List<PostImgDto> selectPostImgs(Long postId){
 
@@ -201,6 +210,8 @@ public class PostServiceImpl {
 
         return postImgDtoList;
     }
+    
+    //게시글의 첫번째 이미지 반환
 //    @Override
     public PostImgDto selectOnePostImg(Long imgId){
         PostImg imgEntity = postImgRepository.findById(imgId).orElse(null);
@@ -210,6 +221,30 @@ public class PostServiceImpl {
         return imgDto;
     }
 
+    //게시글 이미지 삭제
+//    @Override
+    @Transactional
+    public void deleteOnePostImg(Long imgId){
+        postImgRepository.deleteById(imgId);
+    }
+
+    //게시글 업데이트
+//    @Override
+    @Transactional
+    public void updatePost(PostDto postDto, MultipartFile[] uploadFiles) throws IOException {
+        //Dto -> Enity
+        Post post = PostEntityDtoMapper.dtoToEntity(postDto);
+
+        Post rs = postRepository.save(post);
+        log.info("게시글 업데이트 성공?:{}",rs);
+
+        //새이미지 추가
+        insertPostImg(post, uploadFiles);
+
+    }
+
+    //게시글 삭제
+//    @Override
     @Transactional
     public void deletePost(Long postId){
         //postId로 post엔티티 조회
@@ -237,8 +272,21 @@ public class PostServiceImpl {
     }
 
     
+    //hideState 변경
+//    @Override
+    @Transactional
+    public void updateHideState(Long postId, HideState hideState){
+        QPost qpost = QPost.post;
 
+        long resultCount = jpaQueryFactory
+                .update(qpost)
+                .set(qpost.hideState, hideState)
+                .where(qpost.postId.eq(postId))
+                .execute();
 
+//        log.info("update hideState 결과>>>>>>>>>>{}", resultCount);
+
+    }
 
 
 
