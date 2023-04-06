@@ -24,13 +24,18 @@
         <div class="py-5 text-center">
             <h2>구매 내역</h2>
         </div>
-        <div th:each="buyOne : ${buyList}">
-            <span th:text="|제목:${buyOne.postDto.title}, |"> </span>
-            <span th:text="|판매자:${buyOne.postDto.member.memId}|"> </span>
-            <button th:onclick="|location.href='@{/reviews/seller(postId=${buyOne.postDto.postId})}'|"
-                    th:if=""> 리뷰남기기 </button>
-
-        </div>
+        <th:block th:unless="${buyList.isEmpty()}">
+            <div th:each="buyOne : ${buyList}">
+                <span th:text="|제목:${buyOne.postDto.title}, |"> </span>
+                <span th:text="|판매자:${buyOne.postDto.member.memId}|"> </span>
+                <button th:onclick="|location.href='@{/reviews/seller(postId=${buyOne.postDto.postId})}'|" th:if="${buyOne.reviewSellerId == 0}"> 리뷰남기기 </button>
+                <button th:onclick="|location.href='@{/reviews/seller/{reviewSellerId}(reviewSellerId=${buyOne.reviewSellerId})}'|"
+                        th:if="${buyOne.reviewSellerId != 0}" >리뷰 보기 </button>
+            </div>
+        </th:block>
+        <th:block th:if="${buyList.isEmpty()}">
+            <h4>구매한 내역이 없습니다.</h4>
+        </th:block>
     </div> <!-- /form-container -->
 </div>
 

@@ -1,10 +1,12 @@
 package com.exercise.carrotproject.domain.review.service;
 
 
+import com.exercise.carrotproject.domain.enumList.ReviewBuyerIndicator;
 import com.exercise.carrotproject.domain.enumList.ReviewSellerIndicator;
 import com.exercise.carrotproject.domain.member.entity.Member;
 import com.exercise.carrotproject.domain.post.entity.Post;
 import com.exercise.carrotproject.domain.review.entity.ReviewBuyer;
+import com.exercise.carrotproject.domain.review.entity.ReviewBuyerDetail;
 import com.exercise.carrotproject.domain.review.entity.ReviewSeller;
 import com.exercise.carrotproject.domain.review.entity.ReviewSellerDetail;
 import com.exercise.carrotproject.domain.review.repository.ReviewBuyerCustomRepository;
@@ -22,20 +24,18 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
+import java.util.NoSuchElementException;
 
 
 @Service
 @RequiredArgsConstructor
-public class ReviewServiceImpl {
+public class ReviewSellerServiceImpl {
     private final ReviewSellerCustomRepository reviewSellerCustomRepository;
     private final ReviewSellerDetailCustomRepository reviewSellerDetailCustomRepository;
-    private final ReviewBuyerCustomRepository reviewBuyerCustomRepository;
-    private final ReviewBuyerDetailCustomRepository reviewBuyerDetailCustomRepository;
 
     private final ReviewSellerRepository reviewSellerRepository;
     private final ReviewSellerDetailRepository reviewSellerDetailRepository;
-    private final ReviewBuyerRepository reviewBuyerRepository;
-    private final ReviewBuyerDetailRepository reviewBuyerDetailRepository;
+
 
 
     @Transactional
@@ -43,24 +43,34 @@ public class ReviewServiceImpl {
         ReviewSeller newReviewSeller = reviewSellerRepository.save(reviewSeller);
         insertReviewSellerDetail(newReviewSeller, indicatorList);
     }
-
     @Transactional
     public void insertReviewSellerDetail(ReviewSeller newReviewSeller, List<ReviewSellerIndicator> indicatorList) {
         for (ReviewSellerIndicator reviewSellerIndicator : indicatorList) {
-            ReviewSellerDetail reviewSellerDetail = ReviewSellerDetail.builder().reviewSeller(newReviewSeller)
+            ReviewSellerDetail reviewSellerDetail = ReviewSellerDetail.builder()
+                    .reviewSeller(newReviewSeller)
                     .reviewSellerIndicator(reviewSellerIndicator)
                     .seller(newReviewSeller.getSeller())
                     .build();
            reviewSellerDetailRepository.save(reviewSellerDetail);
         }
     }
-    public boolean isSellerReviewRegistered (Post post) {
-        return reviewSellerRepository.findByPost(post) == null? true : false;
+    public ReviewSeller findOneReviewSeller(Long reviewSellerId){
+        return reviewSellerRepository.findById(reviewSellerId)
+                .orElseThrow(() -> new NoSuchElementException("reviewSeller Not Found"));
     }
-    public boolean isBuyerReviewRegistered(Post post) {
-        return reviewBuyerRepository.findByPost(post) == null? true : false;
+
+/*    public List<ReviewSellerDetail> findReviewSellerIndicatorsBy(Long reviewSellerId){
+        return reviewSellerRepository.findById(reviewSellerId)
+                .orElseThrow(() -> new NoSuchElementException("reviewSeller Not Found"));
+    }*/
+
+    public Long findReviewSellerIdByPost (Post post) {
+        ReviewSeller reviewSeller = reviewSellerRepository.findByPost(post);
+        return reviewSellerRepository.findByPost(post) != null? reviewSeller.getReviewSellerId() : 0L;
     }
+
 //    public Map<ReviewSellerIndicator, Long> () {
 //
 //    }
+
 }

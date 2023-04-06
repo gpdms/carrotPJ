@@ -1,6 +1,7 @@
 package com.exercise.carrotproject.web.review.controller;
 
 import com.exercise.carrotproject.domain.enumList.Category;
+import com.exercise.carrotproject.domain.enumList.ReviewBuyerIndicator;
 import com.exercise.carrotproject.domain.enumList.ReviewSellerIndicator;
 import com.exercise.carrotproject.domain.enumList.ReviewState;
 import com.exercise.carrotproject.domain.member.dto.MemberDto;
@@ -14,9 +15,12 @@ import com.exercise.carrotproject.domain.post.repository.PostRepository;
 import com.exercise.carrotproject.domain.post.repository.SellListRepository;
 import com.exercise.carrotproject.domain.post.service.PostService;
 import com.exercise.carrotproject.domain.post.service.PostServiceImpl;
+import com.exercise.carrotproject.domain.review.entity.ReviewBuyer;
 import com.exercise.carrotproject.domain.review.entity.ReviewSeller;
-import com.exercise.carrotproject.domain.review.service.ReviewServiceImpl;
+import com.exercise.carrotproject.domain.review.service.ReviewBuyerServiceImpl;
+import com.exercise.carrotproject.domain.review.service.ReviewSellerServiceImpl;
 import com.exercise.carrotproject.web.common.SessionConst;
+import com.exercise.carrotproject.web.review.form.ReviewDetailForm;
 import com.exercise.carrotproject.web.review.form.ReviewForm;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -37,7 +41,8 @@ import java.util.NoSuchElementException;
 @RequiredArgsConstructor
 public class ReviewController {
     private final MemberServiceImpl memberService;
-    private final ReviewServiceImpl reviewService;
+    private final ReviewSellerServiceImpl reviewSellerService;
+    private final ReviewBuyerServiceImpl reviewBuyerService;
 
     private final PostRepository postRepository;
     private final BuyListRepository buyListRepository;
@@ -88,7 +93,6 @@ public class ReviewController {
     @PostMapping("/seller")
     @ResponseBody
     public String addSellerReview(@RequestBody ReviewForm reviewForm) {
-        log.info("reviewSellerForm----{}", reviewForm);
         List<ReviewSellerIndicator> indicatorList = ReviewSellerIndicator.findAllByEnumName(reviewForm.getIndicators());
         ReviewSeller reviewSeller = ReviewSeller.builder()
                 .seller(memberService.findOneMember(reviewForm.getSellerId()))
@@ -98,28 +102,57 @@ public class ReviewController {
                 .totalScore(ReviewSellerIndicator.sumScore(indicatorList))
                 .message(reviewForm.getMessage())
                 .build();
-        reviewService.insertReviewSeller(reviewSeller, indicatorList);
+        reviewSellerService.insertReviewSeller(reviewSeller, indicatorList);
         return "성공";
     }
+
+    @GetMapping("/seller/{reviewSellerId}")
+    public String reviewSellerDetail (@PathVariable String reviewSellerId) {
+        ReviewSeller reviewSeller = reviewSellerService.findOneReviewSeller(Long.valueOf(reviewSellerId));
+
+       /* ReviewDetailForm.builder()
+                .postTitle(reviewSeller.getPost().getTitle())
+                .reviewState(reviewSeller.getReviewState())
+                .buyerId(reviewSeller.getBuyer().getMemId())
+                .sellerId(reviewSeller.getSeller().getMemId())
+                .reviewSellerId(Long.valueOf(reviewSellerId))
+                .build()*/
+        return "review/reviewDetail";
+    }
+
 
    @GetMapping("/buyer")
    public String toBuyerReviewForm(
            HttpSession session,
            @RequestParam String postId,
-           @ModelAttribute("reviewForm") ReviewForm reviewForm){
+           Model model){
        MemberDto loginMember = (MemberDto) session.getAttribute(SessionConst.LOGIN_MEMBER);
        SellList sellOne = sellListRepository.findByPost(postRepository.findById(Long.valueOf(postId)).orElseThrow());
-       reviewForm = ReviewForm.builder().sellerId(loginMember.getMemId())
+       ReviewForm reviewForm = ReviewForm.builder().sellerId(loginMember.getMemId())
                .buyerId(sellOne.getBuyer().getMemId())
                .postId(Long.valueOf(postId))
                .build();
+       model.addAttribute("reviewForm", reviewForm);
        return "review/reviewForm";
    }
     @PostMapping("/buyer")
     @ResponseBody
     public String addBuyerReview(@RequestBody ReviewForm reviewForm) {
-        log.info("reviewBuyerForm----{}", reviewForm);
+        List<ReviewBuyerIndicator> indicatorList = ReviewBuyerIndicator.findAllByEnumName(reviewForm.getIndicators());
+        ReviewBuyer reviewBuyer = ReviewBuyer.builder()
+                .seller(memberService.findOneMember(reviewForm.getSellerId()))
+                .buyer(memberService.findOneMember(reviewForm.getBuyerId()))
+                .post(postRepository.findById(reviewForm.getPostId()).orElse(null))
+                .reviewState(ReviewState.findByStateCode(reviewForm.getReviewStateCode()))
+                .totalScore(ReviewBuyerIndicator.sumScore(indicatorList))
+                .message(reviewForm.getMessage())
+                .build();
+        reviewBuyerService.insertReviewBuyer(reviewBuyer, indicatorList);
         return "review/reviewForm";
+    }
+    @GetMapping("/buyer/{reviewBuyerId}")
+    public String reviewBuyerDetail (@PathVariable String reviewBuyerId) {
+        return "review/reviewDetail";
     }
 
 

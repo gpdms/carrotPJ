@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout/basic.html}">
+
+<head layout:fragment="head">
+    <title>판매 완료!! 내역</title>
+    <link th:href="@{/css/bootstrap.min.css}"
+          href="/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        .form-container {
+            max-width: 560px;
+            padding-left: 100px;
+        }
+        .field-error {
+            border-color: #dc3545;
+            color: #dc3545;
+        }
+    </style>
+</head>
+
+<div layout:fragment="content">
+    <div class="form-container">
+        <div class="py-5 text-center">
+            <h2>판매 완료!! 내역</h2>
+        </div>
+        <th:block th:unless="${sellList.isEmpty()}">
+            <div th:each="sellOne : ${sellList}">
+                <span th:text="|제목:${sellOne.postDto.title}, |"> </span>
+                <span th:text="|판매상태:${sellOne.postDto.sellState}|"> </span>
+                <span th:text="|구매자:${sellOne.buyerId}|"> </span>
+                <button th:onclick="|location.href='@{/reviews/buyer(postId=${sellOne.postDto.postId})}'|" th:if="${sellOne.reviewBuyerId==0}">리뷰 남기기 </button>
+                <button th:onclick="|location.href='@{/reviews/buyer/{reviewBuyerId}(reviewBuyerId=${sellOne.reviewBuyerId})}'|" th:if="${sellOne.reviewBuyerId!=0}" >리뷰 보기 </button>
+            </div>
+        </th:block>
+        <th:block th:if="${sellList.isEmpty()}">
+            <h4>판매 완료!!한 내역이 없습니다</h4>
+        </th:block>
+    </div> <!-- /form-container -->
+</div>
+
+<div layout:fragment="script" th:inline="javascript">
+    <script th:inline="javascript">
+    </script>
+</div>

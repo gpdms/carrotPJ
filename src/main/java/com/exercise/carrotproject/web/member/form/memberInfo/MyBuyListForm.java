@@ -1,4 +1,4 @@
-package com.exercise.carrotproject.web.member.form;
+package com.exercise.carrotproject.web.member.form.memberInfo;
 
 import com.exercise.carrotproject.domain.post.dto.PostDto;
 import com.exercise.carrotproject.domain.post.entity.Post;
@@ -10,22 +10,19 @@ import lombok.*;
 @Getter
 @Builder
 @ToString
-public class SellListForm {
-    private Long sellId;
-
-    //private Post post;
+public class MyBuyListForm {
+    private Long buyId;
     private PostDto postDto;
-    //private Member seller;
-    private String sellerId;
-    //private Member buyer;
     private String buyerId;
-    private Boolean reviewExist;
+    private String sellerId;
 
-    public SellListForm(Long sellId, Post post, String buyerId, String sellerId, boolean reviewExist) {
-        this.sellId = sellId;
+    private Long reviewSellerId;
+
+    public MyBuyListForm(Long buyId, Post post, String buyerId, String sellerId, Long reviewSellerId) {
+        this.buyId = buyId;
         this.postDto = PostEntityDtoMapper.entityToDto(post);
         this.buyerId = buyerId;
         this.sellerId = sellerId;
-        this.reviewExist = reviewExist;
+        this.reviewSellerId = reviewSellerId;
     }
 }

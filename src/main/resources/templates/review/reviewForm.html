@@ -252,7 +252,8 @@
                 contentType: "application/json",
                 success: function (data) {
                     alert("리뷰가 등록되었습니다.");
-                    history.back();
+                    let me =  [[${reviewForm.buyerId}]] ;
+                    window.location.href= `/members/${me}/buyList`
                 },
                 error: function (err) {
                     console.log(err);
@@ -274,7 +275,8 @@
                 contentType: "application/json",
                 success: function (data) {
                     alert("리뷰가 등록되었습니다.");
-                    history.back();
+                    let me =  [[${reviewForm.sellerId}]] ;
+                    window.location.href= `/members/${me}/sellList`
                 },
                 error: function (err) {
                     console.log(err);

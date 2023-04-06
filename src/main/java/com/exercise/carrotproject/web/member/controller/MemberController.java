@@ -1,27 +1,24 @@
 package com.exercise.carrotproject.web.member.controller;
 
 
-import com.exercise.carrotproject.domain.member.MemberEntityDtoMapper;
 import com.exercise.carrotproject.domain.member.dto.MemberDto;
 import com.exercise.carrotproject.domain.member.entity.Member;
 import com.exercise.carrotproject.domain.member.repository.MemberRepository;
 import com.exercise.carrotproject.domain.member.service.MemberServiceImpl;
-import com.exercise.carrotproject.domain.post.dto.BuyListDto;
-import com.exercise.carrotproject.domain.post.dto.PostDto;
-import com.exercise.carrotproject.domain.post.dto.SellListDto;
 import com.exercise.carrotproject.domain.post.entity.BuyList;
-import com.exercise.carrotproject.domain.post.entity.PostEntityDtoMapper;
 import com.exercise.carrotproject.domain.post.entity.SellList;
 import com.exercise.carrotproject.domain.post.repository.BuyListRepository;
 import com.exercise.carrotproject.domain.post.repository.PostRepository;
 import com.exercise.carrotproject.domain.post.repository.SellListRepository;
-import com.exercise.carrotproject.domain.review.repository.basic.ReviewBuyerRepository;
+import com.exercise.carrotproject.domain.review.service.ReviewBuyerServiceImpl;
+import com.exercise.carrotproject.domain.review.service.ReviewSellerServiceImpl;
 import com.exercise.carrotproject.domain.review.service.ReviewServiceImpl;
 import com.exercise.carrotproject.web.common.SessionConst;
-import com.exercise.carrotproject.web.member.form.ProfileForm;
-import com.exercise.carrotproject.web.member.form.PwdUpdateForm;
-import com.exercise.carrotproject.web.member.form.SellListForm;
-import com.exercise.carrotproject.web.member.form.SignupForm;
+import com.exercise.carrotproject.web.member.form.*;
+import com.exercise.carrotproject.web.member.form.memberInfo.MyBuyListForm;
+import com.exercise.carrotproject.web.member.form.memberInfo.ProfileForm;
+import com.exercise.carrotproject.web.member.form.memberInfo.PwdUpdateForm;
+import com.exercise.carrotproject.web.member.form.memberInfo.MySellListForm;
 import com.exercise.carrotproject.web.member.util.SecurityUtils;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -59,7 +56,8 @@ public class MemberController {
     //for Review
     private final SellListRepository sellListRepository;
     private final BuyListRepository buyListRepository;
-    private final ReviewServiceImpl reviewService;
+    private final ReviewSellerServiceImpl reviewSellerService;
+    private final ReviewBuyerServiceImpl reviewBuyerService;
 
     @GetMapping("/{memId}")
     public String toMemberHome(@PathVariable String memId, Model model,
@@ -204,27 +202,28 @@ public class MemberController {
     private String buyList(@PathVariable String memId, Model model) {
         Member buyer = memberService.findOneMember(memId);
         List<BuyList> buyList = buyListRepository.findByBuyer(buyer);
-        List<BuyListDto> buyDtoList = new ArrayList<>();
+        List<MyBuyListForm> buyFormList = new ArrayList<>();
         for (BuyList buyOne : buyList) {
-            BuyListDto buyOneDto = new BuyListDto(buyOne.getBuyId(), buyOne.getPost(), buyOne.getBuyer().getMemId(), buyOne.getSeller().getMemId());
-            buyDtoList.add(buyOneDto);
+            Long reviewSellerId = reviewSellerService.findReviewSellerIdByPost(buyOne.getPost());
+            MyBuyListForm buyOneForm = new MyBuyListForm(buyOne.getBuyId(), buyOne.getPost(), buyOne.getBuyer().getMemId(), buyOne.getSeller().getMemId(), reviewSellerId);
+            buyFormList.add(buyOneForm);
         }
-        model.addAttribute("buyList", buyDtoList);
+        model.addAttribute("buyList", buyFormList);
 
-        return "/member/buyList";
+        return "member/myBuyList";
     }
     //sellList
     @GetMapping("/{memId}/sellList")
     private String sellList(@PathVariable String memId, Model model) {
         Member seller= memberService.findOneMember(memId);
         List<SellList> sellList = sellListRepository.findBySeller(seller);
-        List<SellListForm> sellFormList = new ArrayList<>();
+        List<MySellListForm> sellFormList = new ArrayList<>();
         for (SellList sellOne : sellList) {
-            boolean registered = reviewService.isSellerReviewRegistered(sellOne.getPost());
-            SellListForm sellForm = new SellListForm(sellOne.getSellId(), sellOne.getPost(), sellOne.getBuyer().getMemId(), sellOne.getSeller().getMemId(), registered);
+            Long reviewBuyerId = reviewBuyerService.findReviewBuyerIdByPost(sellOne.getPost());
+            MySellListForm sellForm = new MySellListForm(sellOne.getSellId(), sellOne.getPost(), sellOne.getBuyer().getMemId(), sellOne.getSeller().getMemId(), reviewBuyerId);
             sellFormList.add(sellForm);
         }
         model.addAttribute("sellList", sellFormList);
-        return "/member/sellList";
+        return "member/mySellList";
     }
 }
