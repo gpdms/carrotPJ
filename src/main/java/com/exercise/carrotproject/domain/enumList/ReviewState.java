@@ -4,6 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 
 import java.util.Arrays;
+import java.util.NoSuchElementException;
 
 @Getter
 @AllArgsConstructor
@@ -21,6 +22,6 @@ public enum ReviewState {
         return Arrays.stream(values())
                 .filter(value -> value.stateCode.equals(searchCode))
                 .findAny()
-                .orElse(null);
+                .orElseThrow(() -> new NoSuchElementException("Invalid review StateCode"));
     }
 }

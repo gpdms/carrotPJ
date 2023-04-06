@@ -3,6 +3,8 @@ package com.exercise.carrotproject.domain.review.service;
 
 import com.exercise.carrotproject.domain.enumList.ReviewSellerIndicator;
 import com.exercise.carrotproject.domain.member.entity.Member;
+import com.exercise.carrotproject.domain.post.entity.Post;
+import com.exercise.carrotproject.domain.review.entity.ReviewBuyer;
 import com.exercise.carrotproject.domain.review.entity.ReviewSeller;
 import com.exercise.carrotproject.domain.review.entity.ReviewSellerDetail;
 import com.exercise.carrotproject.domain.review.repository.ReviewBuyerCustomRepository;
@@ -52,7 +54,12 @@ public class ReviewServiceImpl {
            reviewSellerDetailRepository.save(reviewSellerDetail);
         }
     }
-
+    public boolean isSellerReviewRegistered (Post post) {
+        return reviewSellerRepository.findByPost(post) == null? true : false;
+    }
+    public boolean isBuyerReviewRegistered(Post post) {
+        return reviewBuyerRepository.findByPost(post) == null? true : false;
+    }
 //    public Map<ReviewSellerIndicator, Long> () {
 //
 //    }

@@ -4,6 +4,7 @@ package com.exercise.carrotproject.web.member.controller;
 import com.exercise.carrotproject.domain.member.MemberEntityDtoMapper;
 import com.exercise.carrotproject.domain.member.dto.MemberDto;
 import com.exercise.carrotproject.domain.member.entity.Member;
+import com.exercise.carrotproject.domain.member.repository.MemberRepository;
 import com.exercise.carrotproject.domain.member.service.MemberServiceImpl;
 import com.exercise.carrotproject.domain.post.dto.BuyListDto;
 import com.exercise.carrotproject.domain.post.dto.PostDto;
@@ -14,9 +15,12 @@ import com.exercise.carrotproject.domain.post.entity.SellList;
 import com.exercise.carrotproject.domain.post.repository.BuyListRepository;
 import com.exercise.carrotproject.domain.post.repository.PostRepository;
 import com.exercise.carrotproject.domain.post.repository.SellListRepository;
+import com.exercise.carrotproject.domain.review.repository.basic.ReviewBuyerRepository;
+import com.exercise.carrotproject.domain.review.service.ReviewServiceImpl;
 import com.exercise.carrotproject.web.common.SessionConst;
 import com.exercise.carrotproject.web.member.form.ProfileForm;
 import com.exercise.carrotproject.web.member.form.PwdUpdateForm;
+import com.exercise.carrotproject.web.member.form.SellListForm;
 import com.exercise.carrotproject.web.member.form.SignupForm;
 import com.exercise.carrotproject.web.member.util.SecurityUtils;
 import lombok.RequiredArgsConstructor;
@@ -45,19 +49,22 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class MemberController {
     private final MemberServiceImpl memberService;
+    private final MemberRepository memberRepository;
     private final SecurityUtils securityUtils;
     private final PostRepository postRepository;
+
     @Value("${dir.img-profile}")
     private String rootProfileImgDir;
 
     //for Review
     private final SellListRepository sellListRepository;
     private final BuyListRepository buyListRepository;
+    private final ReviewServiceImpl reviewService;
 
     @GetMapping("/{memId}")
     public String toMemberHome(@PathVariable String memId, Model model,
                                HttpSession session){
-        Optional<Member> member = memberService.findOneMember(memId);
+        Optional<Member> member = memberRepository.findById(memId);
         if(member.isEmpty()) {
             return "redirect:/";
         }
@@ -195,7 +202,7 @@ public class MemberController {
     //buyList
     @GetMapping("/{memId}/buyList")
     private String buyList(@PathVariable String memId, Model model) {
-        Member buyer = memberService.findOneMember(memId).orElse(null);
+        Member buyer = memberService.findOneMember(memId);
         List<BuyList> buyList = buyListRepository.findByBuyer(buyer);
         List<BuyListDto> buyDtoList = new ArrayList<>();
         for (BuyList buyOne : buyList) {
@@ -203,19 +210,21 @@ public class MemberController {
             buyDtoList.add(buyOneDto);
         }
         model.addAttribute("buyList", buyDtoList);
+
         return "/member/buyList";
     }
     //sellList
     @GetMapping("/{memId}/sellList")
     private String sellList(@PathVariable String memId, Model model) {
-        Member seller= memberService.findOneMember(memId).orElse(null);
+        Member seller= memberService.findOneMember(memId);
         List<SellList> sellList = sellListRepository.findBySeller(seller);
-        List<SellListDto> sellDtoList = new ArrayList<>();
+        List<SellListForm> sellFormList = new ArrayList<>();
         for (SellList sellOne : sellList) {
-            SellListDto sellOneDto = new SellListDto(sellOne.getSellId(), sellOne.getPost(), sellOne.getBuyer().getMemId(), sellOne.getSeller().getMemId());
-            sellDtoList.add(sellOneDto);
+            boolean registered = reviewService.isSellerReviewRegistered(sellOne.getPost());
+            SellListForm sellForm = new SellListForm(sellOne.getSellId(), sellOne.getPost(), sellOne.getBuyer().getMemId(), sellOne.getSeller().getMemId(), registered);
+            sellFormList.add(sellForm);
         }
-        model.addAttribute("sellList", sellDtoList);
+        model.addAttribute("sellList", sellFormList);
         return "/member/sellList";
     }
 }

@@ -6,6 +6,7 @@ import lombok.Getter;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.NoSuchElementException;
 import java.util.stream.Collectors;
 
 
@@ -20,34 +21,36 @@ public enum ReviewBuyerIndicator {
     N6("거래 시간과 장소를 정한 후 거래 직전 취소했어요.", -1.0),
     N7("약속장소에 나타나지 않았어요.", -1.0),
     N8("반말을 사용해요.", -1.0),
-    N9("불친절해요.", -1.0),
-    NB1("단순 변심으로 환불을 요구해요.", -1.0),
+    N9("불친절해요.", -1.0), //공통
+
+    NB1("단순 변심으로 환불을 요구해요.", -1.0), //따로
 
     P1("응답이 빨라요.", 2.5),
     P2("친절하고 매너가 좋아요.", 2.5),
     P3("시간 약속을 잘 지켜요.", 2.5),
 
-    PB1("제가 있는 곳까지 와서 거래했어요.",2.5);
+    PB1("제가 있는 곳까지 와서 거래했어요.",2.5); //따로 집계
 
     private final String description;
-    private final Double score;
+    private final double score;
 
     public static List<ReviewBuyerIndicator> findAllByEnumName(List<String> searchCodes){
         return searchCodes.stream()
                 .map(ReviewBuyerIndicator::findByEnumName)
                 .collect(Collectors.toList());
     }
-    public static ReviewBuyerIndicator findByEnumName(String searchCode){
+    public static ReviewBuyerIndicator findByEnumName(String enumName){
         return Arrays.stream(values())
-                .filter(value -> value.name().equals(searchCode))
+                .filter(value -> value.name().equals(enumName))
                 .findAny()
-                .orElse(null);
+                .orElseThrow(() -> new NoSuchElementException("Invalid buyerIndicator Name"));
     }
-    public static Double sumScore(List<ReviewBuyerIndicator> indicatorList) {
-        return Double.valueOf( indicatorList.stream()
+    public static double sumScore(List<ReviewBuyerIndicator> indicatorList) {
+        double sum = indicatorList.stream()
                 .map(value -> value.getScore())
                 .mapToDouble(Double::doubleValue)
-                .sum() );
+                .sum();
+        return (double)Math.round(sum*100)/100;
     }
 
 }

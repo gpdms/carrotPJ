@@ -28,6 +28,7 @@ import org.springframework.web.bind.annotation.*;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 import java.util.List;
+import java.util.NoSuchElementException;
 
 
 @Slf4j
@@ -46,9 +47,9 @@ public class ReviewController {
    @GetMapping
    @ResponseBody
    public void toReviewBuyerForm(HttpServletRequest request) {
-       Member seller1 = memberService.findOneMember("tester2").orElse(null);
-       Member seller2 = memberService.findOneMember("tester3").orElse(null);
-       Member buyer = memberService.findOneMember("tester1").orElse(null);
+       Member seller1 = memberService.findOneMember("tester2");
+       Member seller2 = memberService.findOneMember("tester3");
+       Member buyer = memberService.findOneMember("tester1");
 
        for(int i = 1 ; i <= 10; i++ ){
            if(i% 2  == 0 ){
@@ -90,8 +91,8 @@ public class ReviewController {
         log.info("reviewSellerForm----{}", reviewForm);
         List<ReviewSellerIndicator> indicatorList = ReviewSellerIndicator.findAllByEnumName(reviewForm.getIndicators());
         ReviewSeller reviewSeller = ReviewSeller.builder()
-                .seller(memberService.findOneMember(reviewForm.getSellerId()).orElse(null))
-                .buyer(memberService.findOneMember(reviewForm.getBuyerId()).orElse(null))
+                .seller(memberService.findOneMember(reviewForm.getSellerId()))
+                .buyer(memberService.findOneMember(reviewForm.getBuyerId()))
                 .post(postRepository.findById(reviewForm.getPostId()).orElse(null))
                 .reviewState(ReviewState.findByStateCode(reviewForm.getReviewStateCode()))
                 .totalScore(ReviewSellerIndicator.sumScore(indicatorList))

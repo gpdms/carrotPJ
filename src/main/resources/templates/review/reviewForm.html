@@ -181,6 +181,7 @@
             }
         }
         function viewSellerForm(reviewStateNum) {
+            $("input:checkbox[name='indicator']").prop("checked", false);
             let message = createMessage(reviewStateNum);
             if(reviewStateNum == '0') {
                 $("#negativeSellerIndicator").css("display", "block");
@@ -197,6 +198,7 @@
         }
 
         function viewBuyerForm(reviewStateNum) {
+            $("input:checkbox[name='indicator']").prop("checked", false);
             let message = createMessage(reviewStateNum);
             if(reviewStateNum == '0') {
                 $("#negativeBuyerIndicator").css("display", "block");
@@ -250,6 +252,7 @@
                 contentType: "application/json",
                 success: function (data) {
                     alert("리뷰가 등록되었습니다.");
+                    history.back();
                 },
                 error: function (err) {
                     console.log(err);
@@ -271,6 +274,7 @@
                 contentType: "application/json",
                 success: function (data) {
                     alert("리뷰가 등록되었습니다.");
+                    history.back();
                 },
                 error: function (err) {
                     console.log(err);
