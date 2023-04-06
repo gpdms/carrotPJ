@@ -1,7 +1,9 @@
 package com.exercise.carrotproject.domain.post.entity;
 
+import com.exercise.carrotproject.domain.converter.HideStateConverter;
 import com.exercise.carrotproject.domain.converter.LocAttributeConverter;
 import com.exercise.carrotproject.domain.enumList.Category;
+import com.exercise.carrotproject.domain.enumList.HideState;
 import com.exercise.carrotproject.domain.enumList.Loc;
 import com.exercise.carrotproject.domain.converter.CategoryConverter;
 import com.exercise.carrotproject.domain.member.entity.Member;
@@ -34,7 +36,8 @@ public class Post {
     @Convert(converter = CategoryConverter.class)
     private Category category; //카테고리 enum
     @ColumnDefault("0") @Column(nullable = false)
-    private Integer hideState; //숨김여부: 0보임,1숨김
+    @Convert(converter = HideStateConverter.class)
+    private HideState hideState; //숨김여부: 0보임,1숨김
     @ColumnDefault("0") @Column(nullable = false)
     private Integer sellState; //판매여부: 0판매중,1예약중,2거래완료
     private Integer hits;
@@ -46,9 +49,10 @@ public class Post {
     @PrePersist
     public void prePersist(){
         this.price = this.price == null ? 0 : this.price;
-        this.hideState = this.hideState == null ? 0 : this.hideState;
+        this.hideState = this.hideState == null ? HideState.SHOW : this.hideState;
         this.sellState = this.sellState == null ? 0 : this.sellState;
     }
+
 
 
 
