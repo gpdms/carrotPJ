@@ -22,10 +22,14 @@ public class BuyListDto {
     //private Member seller;
     private String sellerId;
 
-    public BuyListDto(Long buyId, Post post, String buyerId, String sellerId) {
+    //리뷰버튼 보이기 위한것
+    private Long reviewSellerId;
+
+    public BuyListDto(Long buyId, Post post, String buyerId, String sellerId, Long reviewSellerId) {
         this.buyId = buyId;
         this.postDto = PostEntityDtoMapper.entityToDto(post);
         this.buyerId = buyerId;
         this.sellerId = sellerId;
+        this.reviewSellerId = reviewSellerId;
     }
 }

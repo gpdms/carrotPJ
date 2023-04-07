@@ -25,6 +25,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
@@ -59,21 +60,23 @@ public class ReviewController {
                SellList sellList = SellList.builder().post(post1).buyer(buyer).seller(seller1).build();
                sellListRepository.save(sellList);
            } else {
-               Post postBuild2 = Post.builder().title("글" + i).member(seller2).price(i * 1000).category(Category.DIGITAL_DEVICE).loc(seller2.getLoc()).hideState(HideState.SHOW).sellState(SellState.ON_SALE).content("내용" + i).build();
+               Post postBuild2 = Post.builder().title("글" + i).member(seller2).price(i * 1000).category(Category.DIGITAL_DEVICE).loc(seller2.getLoc()).hideState(HideState.SHOW).sellState(SellState.SOLD).content("내용" + i).build();
                Post post2 = postRepository.save(postBuild2);
-               SellList sellList = SellList.builder().post(post2).buyer(buyer).seller(seller2).build();
+               SellList sellList = SellList.builder().post(post2).buyer(seller1).seller(seller2).build();
                sellListRepository.save(sellList);
            }
        }
 
    }
     @GetMapping("/seller")
-    public String toSellerReviewForm(
-            HttpSession session,
-            @RequestParam String postId,
-            Model model){
-       MemberDto loginMember = (MemberDto) session.getAttribute(SessionConst.LOGIN_MEMBER);
-       BuyList buyOne = buyListRepository.findByPost(postRepository.findById(Long.valueOf(postId)).orElseThrow());
+    public String toSellerReviewForm(@RequestParam String postId,  HttpSession session, RedirectAttributes redirectAttributes, Model model){
+        MemberDto loginMember = (MemberDto) session.getAttribute(SessionConst.LOGIN_MEMBER);
+        Post post = postRepository.findById(Long.valueOf(postId)).orElseThrow(() -> new NoSuchElementException("Post Not Found"));
+        if(reviewSellerService.findReviewSellerIdByPost(post) != 0L) { //이미 등록한 구매자 리뷰가 있으면 나의 구매 목록으로
+            redirectAttributes.addAttribute("me", loginMember.getMemId());
+            return "redirect:/members/{me}/transaction/buyList";
+        }
+        BuyList buyOne = buyListRepository.findByPost(post);
        ReviewForm reviewForm= ReviewForm.builder().sellerId(buyOne.getSeller().getMemId())
                 .buyerId(loginMember.getMemId())
                 .postId(Long.valueOf(postId))
@@ -84,7 +87,12 @@ public class ReviewController {
 
     @PostMapping("/seller")
     @ResponseBody
-    public String addSellerReview(@RequestBody ReviewForm reviewForm) {
+    public String addSellerReview(@RequestBody ReviewForm reviewForm, RedirectAttributes redirectAttributes) {
+        Post post = postRepository.findById(reviewForm.getPostId()).orElseThrow(() -> new NoSuchElementException("Post Not Found"));
+        if(reviewSellerService.findReviewSellerIdByPost(post) != 0L) { //이미 등록한 구매자 리뷰가 있으면 나의 구매 목록으로
+            redirectAttributes.addAttribute("me", reviewForm.getBuyerId());
+            return "redirect:/members/{me}/transaction/buyList";
+        }
         List<ReviewSellerIndicator> indicatorList = ReviewSellerIndicator.findAllByEnumName(reviewForm.getIndicators());
         ReviewSeller reviewSeller = ReviewSeller.builder()
                 .seller(memberService.findOneMember(reviewForm.getSellerId()))
@@ -112,20 +120,21 @@ public class ReviewController {
         return "review/reviewDetail";
     }
     @DeleteMapping("/seller/{reviewSellerId}")
-    public ResponseEntity<Map<String, Object>>  deleteSellerReview(@PathVariable String reviewSellerId) {
-        log.info("삭제테스트~~~~~~~~~~~~~~~~~~~~~~~~~~{}",reviewSellerId);
+    public ResponseEntity<Map<String, Object>> deleteSellerReview(@PathVariable String reviewSellerId) {
        reviewSellerService.deleteReviewSeller(Long.valueOf(reviewSellerId));
-       return new ResponseEntity<Map<String, Object>>(Collections.singletonMap("message", "삭제에 성공했습니다."), HttpStatus.OK);
+       return new ResponseEntity<>(Collections.singletonMap("message", "삭제에 성공했습니다."), HttpStatus.OK);
     }
 
 
    @GetMapping("/buyer")
-   public String toBuyerReviewForm(
-           HttpSession session,
-           @RequestParam String postId,
-           Model model){
+   public String toBuyerReviewForm(@RequestParam String postId,  HttpSession session, RedirectAttributes redirectAttributes, Model model){
        MemberDto loginMember = (MemberDto) session.getAttribute(SessionConst.LOGIN_MEMBER);
-       SellList sellOne = sellListRepository.findByPost(postRepository.findById(Long.valueOf(postId)).orElseThrow());
+       Post post = postRepository.findById(Long.valueOf(postId)).orElseThrow(() -> new NoSuchElementException("Post Not Found"));
+       if(reviewBuyerService.findReviewBuyerIdByPost(post) != 0L) { //이미 등록된 등록된 판매자 리뷰가 있으면 구매목록 페이지로
+           redirectAttributes.addAttribute("me", loginMember.getMemId());
+           return "redirect:/members/{me}/transaction/sellList";
+       }
+       SellList sellOne = sellListRepository.findByPost(post);
        ReviewForm reviewForm = ReviewForm.builder().sellerId(loginMember.getMemId())
                .buyerId(sellOne.getBuyer().getMemId())
                .postId(Long.valueOf(postId))
@@ -135,7 +144,12 @@ public class ReviewController {
    }
     @PostMapping("/buyer")
     @ResponseBody
-    public String addBuyerReview(@RequestBody ReviewForm reviewForm) {
+    public String addBuyerReview(@RequestBody ReviewForm reviewForm, RedirectAttributes redirectAttributes) {
+        Post post = postRepository.findById(reviewForm.getPostId()).orElseThrow(() -> new NoSuchElementException("Post Not Found"));
+        if(reviewBuyerService.findReviewBuyerIdByPost(post) != 0L) {
+            redirectAttributes.addAttribute("me", reviewForm.getSellerId());
+            return "redirect:/members/{me}/transaction/sellList";
+        }
         List<ReviewBuyerIndicator> indicatorList = ReviewBuyerIndicator.findAllByEnumName(reviewForm.getIndicators());
         ReviewBuyer reviewBuyer = ReviewBuyer.builder()
                 .seller(memberService.findOneMember(reviewForm.getSellerId()))
@@ -165,9 +179,8 @@ public class ReviewController {
     }
     @DeleteMapping("/buyer/{reviewBuyerId}")
     public ResponseEntity<Map<String, Object>> deleteBuyerReview(@PathVariable String reviewBuyerId) {
-       log.info("삭제테스트~~~~~~~~~~~~~~~~~~~~~~~~~~{}",reviewBuyerId);
         reviewBuyerService.deleteReviewBuyer(Long.valueOf(reviewBuyerId));
-        return new ResponseEntity<Map<String, Object>>(Collections.singletonMap("message", "삭제에 성공했습니다."), HttpStatus.OK);
+        return new ResponseEntity<>(Collections.singletonMap("message", "삭제에 성공했습니다."), HttpStatus.OK);
     }
 
 

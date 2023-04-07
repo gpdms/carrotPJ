@@ -28,7 +28,8 @@
             <div th:each="buyOne : ${buyList}">
                 <span th:text="|제목:${buyOne.postDto.title}, |"> </span>
                 <span th:text="|판매자:${buyOne.postDto.member.memId}|"> </span>
-                <button th:onclick="|location.href='@{/reviews/seller(postId=${buyOne.postDto.postId})}'|" th:if="${buyOne.reviewSellerId == 0}"> 리뷰남기기 </button>
+                <button th:onclick="|location.href='@{/reviews/seller(postId=${buyOne.postDto.postId})}'|"
+                        th:if="${buyOne.reviewSellerId == 0}"> 리뷰남기기 </button>
                 <button th:onclick="|location.href='@{/reviews/seller/{reviewSellerId}(reviewSellerId=${buyOne.reviewSellerId})}'|"
                         th:if="${buyOne.reviewSellerId != 0}" >리뷰 보기 </button>
             </div>

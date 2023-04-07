@@ -23,8 +23,8 @@ import static org.springframework.util.StringUtils.hasText;
 public class ReviewDetailCustomRepository {
     private final JPAQueryFactory queryFactory;
 
-//   public Long countBySellerAndIndicator (SellerDetailSearchCond sellerCond, BuyerDetailSearchCond buyerCond) {
-      /* return queryFactory.select(
+/*   public Long countBySellerAndIndicator (SellerDetailSearchCond sellerCond, BuyerDetailSearchCond buyerCond) {
+       return queryFactory.select(
                        JPAExpressions.select(reviewSellerDetail.count())
                                .from(reviewSellerDetail)
                                .where(sellerIdEq(sellerCond.getSellerId()),
@@ -36,21 +36,10 @@ public class ReviewDetailCustomRepository {
                                ))
                .fetchOne();
 
-     queryFactory
-               .select(reviewSellerDetail.reviewSellerReviewId)
-               .from(reviewSellerDetail)
-               .leftJoin(reviewSellerDetail, reviewBuyerDetail)
-               .on(
-                       reviewSellerDetail.seller.memId.eq(sellerCond.getSellerId()),
-                       reviewSellerDetail.reviewSellerIndicator.eq(sellerCond.getSellerIndicator()),
-                       reviewBuyerDetail.buyer.memId.eq(buyerCond.getBuyerId()),
-                       reviewBuyerDetail.reviewBuyerIndicator.eq(buyerCond.getBuyerIndicator())
-               )
-               .distinct()
-               .fetch();
+
     };*/
 
-   /* private BooleanExpression sellerIdEq(String sellerId) {
+    private BooleanExpression sellerIdEq(String sellerId) {
         return hasText(sellerId) ? null : reviewSellerDetail.seller.memId.eq(sellerId);
     }
     private BooleanExpression sellerIndicatorEq(ReviewSellerIndicator reviewSellerIndicator) {
@@ -61,6 +50,6 @@ public class ReviewDetailCustomRepository {
     }
     private BooleanExpression buyerIndicatorEq(ReviewBuyerIndicator reviewBuyerIndicator) {
         return reviewBuyerIndicator == null ? null : reviewBuyerDetail.reviewBuyerIndicator.eq(reviewBuyerIndicator);
-    }*/
+    }
 
 }
