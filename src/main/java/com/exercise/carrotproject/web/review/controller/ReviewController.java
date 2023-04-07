@@ -45,7 +45,7 @@ public class ReviewController {
     private final SellListRepository sellListRepository;
 
     //테스트 db
-   @GetMapping
+   //@GetMapping
    @ResponseBody
    public void toReviewBuyerForm(HttpServletRequest request) {
        Member seller1 = memberService.findOneMember("tester2");
@@ -56,15 +56,11 @@ public class ReviewController {
            if(i% 2  == 0 ){
                Post postBuild1 = Post.builder().title("글" + i).member(seller1).price(i * 1000).category(Category.ETC).loc(seller1.getLoc()).hideState(HideState.SHOW).sellState(SellState.SOLD).content("내용" + i).build();
                Post post1 = postRepository.save(postBuild1);
-               BuyList buyList= BuyList.builder().post(post1).buyer(buyer).seller(seller1).build();
-               buyListRepository.save(buyList);
                SellList sellList = SellList.builder().post(post1).buyer(buyer).seller(seller1).build();
                sellListRepository.save(sellList);
            } else {
                Post postBuild2 = Post.builder().title("글" + i).member(seller2).price(i * 1000).category(Category.DIGITAL_DEVICE).loc(seller2.getLoc()).hideState(HideState.SHOW).sellState(SellState.ON_SALE).content("내용" + i).build();
                Post post2 = postRepository.save(postBuild2);
-               BuyList buyList= BuyList.builder().post(post2).buyer(buyer).seller(seller2).build();
-               buyListRepository.save(buyList);
                SellList sellList = SellList.builder().post(post2).buyer(buyer).seller(seller2).build();
                sellListRepository.save(sellList);
            }
@@ -117,6 +113,7 @@ public class ReviewController {
     }
     @DeleteMapping("/seller/{reviewSellerId}")
     public ResponseEntity<Map<String, Object>>  deleteSellerReview(@PathVariable String reviewSellerId) {
+        log.info("삭제테스트~~~~~~~~~~~~~~~~~~~~~~~~~~{}",reviewSellerId);
        reviewSellerService.deleteReviewSeller(Long.valueOf(reviewSellerId));
        return new ResponseEntity<Map<String, Object>>(Collections.singletonMap("message", "삭제에 성공했습니다."), HttpStatus.OK);
     }
@@ -168,6 +165,7 @@ public class ReviewController {
     }
     @DeleteMapping("/buyer/{reviewBuyerId}")
     public ResponseEntity<Map<String, Object>> deleteBuyerReview(@PathVariable String reviewBuyerId) {
+       log.info("삭제테스트~~~~~~~~~~~~~~~~~~~~~~~~~~{}",reviewBuyerId);
         reviewBuyerService.deleteReviewBuyer(Long.valueOf(reviewBuyerId));
         return new ResponseEntity<Map<String, Object>>(Collections.singletonMap("message", "삭제에 성공했습니다."), HttpStatus.OK);
     }

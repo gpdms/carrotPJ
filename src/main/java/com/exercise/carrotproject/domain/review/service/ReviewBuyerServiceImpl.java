@@ -60,6 +60,7 @@ public class ReviewBuyerServiceImpl {
         }
     }
     public ReviewBuyer findOneReviewBuyer(Long reviewBuyerId){
+        reviewBuyerRepository.findById(reviewBuyerId);
         return reviewBuyerRepository.findById(reviewBuyerId)
                 .orElseThrow(() -> new NoSuchElementException("reviewBuyer Not Found"));
     }
@@ -78,9 +79,10 @@ public class ReviewBuyerServiceImpl {
 
     @Transactional
     public void deleteReviewBuyer(Long reviewBuyerId) {
-        reviewBuyerRepository.deleteById(reviewBuyerId);
         //구매자에 대한 리뷰 삭제시, 상대편의 구매목록에서도 삭제
-        buyListRepository.deleteByPost(findOneReviewBuyer(reviewBuyerId).getPost());
+        ReviewBuyer oneReviewBuyer = findOneReviewBuyer(reviewBuyerId);
+        buyListRepository.deleteByPost(oneReviewBuyer.getPost());
+        reviewBuyerRepository.deleteById(reviewBuyerId);
     }
 
 //    public Map<ReviewSellerIndicator, Long> () {

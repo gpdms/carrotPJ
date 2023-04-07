@@ -51,7 +51,7 @@
                 </ul>
             </div>
             <button class="w-100 btn btn-secondary btn-lg"
-                    id="buyerReviewDelBtn"> 삭제하기 </button>
+                    id="buyerDelBtn"> 삭제하기 </button>
         </div>
 
         <div th:if="${reviewDetailForm.sellerIndicatorList != null}">
@@ -79,7 +79,7 @@
                 </ul>
             </div>
             <button class="w-100 btn btn-secondary btn-lg"
-                    id="sellerReviewDelBtn"> 삭제하기 </button>
+                    id="sellerDelBtn"> 삭제하기 </button>
         </div>
 
         <button class="w-100 btn btn-secondary btn-lg"
@@ -89,11 +89,12 @@
 </div>
 
 <div layout:fragment="script" th:inline="javascript">
-    <script th:inline="javascript">
-        const buyerReviewDelBtn = document.getElementById('buyerReviewDelBtn');
-        const sellerReviewDelBtn = document.getElementById('sellerReviewDelBtn');
-        window.onload=function() {
-            buyerReviewDelBtn.addEventListener("click", function () {
+    <script th:inline="javascript" >
+
+        const buyerDelBtn =document.getElementById('buyerDelBtn')
+        if(buyerDelBtn) {
+            buyerDelBtn.addEventListener("click", function () {
+                console.log(buyerDelBtn)
                 if (delConfirm()) {
                     let reviewBuyerId = [[${reviewDetailForm.reviewBuyerId}]];
                     let url = '/reviews/buyer/' + reviewBuyerId
@@ -108,9 +109,8 @@
                     }).then(data => {
                         alert(data.message);
                         let me = [[${reviewDetailForm.sellerId}]];
-                        window.location.href = `/members/${me}/sellList`;
-                    })
-                    .catch(err => {
+                        window.location.href = `/members/${me}/transaction/sellList`;
+                    }).catch(err => {
                         console.log(err);
                         alert('삭제에 실패했습니다.');
                     })
@@ -118,8 +118,10 @@
             });
         }
 
-        window.onload=function() {
-            sellerReviewDelBtn.addEventListener("click", function () {
+        const sellerDelBtn = document.getElementById('sellerDelBtn');
+            if(sellerDelBtn) {
+                console.log(sellerDelBtn)
+                sellerDelBtn.addEventListener("click", function () {
                 if (!delConfirm()) {
                     return;
                 }
@@ -138,14 +140,15 @@
                 .then(data => {
                     alert(data.message);
                     let me = [[${reviewDetailForm.buyerId}]];
-                    window.location.href = `/members/${me}/buyList`
+                    window.location.href = `/members/${me}/transaction/buyList`
                 })
                 .catch(err => {
                     console.log(err);
                     alert("삭제에 실패했습니다.")
                 });
-            })
-        }
+                })
+            }
+
         function delConfirm() {
             return confirm("리뷰를 삭제하시겠습니까?");
         }

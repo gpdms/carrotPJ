@@ -50,7 +50,8 @@ public enum ReviewBuyerIndicator {
                 .map(value -> value.getScore())
                 .mapToDouble(Double::doubleValue)
                 .sum();
-        return (double)Math.round(sum*1000)/1000;
+        System.out.println("합계----------------------------2"+Math.round(sum*1000)/1000);
+        return Math.round(sum*1000)/1000;
     }
 
 }
