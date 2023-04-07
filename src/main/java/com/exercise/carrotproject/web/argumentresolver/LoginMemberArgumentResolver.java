@@ -20,7 +20,7 @@ public class LoginMemberArgumentResolver implements HandlerMethodArgumentResolve
         log.info("supportsParameter 실행");
         boolean hasParameterAnnotation = parameter.hasParameterAnnotation(Login.class);//파라미터에 Login Anootation이 있는지
         boolean hasMemberType = MemberDto.class.isAssignableFrom(parameter.getParameterType());  //파라미터의 타입이 Member인지
-        return hasParameterAnnotation && hasMemberType; //true면 resolveArgument 실행
+        return hasParameterAnnotation && hasMemberType; //true면 resolveArgument() 실행
     }
 
     @Override //컨트롤러에서 맵핑된 메소드의 파라미터를 리턴

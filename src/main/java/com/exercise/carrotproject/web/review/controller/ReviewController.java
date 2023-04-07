@@ -10,8 +10,6 @@ import com.exercise.carrotproject.domain.post.entity.SellList;
 import com.exercise.carrotproject.domain.post.repository.BuyListRepository;
 import com.exercise.carrotproject.domain.post.repository.PostRepository;
 import com.exercise.carrotproject.domain.post.repository.SellListRepository;
-import com.exercise.carrotproject.domain.post.service.PostService;
-import com.exercise.carrotproject.domain.post.service.PostServiceImpl;
 import com.exercise.carrotproject.domain.review.entity.ReviewBuyer;
 import com.exercise.carrotproject.domain.review.entity.ReviewSeller;
 import com.exercise.carrotproject.domain.review.service.ReviewBuyerServiceImpl;
@@ -21,6 +19,8 @@ import com.exercise.carrotproject.web.review.form.ReviewDetailForm;
 import com.exercise.carrotproject.web.review.form.ReviewForm;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -28,8 +28,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
-import java.util.List;
-import java.util.NoSuchElementException;
+import java.util.*;
 
 
 @Slf4j
@@ -46,7 +45,7 @@ public class ReviewController {
     private final SellListRepository sellListRepository;
 
     //테스트 db
-   @GetMapping
+   //@GetMapping
    @ResponseBody
    public void toReviewBuyerForm(HttpServletRequest request) {
        Member seller1 = memberService.findOneMember("tester2");
@@ -57,15 +56,11 @@ public class ReviewController {
            if(i% 2  == 0 ){
                Post postBuild1 = Post.builder().title("글" + i).member(seller1).price(i * 1000).category(Category.ETC).loc(seller1.getLoc()).hideState(HideState.SHOW).sellState(SellState.SOLD).content("내용" + i).build();
                Post post1 = postRepository.save(postBuild1);
-               BuyList buyList= BuyList.builder().post(post1).buyer(buyer).seller(seller1).build();
-               buyListRepository.save(buyList);
                SellList sellList = SellList.builder().post(post1).buyer(buyer).seller(seller1).build();
                sellListRepository.save(sellList);
            } else {
                Post postBuild2 = Post.builder().title("글" + i).member(seller2).price(i * 1000).category(Category.DIGITAL_DEVICE).loc(seller2.getLoc()).hideState(HideState.SHOW).sellState(SellState.ON_SALE).content("내용" + i).build();
                Post post2 = postRepository.save(postBuild2);
-               BuyList buyList= BuyList.builder().post(post2).buyer(buyer).seller(seller2).build();
-               buyListRepository.save(buyList);
                SellList sellList = SellList.builder().post(post2).buyer(buyer).seller(seller2).build();
                sellListRepository.save(sellList);
            }
@@ -102,19 +97,25 @@ public class ReviewController {
         reviewSellerService.insertReviewSeller(reviewSeller, indicatorList);
         return "성공";
     }
-
     @GetMapping("/seller/{reviewSellerId}")
-    public String reviewSellerDetail (@PathVariable String reviewSellerId) {
+    public String reviewSellerDetail (@PathVariable String reviewSellerId, Model model) {
         ReviewSeller reviewSeller = reviewSellerService.findOneReviewSeller(Long.valueOf(reviewSellerId));
-
-       /* ReviewDetailForm.builder()
+        ReviewDetailForm detailForm = ReviewDetailForm.builder()
                 .postTitle(reviewSeller.getPost().getTitle())
                 .reviewState(reviewSeller.getReviewState())
                 .buyerId(reviewSeller.getBuyer().getMemId())
                 .sellerId(reviewSeller.getSeller().getMemId())
                 .reviewSellerId(Long.valueOf(reviewSellerId))
-                .build()*/
+                .sellerIndicatorList(reviewSellerService.getReviewSellerIndicatorsByReview(reviewSeller))
+                .build();
+        model.addAttribute("reviewDetailForm", detailForm);
         return "review/reviewDetail";
+    }
+    @DeleteMapping("/seller/{reviewSellerId}")
+    public ResponseEntity<Map<String, Object>>  deleteSellerReview(@PathVariable String reviewSellerId) {
+        log.info("삭제테스트~~~~~~~~~~~~~~~~~~~~~~~~~~{}",reviewSellerId);
+       reviewSellerService.deleteReviewSeller(Long.valueOf(reviewSellerId));
+       return new ResponseEntity<Map<String, Object>>(Collections.singletonMap("message", "삭제에 성공했습니다."), HttpStatus.OK);
     }
 
 
@@ -148,9 +149,27 @@ public class ReviewController {
         return "review/reviewForm";
     }
     @GetMapping("/buyer/{reviewBuyerId}")
-    public String reviewBuyerDetail (@PathVariable String reviewBuyerId) {
+    public String reviewBuyerDetail (@PathVariable String reviewBuyerId, Model model) {
+        ReviewBuyer reviewBuyer = reviewBuyerService.findOneReviewBuyer(Long.valueOf(reviewBuyerId));
+        ReviewDetailForm detailForm = ReviewDetailForm.builder()
+                .postTitle(reviewBuyer.getPost().getTitle())
+                .reviewState(reviewBuyer.getReviewState())
+                .buyerId(reviewBuyer.getBuyer().getMemId())
+                .sellerId(reviewBuyer.getSeller().getMemId())
+                .reviewBuyerId(Long.valueOf(reviewBuyerId))
+                .buyerIndicatorList(reviewBuyerService.getReviewBuyerIndicatorsByReview(reviewBuyer))
+                .message(reviewBuyer.getMessage())
+                .build();
+        model.addAttribute("reviewDetailForm", detailForm);
         return "review/reviewDetail";
     }
+    @DeleteMapping("/buyer/{reviewBuyerId}")
+    public ResponseEntity<Map<String, Object>> deleteBuyerReview(@PathVariable String reviewBuyerId) {
+       log.info("삭제테스트~~~~~~~~~~~~~~~~~~~~~~~~~~{}",reviewBuyerId);
+        reviewBuyerService.deleteReviewBuyer(Long.valueOf(reviewBuyerId));
+        return new ResponseEntity<Map<String, Object>>(Collections.singletonMap("message", "삭제에 성공했습니다."), HttpStatus.OK);
+    }
+
 
 
 }

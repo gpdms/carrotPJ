@@ -22,7 +22,7 @@
 <div layout:fragment="content">
     <div class="form-container">
         <div class="py-5 text-center">
-            <h2>구매 내역</h2>
+            <h2>[[${memId}]]님의 구매 내역</h2>
         </div>
         <th:block th:unless="${buyList.isEmpty()}">
             <div th:each="buyOne : ${buyList}">
