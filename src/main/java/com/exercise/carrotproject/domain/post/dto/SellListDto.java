@@ -14,7 +14,6 @@ import javax.persistence.*;
 @ToString
 public class SellListDto {
     private Long sellId;
-
     //private Post post;
     private PostDto postDto;
     //private Member seller;
@@ -22,10 +21,14 @@ public class SellListDto {
     //private Member buyer;
     private String buyerId;
 
-    public SellListDto(Long sellId, Post post, String buyerId, String sellerId) {
+    //리뷰버튼 보이기 위한것
+    private Long reviewBuyerId;
+
+    public SellListDto(Long sellId, Post post, String sellerId, String buyerId, Long reviewBuyerId) {
         this.sellId = sellId;
         this.postDto = PostEntityDtoMapper.entityToDto(post);
-        this.buyerId = buyerId;
         this.sellerId = sellerId;
+        this.buyerId = buyerId;
+        this.reviewBuyerId = reviewBuyerId;
     }
 }

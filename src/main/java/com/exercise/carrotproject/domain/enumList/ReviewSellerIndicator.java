@@ -60,8 +60,7 @@ public enum ReviewSellerIndicator {
                .map(value -> value.getScore())
                .mapToDouble(Double::doubleValue)
                .sum();
-       System.out.println("합계----------------------------"+Math.round(sum*1000)/1000);
-       return Math.round(sum*1000)/1000;
+       return Math.round(sum*100)/100.0;
    }
 
 }

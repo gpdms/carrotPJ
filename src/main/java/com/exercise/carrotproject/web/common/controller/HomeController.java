@@ -2,6 +2,7 @@ package com.exercise.carrotproject.web.common.controller;
 
 
 import com.exercise.carrotproject.domain.enumList.Loc;
+import com.exercise.carrotproject.domain.member.MemberEntityDtoMapper;
 import com.exercise.carrotproject.domain.member.dto.MemberDto;
 import com.exercise.carrotproject.domain.member.entity.Member;
 import com.exercise.carrotproject.domain.member.repository.MemberRepository;
@@ -31,7 +32,6 @@ public class HomeController {
     private final MemberServiceImpl memberService;
     private final SecurityUtils securityUtils;
     private final PostRepository postRepository;
-
     //@PostConstruct
     public void init() {
         Member member3 = Member.builder().memId("tester3").mannerScore(36.5).nickname("3Nick").loc(Loc.GANGBUK).memPwd(securityUtils.getHashedPwd("tester33")).build();
@@ -71,25 +71,25 @@ public class HomeController {
     @GetMapping("/home/{memId}")
     public String toMemberHome(@PathVariable String memId, Model model,
                                HttpSession session){
-        Optional<Member> member = memberRepository.findById(memId);
-        if(member.isEmpty()) {
+        Optional<Member> opMember = memberRepository.findById(memId);
+        if(opMember.isEmpty()) {
             return "redirect:/";
         }
+        Member member = opMember.orElseThrow();
         boolean blockState = false;
         Object loginSession = session.getAttribute(SessionConst.LOGIN_MEMBER);
         if(loginSession != null) {
             MemberDto loginMember = (MemberDto)loginSession;
-            if (memberService.findOneBlockByMemIds(loginMember.getMemId(), member.orElseThrow().getMemId()) != null) {
+            if (memberService.findOneBlockByMemIds(loginMember.getMemId(), member.getMemId()) != null) {
                 blockState = true;
             }
         }
         Long countPost = 0L;
         if(!blockState) {
-            countPost = postRepository.countByMember(member.orElse(null));
+            countPost = postRepository.countByMember(member);
             log.info("countPost{}", countPost);
         }
-
-        model.addAttribute("member", member.orElse(null));
+        model.addAttribute("member", MemberEntityDtoMapper.toMemberDto(member));
         model.addAttribute("countPost", countPost);
         model.addAttribute("blockState", blockState);
 

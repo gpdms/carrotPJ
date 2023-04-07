@@ -165,9 +165,10 @@ public class MemberController {
 
     //buyList
     @GetMapping("/{memId}/transaction/buyList")
-    private String buyList(@PathVariable String memId, Model model) {
+    public String buyList(@PathVariable String memId, Model model) {
         Member buyer = memberService.findOneMember(memId);
         List<BuyList> buyList = buyListRepository.findByBuyer(buyer);
+
         List<MyBuyListForm> buyFormList = new ArrayList<>();
         for (BuyList buyOne : buyList) {
             Long reviewSellerId = reviewSellerService.findReviewSellerIdByPost(buyOne.getPost());
@@ -180,8 +181,7 @@ public class MemberController {
     }
     //sellList
     @GetMapping("/{memId}/transaction/sellList")
-    private String sellList(@PathVariable String memId, Model model) {
-
+    public String sellList(@PathVariable String memId, Model model) {
         Member seller= memberService.findOneMember(memId);
         List<SellList> sellList = sellListRepository.findBySeller(seller);
         List<MySellListForm> sellFormList = new ArrayList<>();
