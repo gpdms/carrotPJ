@@ -19,7 +19,6 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-import javax.annotation.PostConstruct;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 import java.util.Optional;
@@ -76,6 +75,7 @@ public class HomeController {
             return "redirect:/";
         }
         Member member = opMember.orElseThrow();
+
         boolean blockState = false;
         Object loginSession = session.getAttribute(SessionConst.LOGIN_MEMBER);
         if(loginSession != null) {
@@ -92,6 +92,7 @@ public class HomeController {
         model.addAttribute("member", MemberEntityDtoMapper.toMemberDto(member));
         model.addAttribute("countPost", countPost);
         model.addAttribute("blockState", blockState);
+
 
         return "memberHome";
     }

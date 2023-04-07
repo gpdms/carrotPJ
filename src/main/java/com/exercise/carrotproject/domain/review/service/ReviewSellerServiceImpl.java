@@ -7,13 +7,13 @@ import com.exercise.carrotproject.domain.member.entity.Member;
 import com.exercise.carrotproject.domain.post.entity.BuyList;
 import com.exercise.carrotproject.domain.post.entity.Post;
 import com.exercise.carrotproject.domain.post.repository.BuyListRepository;
+import com.exercise.carrotproject.domain.review.dto.BuyerDetailCountDto;
+import com.exercise.carrotproject.domain.review.dto.SellerDetailCountDto;
 import com.exercise.carrotproject.domain.review.entity.ReviewBuyer;
 import com.exercise.carrotproject.domain.review.entity.ReviewBuyerDetail;
 import com.exercise.carrotproject.domain.review.entity.ReviewSeller;
 import com.exercise.carrotproject.domain.review.entity.ReviewSellerDetail;
-import com.exercise.carrotproject.domain.review.repository.ReviewBuyerCustomRepository;
 import com.exercise.carrotproject.domain.review.repository.ReviewBuyerDetailCustomRepository;
-import com.exercise.carrotproject.domain.review.repository.ReviewSellerCustomRepository;
 import com.exercise.carrotproject.domain.review.repository.ReviewSellerDetailCustomRepository;
 import com.exercise.carrotproject.domain.review.repository.basic.ReviewBuyerDetailRepository;
 import com.exercise.carrotproject.domain.review.repository.basic.ReviewBuyerRepository;
@@ -35,9 +35,7 @@ import java.util.stream.Collectors;
 @Service
 @RequiredArgsConstructor
 public class ReviewSellerServiceImpl {
-    private final ReviewSellerCustomRepository reviewSellerCustomRepository;
     private final ReviewSellerDetailCustomRepository reviewSellerDetailCustomRepository;
-
     private final ReviewSellerRepository reviewSellerRepository;
     private final ReviewSellerDetailRepository reviewSellerDetailRepository;
 
@@ -79,8 +77,8 @@ public class ReviewSellerServiceImpl {
         reviewSellerRepository.deleteById(reviewSellerId);
     }
 
-//    public Map<ReviewSellerIndicator, Long> () {
-//
-//    }
+    public List<SellerDetailCountDto> sellerIndicatorsForMannerDetail(String memId) {
+        return reviewSellerDetailCustomRepository.countIndicatorBySeller(memId);
+    }
 
 }

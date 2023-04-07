@@ -10,10 +10,14 @@ import com.exercise.carrotproject.domain.post.entity.SellList;
 import com.exercise.carrotproject.domain.post.repository.BuyListRepository;
 import com.exercise.carrotproject.domain.post.repository.PostRepository;
 import com.exercise.carrotproject.domain.post.repository.SellListRepository;
+import com.exercise.carrotproject.domain.review.dto.BuyerDetailCountDto;
+import com.exercise.carrotproject.domain.review.dto.CommonDetailCountDto;
+import com.exercise.carrotproject.domain.review.dto.SellerDetailCountDto;
 import com.exercise.carrotproject.domain.review.entity.ReviewBuyer;
 import com.exercise.carrotproject.domain.review.entity.ReviewSeller;
 import com.exercise.carrotproject.domain.review.service.ReviewBuyerServiceImpl;
 import com.exercise.carrotproject.domain.review.service.ReviewSellerServiceImpl;
+import com.exercise.carrotproject.domain.review.service.ReviewServiceImpl;
 import com.exercise.carrotproject.web.common.SessionConst;
 import com.exercise.carrotproject.web.review.form.ReviewDetailForm;
 import com.exercise.carrotproject.web.review.form.ReviewForm;
@@ -30,6 +34,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 import java.util.*;
+import java.util.stream.Collectors;
 
 
 @Slf4j
@@ -40,6 +45,7 @@ public class ReviewController {
     private final MemberServiceImpl memberService;
     private final ReviewSellerServiceImpl reviewSellerService;
     private final ReviewBuyerServiceImpl reviewBuyerService;
+    private final ReviewServiceImpl reviewService;
 
     private final PostRepository postRepository;
     private final BuyListRepository buyListRepository;
@@ -183,6 +189,15 @@ public class ReviewController {
         return new ResponseEntity<>(Collections.singletonMap("message", "삭제에 성공했습니다."), HttpStatus.OK);
     }
 
-
-
+    //매너 상세
+    @GetMapping("/{memId}")
+    public String toMannerDetail(@PathVariable String memId,Model model) {
+        List<BuyerDetailCountDto> buyerDetailCountList = reviewBuyerService.buyerIndicatorsForMannerDetail(memId);
+        List<SellerDetailCountDto> sellerDetailCountList = reviewSellerService.sellerIndicatorsForMannerDetail(memId);
+        Map<String, Object> positiveMannerMap = reviewService.getPositiveMannerMap(buyerDetailCountList, sellerDetailCountList);
+        Map<String, Object> negativeMannerMap = reviewService.getNegativeMannerMap(buyerDetailCountList, sellerDetailCountList);
+        model.addAttribute("positiveMannerMap", positiveMannerMap);
+        model.addAttribute("negativeMannerMap", negativeMannerMap);
+        return  "member/mannerDetail";
+    }
 }
