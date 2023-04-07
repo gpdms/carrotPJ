@@ -22,9 +22,9 @@
         #negativeSellerIndicator {
             display: none;
         }
-        #reviewSellerMessage, #reviewBuyerMessage textarea {
-            height: 300px;
-            width: 500px;
+        #reviewSellerMessage textarea, #reviewBuyerMessage textarea {
+            height: 200px;
+            width: 300px;
         }
 
     </style>
@@ -53,12 +53,11 @@
                     <th:block th:each="RSValue:${T(com.exercise.carrotproject.domain.enumList.ReviewState).values()}"  >
                         <button type="button" th:text="${RSValue.description}" th:onclick="viewSellerForm([[${RSValue.stateCode}]])"></button>
                     </th:block>
-                    <div class="reviewStateCode"></div>
                 </div>
-
 
                 <div id="sellerIndicators">
                     <div id="positiveSellerIndicator">
+                        <hr class="my-4">
                         <h5>어떤 점이 좋았나요?</h5>
                         <th:block th:each="RS:${T(com.exercise.carrotproject.domain.enumList.ReviewSellerIndicator).values()}">
                             <label th:if="${RS.name().contains('P')}">
@@ -68,6 +67,7 @@
                         </th:block>
                     </div>
                     <div id="negativeSellerIndicator">
+                        <hr class="my-4">
                         <h5>어떤 점이 별로였나요?</h5>
                         <th:block th:each="RS:${T(com.exercise.carrotproject.domain.enumList.ReviewSellerIndicator).values()}">
                             <label th:if="${RS.name().contains('N')}">
@@ -115,12 +115,12 @@
                                 th:onclick="viewBuyerForm([[${RSValue.stateCode}]])">
                         </button>
                     </th:block>
-                   <div class="reviewStateCode"></div>
                </div>
 
                 <div id="buyerForm">
                    <div id="buyerIndicators">
                         <div id="positiveBuyerIndicator">
+                            <hr class="my-4">
                             <h5>어떤 점이 좋았나요?</h5>
                             <th:block th:each="RB:${T(com.exercise.carrotproject.domain.enumList.ReviewBuyerIndicator).values()}">
                                <label th:if="${RB.name().contains('P')}">
@@ -130,6 +130,7 @@
                             </th:block>
                         </div>
                         <div id="negativeBuyerIndicator">
+                            <hr class="my-4">
                             <h5>어떤 점이 별로였나요?</h5>
                             <th:block th:each="RB:${T(com.exercise.carrotproject.domain.enumList.ReviewBuyerIndicator).values()}">
                                 <label th:if="${RB.name().contains('N')}">
@@ -163,7 +164,7 @@
     </div> <!-- /form-container -->
 </div>
 
-<div layout:fragment="script">
+SELECT * FROM REVIEW_BUYER <div layout:fragment="script">
     <script th:inline="javascript">
         let reviewStateCode = '0';
 
@@ -171,19 +172,18 @@
             if(reviewStateNum == '0') {
                 return `<h5>아쉬웠던 점을 망고마켓 팀에 알려주세요</h5>
                     <p>상대방에게 전달되지 않으니 안심하세요 </p>
-                    <textarea name="message"
-                              className="formcontrol" placeholder="여기에 적어주세요. (선택사항)"> </textarea>`;
+                    <textarea name="message" placeholder="여기에 적어주세요. (선택사항)" className="formcontrol"></textarea>`;
             }else{
                 return `<h5>따뜻한 거래경험을 알려주세요!</h5>
                     <p>남겨주신 거래후기는 상대방의 프로필에 공개돼요</p>
-                    <textarea name="message"
-                           class="formcontrol"> 여기에 적어주세요. (선택사항)</textarea>`;
+                    <textarea name="message"  placeholder="여기에 적어주세요. (선택사항)" class="formcontrol"></textarea>`;
             }
         }
         function viewSellerForm(reviewStateNum) {
             $("input:checkbox[name='indicator']").prop("checked", false);
             let message = createMessage(reviewStateNum);
             if(reviewStateNum == '0') {
+                reviewStateCode = '0';
                 $("#negativeSellerIndicator").css("display", "block");
                 $("#positiveSellerIndicator").css("display", "none");
                 $("#reviewSellerMessage").empty();
@@ -201,6 +201,7 @@
             $("input:checkbox[name='indicator']").prop("checked", false);
             let message = createMessage(reviewStateNum);
             if(reviewStateNum == '0') {
+                reviewStateCode = '0';
                 $("#negativeBuyerIndicator").css("display", "block");
                 $("#positiveBuyerIndicator").css("display", "none");
                 $("#reviewBuyerMessage").empty();
@@ -253,7 +254,7 @@
                 success: function (data) {
                     alert("리뷰가 등록되었습니다.");
                     let me =  [[${reviewForm.buyerId}]] ;
-                    window.location.href= `/members/${me}/buyList`
+                    window.location.href= `/members/${me}/transaction/buyList`
                 },
                 error: function (err) {
                     console.log(err);
@@ -276,7 +277,7 @@
                 success: function (data) {
                     alert("리뷰가 등록되었습니다.");
                     let me =  [[${reviewForm.sellerId}]] ;
-                    window.location.href= `/members/${me}/sellList`
+                    window.location.href= `/members/${me}/transaction/sellList`
                 },
                 error: function (err) {
                     console.log(err);

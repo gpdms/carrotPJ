@@ -15,4 +15,5 @@ public interface BuyListRepository extends JpaRepository<BuyList,Long> {
     //for review
     List<BuyList> findByBuyer (Member buyer);
     BuyList findByPost (Post post);
+    void deleteByPost (Post post);
 }

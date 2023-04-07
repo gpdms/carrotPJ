@@ -4,7 +4,9 @@ package com.exercise.carrotproject.domain.review.service;
 import com.exercise.carrotproject.domain.enumList.ReviewBuyerIndicator;
 import com.exercise.carrotproject.domain.enumList.ReviewSellerIndicator;
 import com.exercise.carrotproject.domain.member.entity.Member;
+import com.exercise.carrotproject.domain.post.entity.BuyList;
 import com.exercise.carrotproject.domain.post.entity.Post;
+import com.exercise.carrotproject.domain.post.repository.BuyListRepository;
 import com.exercise.carrotproject.domain.review.entity.ReviewBuyer;
 import com.exercise.carrotproject.domain.review.entity.ReviewBuyerDetail;
 import com.exercise.carrotproject.domain.review.entity.ReviewSeller;
@@ -21,10 +23,13 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.NoSuchElementException;
+import java.util.stream.Collectors;
 
 
 @Service
@@ -35,8 +40,6 @@ public class ReviewSellerServiceImpl {
 
     private final ReviewSellerRepository reviewSellerRepository;
     private final ReviewSellerDetailRepository reviewSellerDetailRepository;
-
-
 
     @Transactional
     public void insertReviewSeller(ReviewSeller reviewSeller, List<ReviewSellerIndicator> indicatorList) {
@@ -59,14 +62,21 @@ public class ReviewSellerServiceImpl {
                 .orElseThrow(() -> new NoSuchElementException("reviewSeller Not Found"));
     }
 
-/*    public List<ReviewSellerDetail> findReviewSellerIndicatorsBy(Long reviewSellerId){
-        return reviewSellerRepository.findById(reviewSellerId)
-                .orElseThrow(() -> new NoSuchElementException("reviewSeller Not Found"));
-    }*/
+    public List<ReviewSellerIndicator> getReviewSellerIndicatorsByReview(ReviewSeller reviewSeller){
+        List<ReviewSellerDetail> reviewSellerDetails = reviewSellerDetailRepository.findByReviewSeller(reviewSeller);
+        return reviewSellerDetails.stream()
+                .map(ReviewSellerDetail::getReviewSellerIndicator)
+                .collect(Collectors.toList());
+    }
 
     public Long findReviewSellerIdByPost (Post post) {
         ReviewSeller reviewSeller = reviewSellerRepository.findByPost(post);
         return reviewSellerRepository.findByPost(post) != null? reviewSeller.getReviewSellerId() : 0L;
+    }
+
+    @Transactional
+    public void deleteReviewSeller(Long reviewSellerId) {
+        reviewSellerRepository.deleteById(reviewSellerId);
     }
 
 //    public Map<ReviewSellerIndicator, Long> () {

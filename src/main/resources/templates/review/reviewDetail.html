@@ -21,10 +21,137 @@
 
 <div layout:fragment="content">
     <div class="form-container">
-    </div>
+        <div class="py-5 text-center">
+            <h2>리뷰</h2>
+        </div>
+        <hr class="my-4">
+
+        <div th:if="${reviewDetailForm.buyerIndicatorList != null}">
+            <div th:if="${reviewDetailForm.reviewState.stateCode == '0'}">
+                <h4 th:text="|${reviewDetailForm.buyerId}님에게 아쉬운 후기를 남겼어요|"></h4>
+                <h6 th:text="|${reviewDetailForm.buyerId}님과 ${reviewDetailForm.postTitle}을 거래했어요|"> </h6>
+                <hr class="my-4">
+                <p>메시지는 운영 팀에게만 전달돼요</p>
+                <p th:text="${reviewDetailForm.message}"> </p>
+                <ul>
+                    <th:block th:each="buyerIndicator : ${reviewDetailForm.buyerIndicatorList}">
+                        <li th:text="${buyerIndicator.description}"></li>
+                    </th:block>
+                </ul>
+            </div>
+            <div th:if="${reviewDetailForm.reviewState.stateCode != '0'}">
+                <h4 th:text="|${reviewDetailForm.buyerId}님에게 따뜻한 거래후기를 보냈어요|"></h4>
+                <h6 th:text="|${reviewDetailForm.buyerId}님과 ${reviewDetailForm.postTitle}을 거래했어요|"> </h6>
+                <p th:text="${reviewDetailForm.message}"> </p>
+                <hr class="my-4">
+                <ul>
+                    <th:block th:each="buyerIndicator : ${reviewDetailForm.buyerIndicatorList}">
+                        <li th:text="${buyerIndicator.description}"></li>
+                    </th:block>
+                </ul>
+            </div>
+            <button class="w-100 btn btn-secondary btn-lg"
+                    id="buyerDelBtn"> 삭제하기 </button>
+        </div>
+
+        <div th:if="${reviewDetailForm.sellerIndicatorList != null}">
+            <div th:if="${reviewDetailForm.reviewState.stateCode == '0'}">
+                <h4 th:text="|${reviewDetailForm.sellerId}님에게 아쉬운 후기를 남겼어요|"></h4>
+                <h6 th:text="|${reviewDetailForm.sellerId}님과 ${reviewDetailForm.postTitle}을 거래했어요|"> </h6>
+                <hr class="my-4">
+                <p>메시지는 운영 팀에게만 전달돼요</p>
+                <p th:text="${reviewDetailForm.message}"> </p>
+                <ul>
+                    <th:block th:each="sellerIndicator : ${reviewDetailForm.sellerIndicatorList}">
+                        <li th:text="${sellerIndicator.description}"></li>
+                    </th:block>
+                </ul>
+            </div>
+            <div th:if="${reviewDetailForm.reviewState.stateCode != '0'}">
+                <h4 th:text="|${reviewDetailForm.sellerId}님에게 따뜻한 거래후기를 보냈어요|"></h4>
+                <h6 th:text="|${reviewDetailForm.sellerId}님과 ${reviewDetailForm.postTitle}을 거래했어요|"> </h6>
+                <p th:text="${reviewDetailForm.message}"> </p>
+                <hr class="my-4">
+                <ul>
+                    <th:block th:each="sellerIndicator : ${reviewDetailForm.sellerIndicatorList}">
+                        <li th:text="${sellerIndicator.description}"></li>
+                    </th:block>
+                </ul>
+            </div>
+            <button class="w-100 btn btn-secondary btn-lg"
+                    id="sellerDelBtn"> 삭제하기 </button>
+        </div>
+
+        <button class="w-100 btn btn-secondary btn-lg"
+                onclick="history.go(-1); return false;"
+                type="button">이전으로</button>
+    </div> <!-- form-continer-->
 </div>
 
 <div layout:fragment="script" th:inline="javascript">
-    <script th:inline="javascript">
+    <script th:inline="javascript" >
+
+        const buyerDelBtn =document.getElementById('buyerDelBtn')
+        if(buyerDelBtn) {
+            buyerDelBtn.addEventListener("click", function () {
+                console.log(buyerDelBtn)
+                if (delConfirm()) {
+                    let reviewBuyerId = [[${reviewDetailForm.reviewBuyerId}]];
+                    let url = '/reviews/buyer/' + reviewBuyerId
+                    fetch(url, {
+                        method: 'DELETE'
+                    }).then(response => {
+                        if (response.ok) {
+                            return response.json();  // HTTP 응답 객체를 JSON으로 변환하여 반환
+                        } else {
+                            throw new Error('서버로부터 응답을 받지 못했습니다.');  // 예외 발생
+                        }
+                    }).then(data => {
+                        alert(data.message);
+                        let me = [[${reviewDetailForm.sellerId}]];
+                        window.location.href = `/members/${me}/transaction/sellList`;
+                    }).catch(err => {
+                        console.log(err);
+                        alert('삭제에 실패했습니다.');
+                    })
+                }
+            });
+        }
+
+        const sellerDelBtn = document.getElementById('sellerDelBtn');
+            if(sellerDelBtn) {
+                console.log(sellerDelBtn)
+                sellerDelBtn.addEventListener("click", function () {
+                if (!delConfirm()) {
+                    return;
+                }
+                let reviewSellerId = [[${reviewDetailForm.reviewSellerId}]];
+                console.log(reviewSellerId);
+                let url = '/reviews/seller/' + reviewSellerId
+                fetch(url, {
+                    method: 'DELETE'
+                }).then(response => {
+                    if (response.ok) {
+                        return response.json();  // HTTP 응답 객체를 JSON으로 변환하여 반환
+                    } else {
+                        throw new Error('서버로부터 응답을 받지 못했습니다.');  // 예외 발생
+                    }
+                })
+                .then(data => {
+                    alert(data.message);
+                    let me = [[${reviewDetailForm.buyerId}]];
+                    window.location.href = `/members/${me}/transaction/buyList`
+                })
+                .catch(err => {
+                    console.log(err);
+                    alert("삭제에 실패했습니다.")
+                });
+                })
+            }
+
+        function delConfirm() {
+            return confirm("리뷰를 삭제하시겠습니까?");
+        }
     </script>
+
 </div>

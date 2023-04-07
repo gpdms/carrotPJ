@@ -45,9 +45,7 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class MemberController {
     private final MemberServiceImpl memberService;
-    private final MemberRepository memberRepository;
     private final SecurityUtils securityUtils;
-    private final PostRepository postRepository;
 
     @Value("${dir.img-profile}")
     private String rootProfileImgDir;
@@ -58,35 +56,6 @@ public class MemberController {
     private final ReviewSellerServiceImpl reviewSellerService;
     private final ReviewBuyerServiceImpl reviewBuyerService;
 
-    @GetMapping("/{memId}")
-    public String toMemberHome(@PathVariable String memId, Model model,
-                               HttpSession session){
-        Optional<Member> member = memberRepository.findById(memId);
-        if(member.isEmpty()) {
-            return "redirect:/";
-        }
-
-        boolean blockState = false;
-        Object loginSession = session.getAttribute(SessionConst.LOGIN_MEMBER);
-        if(loginSession != null) {
-            MemberDto loginMember = (MemberDto)loginSession;
-            if (memberService.findOneBlockByMemIds(loginMember.getMemId(), member.orElseThrow().getMemId()) != null) {
-                blockState = true;
-            }
-        }
-
-        Long countPost = 0L;
-        if(!blockState) {
-            countPost = postRepository.countByMember(member.orElse(null));
-            log.info("countPost{}", countPost);
-        }
-
-        model.addAttribute("member", member.orElse(null));
-        model.addAttribute("countPost", countPost);
-        model.addAttribute("blockState", blockState);
-
-        return "memberHome";
-    }
 
     @GetMapping("/signup")
     public String signupForm(@ModelAttribute("signupForm") SignupForm form) {
@@ -126,8 +95,7 @@ public class MemberController {
         profileForm.setLoc(member.getLoc());
         return "/member/memberInfo";
     }
-
-    @PostMapping("/{memId}/pwdEdit")
+    @PostMapping("/{memId}/edit/pwd")
     public String pwdUpdate(@PathVariable String memId,
                             @ModelAttribute("profileForm") ProfileForm profileForm,
                             @Valid @ModelAttribute("pwdUpdateForm") PwdUpdateForm pwdUpdateForm,
@@ -153,9 +121,8 @@ public class MemberController {
         }
         return  "/member/memberInfo";
     }
-
     @ResponseBody
-    @PatchMapping("/{memId}/profileEdit")
+    @PatchMapping("/{memId}/edit/profile")
     public ProfileForm profileUpdate(@PathVariable String memId,
                                 @Valid @ModelAttribute("profileForm") ProfileForm profileForm,
                                 @RequestParam("profImg") MultipartFile profImg) {
@@ -181,7 +148,7 @@ public class MemberController {
     @PostMapping("/{memId}/block")
     public String blockMember(@PathVariable String memId,
                               HttpServletRequest request,
-                            Model model){
+                              Model model){
         HttpSession session = request.getSession(false);
         MemberDto loginMember = (MemberDto)session.getAttribute(SessionConst.LOGIN_MEMBER);
         memberService.insertBlock(loginMember.getMemId(), memId);
@@ -197,7 +164,7 @@ public class MemberController {
     }
 
     //buyList
-    @GetMapping("/{memId}/buyList")
+    @GetMapping("/{memId}/transaction/buyList")
     private String buyList(@PathVariable String memId, Model model) {
         Member buyer = memberService.findOneMember(memId);
         List<BuyList> buyList = buyListRepository.findByBuyer(buyer);
@@ -208,11 +175,11 @@ public class MemberController {
             buyFormList.add(buyOneForm);
         }
         model.addAttribute("buyList", buyFormList);
-
+        model.addAttribute("memId", memId);
         return "member/myBuyList";
     }
     //sellList
-    @GetMapping("/{memId}/sellList")
+    @GetMapping("/{memId}/transaction/sellList")
     private String sellList(@PathVariable String memId, Model model) {
         Member seller= memberService.findOneMember(memId);
         List<SellList> sellList = sellListRepository.findBySeller(seller);
