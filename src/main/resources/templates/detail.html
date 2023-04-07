@@ -100,9 +100,9 @@
 
 
                         <!--판매여부-->
-                        <select th:if="${session.loginMember.memId}==${post.member.memId}" th:onchange="sellState([[${post.postId}]])">
+                        <select id="selSellState" th:if="${session.loginMember.memId}==${post.member.memId}" th:onchange="sellState([[${post.postId}]])">
                             <!--thymeleaf이용해 Enum클래스 정보 바로 가져오기-->
-                            <option id="optSellState" th:each = "sellStateEnum:${T(com.exercise.carrotproject.domain.enumList.SellState).values()}" th:value="${sellStateEnum.getSellStateName()}" th:text="${sellStateEnum.getSellStateName()}" th:selected="${sellStateEnum}==${post.sellState}"></option>
+                            <option th:each = "sellStateEnum:${T(com.exercise.carrotproject.domain.enumList.SellState).values()}" th:value="${sellStateEnum.getSellStateName()}" th:text="${sellStateEnum.getSellStateName()}" th:selected="${sellStateEnum}==${post.sellState}"></option>
 
                         </select>
 
@@ -291,7 +291,7 @@
                     },
                     error: function(jqXHR, textStatus, errorThrown){
                         console.log(jqXHR.responseText);
-                        alert(textStatus);
+                        alert("변경에 실패했습니다.");
                     }
                 }); //$.ajax
             }
@@ -324,8 +324,8 @@
             function sellState(postId){
                 console.log("postId:",postId);
 
-                let optSellState = $("#optSellState").val();
-                let data = {"postId" : postId, "sellStateName": optSellState};
+                let sellStateName = $("#selSellState").val();
+                let data = {"postId" : postId, "sellStateName": sellStateName};
 
                 $.ajax({
                     url: '/post/sellState',
@@ -334,12 +334,12 @@
                     success: function(result){
                         console.log(result);
                         //화면 처리
-                        // alert(result);
+                        alert(result);
                         // location.reload();
                     },
                     error: function(jqXHR, textStatus, errorThrown){
                         console.log(jqXHR.statusText);
-                        alert(textStatus);
+                        alert("변경에 실패했습니다.");
                     }
                 }); //$.ajax
             }

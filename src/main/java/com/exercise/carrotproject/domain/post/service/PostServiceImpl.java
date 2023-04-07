@@ -1,6 +1,7 @@
 package com.exercise.carrotproject.domain.post.service;
 
 import com.exercise.carrotproject.domain.enumList.HideState;
+import com.exercise.carrotproject.domain.enumList.SellState;
 import com.exercise.carrotproject.domain.post.entity.*;
 import com.exercise.carrotproject.domain.post.dto.PostDto;
 import com.exercise.carrotproject.domain.post.dto.PostImgDto;
@@ -275,7 +276,21 @@ public class PostServiceImpl {
     //hideState 변경
 //    @Override
     @Transactional
-    public void updateHideState(Long postId, HideState hideState){
+    public String updateHideState(Long postId, String hideStateName){
+
+        HideState hideState = null;
+        String msg = null;
+        if (hideStateName.equals("보임")){
+            hideState = HideState.HIDE;
+            msg = "게시물이 이웃에게 보이지 않게 숨깁니다.";
+        } else if (hideStateName.equals("숨김")){
+            hideState = HideState.SHOW;
+            msg = "게시물이 이웃에게 다시 보입니다.";
+        } else{
+            hideState = null;
+            msg=null;
+        }
+
         QPost qpost = QPost.post;
 
         long resultCount = jpaQueryFactory
@@ -285,11 +300,43 @@ public class PostServiceImpl {
                 .execute();
 
 //        log.info("update hideState 결과>>>>>>>>>>{}", resultCount);
+        return msg;
 
     }
 
 
+    //sellState변경
+//    @Override
+    @Transactional
+    public String updateSellState(Long postId, String sellStateName){
 
+        SellState sellState = null;
+        String msg = null;
+
+        if(sellStateName.equals("판매중")){
+            sellState = SellState.ON_SALE;
+            msg ="'판매중'으로 변경되었습니다.";
+        }else if(sellStateName.equals("예약중")){
+            sellState = SellState.RESERVATION;
+            msg ="'예약중'으로 변경되었습니다.";
+
+        } else if (sellStateName.equals("판매완료")) {
+            sellState = SellState.SOLD;
+            msg ="'판매완료'으로 변경되었습니다.";
+        } else{
+            sellState = null;
+        }
+
+        QPost qpost = QPost.post;
+
+        jpaQueryFactory
+                .update(qpost)
+                .set(qpost.sellState, sellState)
+                .where(qpost.postId.eq(postId))
+                .execute();
+
+        return msg;
+    }
 
 
 

@@ -216,35 +216,20 @@ public class PostController {
     public ResponseEntity<String> udtHideState(@RequestParam Long postId, @RequestParam String hideStateName){
 //        log.info("컨트롤러 udtHideState()로 넘어온 postId:{}, hideStateName:{}", postId, hideStateName);
 
-        if(hideStateName.equals("보임")){
-            postService.updateHideState(postId, HideState.HIDE);
-            return new ResponseEntity<>("게시물이 이웃에게 보이지 않게 숨깁니다.",HttpStatus.OK);
-        }
-        if(hideStateName.equals("숨김")){
-            postService.updateHideState(postId, HideState.SHOW);
-            return new ResponseEntity<>("게시물이 이웃에게 다시 보입니다.",HttpStatus.OK);
+        String resultMsg = postService.updateHideState(postId, hideStateName);
 
-        }
-        return new ResponseEntity<>("숨김/보이기 처리에 실패했습니다.",HttpStatus.BAD_REQUEST);
+        return new ResponseEntity<>(resultMsg, HttpStatus.OK);
 
     }
 
     //sellState 판매여부 변경
     @PostMapping("/post/sellState")
-    @ResponseBody
-    public String udtSellState(@RequestParam Long postId, @RequestParam String sellStateName){
-        log.info("컨트롤러 도착 sellState!!!!!!!postId:{}, sellState:{}", postId, sellStateName);
+    public ResponseEntity<String> udtSellState(@RequestParam Long postId, @RequestParam String sellStateName){
+//        log.info("컨트롤러 도착 sellState!!!!!!!postId:{}, sellState:{}", postId, sellStateName);
 
-        if(sellStateName.equals("판매중")){
+        String resultMsg = postService.updateSellState(postId, sellStateName);
 
-        }
-        if(sellStateName.equals("예약중")){
-            
-        }
-        if(sellStateName.equals("판매완료")){
-
-        }
-        return "실패";
+        return new ResponseEntity<>(resultMsg, HttpStatus.OK);
     }
 
 
