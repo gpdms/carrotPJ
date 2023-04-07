@@ -2,13 +2,14 @@ package com.exercise.carrotproject.domain.post.service;
 
 import com.exercise.carrotproject.domain.enumList.HideState;
 import com.exercise.carrotproject.domain.enumList.SellState;
+import com.exercise.carrotproject.domain.member.entity.Member;
+import com.exercise.carrotproject.domain.member.entity.QMember;
+import com.exercise.carrotproject.domain.member.repository.MemberRepository;
 import com.exercise.carrotproject.domain.post.entity.*;
 import com.exercise.carrotproject.domain.post.dto.PostDto;
 import com.exercise.carrotproject.domain.post.dto.PostImgDto;
-import com.exercise.carrotproject.domain.post.repository.CustomPostRepository;
-import com.exercise.carrotproject.domain.post.repository.PostImgRepository;
-import com.exercise.carrotproject.domain.post.repository.PostRepository;
-import com.exercise.carrotproject.domain.post.repository.PostRepositoryImpl;
+import com.exercise.carrotproject.domain.post.repository.*;
+import com.querydsl.jpa.JPAExpressions;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -46,6 +47,8 @@ public class PostServiceImpl {
 
     private final PostRepository postRepository;
     private final PostImgRepository postImgRepository;
+    private final SellListRepository sellListRepository;
+    private final MemberRepository memberRepository;
     private final JPAQueryFactory jpaQueryFactory; //QuerydslConfig파일에 bean등록함
 //    private final PostRepositoryImpl customPostRepository; //후에 CustomPostRepository로 바꿔주기
 
@@ -239,6 +242,14 @@ public class PostServiceImpl {
         Post rs = postRepository.save(post);
         log.info("게시글 업데이트 성공?:{}",rs);
 
+        //파일이 비어있을 경우
+        for(MultipartFile file : uploadFiles) {
+            //이미지 0개 -> post 이미지에 저장하지 않는다.
+            if( file.isEmpty() ) {
+                return; //이미지추가 안함
+            }
+        }
+
         //새이미지 추가
         insertPostImg(post, uploadFiles);
 
@@ -315,14 +326,14 @@ public class PostServiceImpl {
 
         if(sellStateName.equals("판매중")){
             sellState = SellState.ON_SALE;
-            msg ="'판매중'으로 변경되었습니다.";
+            msg ="판매중";
         }else if(sellStateName.equals("예약중")){
             sellState = SellState.RESERVATION;
-            msg ="'예약중'으로 변경되었습니다.";
+            msg ="예약중";
 
         } else if (sellStateName.equals("판매완료")) {
             sellState = SellState.SOLD;
-            msg ="'판매완료'으로 변경되었습니다.";
+            msg ="판매완료";
         } else{
             sellState = null;
         }
@@ -338,6 +349,17 @@ public class PostServiceImpl {
         return msg;
     }
 
+    //sellList 판매내역 insert
+//    @Override
+    public void insertSellList(Long postId){
+        Post post = postRepository.findById(postId).orElseThrow();
+        Member member = memberRepository.findById(post.getMember().getMemId()).orElseThrow();
+
+        SellList sellListEntity = SellList.builder().post(post).seller(member).build();
+        sellListRepository.save(sellListEntity);
+
+        log.info("sellList insert 성공!!!!!!!!!!!");
+    }
 
 
 

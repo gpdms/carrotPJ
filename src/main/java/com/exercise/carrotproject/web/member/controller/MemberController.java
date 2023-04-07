@@ -181,15 +181,19 @@ public class MemberController {
     //sellList
     @GetMapping("/{memId}/transaction/sellList")
     private String sellList(@PathVariable String memId, Model model) {
+
         Member seller= memberService.findOneMember(memId);
         List<SellList> sellList = sellListRepository.findBySeller(seller);
         List<MySellListForm> sellFormList = new ArrayList<>();
         for (SellList sellOne : sellList) {
             Long reviewBuyerId = reviewBuyerService.findReviewBuyerIdByPost(sellOne.getPost());
-            MySellListForm sellForm = new MySellListForm(sellOne.getSellId(), sellOne.getPost(), sellOne.getBuyer().getMemId(), sellOne.getSeller().getMemId(), reviewBuyerId);
+            MySellListForm sellForm = new MySellListForm(sellOne.getSellId(), sellOne.getPost(), sellOne.getSeller().getMemId(), sellOne.getBuyer().getMemId(), reviewBuyerId);
             sellFormList.add(sellForm);
         }
         model.addAttribute("sellList", sellFormList);
         return "member/mySellList";
     }
+
+
+
 }

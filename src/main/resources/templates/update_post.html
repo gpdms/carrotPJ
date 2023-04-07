@@ -198,7 +198,7 @@
             //     console.log(key, ":", formData.get(key));
             // }
 
-            //실제 업로드 부분
+            //수정한 게시글 업로드
             let postId = [[${post.postId}]];
             console.log("postId:"+postId);
             $.ajax({
@@ -213,7 +213,7 @@
                     console.log(result);
                     //화면 처리
                     alert(result);
-                    location.href = "/post/board";
+                    location.href = '/post/detail/'+postId;
                 },
                 error: function(jqXHR, textStatus, errorThrown){
                     console.log(jqXHR.responseText);

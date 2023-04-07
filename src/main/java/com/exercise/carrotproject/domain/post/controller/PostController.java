@@ -228,8 +228,11 @@ public class PostController {
 //        log.info("컨트롤러 도착 sellState!!!!!!!postId:{}, sellState:{}", postId, sellStateName);
 
         String resultMsg = postService.updateSellState(postId, sellStateName);
+        if (resultMsg.equals("판매완료")){
+            postService.insertSellList(postId);
+        }
 
-        return new ResponseEntity<>(resultMsg, HttpStatus.OK);
+        return new ResponseEntity<>(resultMsg+"로 변경되었습니다.", HttpStatus.OK);
     }
 
 
