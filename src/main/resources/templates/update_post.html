@@ -192,7 +192,7 @@
 
             var uploadForm = $('#upload_form')[0];
             var formData = new FormData(uploadForm);
-            formData.append("imgIdList", imgIdList)
+            formData.append("imgIdList", imgIdList) //삭제할 기존 이미지id 담은 리스트
             //formData 출력
             // for (let key of formData.keys()) {
             //     console.log(key, ":", formData.get(key));
