@@ -1,11 +1,13 @@
 package com.exercise.carrotproject.domain.review.repository;
 
+import com.exercise.carrotproject.domain.enumList.HideState;
 import com.exercise.carrotproject.domain.enumList.ReviewBuyerIndicator;
 import com.exercise.carrotproject.domain.enumList.ReviewState;
 import com.exercise.carrotproject.domain.review.dto.QReviewBuyerDto;
 import com.exercise.carrotproject.domain.review.dto.ReviewBuyerDto;
 import com.exercise.carrotproject.domain.review.dto.ReviewMessageDto;
 import com.exercise.carrotproject.domain.review.entity.QReviewBuyer;
+import com.exercise.carrotproject.domain.review.entity.ReviewBuyer;
 import com.querydsl.core.annotations.QueryProjection;
 import com.querydsl.core.types.Projections;
 import com.querydsl.core.types.dsl.BooleanExpression;
@@ -17,6 +19,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+import static com.exercise.carrotproject.domain.post.entity.QPost.post;
 import static com.exercise.carrotproject.domain.review.entity.QReviewBuyer.reviewBuyer;
 import static com.exercise.carrotproject.domain.review.entity.QReviewBuyerDetail.reviewBuyerDetail;
 import static com.exercise.carrotproject.domain.review.entity.QReviewSeller.reviewSeller;
@@ -33,7 +36,8 @@ public class ReviewBuyerCustomRepository {
                 .from(reviewBuyer)
                 .where(buyerIdEq(memId),
                         reviewBuyer.message.ne(""),
-                        reviewBuyer.reviewState.ne(ReviewState.BAD))
+                        reviewBuyer.reviewState.ne(ReviewState.BAD),
+                        reviewBuyer.hideState.eq(HideState.SHOW))
                 .fetchOne();
     }
 
@@ -47,8 +51,16 @@ public class ReviewBuyerCustomRepository {
                 .from(reviewBuyer)
                 .where(buyerIdEq(memId),
                         reviewBuyer.message.ne(""),
-                        reviewBuyer.reviewState.ne(ReviewState.BAD))
+                        reviewBuyer.reviewState.ne(ReviewState.BAD),
+                        reviewBuyer.hideState.eq(HideState.SHOW))
                 .fetch();
+    }
+
+    public long hideReviewBuyerById(Long reviewBuyerId) {
+        return queryFactory.update(reviewBuyer)
+                .set(reviewBuyer.hideState, HideState.HIDE)
+                .where(reviewBuyer.reviewBuyerId.eq(reviewBuyerId))
+                .execute();
     }
 
     private BooleanExpression buyerIdEq(String memId) {

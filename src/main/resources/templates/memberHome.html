@@ -9,20 +9,19 @@
     <style>
         .container {
             width: 800px;
-            padding-left: 100px;
         }
         .profile_container{
             width: 200px;
             margin: auto;
         }
-        .profile-img_main{
+        .profile-img-main{
             width: 150px;
             height: 150px;
             overflow: hidden;
             border-radius: 50%;
             margin: 0 auto 20px;
         }
-        .profile-img_main img{
+        .profile-img-main img{
             width: 100%;
             height: 100%;
         }
@@ -38,7 +37,7 @@
 <div layout:fragment="content">
 <div class="container">
     <div class="profile_container">
-        <div class="profile-img_main">
+        <div class="profile-img-main">
             <img th:src="|/members/${member.memId}/profileImg|" alt="프로필이미지">
         </div>
         <button th:if="${session.loginMember?.memId == member.memId}"> 프로필 편집 </button>
@@ -85,15 +84,19 @@
         </th:block>
         <th:block th:unless="${reviewMessageBrief.isEmpty()}">
             <div class="row" th:each="review:${reviewMessageBrief}">
-                <div class="col-sm-5 profile-img">
-                    <a th:href="@{/home/{memId}(memId=${review.buyer?.memId})}">
-                        <img th:src="|/members/${review.buyer?.memId}/profileImg|" alt="프로필이미지">
-                    </a>
-                    <a th:href="@{/home/{memId}(memId=${review.seller?.memId})}">
-                        <img th:src="|/members/${review.seller?.memId}/profileImg|" alt="프로필이미지">
-                    </a>
+                <div class="col-sm-1">
+                    <div class="profile-img">
+                        <a th:if="${review.buyer != null}"
+                            th:href="@{/home/{memId}(memId=${review.buyer?.memId})}">
+                            <img th:src="|/members/${review.buyer?.memId}/profileImg|" alt="프로필이미지">
+                        </a>
+                        <a th:if="${review.seller != null}"  class="profile-img"
+                            th:href="@{/home/{memId}(memId=${review.seller.memId})}">
+                            <img th:src="|/members/${review.seller.memId}/profileImg|" alt="프로필이미지">
+                        </a>
+                    </div>
                 </div>
-                <div class="col-md-8">
+                <div class="col-lg">
                     <div th:if="${review.buyer != null}" >
                         <p th:text="|${review.buyer.nickname}|"></p>
                         <span th:text="|${review.buyer.loc.locName} - 구매자 - ${review.createdTime}|"></span>
@@ -105,17 +108,27 @@
                         <p th:utext="${review.message}"></p>
                     </div>
                 </div>
-                <div class="col-sm" th:if="${review.buyer != null}">
-                    <a id="review_modal_btn"
-                       th:if="${session.loginMember != null && session.loginMember.memId.equals(memId)}"
-                       th:onclick="setReviewSellerId(${review.reviewSellerId})">
+                <div class="col-sm" th:if="${session.loginMember != null && review.buyer != null}">
+                    <a class="review_modal_btn"
+                       th:if="${session.loginMember.memId.equals(memId)}"
+                       th:onclick="setReviewSeller([[${review.reviewSellerId}]])">
+                        <i class="fa-solid fa-ellipsis-vertical fa-xs"></i>
+                    </a>
+                    <a class="review_modal_btn"
+                       th:if="${session.loginMember.memId.equals(review.buyer.memId)}"
+                       th:onclick="setReviewSeller([[${review.reviewSellerId}]])">
                         <i class="fa-solid fa-ellipsis-vertical fa-xs"></i>
                     </a>
                 </div>
-                <div class="col-sm" th:if="${review.seller != null}">
-                    <a id="review_modal_btn2"
-                       th:if="${session.loginMember != null && session.loginMember.memId.equals(memId)}"
-                       th:onclick="setReviewBuyerId(${review.reviewBuyerId})">
+                <div class="col-sm" th:if="${session.loginMember != null && review.seller != null}">
+                    <a class="review_modal_btn"
+                       th:if="${session.loginMember.memId.equals(memId)}"
+                       th:onclick="setReviewBuyer([[${review.reviewBuyerId}]])">
+                        <i class="fa-solid fa-ellipsis-vertical fa-xs"></i>
+                    </a>
+                    <a class="review_modal_btn"
+                       th:if="${session.loginMember.memId.equals(review.seller.memId)}"
+                       th:onclick="setReviewBuyer([[${review.reviewBuyerId}]])">
                         <i class="fa-solid fa-ellipsis-vertical fa-xs"></i>
                     </a>
                 </div>
@@ -125,7 +138,10 @@
 </div> <!--container-->
 <div class="reviewModal review_modal">
     <div class="review_modal_body">
-        <a id="review_delete_btn">리뷰 삭제</a>
+        <a id="review_hide_btn"
+           th:if="${session.loginMember != null && session.loginMember.memId.equals(memId)}">리뷰 숨김</a>
+        <a id="review_del_btn"
+           th:if="${session.loginMember != null && !session.loginMember.memId.equals(memId)}">리뷰 삭제</a>
         <hr/>
         <a id="review_close_btn">취소</a>
     </div>
@@ -135,25 +151,109 @@
 <div layout:fragment="script">
     <script src="/js/modal.js"></script>
     <script th:inline="javascript">
-        let reviewSellerId = 0;
-        let reviewBuyerId = 0;
+        console.log("~~~~~~~~~~~~~~~~~~~~~~~~~~");
+        let reviewSellerTempId = 0;
+        let reviewBuyerTempId = 0;
         let reviewPerson = "seller";
+
         function setReviewSeller(reviewSellerNum) {
-            reviewSellerId = reviewSellerNum;
+            console.log(reviewSellerNum);
+            reviewSellerTempId = reviewSellerNum;
             reviewPerson = "seller";
         }
         function setReviewBuyer(reviewBuyerNum) {
-            reviewBuyerId = reviewBuyerNum;
+            console.log(reviewBuyerNum);
+            reviewBuyerTempId = reviewBuyerNum;
             reviewPerson = "buyer";
         }
-        const delBtn = document.getElementById("review_delete_btn");
-        delBtn.addEventListener('click', ()=> {
+
+        const hideBtn = document.getElementById("review_hide_btn");
+        if(hideBtn) {
+            hideBtn.addEventListener('click', hide);
+        }
+
+        const delBtn = document.getElementById("review_del_btn");
+        console.log("델")
+        console.log(delBtn);
+        if(delBtn) {
+            delBtn.addEventListener('click', del);
+        }
+        function hide() {
+            if (!hideConfirm()) {
+                return;
+            }
             if(reviewPerson=="seller") {
-
+                $.ajax({
+                    type: 'post',
+                    url: '/reviews/seller/hide',
+                    data: {reviewSellerId : reviewSellerTempId},
+                    success: function (data) {
+                        alert("숨김에 성공했습니다");
+                        location.reload();
+                    },
+                    error: function (err) {
+                        console.log(err);
+                        alert("리뷰를 숨길 수 없습니다.");
+                    }
+                })
+            } else if (reviewPerson=="buyer"){
+                $.ajax({
+                    type: 'post',
+                    url: '/reviews/buyer/hide',
+                    data:  {reviewBuyerId : reviewBuyerTempId},
+                    success: function (data) {
+                        alert("숨김에 성공했습니다.");
+                        location.reload();
+                    },
+                    error: function (err) {
+                        console.log(err);
+                        alert("리뷰를 숨길 수 없습니다.");
+                    }
+                })
             }
-            else {
-
+        }
+        function del() {
+            console.log("클릭!")
+            if (!delConfirm()) {
+                return;
             }
-        });
+            if (reviewPerson == "seller") {
+                $.ajax({
+                    type: 'delete',
+                    url: '/reviews/seller/' + reviewSellerTempId,
+                    success: function (data) {
+                        alert("삭제에 성공했습니다");
+                        location.reload();
+                    },
+                    error: function (err) {
+                        console.log(err);
+                        alert("리뷰를 삭제할 수 없습니다");
+                    }
+                })
+            } else if (reviewPerson == "buyer") {
+                $.ajax({
+                    type: 'delete',
+                    url: '/reviews/buyer/' + reviewBuyerTempId,
+                    success: function (data) {
+                        alert("삭제에 성공했습니다");
+                        location.reload();
+                    },
+                    error: function (err) {
+                        console.log(err);
+                        alert("리뷰를 삭제할 수 없습니다");
+                    }
+                })
+            }
+        }
+
+        function hideConfirm() {
+            return confirm("거래 후기를 숨기시겠습니까? 숨기면 다시 되돌릴 수 없습니다.");
+        }
+        function delConfirm() {
+            return confirm("거래 후기를 삭제하시겠습니까?");
+        }
+
+
+
     </script>
 </div>

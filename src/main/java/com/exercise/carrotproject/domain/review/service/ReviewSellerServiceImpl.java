@@ -12,6 +12,7 @@ import com.exercise.carrotproject.domain.review.entity.ReviewBuyerDetail;
 import com.exercise.carrotproject.domain.review.entity.ReviewSeller;
 import com.exercise.carrotproject.domain.review.entity.ReviewSellerDetail;
 import com.exercise.carrotproject.domain.review.repository.ReviewBuyerDetailCustomRepository;
+import com.exercise.carrotproject.domain.review.repository.ReviewSellerCustomRepository;
 import com.exercise.carrotproject.domain.review.repository.ReviewSellerDetailCustomRepository;
 import com.exercise.carrotproject.domain.review.repository.basic.ReviewBuyerDetailRepository;
 import com.exercise.carrotproject.domain.review.repository.basic.ReviewBuyerRepository;
@@ -23,10 +24,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Map;
-import java.util.NoSuchElementException;
+import java.util.*;
 import java.util.stream.Collectors;
 
 
@@ -34,6 +32,7 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class ReviewSellerServiceImpl {
     private final ReviewSellerDetailCustomRepository reviewSellerDetailCustomRepository;
+    private final ReviewSellerCustomRepository reviewSellerCustomRepository;
     private final ReviewSellerRepository reviewSellerRepository;
     private final ReviewSellerDetailRepository reviewSellerDetailRepository;
 
@@ -75,12 +74,15 @@ public class ReviewSellerServiceImpl {
         reviewSellerRepository.deleteById(reviewSellerId);
     }
 
-
-/*    public Map<ReviewSellerIndicator, Long> sellerIndicatorsForMannerDetail(String memId) {
-        Map<ReviewSellerIndicator, Long> reviewSellerIndicatorMap = reviewSellerDetailCustomRepository.countSellerIndicatorBySeller(memId);
-        return reviewSellerIndicatorMap.entrySet().stream()
-                .filter(entry -> entry.getKey().name().contains("PS")
-                        ||entry.getKey().name().contains("NS"))
-                .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
-    }*/
+    @Transactional
+    public Map<String, String> hideReviewSeller(Long reviewBuyerId) {
+        long result = reviewSellerCustomRepository.hideReviewSellerById(reviewBuyerId);
+        Map<String, String> resultMap = new HashMap<>();
+        if(result>0) {
+            resultMap.put("success", "숨김에 성공했습니다");
+        } else {
+            resultMap.put("fail", "숨김에 성공했습니다");
+        }
+        return resultMap;
+    }
 }

@@ -227,4 +227,26 @@ public class ReviewController {
         model.addAttribute("reviews",reviewService.goodReviewMessagesDetail(memId));
         return "review/publicReviewDetail";
     }
+
+    //숨김기능
+    @PostMapping("/seller/hide")
+    @ResponseBody
+    public ResponseEntity<Map<String, String>> hideSellerReviewMessage(@RequestParam String reviewSellerId) {
+        Map<String, String> resultMap = reviewSellerService.hideReviewSeller(Long.valueOf(reviewSellerId));
+        System.out.println("reviewSellerId = " + reviewSellerId);
+        if(resultMap.containsKey("fail")) {
+            return new ResponseEntity<>(resultMap, HttpStatus.BAD_REQUEST);
+        }
+            return new ResponseEntity<>(resultMap, HttpStatus.OK);
+    }
+    @PostMapping("/buyer/hide")
+    @ResponseBody
+    public ResponseEntity<Map<String, String>> hideBuyerReviewMessage(@RequestParam String reviewBuyerId) {
+        Map<String, String> resultMap = reviewBuyerService.hideReviewBuyer(Long.valueOf(reviewBuyerId));
+        System.out.println("reviewBuyerId = " + reviewBuyerId);
+        if(resultMap.containsKey("fail")) {
+            return new ResponseEntity<>(resultMap, HttpStatus.BAD_REQUEST);
+        }
+        return new ResponseEntity<>(resultMap, HttpStatus.OK);
+    }
 }

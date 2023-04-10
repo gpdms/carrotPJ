@@ -1,5 +1,6 @@
 package com.exercise.carrotproject.domain.review.repository;
 
+import com.exercise.carrotproject.domain.enumList.HideState;
 import com.exercise.carrotproject.domain.enumList.ReviewSellerIndicator;
 import com.exercise.carrotproject.domain.enumList.ReviewState;
 import com.exercise.carrotproject.domain.review.dto.*;
@@ -29,7 +30,8 @@ public class ReviewSellerCustomRepository {
                 .select(reviewSeller.message.count())
                 .from(reviewSeller)
                 .where(sellerIdEq(memId), reviewSeller.message.ne(""),
-                        reviewSeller.reviewState.ne(ReviewState.BAD))
+                        reviewSeller.reviewState.ne(ReviewState.BAD),
+                        reviewSeller.hideState.eq(HideState.SHOW))
                 .fetchOne();
     }
 
@@ -43,8 +45,16 @@ public class ReviewSellerCustomRepository {
                 .from(reviewSeller)
                 .where(sellerIdEq(memId),
                         reviewSeller.message.ne(""),
-                        reviewSeller.reviewState.ne(ReviewState.BAD))
+                        reviewSeller.reviewState.ne(ReviewState.BAD),
+                        reviewSeller.hideState.eq(HideState.SHOW))
                 .fetch();
+    }
+
+    public long hideReviewSellerById(Long reviewSellerId) {
+        return queryFactory.update(reviewSeller)
+                .set(reviewSeller.hideState, HideState.HIDE)
+                .where(reviewSeller.reviewSellerId.eq(reviewSellerId))
+                .execute();
     }
 
     private BooleanExpression sellerIdEq(String sellerId) {

@@ -10,6 +10,7 @@ import com.exercise.carrotproject.domain.review.entity.ReviewBuyer;
 import com.exercise.carrotproject.domain.review.entity.ReviewBuyerDetail;
 import com.exercise.carrotproject.domain.review.entity.ReviewSeller;
 import com.exercise.carrotproject.domain.review.entity.ReviewSellerDetail;
+import com.exercise.carrotproject.domain.review.repository.ReviewBuyerCustomRepository;
 import com.exercise.carrotproject.domain.review.repository.ReviewBuyerDetailCustomRepository;
 import com.exercise.carrotproject.domain.review.repository.ReviewSellerDetailCustomRepository;
 import com.exercise.carrotproject.domain.review.repository.basic.ReviewBuyerDetailRepository;
@@ -31,6 +32,7 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class ReviewBuyerServiceImpl {
     private final ReviewBuyerDetailCustomRepository reviewBuyerDetailCustomRepository;
+    private final ReviewBuyerCustomRepository reviewBuyerCustomRepository;
     private final ReviewBuyerRepository reviewBuyerRepository;
     private final ReviewBuyerDetailRepository reviewBuyerDetailRepository;
 
@@ -83,13 +85,15 @@ public class ReviewBuyerServiceImpl {
         reviewBuyerRepository.deleteById(reviewBuyerId);
     }
 
-
-
-/*    public Map<ReviewBuyerIndicator, Long> buyerIndicatorsForMannerDetail(String memId) {
-        Map<ReviewBuyerIndicator, Long> reviewBuyerIndicatorMap = reviewBuyerDetailCustomRepository.countBuyerIndicatorByBuyer(memId);
-        return reviewBuyerIndicatorMap.entrySet().stream()
-                .filter(entry -> entry.getKey().name().contains("PB")
-                        ||entry.getKey().name().contains("NB"))
-                .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
-    }*/
+    @Transactional
+    public Map<String, String> hideReviewBuyer(Long reviewSellerId) {
+        long result = reviewBuyerCustomRepository.hideReviewBuyerById(reviewSellerId);
+        Map<String, String> resultMap = new HashMap<>();
+        if(result>0) {
+            resultMap.put("success", "숨김에 성공했습니다");
+        } else {
+            resultMap.put("fail", "숨김에 성공했습니다");
+        }
+        return resultMap;
+    }
 }

@@ -126,7 +126,6 @@
                     return;
                 }
                 let reviewSellerId = [[${reviewDetailForm.reviewSellerId}]];
-                console.log(reviewSellerId);
                 let url = '/reviews/seller/' + reviewSellerId
                 fetch(url, {
                     method: 'DELETE'

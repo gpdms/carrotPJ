@@ -33,14 +33,19 @@
     overflow-y: auto;
 }
 
-#review_modal_btn {
+.review_modal_btn {
     cursor: pointer;
+    color: #000000;
 }
 #review_close_btn {
     cursor: pointer;
     color: #999;
 }
-#review_delete_btn{
+#review_hide_btn{
+    cursor: pointer;
+    color: red;
+}
+#review_del_btn{
     cursor: pointer;
     color: red;
 }
