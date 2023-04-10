@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout/basic.html}">
+
+<head layout:fragment="head">
+    <title>받은 매너평가</title>
+    <link th:href="@{/css/bootstrap.min.css}"
+          href="/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        .form-container {
+            max-width: 560px;
+            padding-left: 100px;
+        }
+    </style>
+</head>
+
+<div layout:fragment="content">
+<div class="form-container">
+    <div class="py-5 text-center">
+        <h2>매너 상세</h2>
+    </div>
+    <div>
+        <h4 class="mb-3">받은 매너 칭찬</h4>
+        <th:block th:if="${positiveMannerMap.isEmpty()}">
+            받은 매너 칭찬이 없습니다
+        </th:block>
+        <th:block th:unless="${positiveMannerMap.isEmpty()}">
+            <p th:each="entry : ${positiveMannerMap}">
+                <span th:text="${entry.key.description}"></span>
+                <span th:text="${entry.value}"></span>
+            </p>
+        </th:block>
+    </div>
+    <hr>
+    <div>
+        <h4 class="mb-3">받은 비매너</h4>
+        <th:block th:unless="${memId.equals(session.loginMember?.memId) && !negativeMannerMap.isEmpty()}">
+            받은 비매너가 없습니다
+        </th:block>
+        <th:block th:if="${memId.equals(session.loginMember?.memId) && !negativeMannerMap.isEmpty()}">
+            <p th:each="entry : ${negativeMannerMap}">
+                <span th:text="${entry.key.description}"></span>
+                <span th:text="${entry.value}"></span>
+            </p>
+        </th:block>
+    </div>
+    <hr>
+    <p> 참고 사항 </p>
+    <span>-받은 비매너 내역은 나에게만 보입니다.</span>
+</div> <!-- /form-container -->
+</div>
+
+<div layout:fragment="script" th:inline="javascript">
+<script th:inline="javascript">
+</script>
+</div>

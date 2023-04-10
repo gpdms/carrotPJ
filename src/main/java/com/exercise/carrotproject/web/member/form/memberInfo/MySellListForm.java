@@ -27,5 +27,6 @@ public class MySellListForm {
         this.postDto = PostEntityDtoMapper.entityToDto(post);
         this.sellerId = sellerId;
         this.buyerId = buyerId;
+        this.reviewBuyerId = reviewBuyerId;
     }
 }

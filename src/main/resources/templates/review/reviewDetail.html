@@ -119,9 +119,9 @@
         }
 
         const sellerDelBtn = document.getElementById('sellerDelBtn');
-            if(sellerDelBtn) {
-                console.log(sellerDelBtn)
-                sellerDelBtn.addEventListener("click", function () {
+        if(sellerDelBtn) {
+            console.log(sellerDelBtn)
+            sellerDelBtn.addEventListener("click", function () {
                 if (!delConfirm()) {
                     return;
                 }
@@ -137,17 +137,17 @@
                         throw new Error('서버로부터 응답을 받지 못했습니다.');  // 예외 발생
                     }
                 })
-                .then(data => {
-                    alert(data.message);
-                    let me = [[${reviewDetailForm.buyerId}]];
-                    window.location.href = `/members/${me}/transaction/buyList`
-                })
-                .catch(err => {
-                    console.log(err);
-                    alert("삭제에 실패했습니다.")
-                });
-                })
-            }
+                    .then(data => {
+                        alert(data.message);
+                        let me = [[${reviewDetailForm.buyerId}]];
+                        window.location.href = `/members/${me}/transaction/buyList`
+                    })
+                    .catch(err => {
+                        console.log(err);
+                        alert("삭제에 실패했습니다.")
+                    });
+            })
+        }
 
         function delConfirm() {
             return confirm("리뷰를 삭제하시겠습니까?");

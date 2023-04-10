@@ -4,19 +4,25 @@
       layout:decorate="~{layout/basic.html}">
 <head layout:fragment="head">
     <title>홈 화면</title>
+    <link href="/css/profile.css" rel="stylesheet" />
+    <link href="/css/modal.css" rel="stylesheet" />
     <style>
+        .container {
+            width: 800px;
+            padding-left: 100px;
+        }
         .profile_container{
             width: 200px;
             margin: auto;
         }
-        .profile-img{
+        .profile-img_main{
             width: 150px;
             height: 150px;
             overflow: hidden;
             border-radius: 50%;
             margin: 0 auto 20px;
         }
-        .profile-img img{
+        .profile-img_main img{
             width: 100%;
             height: 100%;
         }
@@ -26,20 +32,22 @@
             display: block;
         }
     </style>
+    <script src="https://kit.fontawesome.com/b5ffac9792.js" crossorigin="anonymous"></script>
 </head>
 
 <div layout:fragment="content">
+<div class="container">
     <div class="profile_container">
-        <div class="profile-img">
+        <div class="profile-img_main">
             <img th:src="|/members/${member.memId}/profileImg|" alt="프로필이미지">
         </div>
-        <button th:if="${session?.loginMember.memId == member.memId}"> 프로필 편집 </button>
+        <button th:if="${session.loginMember?.memId == member.memId}"> 프로필 편집 </button>
         <form th:action="|/members/${member.memId}/block|" th:method="post">
-            <button th:if="${session?.loginMember.memId != member.memId && !blockState}" type="submit">
+            <button th:if="${session.loginMember?.memId != member.memId && !blockState}" type="submit">
                 차단하기</button>
         </form>
         <form th:action="|/members/${member.memId}/cancelBlock|" th:method="post">
-            <input type="hidden" name="loginMemId" th:value="${session.loginMember.memId}">
+            <input type="hidden" name="loginMemId" th:value="${session.loginMember?.memId}">
             <button th:if="${blockState}" type="submit">
                 차단해제</button>
         </form>
@@ -49,9 +57,103 @@
     <h3 th:text="|${member.memId}님|"></h3>
     <p th:text="|${member.nickname}님의 매너온도 : ${member.mannerScore}|"></p>
     <span th:text="|${member.nickname}님의 판매상품 : ${countPost}개|"></span> <button type="button"> >이동</button> <br/>
-    <span th:text="|받은 매너 후기|"></span> <button type="button"> >이동</button> <br/>
-    <span th:text="|받은 거래 후기 : 개|"></span> <button type="button"> >이동</button> <br/>
+    <hr>
+    <div>
+        <div>
+            <span th:text="|받은 매너 평가|"></span>
+            <button th:unless="${blockState}"
+                    th:onclick="|location.href='@{/reviews/manner/{memId}(memId=${member.memId})}'|">
+                >이동</button>
+        </div>
+        <div th:if="${positiveMannerBrief.isEmpty()}">
+            아직 받은 매너 평가가 없습니다.
+        </div>
+        <p th:unless="${positiveMannerBrief.isEmpty()}" th:each="entry:${positiveMannerBrief}">
+            <span th:text="${entry.key.description}"></span>
+            <span th:text="${entry.value}"></span>
+        </p>
+    </div>
+    <hr/>
+    <div>
+        <span th:text="|받은 거래 후기 : ${countReviewMessage}개|"></span>
+        <button th:unless="${blockState}"
+                th:onclick="|location.href='@{/reviews/{memId}(memId=${member.memId})}'|">
+            >이동</button>
+        <div style="height:10px;"></div>
+        <th:block th:if="${reviewMessageBrief.isEmpty()}">
+           <div> 받은 거래 후기가 없습니다.</div>
+        </th:block>
+        <th:block th:unless="${reviewMessageBrief.isEmpty()}">
+            <div class="row" th:each="review:${reviewMessageBrief}">
+                <div class="col-sm-5 profile-img">
+                    <a th:href="@{/home/{memId}(memId=${review.buyer?.memId})}">
+                        <img th:src="|/members/${review.buyer?.memId}/profileImg|" alt="프로필이미지">
+                    </a>
+                    <a th:href="@{/home/{memId}(memId=${review.seller?.memId})}">
+                        <img th:src="|/members/${review.seller?.memId}/profileImg|" alt="프로필이미지">
+                    </a>
+                </div>
+                <div class="col-md-8">
+                    <div th:if="${review.buyer != null}" >
+                        <p th:text="|${review.buyer.nickname}|"></p>
+                        <span th:text="|${review.buyer.loc.locName} - 구매자 - ${review.createdTime}|"></span>
+                        <p th:utext="${review.message}"></p>
+                    </div>
+                    <div th:if="${review.seller != null}">
+                        <p th:text="|${review.seller.nickname}|"></p>
+                        <span th:text="|${review.seller.loc.locName} - 판매자 - ${review.createdTime}|"></span>
+                        <p th:utext="${review.message}"></p>
+                    </div>
+                </div>
+                <div class="col-sm" th:if="${review.buyer != null}">
+                    <a id="review_modal_btn"
+                       th:if="${session.loginMember != null && session.loginMember.memId.equals(memId)}"
+                       th:onclick="setReviewSellerId(${review.reviewSellerId})">
+                        <i class="fa-solid fa-ellipsis-vertical fa-xs"></i>
+                    </a>
+                </div>
+                <div class="col-sm" th:if="${review.seller != null}">
+                    <a id="review_modal_btn2"
+                       th:if="${session.loginMember != null && session.loginMember.memId.equals(memId)}"
+                       th:onclick="setReviewBuyerId(${review.reviewBuyerId})">
+                        <i class="fa-solid fa-ellipsis-vertical fa-xs"></i>
+                    </a>
+                </div>
+            </div>
+        </th:block>
+    </div>
+</div> <!--container-->
+<div class="reviewModal review_modal">
+    <div class="review_modal_body">
+        <a id="review_delete_btn">리뷰 삭제</a>
+        <hr/>
+        <a id="review_close_btn">취소</a>
+    </div>
+</div>
 </div>
 
-<script layout:fragment="script" th:inline="javascript">
-</script>
+<div layout:fragment="script">
+    <script src="/js/modal.js"></script>
+    <script th:inline="javascript">
+        let reviewSellerId = 0;
+        let reviewBuyerId = 0;
+        let reviewPerson = "seller";
+        function setReviewSeller(reviewSellerNum) {
+            reviewSellerId = reviewSellerNum;
+            reviewPerson = "seller";
+        }
+        function setReviewBuyer(reviewBuyerNum) {
+            reviewBuyerId = reviewBuyerNum;
+            reviewPerson = "buyer";
+        }
+        const delBtn = document.getElementById("review_delete_btn");
+        delBtn.addEventListener('click', ()=> {
+            if(reviewPerson=="seller") {
+
+            }
+            else {
+
+            }
+        });
+    </script>
+</div>

@@ -7,8 +7,6 @@ import com.exercise.carrotproject.domain.member.entity.Member;
 import com.exercise.carrotproject.domain.post.entity.BuyList;
 import com.exercise.carrotproject.domain.post.entity.Post;
 import com.exercise.carrotproject.domain.post.repository.BuyListRepository;
-import com.exercise.carrotproject.domain.review.dto.BuyerDetailCountDto;
-import com.exercise.carrotproject.domain.review.dto.SellerDetailCountDto;
 import com.exercise.carrotproject.domain.review.entity.ReviewBuyer;
 import com.exercise.carrotproject.domain.review.entity.ReviewBuyerDetail;
 import com.exercise.carrotproject.domain.review.entity.ReviewSeller;
@@ -77,8 +75,12 @@ public class ReviewSellerServiceImpl {
         reviewSellerRepository.deleteById(reviewSellerId);
     }
 
-    public List<SellerDetailCountDto> sellerIndicatorsForMannerDetail(String memId) {
-        return reviewSellerDetailCustomRepository.countIndicatorBySeller(memId);
-    }
 
+/*    public Map<ReviewSellerIndicator, Long> sellerIndicatorsForMannerDetail(String memId) {
+        Map<ReviewSellerIndicator, Long> reviewSellerIndicatorMap = reviewSellerDetailCustomRepository.countSellerIndicatorBySeller(memId);
+        return reviewSellerIndicatorMap.entrySet().stream()
+                .filter(entry -> entry.getKey().name().contains("PS")
+                        ||entry.getKey().name().contains("NS"))
+                .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
+    }*/
 }
