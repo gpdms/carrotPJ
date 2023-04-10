@@ -5,6 +5,7 @@ import com.exercise.carrotproject.domain.enumList.SellState;
 import com.exercise.carrotproject.domain.member.entity.Member;
 import com.exercise.carrotproject.domain.member.entity.QMember;
 import com.exercise.carrotproject.domain.member.repository.MemberRepository;
+import com.exercise.carrotproject.domain.post.dto.MtPlaceDto;
 import com.exercise.carrotproject.domain.post.entity.*;
 import com.exercise.carrotproject.domain.post.dto.PostDto;
 import com.exercise.carrotproject.domain.post.dto.PostImgDto;
@@ -49,6 +50,7 @@ public class PostServiceImpl {
     private final PostImgRepository postImgRepository;
     private final SellListRepository sellListRepository;
     private final MemberRepository memberRepository;
+    private final MtPlaceRepository mtPlaceRepository;
     private final JPAQueryFactory jpaQueryFactory; //QuerydslConfig파일에 bean등록함
 //    private final PostRepositoryImpl customPostRepository; //후에 CustomPostRepository로 바꿔주기
 
@@ -60,8 +62,8 @@ public class PostServiceImpl {
 
 //    @Override
     @Transactional
-    public String insertPost(PostDto postDto, MultipartFile[] uploadFiles) throws IOException {
-        log.info("uploadfiles-length {}", uploadFiles.length);
+    public String insertPost(PostDto postDto, MultipartFile[] uploadFiles, MtPlaceDto mtPlaceDto) throws IOException {
+//        log.info("uploadfiles-length {}", uploadFiles.length);
 //        log.info("서비스단 postDto:",postDto);
         //Dto->Entity 변환
         Post postEntity = PostEntityDtoMapper.dtoToEntity(postDto);
@@ -84,6 +86,12 @@ public class PostServiceImpl {
         }
         //이미지 테이블에 insert
         insertPostImg(postEntity, uploadFiles);
+
+        //거래희망장소 테이블에 insert
+        if(mtPlaceDto.getLat() != null && mtPlaceDto.getLon() != null && mtPlaceDto.getPlaceInfo()!=null){
+            insertMtPlace(postEntity, mtPlaceDto);
+
+        }
 
         
         return "성공";
@@ -164,6 +172,21 @@ public class PostServiceImpl {
 
         return folderPath;
     }
+
+    //거래희망장소 insert
+//    @Override
+    @Transactional
+    public void insertMtPlace(Post postEntity, MtPlaceDto mtPlaceDto){
+        MtPlace mtPlaceEntity = MtPlace.builder()
+                .post(postEntity)
+                .lat(mtPlaceDto.getLat())
+                .lon(mtPlaceDto.getLon())
+                .placeInfo(mtPlaceDto.getPlaceInfo())
+                .build();
+        mtPlaceRepository.save(mtPlaceEntity);
+    }
+
+
 
 //    @Override
     public List<PostDto> selectAllPost(){

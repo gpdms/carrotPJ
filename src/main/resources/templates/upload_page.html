@@ -63,35 +63,32 @@
             <div class="form-group form-description">
                 <textarea class="form-control" id="productsDescription" name="content" rows="10" placeholder="제품 설명을 작성해주세요."></textarea>
             </div>
-
-
-<!--            <div class="form-group form-car-smoking">-->
-<!--                <label>차량 판매자 흡연 여부</label>-->
-<!--                <div class="form-check form-check-inline form-check-smoking">-->
-<!--                    <input class="form-check-input" type="radio" name="smokingOptions" id="inlineSmoker" value="true">-->
-<!--                    <label class="form-check-label smoker" for="inlineSmoker">예, 흡연자 입니다.</label>-->
-<!--                </div>-->
-<!--                <div class="form-check form-check-inline form-check-nonsmoking">-->
-<!--                    <input class="form-check-input" type="radio" name="smokingOptions" id="inlineNonSmoker" value="false">-->
-<!--                    <label class="form-check-label non-smoker" for="inlineNonSmoker">아니오, 비 흡연자 입니다.</label>-->
-<!--                </div>-->
-<!--            </div>-->
-            <button type="button" id="uploadBtn" class="btn btn-primary btn-submit">상품 등록하기</button>
         </form>
 
-        <!--거래희망장소-->
-        <button id="regPlace" type="button">거래희망장소 등록하기</button>
-
-        <div id="mapArea">
+            <!--거래희망장소-->
+            <button id="regPlace" type="button">거래희망장소 선택하기</button>
             <!--카카오맵 지도-->
-            <div id="map" style="width:100%;height:350px;"></div>
-            <p>거래 희망하는 장소를 지도에서 클릭해주세요!</p>
-                <div id="placeInfo" class="form-group form-car-mileage" style="display: none;">
-                    <input type="text" class="form-control"  name="wishPlace" placeholder="장소명을 입력해주세요. 예)강남역 1번 출구">
+            <div id="mapArea">
+                <p style="font-weight: bold;">거래 희망하는 장소를 지도에서 클릭해주세요!</p>
+
+                <div id="map" style="width:100%;height:350px; margin: 20px;"></div>
+
+                <div id="inputPlace" class="form-group form-car-mileage" style="display: none;">
+                    <input type="text" class="form-control" id="placeInfo" name="placeInfo" placeholder="장소명을 입력해주세요. 예)강남역 1번 출구">
                 </div>
-                <div id="clickLatlng"></div>
-            <button id="noPlace" type="button" >장소선택 안함</button>
-        </div>
+                <button id="cfmPlace" type="button" style="display: none;">장소선택하기</button>
+
+                <!--                <div id="clickLatlng"></div>-->
+                <button id="noPlace" type="button" >장소선택 안함</button>
+            </div>
+
+
+
+            <br/><br/>
+            <button type="button" id="uploadBtn" class="btn btn-primary btn-submit">상품 등록하기</button>
+
+
+
 
     </div>
 
@@ -110,31 +107,8 @@
 <!--지도API: head, body 등 어떠한 위치에 넣어도 상관없지만, 반드시 실행 코드보다 먼저 선언되어야 합니다.-->
 <script type="text/javascript" src="//dapi.kakao.com/v2/maps/sdk.js?appkey=e133f6ea3b90b5b74b80864ba7037219"></script>
 
-<!--지도 띄우기-->
 <script>
-    //지도 숨겼다가 거래희망장소등록 버튼 클릭시 보이기
-    $('#mapArea').hide();
-    $('#regPlace').click(function (){
-        $('#mapArea').show();
-        relayout();
-    });
-    //장소선택안함 클릭시 지도 숨기기
-    $('#noPlace').click(function (){
-        $('#mapArea').hide();
-    })
-
-    function relayout() {
-        // 지도를 표시하는 div 크기를 변경한 이후 지도가 정상적으로 표출되지 않을 수도 있습니다
-        // 크기를 변경한 이후에는 반드시  map.relayout 함수를 호출해야 합니다
-        // window의 resize 이벤트에 의한 크기변경은 map.relayout 함수가 자동으로 호출됩니다
-        map.relayout();
-    }
-
-
-
-
-
-
+    <!--지도 띄우기-->
     var mapContainer = document.getElementById('map'), // 지도를 표시할 div
         mapOption = {
             center: new kakao.maps.LatLng(33.450701, 126.570667), // 지도의 중심좌표
@@ -152,36 +126,66 @@
     // 지도에 마커를 표시합니다
     marker.setMap(map);
 
+    //위도, 경도, 장소정보
+    var lat;
+    var lon;
+    var placeInfo;
+
     // 지도에 클릭 이벤트를 등록합니다
     // 지도를 클릭하면 마지막 파라미터로 넘어온 함수를 호출합니다
     kakao.maps.event.addListener(map, 'click', function(mouseEvent) {
 
         // 클릭한 위도, 경도 정보를 가져옵니다
         var latlng = mouseEvent.latLng;
-        // console.log("클릭한 위도,경도:", latlng);
-        // console.log("클릭한 위도:", latlng.getLat());
-        // console.log("클릭한 경도:", latlng.getLng());
 
         // 마커 위치를 클릭한 위치로 옮깁니다
         marker.setPosition(latlng);
 
-        var message = '클릭한 위치의 위도는 ' + latlng.getLat() + ' 이고, ';
-        message += '경도는 ' + latlng.getLng() + ' 입니다';
+        // var message = '클릭한 위치의 위도는 ' + latlng.getLat() + ' 이고, ';
+        // message += '경도는 ' + latlng.getLng() + ' 입니다';
+        //
+        // var resultDiv = document.getElementById('clickLatlng');
+        // resultDiv.innerHTML = message;
 
-        var resultDiv = document.getElementById('clickLatlng');
-        resultDiv.innerHTML = message;
+        //장소정보 입력창 보이기
+        document.getElementById('inputPlace').style.display='block';
+        document.getElementById('cfmPlace').style.display="inline-block";
 
-        document.getElementById('placeInfo').style.display='block';
+        //'장소선택하기'버튼 클릭시 위도,경도,장소정보 set
+        document.getElementById('cfmPlace').addEventListener('click',function () {
+            lat = latlng.getLat();
+            lon = latlng.getLng();
+            placeInfo = document.getElementById('placeInfo').value;
+            console.log("세팅된 lat:{}, lon:{}, placeinfo:{}", lat, lon, placeInfo);
+        });
+
+
 
     });
         // 아래 코드는 지도 위의 마커를 제거하는 코드입니다
         // marker.setMap(null);
 
 
+    //지도 숨겼다가 거래희망장소등록 버튼 클릭시 보이기 (지도생성 코드 아래에 위치하기)
+    $('#mapArea').hide();
 
-</script>
+    $('#regPlace').click(function (){
+        $('#mapArea').show();
+        relayout();
+    });
+    //장소선택안함 클릭시 지도 숨기기
+    $('#noPlace').click(function (){
+        $('#mapArea').hide();
+    })
 
-    <script>
+    function relayout() {
+        // 지도를 표시하는 div 크기를 변경한 이후 지도가 정상적으로 표출되지 않을 수도 있습니다
+        // 크기를 변경한 이후에는 반드시  map.relayout 함수를 호출해야 합니다
+        // window의 resize 이벤트에 의한 크기변경은 map.relayout 함수가 자동으로 호출됩니다
+        map.relayout();
+    }
+
+
 
         // const handler = {
         //     init() {
@@ -373,6 +377,12 @@
 
             var uploadForm = $('#upload_form')[0]; //$(...) 하면 객체 하나가 리턴
             var formData = new FormData(uploadForm); //FormData에는 객체가 들어가지 못함. so객체에서 인덱스로 뽑아옴.
+
+            // var mapData = { "lat": lat, "lon": lon, "placeInfo": placeInfo};
+            formData.append("lat", lat);
+            formData.append("lon", lon);
+            formData.append("placeInfo", placeInfo);
+
 
             //formData 출력
             // for (let key of formData.keys()) {

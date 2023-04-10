@@ -2,6 +2,7 @@ package com.exercise.carrotproject.domain.post.controller;
 
 import com.exercise.carrotproject.domain.enumList.HideState;
 import com.exercise.carrotproject.domain.enumList.SellState;
+import com.exercise.carrotproject.domain.post.dto.MtPlaceDto;
 import com.exercise.carrotproject.web.common.SessionConst;
 import com.exercise.carrotproject.domain.member.dto.MemberDto;
 import com.exercise.carrotproject.domain.post.dto.PostDto;
@@ -86,8 +87,9 @@ public class PostController {
     //게시글 업로드
     @PostMapping("/post/upload")
 //    @ResponseBody
-    public ResponseEntity<String> insPost(PostDto postDto, @RequestParam MultipartFile[] uploadFiles, HttpSession session) throws IOException {
-//        log.info("컨트롤러단 postDto:", postDto);
+    public ResponseEntity<String> insPost(PostDto postDto, @RequestParam MultipartFile[] uploadFiles, MtPlaceDto mtPlaceDto, HttpSession session) throws IOException {
+//        log.info("컨트롤러단 mtPlaceDto:", postDto);
+        System.out.println("컨트롤러단 mtPlaceDto = " + mtPlaceDto);
 //        log.info("controller uploadfiles-length {}", uploadFiles.length);
 
         //제목, 카테고리, 내용 null체크
@@ -103,14 +105,13 @@ public class PostController {
         //게시글 내용 개행 처리
         postDto.setContent(postDto.getContent().replace("\r\n","<br>")); //줄개행
 
-        //DB에 insert
-        String a = postService.insertPost(postDto, uploadFiles);
-         if(a.equals("이미지타입오류")){
+        //Post,이미지 DB에 insert
+        String insResult = postService.insertPost(postDto, uploadFiles, mtPlaceDto);
+         if(insResult.equals("이미지타입오류")){
              return new ResponseEntity<>("이미지 파일이 아닙니다.",HttpStatus.BAD_REQUEST);
-         } else if(a.equals("성공")){
-             return new ResponseEntity<>("상품이 게시되었습니다.",HttpStatus.OK);
-
          }
+
+
 
         return new ResponseEntity<>("상품이 게시되었습니다.",HttpStatus.OK);
     }
