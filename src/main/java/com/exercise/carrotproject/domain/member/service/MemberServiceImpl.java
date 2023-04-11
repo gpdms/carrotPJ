@@ -128,13 +128,16 @@ public class MemberServiceImpl {
         return null;
     }
 
-
-
     //@Override
-    public void insertBlock(String fromMemId, String toMemId) {
+    public Map<String,String> insertBlock(String fromMemId, String toMemId) {
         Block block = Block.builder().fromMem(memberRepository.findById(fromMemId).orElse(null))
                 .toMem(memberRepository.findById(toMemId).orElse(null)).build();
-        blockRepository.save(block);
+        Map<String, String> saveResult = new HashMap<>();
+        if (blockRepository.save(block) != null) {
+            saveResult.put("resultCode", "fail");
+        }
+        saveResult.put("resultCode", "success");
+        return saveResult;
     }
 
     //@Override

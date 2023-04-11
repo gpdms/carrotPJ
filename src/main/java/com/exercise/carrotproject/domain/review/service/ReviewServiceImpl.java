@@ -165,12 +165,9 @@ public class ReviewServiceImpl {
         return negativeMap;
     }
 
-    public Map<String, Long> countGoodReviewMessage(String memId) {
-        Map<String, Long> countMap= new HashMap<>();
-        countMap.put("buyerCount", reviewBuyerCustomRepository.countMessageByBuyer(memId));
-        countMap.put("sellerCount", reviewSellerCustomRepository.countMessageBySeller(memId));
-        countMap.put("AllCount",countMap.get("reviewBuyer")+countMap.get("reviewSeller"));
-        return countMap;
+    public Long countGoodReviewMessage(String memId) {
+        return reviewBuyerCustomRepository.countMessageByBuyer(memId) +
+                reviewSellerCustomRepository.countMessageBySeller(memId) ;
     }
     public Map<String, List<ReviewMessageDto>> goodReviewMessagesDetail(String memId) {
         List<ReviewMessageDto> buyerMessages = reviewBuyerCustomRepository.reviewMessageByBuyer(memId);

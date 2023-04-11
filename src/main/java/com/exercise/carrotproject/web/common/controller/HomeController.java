@@ -89,16 +89,12 @@ public class HomeController {
             }
         }
         Long countPost = 0L;
-        Long countReviewMessage = 0L;
-        Map<Object, Long> positiveMannerBrief = new HashMap<>();
-        List<ReviewMessageDto> reviewMessageBrief = new ArrayList<>();
+        Long countReviewMessage = countReviewMessage = reviewService.countGoodReviewMessage(memId);
+        Map<Object, Long> positiveMannerBrief =  reviewService.getPositiveMannerBrief(memId, 3L);
+        List<ReviewMessageDto> reviewMessageBrief =reviewService.goodReviewMessagesBrief(memId, 3L);
         if(blockState == false) {
             countPost = postRepository.countByMember(member);
-            positiveMannerBrief = reviewService.getPositiveMannerBrief(memId, 3L);
-            countReviewMessage = reviewService.countGoodReviewMessage(memId).get("reviewAll");
-            reviewMessageBrief = reviewService.goodReviewMessagesBrief(memId, 3L);
         }
-
         model.addAttribute("member", MemberEntityDtoMapper.toMemberDto(member));
         model.addAttribute("blockState", blockState);
         model.addAttribute("countPost", countPost);

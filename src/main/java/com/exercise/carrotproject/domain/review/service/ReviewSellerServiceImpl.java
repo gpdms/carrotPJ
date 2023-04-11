@@ -81,7 +81,7 @@ public class ReviewSellerServiceImpl {
         if(result>0) {
             resultMap.put("success", "숨김에 성공했습니다");
         } else {
-            resultMap.put("fail", "숨김에 성공했습니다");
+            resultMap.put("fail", "숨김에 실패했습니다");
         }
         return resultMap;
     }

@@ -86,7 +86,6 @@ public class ReviewController {
 
     @GetMapping("/{memId}")
     public String toPublicReviewDetail(@PathVariable String memId, Model model) {
-        model.addAttribute("countMap", reviewService.countGoodReviewMessage(memId));
         model.addAttribute("messageMap",reviewService.goodReviewMessagesDetail(memId));
         return "review/publicReviewDetail";
     }
