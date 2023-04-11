@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout/basic.html}">
+
+<head layout:fragment="head">
+    <title>받은 매너평가</title>
+    <link th:href="@{/css/bootstrap.min.css}"
+          href="/css/bootstrap.min.css" rel="stylesheet">
+    <link href="/css/profile.css" rel="stylesheet" />
+    <link href="/css/review_modal.css" rel="stylesheet" />
+    <style>
+        .form-container {
+            max-width: 800px;
+            padding-left: 100px;
+        }
+        #sellerReviews, #buyerReviews {
+            display: none;
+        }
+    </style>
+    <script src="https://kit.fontawesome.com/b5ffac9792.js" crossorigin="anonymous"></script>
+</head>
+
+<div layout:fragment="content">
+<div class="form-container">
+    <div class="py-5 text-center">
+        <h2>거래 후기 상세</h2>
+    </div>
+
+    <div style="margin-bottom: 10px;">
+        <button id="allReview_btn">전체 후기</button>
+        <button id="buyerReview_btn">판매자 후기</button>
+        <button id="sellerReview_btn">구매자 후기</button>
+    </div>
+
+    <div id="allReviews">
+        <div th:if="${messageMap['allMessages'].isEmpty()}">
+            <div> 받은 거래 후기가 없습니다.</div>
+        </div>
+        <div th:unless="${messageMap['allMessages'].isEmpty()}">
+            <div>
+                <h6 th:text="|전체 후기 ${messageMap['allMessages'].size()}개|" id="count"></h6>
+            </div>
+            <hr/>
+            <div class="row" th:each="review:${messageMap['allMessages']}">
+                <div class="col-sm-1">
+                    <div class="profile-img">
+                        <a th:if="${review.buyer != null}"
+                           th:href="@{/home/{memId}(memId=${review.buyer?.memId})}">
+                            <img th:src="|/members/${review.buyer?.memId}/profileImg|" alt="프로필이미지">
+                        </a>
+                        <a th:if="${review.seller != null}"  class="profile-img"
+                           th:href="@{/home/{memId}(memId=${review.seller.memId})}">
+                            <img th:src="|/members/${review.seller.memId}/profileImg|" alt="프로필이미지">
+                        </a>
+                    </div>
+                </div>
+                <div class="col-lg">
+                    <div th:if="${review.buyer != null}" >
+                        <p th:text="|${review.buyer.nickname}|"></p>
+                        <span th:text="|${review.buyer.loc.locName} - 구매자 - ${review.createdTime}|"></span>
+                        <p th:utext="${review.message}"></p>
+                    </div>
+                    <div th:if="${review.seller != null}">
+                        <p th:text="|${review.seller.nickname}|"></p>
+                        <span th:text="|${review.seller.loc.locName} - 판매자 - ${review.createdTime}|"></span>
+                        <p th:utext="${review.message}"></p>
+                    </div>
+                </div>
+                <!--setting 버튼-->
+                <div class="col-sm" th:if="${session.loginMember != null && review.buyer != null}">
+                    <a class="review_modal_btn"
+                       th:if="${session.loginMember.memId.equals(memId)}"
+                       th:data-reviewedWho="seller"
+                       th:data-reviewId="${review.reviewSellerId}">
+                        <i class="fa-solid fa-ellipsis-vertical fa-xs"></i>
+                    </a>
+                    <a class="review_modal_btn"
+                       th:if="${session.loginMember.memId.equals(review.buyer.memId)}"
+                       th:data-reviewedWho="seller"
+                       th:data-reviewId="${review.reviewSellerId}">
+                        <i class="fa-solid fa-ellipsis-vertical fa-xs"></i>
+                    </a>
+                </div>
+                <div class="col-sm" th:if="${session.loginMember != null && review.seller != null}">
+                    <a class="review_modal_btn"
+                       th:if="${session.loginMember.memId.equals(memId)}"
+                       th:data-reviewedWho="buyer"
+                       th:data-reviewId="${review.reviewBuyerId}">
+                        <i class="fa-solid fa-ellipsis-vertical fa-xs"></i>
+                    </a>
+                    <a class="review_modal_btn"
+                       th:if="${session.loginMember.memId.equals(review.seller.memId)}"
+                       th:data-reviewedWho="buyer"
+                       th:data-reviewId="${review.reviewBuyerId}">
+                        <i class="fa-solid fa-ellipsis-vertical fa-xs"></i>
+                    </a>
+                </div>
+                <!--setting 버튼-->
+                <hr/>
+            </div><!--each allReviews-->
+        </div><!--not Empty-->
+    </div><!--allReviews-->
+
+
+    <div id="sellerReviews">
+        <div th:if="${messageMap['sellerMessages'].isEmpty()}">
+            <div>구매자 후기가 없어요</div>
+        </div>
+        <div th:unless="${messageMap['sellerMessages'].isEmpty()}">
+            <div>
+                <h6 th:text="|구매자 후기 ${messageMap['sellerMessages'].size()}개|"></h6>
+            </div>
+            <hr/>
+            <div class="row" th:each="review:${messageMap['sellerMessages']}">
+                <div class="col-sm-1">
+                    <div class="profile-img">
+                        <a  class="profile-img"
+                           th:href="@{/home/{memId}(memId=${review.buyer.memId})}">
+                            <img th:src="|/members/${review.buyer.memId}/profileImg|" alt="프로필이미지">
+                        </a>
+                    </div>
+                </div>
+                <div class="col-lg">
+                    <p th:text="|${review.buyer.nickname}|"></p>
+                    <span th:text="|${review.buyer.loc.locName} - 구매자 - ${review.createdTime}|"></span>
+                    <p th:utext="${review.message}"></p>
+                </div>
+                <!--setting 버튼-->
+                <div class="col-sm" th:if="${session.loginMember != null}">
+                    <a class="review_modal_btn"
+                       th:if="${session.loginMember.memId.equals(memId)}"
+                       th:data-reviewedWho="seller"
+                       th:data-reviewId="${review.reviewSellerId}">
+                        <i class="fa-solid fa-ellipsis-vertical fa-xs"></i>
+                    </a>
+                    <a class="review_modal_btn"
+                       th:if="${session.loginMember.memId.equals(review.buyer.memId)}"
+                       th:data-reviewedWho="seller"
+                       th:data-reviewId="${review.reviewSellerId}">
+                        <i class="fa-solid fa-ellipsis-vertical fa-xs"></i>
+                    </a>
+                </div>
+                <!--setting 버튼-->
+                <hr/>
+            </div> <!--each sellerReviews-->
+        </div><!--not Empty-->
+    </div><!--sellerReviews-->
+
+    <div id="buyerReviews">
+        <div th:if="${messageMap['buyerMessages'].isEmpty()}">
+            <div>판매자 후기가 없어요</div>
+        </div>
+        <div th:unless="${messageMap['buyerMessages'].isEmpty()}">
+            <div>
+                <h6 th:text="|판매자 후기 ${messageMap['buyerMessages'].size()}개|"></h6>
+            </div>
+            <hr/>
+            <div class="row" th:each="review:${messageMap['buyerMessages']}">
+                <div class="col-sm-1">
+                    <div class="profile-img">
+                        <a th:href="@{/home/{memId}(memId=${review.seller.memId})}">
+                            <img th:src="|/members/${review.seller.memId}/profileImg|" alt="프로필이미지">
+                        </a>
+                    </div>
+                </div>
+                <div class="col-lg">
+                    <p th:text="|${review.seller.nickname}|"></p>
+                    <span th:text="|${review.seller.loc.locName} - 판매자 - ${review.createdTime}|"></span>
+                    <p th:utext="${review.message}"></p>
+                </div>
+                <!-- setting 버튼-->
+                <div class="col-sm" th:if="${session.loginMember != null}">
+                    <a class="review_modal_btn"
+                       th:if="${session.loginMember.memId.equals(memId)}"
+                       th:data-reviewedWho="buyer"
+                       th:data-reviewId="${review.reviewBuyerId}">
+                        <i class="fa-solid fa-ellipsis-vertical fa-xs"></i>
+                    </a>
+                    <a class="review_modal_btn"
+                       th:if="${session.loginMember.memId.equals(review.seller.memId)}"
+                       th:data-reviewedWho="buyer"
+                       th:data-reviewId="${review.reviewBuyerId}">
+                        <i class="fa-solid fa-ellipsis-vertical fa-xs"></i>
+                    </a>
+                </div>
+               <!-- setting 버튼-->
+                <hr/>
+            </div><!--each buyerReviews-->
+        </div><!--not Empty-->
+    </div><!--buyerReviews-->
+
+</div> <!-- /form-container -->
+<!--리뷰 모달-->
+<div class="reviewModal review_modal">
+    <div class="review_modal_body">
+        <a id="review_hide_btn" th:if="${session.loginMember != null && session.loginMember.memId.equals(memId)}">
+            리뷰 숨김</a>
+        <a id="review_del_btn" th:if="${session.loginMember != null && !session.loginMember.memId.equals(memId)}">
+            리뷰 삭제</a>
+        <hr/>
+        <a id="review_detail_btn">리뷰 보기</a>
+        <hr/>
+        <a id="review_close_btn">취소</a>
+    </div>
+</div>
+</div>
+
+<div layout:fragment="script">
+    <script src="/js/review_modal.js"></script>
+    <script th:inline="javascript">
+        //탭전환
+        const allReviews = document.getElementById("allReviews");
+        const buyerReviews = document.getElementById("buyerReviews");
+        const sellerReviews = document.getElementById("sellerReviews");
+        function allReview() {
+            allReviews.style.display = "block";
+            buyerReviews.style.display = "none";
+            sellerReviews.style.display = "none";
+        }
+        function sellerReview() {
+            allReviews.style.display = "none";
+            buyerReviews.style.display = "none";
+            sellerReviews.style.display = "block";
+        }
+        function buyerReview() {
+            allReviews.style.display = "none";
+            buyerReviews.style.display = "block";
+            sellerReviews.style.display = "none";
+        }
+        document.getElementById("allReview_btn").addEventListener('click', allReview);
+        document.getElementById("sellerReview_btn").addEventListener('click', sellerReview);
+        document.getElementById("buyerReview_btn").addEventListener('click', buyerReview);
+    </script>
+</div>

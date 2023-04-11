@@ -1,11 +1,14 @@
 package com.exercise.carrotproject.domain.review.entity;
 
 import com.exercise.carrotproject.domain.common.entity.BaseEntity;
+import com.exercise.carrotproject.domain.converter.HideStateConverter;
+import com.exercise.carrotproject.domain.enumList.HideState;
 import com.exercise.carrotproject.domain.member.entity.Member;
 import com.exercise.carrotproject.domain.converter.ReviewStateConverter;
 import com.exercise.carrotproject.domain.post.entity.Post;
 import com.exercise.carrotproject.domain.enumList.ReviewState;
 import lombok.*;
+import org.hibernate.annotations.ColumnDefault;
 import org.hibernate.annotations.DynamicInsert;
 
 import javax.persistence.*;
@@ -34,6 +37,9 @@ public class ReviewBuyer extends BaseEntity {
     private Double totalScore;
     private String message;
 
+    @NotNull @ColumnDefault("0")
+    @Convert(converter = HideStateConverter.class)
+    private HideState hideState;
     @NotNull @Convert(converter = ReviewStateConverter.class)
     private ReviewState reviewState;
 

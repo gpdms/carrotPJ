@@ -8,6 +8,8 @@ import com.exercise.carrotproject.domain.member.entity.Member;
 import com.exercise.carrotproject.domain.member.repository.MemberRepository;
 import com.exercise.carrotproject.domain.member.service.MemberServiceImpl;
 import com.exercise.carrotproject.domain.post.repository.PostRepository;
+import com.exercise.carrotproject.domain.review.dto.ReviewMessageDto;
+import com.exercise.carrotproject.domain.review.service.ReviewServiceImpl;
 import com.exercise.carrotproject.web.argumentresolver.Login;
 import com.exercise.carrotproject.web.common.SessionConst;
 import com.exercise.carrotproject.web.member.util.SecurityUtils;
@@ -22,7 +24,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import javax.annotation.PostConstruct;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
-import java.util.Optional;
+import java.util.*;
 
 @Controller
 @RequiredArgsConstructor
@@ -76,6 +78,7 @@ public class HomeController {
             return "redirect:/";
         }
         Member member = opMember.orElseThrow();
+
         boolean blockState = false;
         Object loginSession = session.getAttribute(SessionConst.LOGIN_MEMBER);
         if(loginSession != null) {
@@ -85,14 +88,18 @@ public class HomeController {
             }
         }
         Long countPost = 0L;
-        if(!blockState) {
+        Long countReviewMessage = countReviewMessage = reviewService.countGoodReviewMessage(memId);
+        Map<Object, Long> positiveMannerBrief =  reviewService.getPositiveMannerBrief(memId, 3L);
+        List<ReviewMessageDto> reviewMessageBrief =reviewService.goodReviewMessagesBrief(memId, 3L);
+        if(blockState == false) {
             countPost = postRepository.countByMember(member);
-            log.info("countPost{}", countPost);
         }
         model.addAttribute("member", MemberEntityDtoMapper.toMemberDto(member));
-        model.addAttribute("countPost", countPost);
         model.addAttribute("blockState", blockState);
-
+        model.addAttribute("countPost", countPost);
+        model.addAttribute("positiveMannerBrief", positiveMannerBrief);
+        model.addAttribute("countReviewMessage", countReviewMessage);
+        model.addAttribute("reviewMessageBrief", reviewMessageBrief);
         return "memberHome";
     }
 

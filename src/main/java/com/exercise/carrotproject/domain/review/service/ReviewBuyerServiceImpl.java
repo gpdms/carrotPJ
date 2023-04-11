@@ -12,7 +12,6 @@ import com.exercise.carrotproject.domain.review.entity.ReviewSeller;
 import com.exercise.carrotproject.domain.review.entity.ReviewSellerDetail;
 import com.exercise.carrotproject.domain.review.repository.ReviewBuyerCustomRepository;
 import com.exercise.carrotproject.domain.review.repository.ReviewBuyerDetailCustomRepository;
-import com.exercise.carrotproject.domain.review.repository.ReviewSellerCustomRepository;
 import com.exercise.carrotproject.domain.review.repository.ReviewSellerDetailCustomRepository;
 import com.exercise.carrotproject.domain.review.repository.basic.ReviewBuyerDetailRepository;
 import com.exercise.carrotproject.domain.review.repository.basic.ReviewBuyerRepository;
@@ -22,7 +21,9 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.NoSuchElementException;
 import java.util.stream.Collectors;
 
@@ -30,9 +31,8 @@ import java.util.stream.Collectors;
 @Service
 @RequiredArgsConstructor
 public class ReviewBuyerServiceImpl {
-    private final ReviewBuyerCustomRepository reviewBuyerCustomRepository;
     private final ReviewBuyerDetailCustomRepository reviewBuyerDetailCustomRepository;
-
+    private final ReviewBuyerCustomRepository reviewBuyerCustomRepository;
     private final ReviewBuyerRepository reviewBuyerRepository;
     private final ReviewBuyerDetailRepository reviewBuyerDetailRepository;
 
@@ -85,8 +85,15 @@ public class ReviewBuyerServiceImpl {
         reviewBuyerRepository.deleteById(reviewBuyerId);
     }
 
-//    public Map<ReviewSellerIndicator, Long> () {
-//
-//    }
-
+    @Transactional
+    public Map<String, String> hideReviewBuyer(Long reviewSellerId) {
+        long result = reviewBuyerCustomRepository.hideReviewBuyerById(reviewSellerId);
+        Map<String, String> resultMap = new HashMap<>();
+        if(result>0) {
+            resultMap.put("success", "숨김에 성공했습니다");
+        } else {
+            resultMap.put("fail", "숨김에 성공했습니다");
+        }
+        return resultMap;
+    }
 }

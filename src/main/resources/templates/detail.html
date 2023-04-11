@@ -47,7 +47,7 @@
                        <!--프로필-->
                         <p>[[${post.member.nickname}]]</p>
                         <div class="profile-img">
-                            <a th:href="@{/members/{memId}(memId=${post.member.memId})}">
+                            <a th:href="@{/home/{memId}(memId=${post.member.memId})}">
                              <img th:src="|/members/${post.member.memId}/profileImg|" alt="프로필이미지"/>
                             </a>
                         </div>

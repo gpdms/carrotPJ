@@ -1,0 +1,55 @@
+@charset "UTF-8";
+/* 리뷰 삭제 모달 */
+.review_modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    display: none;
+    background-color: rgba(0, 0, 0, 0.4);
+    z-index: 5;
+    /*overflow: hidden;*/
+}
+.review_modal_body {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    width: 300px;
+    height: 220px;
+    padding: 40px;
+    margin: 0;
+
+    text-align: center;
+    color: #111;
+    background-color: rgb(255, 255, 255);
+    border-radius: 10px;
+    box-shadow: 0 2px 3px 0 rgba(34, 36, 38, 0.15);
+
+    transform: translateX(-50%) translateY(-50%);
+    z-index: 6;
+    /*overflow: hidden;*/
+    overflow-x: hidden;
+    overflow-y: auto;
+}
+
+.review_modal_btn {
+    cursor: pointer;
+    color: #111;
+}
+#review_detail_btn {
+    cursor: pointer;
+    color: #111;
+}
+#review_close_btn {
+    cursor: pointer;
+    color: #999;
+}
+#review_hide_btn {
+    cursor: pointer;
+    color: red;
+}
+#review_del_btn {
+    cursor: pointer;
+    color: red;
+}

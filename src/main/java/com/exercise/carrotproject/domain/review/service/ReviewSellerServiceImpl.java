@@ -11,7 +11,6 @@ import com.exercise.carrotproject.domain.review.entity.ReviewBuyer;
 import com.exercise.carrotproject.domain.review.entity.ReviewBuyerDetail;
 import com.exercise.carrotproject.domain.review.entity.ReviewSeller;
 import com.exercise.carrotproject.domain.review.entity.ReviewSellerDetail;
-import com.exercise.carrotproject.domain.review.repository.ReviewBuyerCustomRepository;
 import com.exercise.carrotproject.domain.review.repository.ReviewBuyerDetailCustomRepository;
 import com.exercise.carrotproject.domain.review.repository.ReviewSellerCustomRepository;
 import com.exercise.carrotproject.domain.review.repository.ReviewSellerDetailCustomRepository;
@@ -25,19 +24,15 @@ import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Map;
-import java.util.NoSuchElementException;
+import java.util.*;
 import java.util.stream.Collectors;
 
 
 @Service
 @RequiredArgsConstructor
 public class ReviewSellerServiceImpl {
-    private final ReviewSellerCustomRepository reviewSellerCustomRepository;
     private final ReviewSellerDetailCustomRepository reviewSellerDetailCustomRepository;
-
+    private final ReviewSellerCustomRepository reviewSellerCustomRepository;
     private final ReviewSellerRepository reviewSellerRepository;
     private final ReviewSellerDetailRepository reviewSellerDetailRepository;
 
@@ -79,8 +74,15 @@ public class ReviewSellerServiceImpl {
         reviewSellerRepository.deleteById(reviewSellerId);
     }
 
-//    public Map<ReviewSellerIndicator, Long> () {
-//
-//    }
-
+    @Transactional
+    public Map<String, String> hideReviewSeller(Long reviewBuyerId) {
+        long result = reviewSellerCustomRepository.hideReviewSellerById(reviewBuyerId);
+        Map<String, String> resultMap = new HashMap<>();
+        if(result>0) {
+            resultMap.put("success", "숨김에 성공했습니다");
+        } else {
+            resultMap.put("fail", "숨김에 실패했습니다");
+        }
+        return resultMap;
+    }
 }

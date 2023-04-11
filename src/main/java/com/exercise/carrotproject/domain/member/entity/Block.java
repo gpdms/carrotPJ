@@ -34,7 +34,7 @@ public class Block {
     private Timestamp createdTime;
 
     public Long getBlockId() {
-        return Long.valueOf(blockId);
+        return blockId;
     }
     public Member getFromMem() {
         return Member.builder().memId(getFromMem().getMemId())

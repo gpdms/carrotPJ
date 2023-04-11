@@ -4,19 +4,24 @@
       layout:decorate="~{layout/basic.html}">
 <head layout:fragment="head">
     <title>홈 화면</title>
+    <link href="/css/profile.css" rel="stylesheet" />
+    <link href="/css/review_modal.css" rel="stylesheet" />
     <style>
+        .container {
+            width: 800px;
+        }
         .profile_container{
             width: 200px;
             margin: auto;
         }
-        .profile-img{
+        .profile-img-main{
             width: 150px;
             height: 150px;
             overflow: hidden;
             border-radius: 50%;
             margin: 0 auto 20px;
         }
-        .profile-img img{
+        .profile-img-main img{
             width: 100%;
             height: 100%;
         }
@@ -26,31 +31,174 @@
             display: block;
         }
     </style>
+    <script src="https://kit.fontawesome.com/b5ffac9792.js" crossorigin="anonymous"></script>
 </head>
 
 <div layout:fragment="content">
+<div class="container">
     <div class="profile_container">
-        <div class="profile-img">
+        <div class="profile-img-main">
             <img th:src="|/members/${member.memId}/profileImg|" alt="프로필이미지">
         </div>
-        <button th:if="${session?.loginMember.memId == member.memId}"> 프로필 편집 </button>
-        <form th:action="|/members/${member.memId}/block|" th:method="post">
-            <button th:if="${session?.loginMember.memId != member.memId && !blockState}" type="submit">
-                차단하기</button>
-        </form>
-        <form th:action="|/members/${member.memId}/cancelBlock|" th:method="post">
-            <input type="hidden" name="loginMemId" th:value="${session.loginMember.memId}">
-            <button th:if="${blockState}" type="submit">
-                차단해제</button>
+        <button th:if="${session.loginMember?.memId == member.memId}"> 프로필 편집 </button>
+        <button id="block_btn" th:if="${session.loginMember?.memId != member.memId && !blockState}" type="button">
+            차단하기</button>
+        <button id="block_cancel_btn" th:if="${blockState}" type="button">
+            차단해제</button>
         </form>
     </div>
     <hr>
 
     <h3 th:text="|${member.memId}님|"></h3>
     <p th:text="|${member.nickname}님의 매너온도 : ${member.mannerScore}|"></p>
-    <span th:text="|${member.nickname}님의 판매상품 : ${countPost}개|"></span>
-    <button type="button"> >이동</button>
+    <span th:text="|${member.nickname}님의 판매상품 : ${countPost}개|"></span> <button type="button"> >이동</button> <br/>
+    <hr>
+    <div>
+        <div>
+            <span th:text="|받은 매너 평가|"></span>
+            <button th:unless="${blockState}"
+                    th:onclick="|location.href='@{/reviews/manner/{memId}(memId=${member.memId})}'|">
+                >이동</button>
+        </div>
+        <div th:if="${positiveMannerBrief.isEmpty()}">
+            아직 받은 매너 평가가 없습니다.
+        </div>
+        <p th:unless="${positiveMannerBrief.isEmpty()}" th:each="entry:${positiveMannerBrief}">
+            <span th:text="${entry.key.description}"></span>
+            <span th:text="${entry.value}"></span>
+        </p>
+    </div>
+    <hr/>
+    <div>
+        <span th:text="|받은 거래 후기 : ${countReviewMessage}개|"></span>
+        <button th:unless="${blockState}"
+                th:onclick="|location.href='@{/reviews/{memId}(memId=${member.memId})}'|">
+            >이동</button>
+        <div style="height:10px;"></div>
+        <th:block th:if="${reviewMessageBrief.isEmpty()}">
+           <div> 받은 거래 후기가 없습니다.</div>
+        </th:block>
+        <th:block th:unless="${reviewMessageBrief.isEmpty()}">
+            <div class="row" th:each="review:${reviewMessageBrief}">
+                <div class="col-sm-1">
+                    <div class="profile-img">
+                        <a th:if="${review.buyer != null}"
+                            th:href="@{/home/{memId}(memId=${review.buyer?.memId})}">
+                            <img th:src="|/members/${review.buyer?.memId}/profileImg|" alt="프로필이미지">
+                        </a>
+                        <a th:if="${review.seller != null}"  class="profile-img"
+                            th:href="@{/home/{memId}(memId=${review.seller.memId})}">
+                            <img th:src="|/members/${review.seller.memId}/profileImg|" alt="프로필이미지">
+                        </a>
+                    </div>
+                </div>
+                <div class="col-lg">
+                    <div th:if="${review.buyer != null}" >
+                        <p th:text="|${review.buyer.nickname}|"></p>
+                        <span th:text="|${review.buyer.loc.locName} - 구매자 - ${review.createdTime}|"></span>
+                        <p th:utext="${review.message}"></p>
+                    </div>
+                    <div th:if="${review.seller != null}">
+                        <p th:text="|${review.seller.nickname}|"></p>
+                        <span th:text="|${review.seller.loc.locName} - 판매자 - ${review.createdTime}|"></span>
+                        <p th:utext="${review.message}"></p>
+                    </div>
+                </div>
+                <div class="col-sm" th:if="${session.loginMember != null && review.buyer != null}">
+                    <a class="review_modal_btn"
+                       th:if="${session.loginMember.memId.equals(memId)}"
+                       th:data-reviewedWho="seller"
+                       th:data-reviewId="${review.reviewSellerId}">
+                        <i class="fa-solid fa-ellipsis-vertical fa-xs"></i>
+                    </a>
+                    <a class="review_modal_btn"
+                       th:if="${session.loginMember.memId.equals(review.buyer.memId)}"
+                       th:data-reviewedWho="seller"
+                       th:data-reviewId="${review.reviewSellerId}">
+                        <i class="fa-solid fa-ellipsis-vertical fa-xs"></i>
+                    </a>
+                </div>
+                <div class="col-sm" th:if="${session.loginMember != null && review.seller != null}">
+                    <a class="review_modal_btn"
+                       th:if="${session.loginMember.memId.equals(memId)}"
+                       th:data-reviewedWho="buyer"
+                       th:data-reviewId="${review.reviewBuyerId}">
+                        <i class="fa-solid fa-ellipsis-vertical fa-xs"></i>
+                    </a>
+                    <a class="review_modal_btn"
+                       th:if="${session.loginMember.memId.equals(review.seller.memId)}"
+                       th:data-reviewedWho="buyer"
+                       th:data-reviewId="${review.reviewBuyerId}">
+                        <i class="fa-solid fa-ellipsis-vertical fa-xs"></i>
+                    </a>
+                </div>
+            </div>
+        </th:block>
+    </div>
+</div> <!--container-->
+<div class="reviewModal review_modal">
+    <div class="review_modal_body">
+        <a id="review_hide_btn" th:if="${session.loginMember != null && session.loginMember.memId.equals(memId)}">
+            리뷰 숨김</a>
+        <a id="review_del_btn" th:if="${session.loginMember != null && !session.loginMember.memId.equals(memId)}">
+            리뷰 삭제</a>
+        <hr/>
+        <a id="review_detail_btn">리뷰 보기</a>
+        <hr/>
+        <a id="review_close_btn">취소</a>
+    </div>
+</div>
 </div>
 
-<script layout:fragment="script" th:inline="javascript">
-</script>
+<div layout:fragment="script">
+    <script src="/js/review_modal.js"></script>
+    <script th:inline="javascript">
+        // $('#block_btn').ready(function(){
+            $("#block_btn").on("click", block);
+        // });
+        function block() {
+            console.log("블락버튼누름")
+            if (!blockConfirm()) { return; }
+            let blockWho = [[${member.memId}]];
+            $.ajax({
+                type: 'post',
+                url: '/block/'+blockWho,
+                data: {blockWho: blockWho},
+                success: function (data) {
+                    alert("차단에 성공했습니다.");
+                    location.reload();
+                },
+                error: function (err) {
+                    console.log(err);
+                    alert("차단에 실패했습니다.");
+                }
+            })
+
+        }
+
+
+        // $('#block_cancel_btn').ready(function(){
+            $("#block_cancel_btn").on("click", cancelBlock);
+        // });
+        function cancelBlock(){
+            let blockCancelWho = [[${member.memId}]];
+            $.ajax({
+                type: 'delete',
+                url: '/block/'+blockCancelWho,
+                data: {blockWho: blockCancelWho},
+                success: function (data) {
+                    alert("차단을 해제했습니다");
+                    location.reload();
+                },
+                error: function (err) {
+                    console.log(err);
+                    alert("차단에 실패했습니다.");
+                }
+            })
+        }
+        function blockConfirm() {
+            return confirm("차단시 서로의 게시글을 확인하거나 채팅을 할 수 없어요. 차단하실래요?");
+        }
+    </script>
+
+</div>
