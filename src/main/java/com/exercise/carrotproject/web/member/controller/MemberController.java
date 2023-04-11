@@ -145,23 +145,6 @@ public class MemberController {
         return urlResource;
     }
 
-    @PostMapping("/{memId}/block")
-    public String blockMember(@PathVariable String memId,
-                              HttpServletRequest request,
-                              Model model){
-        HttpSession session = request.getSession(false);
-        MemberDto loginMember = (MemberDto)session.getAttribute(SessionConst.LOGIN_MEMBER);
-        memberService.insertBlock(loginMember.getMemId(), memId);
-        return "redirect:/members/{memId}";
-    }
-
-    @PostMapping("/{memId}/cancelBlock")
-    public String cancelBlockMember(@PathVariable String memId,
-                                    HttpServletRequest request,
-                                    @RequestParam String loginMemId){
-        memberService.deleteBlock(loginMemId, memId);
-        return "redirect:/members/{memId}";
-    }
 
     //buyList
     @GetMapping("/{memId}/transaction/buyList")

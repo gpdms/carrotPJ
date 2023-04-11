@@ -3,6 +3,7 @@ package com.exercise.carrotproject.web.review.form;
 import com.exercise.carrotproject.domain.enumList.ReviewBuyerIndicator;
 import lombok.*;
 
+import javax.validation.constraints.NotNull;
 import java.util.List;
 
 
@@ -13,13 +14,13 @@ import java.util.List;
 @Builder
 @ToString
 public class ReviewForm {
-    //@NotNull
+    @NotNull
     private String buyerId;
-    //@NotNull
+    @NotNull
     private String sellerId;
-    //@NotNull
+    @NotNull
     private Long postId;
-    //@NotNull
+    @NotNull
     private String reviewStateCode;
     private List<String> indicators;
     private String message;

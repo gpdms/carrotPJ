@@ -13,6 +13,7 @@
         <link href="/css/chat.css" rel="stylesheet" />
         <!-- Core theme CSS (includes Bootstrap)-->
         <link href="/css/styles.css" rel="stylesheet" />
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
     </head>
     <th:block layout:fragment="head" />
 
@@ -35,11 +36,12 @@
         <!-- Core theme JS-->
         <script src="/js/scripts.js"></script>
         <!--ajax-->
-        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+<!--        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>-->
         <!--sockJS-->
         <script src="https://cdn.jsdelivr.net/npm/sockjs-client@1/dist/sockjs.min.js"></script>
         <!--STOMP-->
         <script src="https://cdnjs.cloudflare.com/ajax/libs/stomp.js/2.3.3/stomp.min.js"></script>
+        <div layout:fragment="script"> </div>
         <script th:inline="javascript">
             /*로그인 한 경우 동작*/
             if ([[${session.loginMember}]]["memId"] != null) {
@@ -80,5 +82,5 @@
             }
         </script>
     </body>
-    <div layout:fragment="script"> </div>
+
 </html>

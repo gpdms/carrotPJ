@@ -78,14 +78,6 @@ public class MemberServiceImpl {
 
     //프로필 이미지 경로 생성
     public String createProfPath(MultipartFile img) {
-        if (img == null) {
-            return null;
-        }
-        if (img.getContentType().startsWith("image") == false) {
-            log.warn("this file is not image type");
-            return null;
-        }
-
         //디렉토리 생성
         File profImgDir = new File(rootProfileImgDir + LocalDate.now());
         profImgDir.mkdir();
@@ -110,10 +102,14 @@ public class MemberServiceImpl {
     //@Override
     @Transactional
     public Member profileUpdate(Member updateMember, MultipartFile profImg) {
-        String profPath = createProfPath(profImg);
+        if (profImg.getContentType().startsWith("image") == false) {
+            return null;
+        }
         Member member = memberRepository.findById(updateMember.getMemId()).orElseThrow(
                 ()-> new NoSuchElementException());
+        String profPath = member.getProfPath();
         if(profPath != null) {
+            profPath = createProfPath(profImg);
             saveImgServer(profImg, profPath);
             member.updateProfile(updateMember.getNickname(), profPath, updateMember.getLoc());
             log.info("afterUpdateMember {}",member);
@@ -132,13 +128,16 @@ public class MemberServiceImpl {
         return null;
     }
 
-
-
     //@Override
-    public void insertBlock(String fromMemId, String toMemId) {
+    public Map<String,String> insertBlock(String fromMemId, String toMemId) {
         Block block = Block.builder().fromMem(memberRepository.findById(fromMemId).orElse(null))
                 .toMem(memberRepository.findById(toMemId).orElse(null)).build();
-        blockRepository.save(block);
+        Map<String, String> saveResult = new HashMap<>();
+        if (blockRepository.save(block) != null) {
+            saveResult.put("resultCode", "fail");
+        }
+        saveResult.put("resultCode", "success");
+        return saveResult;
     }
 
     //@Override
