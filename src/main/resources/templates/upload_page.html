@@ -108,10 +108,13 @@
 <script type="text/javascript" src="//dapi.kakao.com/v2/maps/sdk.js?appkey=e133f6ea3b90b5b74b80864ba7037219"></script>
 
 <script>
+    //위도,경도 초기값
+    var initLat= 33.450701;
+    var initLon= 126.570667;
     <!--지도 띄우기-->
     var mapContainer = document.getElementById('map'), // 지도를 표시할 div
         mapOption = {
-            center: new kakao.maps.LatLng(33.450701, 126.570667), // 지도의 중심좌표
+            center: new kakao.maps.LatLng(initLat, initLon), // 지도의 중심좌표
             level: 3 // 지도의 확대 레벨
         };
 
@@ -123,8 +126,7 @@
         position: map.getCenter()
     });
 
-    // 지도에 마커를 표시합니다
-    marker.setMap(map);
+
 
     //위도, 경도, 장소정보
     var lat;
@@ -134,6 +136,8 @@
     // 지도에 클릭 이벤트를 등록합니다
     // 지도를 클릭하면 마지막 파라미터로 넘어온 함수를 호출합니다
     kakao.maps.event.addListener(map, 'click', function(mouseEvent) {
+        // 지도에 마커를 표시합니다
+        marker.setMap(map);
 
         // 클릭한 위도, 경도 정보를 가져옵니다
         var latlng = mouseEvent.latLng;
@@ -153,15 +157,26 @@
 
         //'장소선택하기'버튼 클릭시 위도,경도,장소정보 set
         document.getElementById('cfmPlace').addEventListener('click',function () {
-            lat = latlng.getLat();
-            lon = latlng.getLng();
+            lat = marker.getPosition().getLat();
+            lon = marker.getPosition().getLng();
             placeInfo = document.getElementById('placeInfo').value;
-            console.log("세팅된 lat:{}, lon:{}, placeinfo:{}", lat, lon, placeInfo);
+
+           if (!placeInfo){ //문자열 비어있을 때 true를 반환
+                alert("장소명을 입력해주세요.")
+            }
+
+            if(lat && lon && placeInfo){ //문자열이 있을 때 true를 반환
+                console.log("마커의 lat:{}, lon:{}, placeinfo:{}", lat, lon, placeInfo);
+                $('#mapArea').hide();
+                $('#uploadBtn').show();
+
+            }
+
         });
-
-
-
     });
+
+
+
         // 아래 코드는 지도 위의 마커를 제거하는 코드입니다
         // marker.setMap(null);
 
@@ -172,10 +187,23 @@
     $('#regPlace').click(function (){
         $('#mapArea').show();
         relayout();
+        //업로드버튼 숨기기
+        $('#uploadBtn').hide();
     });
+
     //장소선택안함 클릭시 지도 숨기기
     $('#noPlace').click(function (){
         $('#mapArea').hide();
+        lat=null;
+        lon=null;
+        placeInfo=null;
+        marker.setMap(null);
+        document.getElementById('placeInfo').value=null;
+        console.log("장소선택안함클릭시 lat:{}, lon:{}, placeinfo:{}", lat, lon, placeInfo);
+
+        //업로드버튼 보이기
+        $('#uploadBtn').show();
+
     })
 
     function relayout() {

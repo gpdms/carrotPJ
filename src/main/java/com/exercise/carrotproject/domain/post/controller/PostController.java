@@ -10,6 +10,7 @@ import com.exercise.carrotproject.domain.post.dto.PostImgDto;
 import com.exercise.carrotproject.domain.post.service.PostServiceImpl;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.UrlResource;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -34,6 +35,14 @@ public class PostController {
 
     private final PostServiceImpl postService;
 
+
+    @Value("${default.postImg}")
+    private String defaultPostImg;
+
+
+
+
+
     @GetMapping("/board")
     public String home(){
         return "redirect:/post/board";
@@ -57,22 +66,30 @@ public class PostController {
     public String postDetail(@PathVariable Long postId, Model model){
         //Post하나 불러오기
         PostDto postDto = postService.selectOnePost(postId);
-//        postDto.setContent(postDto.getContent().replace("<br>","\r\n")); //줄개행
-//        log.info("content줄바꿈확인:{}",postDto.getContent());
 
         //해당 포스트의 이미지 리스트
         List<PostImgDto> postImgDtoList = postService.selectPostImgs(postId);
         //이미지 아이디만 담은 리스트
         List<Long> postImgIdList = postImgDtoList.stream().map(PostImgDto::getImgId).collect(Collectors.toList());
-//        log.info("컨트롤러단 이미지아이디 리스트:{}",postImgIdList.size());
 
+        //기본이미지 넣을 수 있게 존재하지 않는 id 넣어줌.
         if (postImgIdList.size() == 0) {
            postImgIdList.add(0L);
         }
 
+        //거래희망장소 지도 정보
+        MtPlaceDto mtPlaceDto = postService.selectMtPlace(postId);
+//        if(mtPlaceDto == null){
+//            model.addAttribute("mtPlace", "noMtPlace");
+//        } else{
+//
+//        }
+
         model.addAttribute("post", postDto);
         model.addAttribute("imgIds", postImgIdList);
 
+
+        model.addAttribute("mtPlace", mtPlaceDto);
 
         return "detail";
     }
@@ -105,7 +122,7 @@ public class PostController {
         //게시글 내용 개행 처리
         postDto.setContent(postDto.getContent().replace("\r\n","<br>")); //줄개행
 
-        //Post,이미지 DB에 insert
+        //DB에 insert
         String insResult = postService.insertPost(postDto, uploadFiles, mtPlaceDto);
          if(insResult.equals("이미지타입오류")){
              return new ResponseEntity<>("이미지 파일이 아닙니다.",HttpStatus.BAD_REQUEST);
@@ -124,7 +141,7 @@ public class PostController {
         List<PostImgDto> postImgDtoList = postService.selectPostImgs(postId);
 //        log.info("컨트롤러단 postImgDtoList:{}", postImgDtoList);
 
-        String firstImgPath = "C:/upload/default_image.png";
+        String firstImgPath = defaultPostImg;
         if(!postImgDtoList.isEmpty()) {
             firstImgPath = postImgDtoList.get(0).getSavedPath();
         }
@@ -138,11 +155,9 @@ public class PostController {
     @GetMapping("/post/img/{imgId}")
     @ResponseBody
     public UrlResource postImgUrl(@PathVariable Long imgId) throws MalformedURLException {
-        String imgPath = "C:/upload/default_image.png";
-
+        String imgPath = defaultPostImg;
         if(imgId != 0) {
             PostImgDto postImgDto = postService.selectOnePostImg(imgId);
-//            log.info("컨트롤러단 postImgDto:{}", postImgDto);
             imgPath = postImgDto.getSavedPath();
         }
 

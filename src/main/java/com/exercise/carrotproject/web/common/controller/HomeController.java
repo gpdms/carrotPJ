@@ -34,6 +34,7 @@ public class HomeController {
     private final MemberServiceImpl memberService;
     private final SecurityUtils securityUtils;
     private final PostRepository postRepository;
+    private final ReviewServiceImpl reviewService;
 //    @PostConstruct
     public void init() {
         Member member3 = Member.builder().memId("tester3").mannerScore(36.5).nickname("3Nick").loc(Loc.GANGBUK).memPwd(securityUtils.getHashedPwd("tester33")).build();

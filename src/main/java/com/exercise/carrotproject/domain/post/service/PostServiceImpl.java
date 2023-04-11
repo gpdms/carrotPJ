@@ -248,6 +248,25 @@ public class PostServiceImpl {
         return imgDto;
     }
 
+
+//    @Override
+    public MtPlaceDto selectMtPlace(Long postId){
+        Post post = postRepository.findById(postId).orElseThrow();
+        MtPlace mtPlace = mtPlaceRepository.findByPost(post);
+        if(mtPlace == null){
+            return null;
+        }
+        //Entity->Dto
+        MtPlaceDto mtPlaceDto = MtPlaceEntityDtoMapper.entityToDto(mtPlace);
+
+        return mtPlaceDto;
+    }
+
+
+
+
+
+
     //게시글 이미지 삭제
 //    @Override
     @Transactional
