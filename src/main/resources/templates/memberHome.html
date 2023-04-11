@@ -111,24 +111,28 @@
                 <div class="col-sm" th:if="${session.loginMember != null && review.buyer != null}">
                     <a class="review_modal_btn"
                        th:if="${session.loginMember.memId.equals(memId)}"
-                       th:onclick="setReviewSeller([[${review.reviewSellerId}]])">
+                       th:data-reviewWho="seller"
+                       th:data-reviewId="${review.reviewSellerId}">
                         <i class="fa-solid fa-ellipsis-vertical fa-xs"></i>
                     </a>
                     <a class="review_modal_btn"
                        th:if="${session.loginMember.memId.equals(review.buyer.memId)}"
-                       th:onclick="setReviewSeller([[${review.reviewSellerId}]])">
+                       th:data-reviewWho="seller"
+                       th:data-reviewId="${review.reviewSellerId}">
                         <i class="fa-solid fa-ellipsis-vertical fa-xs"></i>
                     </a>
                 </div>
                 <div class="col-sm" th:if="${session.loginMember != null && review.seller != null}">
                     <a class="review_modal_btn"
                        th:if="${session.loginMember.memId.equals(memId)}"
-                       th:onclick="setReviewBuyer([[${review.reviewBuyerId}]])">
+                       th:data-reviewWho="buyer"
+                       th:data-reviewId="${review.reviewBuyerId}">
                         <i class="fa-solid fa-ellipsis-vertical fa-xs"></i>
                     </a>
                     <a class="review_modal_btn"
                        th:if="${session.loginMember.memId.equals(review.seller.memId)}"
-                       th:onclick="setReviewBuyer([[${review.reviewBuyerId}]])">
+                       th:data-reviewWho="buyer"
+                       th:data-reviewId="${review.reviewBuyerId}">
                         <i class="fa-solid fa-ellipsis-vertical fa-xs"></i>
                     </a>
                 </div>
@@ -138,10 +142,12 @@
 </div> <!--container-->
 <div class="reviewModal review_modal">
     <div class="review_modal_body">
-        <a id="review_hide_btn"
-           th:if="${session.loginMember != null && session.loginMember.memId.equals(memId)}">리뷰 숨김</a>
-        <a id="review_del_btn"
-           th:if="${session.loginMember != null && !session.loginMember.memId.equals(memId)}">리뷰 삭제</a>
+        <a id="review_hide_btn" th:if="${session.loginMember != null && session.loginMember.memId.equals(memId)}">
+            리뷰 숨김</a>
+        <a id="review_del_btn" th:if="${session.loginMember != null && !session.loginMember.memId.equals(memId)}">
+            리뷰 삭제</a>
+        <hr/>
+        <a id="review_detail_btn">리뷰 보기</a>
         <hr/>
         <a id="review_close_btn">취소</a>
     </div>
@@ -151,42 +157,32 @@
 <div layout:fragment="script">
     <script src="/js/modal.js"></script>
     <script th:inline="javascript">
-        console.log("~~~~~~~~~~~~~~~~~~~~~~~~~~");
-        let reviewSellerTempId = 0;
-        let reviewBuyerTempId = 0;
-        let reviewPerson = "seller";
-
-        function setReviewSeller(reviewSellerNum) {
-            console.log(reviewSellerNum);
-            reviewSellerTempId = reviewSellerNum;
-            reviewPerson = "seller";
-        }
-        function setReviewBuyer(reviewBuyerNum) {
-            console.log(reviewBuyerNum);
-            reviewBuyerTempId = reviewBuyerNum;
-            reviewPerson = "buyer";
-        }
+        const detailBtn = document.getElementById("review_detail_btn");
+        detailBtn.addEventListener('click', () => {
+            if(reviewWho=="seller") {
+                location.href=`/reviews/seller/${reviewId}`;
+            } else if(reviewWho=="buyer") {
+                location.href=`/reviews/buyer/${reviewId}`;
+            }
+        })
 
         const hideBtn = document.getElementById("review_hide_btn");
         if(hideBtn) {
-            hideBtn.addEventListener('click', hide);
+            hideBtn.addEventListener('click', hideReview);
         }
-
         const delBtn = document.getElementById("review_del_btn");
-        console.log("델")
-        console.log(delBtn);
         if(delBtn) {
-            delBtn.addEventListener('click', del);
+            delBtn.addEventListener('click', deleteReview);
         }
-        function hide() {
+        function hideReview() {
             if (!hideConfirm()) {
                 return;
             }
-            if(reviewPerson=="seller") {
+            if(reviewWho=="seller") {
                 $.ajax({
                     type: 'post',
                     url: '/reviews/seller/hide',
-                    data: {reviewSellerId : reviewSellerTempId},
+                    data: {reviewSellerId : reviewId},
                     success: function (data) {
                         alert("숨김에 성공했습니다");
                         location.reload();
@@ -196,11 +192,11 @@
                         alert("리뷰를 숨길 수 없습니다.");
                     }
                 })
-            } else if (reviewPerson=="buyer"){
+            } else if (reviewWho=="buyer"){
                 $.ajax({
                     type: 'post',
                     url: '/reviews/buyer/hide',
-                    data:  {reviewBuyerId : reviewBuyerTempId},
+                    data:  {reviewBuyerId : reviewId},
                     success: function (data) {
                         alert("숨김에 성공했습니다.");
                         location.reload();
@@ -212,15 +208,14 @@
                 })
             }
         }
-        function del() {
-            console.log("클릭!")
-            if (!delConfirm()) {
+        function deleteReview() {
+            if (!deleteConfirm()) {
                 return;
             }
-            if (reviewPerson == "seller") {
+            if (reviewWho == "seller") {
                 $.ajax({
                     type: 'delete',
-                    url: '/reviews/seller/' + reviewSellerTempId,
+                    url: '/reviews/seller/' + reviewId,
                     success: function (data) {
                         alert("삭제에 성공했습니다");
                         location.reload();
@@ -230,10 +225,10 @@
                         alert("리뷰를 삭제할 수 없습니다");
                     }
                 })
-            } else if (reviewPerson == "buyer") {
+            } else if (reviewWho == "buyer") {
                 $.ajax({
                     type: 'delete',
-                    url: '/reviews/buyer/' + reviewBuyerTempId,
+                    url: '/reviews/buyer/' + reviewId,
                     success: function (data) {
                         alert("삭제에 성공했습니다");
                         location.reload();
@@ -249,10 +244,9 @@
         function hideConfirm() {
             return confirm("거래 후기를 숨기시겠습니까? 숨기면 다시 되돌릴 수 없습니다.");
         }
-        function delConfirm() {
+        function deleteConfirm() {
             return confirm("거래 후기를 삭제하시겠습니까?");
         }
-
 
 
     </script>

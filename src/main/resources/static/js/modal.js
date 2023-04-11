@@ -1,9 +1,16 @@
- //------리뷰 삭제 모달-----//
+ //------리뷰 숨김, 삭제 모달-----//
   const body = document.querySelector("body");
   const reviewModal= document.querySelector(".reviewModal");
   const rvModalBtn = document.querySelectorAll(".review_modal_btn");
   const rvCloseBtn = document.getElementById("review_close_btn");
+
+  let reviewWho = null;
+  let reviewId = 0;
   function modalOpen() {
+    reviewWho = this.getAttribute('data-reviewWho');
+    reviewId = this.getAttribute('data-reviewId');
+    console.log(reviewWho);
+    console.log(reviewId);
     reviewModal.style.display = "block";
     body.style.overflow = "hidden";
   }

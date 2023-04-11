@@ -102,7 +102,6 @@ public class ReviewServiceImpl {
         Map<Enum, Long> commonIndicatorMap
                 = commonIndicatorCount(sortedBuyerIndicatorMap, sortedSellerIndicatorMap);
         Map<Object, Long> positiveMannerMap = getPositiveMannerMap(sortedBuyerIndicatorMap, sortedSellerIndicatorMap, commonIndicatorMap);
-        System.out.println("positiveMannerMap = " + positiveMannerMap);
         Map<Object, Long> collect = positiveMannerMap
                 .entrySet().stream()
                 .limit(limitSize)
@@ -132,8 +131,6 @@ public class ReviewServiceImpl {
                         LinkedHashMap::new));
     }
     public Map<Enum, Long> commonIndicatorCount(Map<ReviewBuyerIndicator, Long> buyerIndicatorMap, Map<ReviewSellerIndicator, Long> sellerIndicatorMap){
-        System.out.println("buyerIndicatorMap = " + buyerIndicatorMap);
-        System.out.println("sellerIndicatorMap = " + sellerIndicatorMap);
         Map<Enum, Long> commonMap = Stream.concat(buyerIndicatorMap.entrySet().stream(), sellerIndicatorMap.entrySet().stream())
                 .collect(Collectors.groupingBy(Map.Entry::getKey, LinkedHashMap::new, Collectors.summingLong(Map.Entry::getValue)));
         commonMap.entrySet().removeIf(entry->entry.getKey().name().contains("B"));
@@ -170,20 +167,25 @@ public class ReviewServiceImpl {
 
     public Map<String, Long> countGoodReviewMessage(String memId) {
         Map<String, Long> countMap= new HashMap<>();
-        countMap.put("reviewBuyer", reviewBuyerCustomRepository.countMessageByBuyer(memId));
-        countMap.put("reviewSeller", reviewSellerCustomRepository.countMessageBySeller(memId));
-        countMap.put("reviewAll",countMap.get("reviewBuyer")+countMap.get("reviewSeller"));
+        countMap.put("buyerCount", reviewBuyerCustomRepository.countMessageByBuyer(memId));
+        countMap.put("sellerCount", reviewSellerCustomRepository.countMessageBySeller(memId));
+        countMap.put("AllCount",countMap.get("reviewBuyer")+countMap.get("reviewSeller"));
         return countMap;
     }
-    public List<ReviewMessageDto> goodReviewMessagesDetail(String memId) {
+    public Map<String, List<ReviewMessageDto>> goodReviewMessagesDetail(String memId) {
         List<ReviewMessageDto> buyerMessages = reviewBuyerCustomRepository.reviewMessageByBuyer(memId);
         List<ReviewMessageDto> sellerMessages = reviewSellerCustomRepository.reviewMessageBySeller(memId);
-        return Stream.concat(buyerMessages.stream(), sellerMessages.stream())
+        List<ReviewMessageDto> allMessages = Stream.concat(buyerMessages.stream(), sellerMessages.stream())
                 .sorted(Comparator.comparing(ReviewMessageDto::getCreatedTime).reversed())
                 .collect(Collectors.toList());
+        HashMap<String, List<ReviewMessageDto>> messageMap = new HashMap<>();
+        messageMap.put("buyerMessages", buyerMessages);
+        messageMap.put("sellerMessages", sellerMessages);
+        messageMap.put("allMessages", allMessages);
+        return messageMap;
     }
     public List<ReviewMessageDto> goodReviewMessagesBrief(String memId, long limitSize) {
-        return goodReviewMessagesDetail(memId)
+        return goodReviewMessagesDetail(memId).get("allMessages")
                 .stream()
                 .limit(limitSize)
                 .collect(Collectors.toList());
