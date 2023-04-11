@@ -176,4 +176,7 @@ public class MemberController {
         model.addAttribute("sellList", sellFormList);
         return "member/mySellList";
     }
+
+
+
 }

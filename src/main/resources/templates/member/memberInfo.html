@@ -34,6 +34,9 @@
                  type="button" th:onclick="|location.href='@{/members/{memId}/transaction/sellList(memId=${session.loginMember.memId})}'|">판매완료내역 보기</button>
 
 
+
+
+
         <h4 class="mb-3"> 프로필 수정 </h4>
         <form id="profileEditForm">
             <input type="hidden" name="memId" th:value="${profileForm.memId}" >
@@ -96,6 +99,11 @@
             <button class="w-50 btn btn-secondary btn-sm" type="submit">비밀번호 수정</button>
         </form>
     </div> <!-- /form-container -->
+
+    <br/>
+    <br/>
+    <button class="w-50 btn btn-secondary btn-group-sm"
+            type="button" th:onclick="|location.href='@{/myPage/mySellList/{memId}(memId=${session.loginMember.memId})}'|">판매내역</button>
 
 </div>
 

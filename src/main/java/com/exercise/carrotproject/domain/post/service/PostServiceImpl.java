@@ -1,13 +1,16 @@
 package com.exercise.carrotproject.domain.post.service;
 
 import com.exercise.carrotproject.domain.enumList.HideState;
+import com.exercise.carrotproject.domain.enumList.SellState;
+import com.exercise.carrotproject.domain.member.entity.Member;
+import com.exercise.carrotproject.domain.member.entity.QMember;
+import com.exercise.carrotproject.domain.member.repository.MemberRepository;
+import com.exercise.carrotproject.domain.post.dto.MtPlaceDto;
 import com.exercise.carrotproject.domain.post.entity.*;
 import com.exercise.carrotproject.domain.post.dto.PostDto;
 import com.exercise.carrotproject.domain.post.dto.PostImgDto;
-import com.exercise.carrotproject.domain.post.repository.CustomPostRepository;
-import com.exercise.carrotproject.domain.post.repository.PostImgRepository;
-import com.exercise.carrotproject.domain.post.repository.PostRepository;
-import com.exercise.carrotproject.domain.post.repository.PostRepositoryImpl;
+import com.exercise.carrotproject.domain.post.repository.*;
+import com.querydsl.jpa.JPAExpressions;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -45,6 +48,9 @@ public class PostServiceImpl {
 
     private final PostRepository postRepository;
     private final PostImgRepository postImgRepository;
+    private final SellListRepository sellListRepository;
+    private final MemberRepository memberRepository;
+    private final MtPlaceRepository mtPlaceRepository;
     private final JPAQueryFactory jpaQueryFactory; //QuerydslConfig파일에 bean등록함
 //    private final PostRepositoryImpl customPostRepository; //후에 CustomPostRepository로 바꿔주기
 
@@ -56,8 +62,8 @@ public class PostServiceImpl {
 
 //    @Override
     @Transactional
-    public String insertPost(PostDto postDto, MultipartFile[] uploadFiles) throws IOException {
-        log.info("uploadfiles-length {}", uploadFiles.length);
+    public String insertPost(PostDto postDto, MultipartFile[] uploadFiles, MtPlaceDto mtPlaceDto) throws IOException {
+//        log.info("uploadfiles-length {}", uploadFiles.length);
 //        log.info("서비스단 postDto:",postDto);
         //Dto->Entity 변환
         Post postEntity = PostEntityDtoMapper.dtoToEntity(postDto);
@@ -80,6 +86,12 @@ public class PostServiceImpl {
         }
         //이미지 테이블에 insert
         insertPostImg(postEntity, uploadFiles);
+
+        //거래희망장소 테이블에 insert
+        if(mtPlaceDto.getLat() != null && mtPlaceDto.getLon() != null && mtPlaceDto.getPlaceInfo()!=null){
+            insertMtPlace(postEntity, mtPlaceDto);
+
+        }
 
         
         return "성공";
@@ -161,6 +173,21 @@ public class PostServiceImpl {
         return folderPath;
     }
 
+    //거래희망장소 insert
+//    @Override
+    @Transactional
+    public void insertMtPlace(Post postEntity, MtPlaceDto mtPlaceDto){
+        MtPlace mtPlaceEntity = MtPlace.builder()
+                .post(postEntity)
+                .lat(mtPlaceDto.getLat())
+                .lon(mtPlaceDto.getLon())
+                .placeInfo(mtPlaceDto.getPlaceInfo())
+                .build();
+        mtPlaceRepository.save(mtPlaceEntity);
+    }
+
+
+
 //    @Override
     public List<PostDto> selectAllPost(){
         //JPQL
@@ -221,6 +248,25 @@ public class PostServiceImpl {
         return imgDto;
     }
 
+
+//    @Override
+    public MtPlaceDto selectMtPlace(Long postId){
+        Post post = postRepository.findById(postId).orElseThrow();
+        MtPlace mtPlace = mtPlaceRepository.findByPost(post);
+        if(mtPlace == null){
+            return null;
+        }
+        //Entity->Dto
+        MtPlaceDto mtPlaceDto = MtPlaceEntityDtoMapper.entityToDto(mtPlace);
+
+        return mtPlaceDto;
+    }
+
+
+
+
+
+
     //게시글 이미지 삭제
 //    @Override
     @Transactional
@@ -237,6 +283,14 @@ public class PostServiceImpl {
 
         Post rs = postRepository.save(post);
         log.info("게시글 업데이트 성공?:{}",rs);
+
+        //파일이 비어있을 경우
+        for(MultipartFile file : uploadFiles) {
+            //이미지 0개 -> post 이미지에 저장하지 않는다.
+            if( file.isEmpty() ) {
+                return; //이미지추가 안함
+            }
+        }
 
         //새이미지 추가
         insertPostImg(post, uploadFiles);
@@ -275,7 +329,21 @@ public class PostServiceImpl {
     //hideState 변경
 //    @Override
     @Transactional
-    public void updateHideState(Long postId, HideState hideState){
+    public String updateHideState(Long postId, String hideStateName){
+
+        HideState hideState = null;
+        String msg = null;
+        if (hideStateName.equals("보임")){
+            hideState = HideState.HIDE;
+            msg = "게시물이 이웃에게 보이지 않게 숨깁니다.";
+        } else if (hideStateName.equals("숨김")){
+            hideState = HideState.SHOW;
+            msg = "게시물이 이웃에게 다시 보입니다.";
+        } else{
+            hideState = null;
+            msg=null;
+        }
+
         QPost qpost = QPost.post;
 
         long resultCount = jpaQueryFactory
@@ -285,12 +353,55 @@ public class PostServiceImpl {
                 .execute();
 
 //        log.info("update hideState 결과>>>>>>>>>>{}", resultCount);
+        return msg;
 
     }
 
 
+    //sellState변경
+//    @Override
+    @Transactional
+    public String updateSellState(Long postId, String sellStateName){
 
+        SellState sellState = null;
+        String msg = null;
 
+        if(sellStateName.equals("판매중")){
+            sellState = SellState.ON_SALE;
+            msg ="판매중";
+        }else if(sellStateName.equals("예약중")){
+            sellState = SellState.RESERVATION;
+            msg ="예약중";
+
+        } else if (sellStateName.equals("판매완료")) {
+            sellState = SellState.SOLD;
+            msg ="판매완료";
+        } else{
+            sellState = null;
+        }
+
+        QPost qpost = QPost.post;
+
+        jpaQueryFactory
+                .update(qpost)
+                .set(qpost.sellState, sellState)
+                .where(qpost.postId.eq(postId))
+                .execute();
+
+        return msg;
+    }
+
+    //sellList 판매내역 insert
+//    @Override
+    public void insertSellList(Long postId){
+        Post post = postRepository.findById(postId).orElseThrow();
+        Member member = memberRepository.findById(post.getMember().getMemId()).orElseThrow();
+
+        SellList sellListEntity = SellList.builder().post(post).seller(member).build();
+        sellListRepository.save(sellListEntity);
+
+        log.info("sellList insert 성공!!!!!!!!!!!");
+    }
 
 
 

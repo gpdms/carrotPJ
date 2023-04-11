@@ -36,13 +36,13 @@ public class Post {
     @Convert(converter = LocAttributeConverter.class)
     private Loc loc; //지역 enum
     @Convert(converter = CategoryConverter.class)
-    private Category category; //카테고리 enum
+    private Category category; //enum
     @ColumnDefault("0") @Column(nullable = false)
     @Convert(converter = HideStateConverter.class)
-    private HideState hideState; //숨김여부: 0보임,1숨김
+    private HideState hideState; //enum
     @ColumnDefault("0") @Column(nullable = false)
     @Convert(converter = SellStateConverter.class)
-    private SellState sellState; //판매여부: 0판매중,1예약중,2거래완료
+    private SellState sellState; //enum
     private Integer hits;
     private String wishPlace;
 
