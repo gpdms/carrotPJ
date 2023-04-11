@@ -151,12 +151,13 @@ public class MemberController {
     public String buyList(@PathVariable String memId, Model model) {
         Member buyer = memberService.findOneMember(memId);
         List<BuyList> buyList = buyListRepository.findByBuyer(buyer);
-
         List<MyBuyListForm> buyFormList = new ArrayList<>();
-        for (BuyList buyOne : buyList) {
-            Long reviewSellerId = reviewSellerService.findReviewSellerIdByPost(buyOne.getPost());
-            MyBuyListForm buyOneForm = new MyBuyListForm(buyOne.getBuyId(), buyOne.getPost(), buyOne.getBuyer().getMemId(), buyOne.getSeller().getMemId(), reviewSellerId);
-            buyFormList.add(buyOneForm);
+        if(buyList != null) {
+            for (BuyList buyOne : buyList) {
+                Long reviewSellerId = reviewSellerService.findReviewSellerIdByPost(buyOne.getPost());
+                MyBuyListForm buyOneForm = new MyBuyListForm(buyOne.getBuyId(), buyOne.getPost(), buyOne.getBuyer().getMemId(), buyOne.getSeller().getMemId(), reviewSellerId);
+                buyFormList.add(buyOneForm);
+            }
         }
         model.addAttribute("buyList", buyFormList);
         model.addAttribute("memId", memId);
@@ -168,10 +169,12 @@ public class MemberController {
         Member seller= memberService.findOneMember(memId);
         List<SellList> sellList = sellListRepository.findBySeller(seller);
         List<MySellListForm> sellFormList = new ArrayList<>();
-        for (SellList sellOne : sellList) {
-            Long reviewBuyerId = reviewBuyerService.findReviewBuyerIdByPost(sellOne.getPost());
-            MySellListForm sellForm = new MySellListForm(sellOne.getSellId(), sellOne.getPost(), sellOne.getSeller().getMemId(), sellOne.getBuyer().getMemId(), reviewBuyerId);
-            sellFormList.add(sellForm);
+        if(sellList != null) {
+            for (SellList sellOne : sellList) {
+                Long reviewBuyerId = reviewBuyerService.findReviewBuyerIdByPost(sellOne.getPost());
+                MySellListForm sellForm = new MySellListForm(sellOne.getSellId(), sellOne.getPost(), sellOne.getSeller().getMemId(), sellOne.getBuyer().getMemId(), reviewBuyerId);
+                sellFormList.add(sellForm);
+            }
         }
         model.addAttribute("sellList", sellFormList);
         return "member/mySellList";
