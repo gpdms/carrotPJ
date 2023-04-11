@@ -82,14 +82,13 @@ public class PostController {
 //        if(mtPlaceDto == null){
 //            model.addAttribute("mtPlace", "noMtPlace");
 //        } else{
-//
+            model.addAttribute("mtPlace", mtPlaceDto);
 //        }
 
         model.addAttribute("post", postDto);
         model.addAttribute("imgIds", postImgIdList);
 
 
-        model.addAttribute("mtPlace", mtPlaceDto);
 
         return "detail";
     }
