@@ -5,6 +5,7 @@ package com.exercise.carrotproject.domain.member.entity;
 import com.exercise.carrotproject.domain.common.entity.BaseEntity;
 import com.exercise.carrotproject.domain.enumList.Loc;
 import com.exercise.carrotproject.domain.converter.LocAttributeConverter;
+import com.exercise.carrotproject.domain.enumList.Role;
 import com.exercise.carrotproject.domain.review.entity.ReviewBuyer;
 import com.exercise.carrotproject.domain.review.entity.ReviewSeller;
 
@@ -29,15 +30,21 @@ import java.util.stream.Collectors;
 @DynamicInsert
 public class Member extends BaseEntity {
     @Id
-    @Size(min = 6, max = 12)
+    @Size(min = 6, max = 30)
     private String memId;
 
     @NotNull
     @Size(min = 8)
     private String memPwd;
 
-    @Column(nullable = false)
-    @Size(min = 2, max = 12)
+    @NotNull
+    @Enumerated(EnumType.STRING)
+    private Role role;
+
+    private String email;
+
+    @NotNull
+    @Size(min = 2, max = 15)
     private String nickname;
 
     @Size(max=500)

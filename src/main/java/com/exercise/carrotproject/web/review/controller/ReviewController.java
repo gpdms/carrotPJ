@@ -4,12 +4,10 @@ import com.exercise.carrotproject.domain.enumList.*;
 import com.exercise.carrotproject.domain.member.dto.MemberDto;
 import com.exercise.carrotproject.domain.member.entity.Member;
 import com.exercise.carrotproject.domain.member.service.MemberServiceImpl;
-import com.exercise.carrotproject.domain.post.entity.BuyList;
 import com.exercise.carrotproject.domain.post.entity.Post;
-import com.exercise.carrotproject.domain.post.entity.SellList;
-import com.exercise.carrotproject.domain.post.repository.BuyListRepository;
+import com.exercise.carrotproject.domain.post.entity.Trade;
 import com.exercise.carrotproject.domain.post.repository.PostRepository;
-import com.exercise.carrotproject.domain.post.repository.SellListRepository;
+import com.exercise.carrotproject.domain.post.repository.TradeRepository;
 import com.exercise.carrotproject.domain.review.dto.ReviewMessageDto;
 import com.exercise.carrotproject.domain.review.entity.ReviewBuyer;
 import com.exercise.carrotproject.domain.review.entity.ReviewSeller;
@@ -46,8 +44,7 @@ public class ReviewController {
     private final ReviewServiceImpl reviewService;
 
     private final PostRepository postRepository;
-    private final BuyListRepository buyListRepository;
-    private final SellListRepository sellListRepository;
+    private final TradeRepository tradeRepository;
 
     private final ReviewBuyerCustomRepository reviewBuyerCustomRepository;
     private final ReviewSellerCustomRepository reviewSellerCustomRepository;
@@ -63,23 +60,23 @@ public class ReviewController {
            if(i% 4  == 0 ){
                Post postBuild1 = Post.builder().title("글" + i).member(mem1).price(i * 1000).category(Category.ETC).loc(mem1.getLoc()).hideState(HideState.SHOW).sellState(SellState.SOLD).content("내용" + i).build();
                Post post1 = postRepository.save(postBuild1);
-               SellList sellList = SellList.builder().post(post1).buyer(mem2).seller(mem1).build();
-               sellListRepository.save(sellList);
+               Trade trade = Trade.builder().post(post1).buyer(mem2).seller(mem1).hideStateBuyer(HideState.SHOW).build();
+               tradeRepository.save(trade);
            } else if(i% 4  == 1 ) {
                Post postBuild2 = Post.builder().title("글" + i).member(mem2).price(i * 1000).category(Category.DIGITAL_DEVICE).loc(mem2.getLoc()).hideState(HideState.SHOW).sellState(SellState.SOLD).content("내용" + i).build();
                Post post2 = postRepository.save(postBuild2);
-               SellList sellList = SellList.builder().post(post2).buyer(mem3).seller(mem2).build();
-               sellListRepository.save(sellList);
+               Trade trade = Trade.builder().post(post2).buyer(mem3).seller(mem2).hideStateBuyer(HideState.SHOW).build();
+               tradeRepository.save(trade);
            } else if(i% 4  == 2 ) {
                Post postBuild3 = Post.builder().title("글" + i).member(mem3).price(i * 1000).category(Category.BOOK).loc(mem3.getLoc()).hideState(HideState.SHOW).sellState(SellState.SOLD).content("내용" + i).build();
                Post post2 = postRepository.save(postBuild3);
-               SellList sellList = SellList.builder().post(post2).buyer(mem1).seller(mem3).build();
-               sellListRepository.save(sellList);
+               Trade trade = Trade.builder().post(post2).buyer(mem1).seller(mem3).hideStateBuyer(HideState.SHOW).build();
+               tradeRepository.save(trade);
            } else {
                Post postBuild2 = Post.builder().title("글" + i).member(mem2).price(i * 1000).category(Category.FOOD).loc(mem2.getLoc()).hideState(HideState.SHOW).sellState(SellState.SOLD).content("내용" + i).build();
                Post post2 = postRepository.save(postBuild2);
-               SellList sellList = SellList.builder().post(post2).buyer(mem1).seller(mem2).build();
-               sellListRepository.save(sellList);
+               Trade trade = Trade.builder().post(post2).buyer(mem1).seller(mem2).hideStateBuyer(HideState.SHOW).build();
+               tradeRepository.save(trade);
            }
        }
    }
@@ -98,7 +95,7 @@ public class ReviewController {
             redirectAttributes.addAttribute("me", loginMember.getMemId());
             return "redirect:/members/{me}/transaction/sellList";
         }
-        SellList sellOne = sellListRepository.findByPost(post);
+        Trade sellOne = tradeRepository.findByPost(post);
         ReviewForm reviewForm = ReviewForm.builder().sellerId(loginMember.getMemId())
                 .buyerId(sellOne.getBuyer().getMemId())
                 .postId(Long.valueOf(postId))
@@ -160,7 +157,7 @@ public class ReviewController {
             redirectAttributes.addAttribute("me", loginMember.getMemId());
             return "redirect:/members/{me}/transaction/buyList";
         }
-        BuyList buyOne = buyListRepository.findByPost(post);
+        Trade buyOne = tradeRepository.findByPost(post);
        ReviewForm reviewForm= ReviewForm.builder().sellerId(buyOne.getSeller().getMemId())
                 .buyerId(loginMember.getMemId())
                 .postId(Long.valueOf(postId))

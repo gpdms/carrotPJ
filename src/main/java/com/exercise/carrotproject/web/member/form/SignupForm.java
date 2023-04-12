@@ -26,7 +26,7 @@ public class SignupForm {
     @NotEmpty(message = "비밀번호 확인은 필수항목입니다.")
     private String pwdConfirm;
 
-    @Size(min=2, max = 12, message = "2자 이상, 12자 이하여야 합니다.")
+    @Size(min=2, max = 15, message = "2자 이상, 15자 이하여야 합니다.")
     private String nickname;
 
     @NotNull
