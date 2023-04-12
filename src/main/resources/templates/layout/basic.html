@@ -81,6 +81,16 @@
                 connect();
             }
         </script>
+        <script th:inline="javascript">
+            function loginOutKakao() {
+                $.ajax({
+                    url: '/logout/getKakaoLogoutURL',
+                    type: 'get',
+                }).done(function (res) {
+                    location.href = res;
+                });
+            }
+        </script>
     </body>
 
 </html>

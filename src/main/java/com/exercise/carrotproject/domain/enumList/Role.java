@@ -8,5 +8,6 @@ import lombok.RequiredArgsConstructor;
 public enum Role {
     USER,
     ADMIN,
-    SOCIAL
+    SOCIAL_KAKAO,
+    SOCIAL_NAVER
 }

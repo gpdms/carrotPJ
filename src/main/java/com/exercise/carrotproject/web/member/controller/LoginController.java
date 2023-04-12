@@ -1,7 +1,6 @@
 package com.exercise.carrotproject.web.member.controller;
 
 import com.exercise.carrotproject.domain.member.ouath.GoogleOauth;
-import com.exercise.carrotproject.domain.member.service.OauthServiceImpl;
 import com.exercise.carrotproject.web.common.SessionConst;
 import com.exercise.carrotproject.domain.member.dto.MemberDto;
 import com.exercise.carrotproject.domain.member.service.LoginService;
@@ -13,10 +12,8 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import javax.validation.Valid;
-import java.io.IOException;
 
 @Controller
 @RequiredArgsConstructor

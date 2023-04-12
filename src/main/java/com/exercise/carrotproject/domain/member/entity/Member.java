@@ -41,8 +41,10 @@ public class Member extends BaseEntity {
     @Enumerated(EnumType.STRING)
     private Role role;
 
-    @Column(nullable = false)
-    @Size(min = 2, max = 12)
+    private String email;
+
+    @NotNull
+    @Size(min = 2, max = 15)
     private String nickname;
 
     @Size(max=500)

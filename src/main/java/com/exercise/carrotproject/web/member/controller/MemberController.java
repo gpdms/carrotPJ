@@ -5,11 +5,9 @@ import com.exercise.carrotproject.domain.member.dto.MemberDto;
 import com.exercise.carrotproject.domain.member.entity.Member;
 import com.exercise.carrotproject.domain.member.repository.MemberRepository;
 import com.exercise.carrotproject.domain.member.service.MemberServiceImpl;
-import com.exercise.carrotproject.domain.post.entity.BuyList;
-import com.exercise.carrotproject.domain.post.entity.SellList;
-import com.exercise.carrotproject.domain.post.repository.BuyListRepository;
+import com.exercise.carrotproject.domain.post.entity.Trade;
 import com.exercise.carrotproject.domain.post.repository.PostRepository;
-import com.exercise.carrotproject.domain.post.repository.SellListRepository;
+import com.exercise.carrotproject.domain.post.repository.TradeRepository;
 import com.exercise.carrotproject.domain.review.service.ReviewBuyerServiceImpl;
 import com.exercise.carrotproject.domain.review.service.ReviewSellerServiceImpl;
 import com.exercise.carrotproject.web.common.SessionConst;
@@ -51,8 +49,7 @@ public class MemberController {
     private String rootProfileImgDir;
 
     //for Review
-    private final SellListRepository sellListRepository;
-    private final BuyListRepository buyListRepository;
+    private final TradeRepository tradeRepository;
     private final ReviewSellerServiceImpl reviewSellerService;
     private final ReviewBuyerServiceImpl reviewBuyerService;
 
@@ -150,12 +147,12 @@ public class MemberController {
     @GetMapping("/{memId}/transaction/buyList")
     public String buyList(@PathVariable String memId, Model model) {
         Member buyer = memberService.findOneMember(memId);
-        List<BuyList> buyList = buyListRepository.findByBuyer(buyer);
+        List<Trade> buyList = tradeRepository.findByBuyer(buyer);
         List<MyBuyListForm> buyFormList = new ArrayList<>();
         if(buyList != null) {
-            for (BuyList buyOne : buyList) {
+            for (Trade buyOne : buyList) {
                 Long reviewSellerId = reviewSellerService.findReviewSellerIdByPost(buyOne.getPost());
-                MyBuyListForm buyOneForm = new MyBuyListForm(buyOne.getBuyId(), buyOne.getPost(), buyOne.getBuyer().getMemId(), buyOne.getSeller().getMemId(), reviewSellerId);
+                MyBuyListForm buyOneForm = new MyBuyListForm(buyOne.getTradeId(), buyOne.getPost(), buyOne.getBuyer().getMemId(), buyOne.getSeller().getMemId(), reviewSellerId);
                 buyFormList.add(buyOneForm);
             }
         }
@@ -167,12 +164,12 @@ public class MemberController {
     @GetMapping("/{memId}/transaction/sellList")
     public String sellList(@PathVariable String memId, Model model) {
         Member seller= memberService.findOneMember(memId);
-        List<SellList> sellList = sellListRepository.findBySeller(seller);
+        List<Trade> sellList = tradeRepository.findBySeller(seller);
         List<MySellListForm> sellFormList = new ArrayList<>();
         if(sellList != null) {
-            for (SellList sellOne : sellList) {
+            for (Trade sellOne : sellList) {
                 Long reviewBuyerId = reviewBuyerService.findReviewBuyerIdByPost(sellOne.getPost());
-                MySellListForm sellForm = new MySellListForm(sellOne.getSellId(), sellOne.getPost(), sellOne.getSeller().getMemId(), sellOne.getBuyer().getMemId(), reviewBuyerId);
+                MySellListForm sellForm = new MySellListForm(sellOne.getTradeId(), sellOne.getPost(), sellOne.getSeller().getMemId(), sellOne.getBuyer().getMemId(), reviewBuyerId);
                 sellFormList.add(sellForm);
             }
         }
