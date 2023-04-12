@@ -16,11 +16,4 @@ public enum Loc {
     //필드
     private String locCode;
     private String locName;
-
-    public static Loc getLocNameByCode(String dbData) {
-        return Arrays.stream(Loc.values())
-                .filter(v -> v.getLocCode().equals(dbData))
-                .findAny()
-                .orElseThrow();
-    }
 }

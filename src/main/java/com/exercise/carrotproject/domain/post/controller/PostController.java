@@ -1,6 +1,8 @@
 package com.exercise.carrotproject.domain.post.controller;
 
 import com.exercise.carrotproject.domain.enumList.HideState;
+import com.exercise.carrotproject.domain.enumList.SellState;
+import com.exercise.carrotproject.domain.post.dto.MtPlaceDto;
 import com.exercise.carrotproject.web.common.SessionConst;
 import com.exercise.carrotproject.domain.member.dto.MemberDto;
 import com.exercise.carrotproject.domain.post.dto.PostDto;
@@ -8,6 +10,7 @@ import com.exercise.carrotproject.domain.post.dto.PostImgDto;
 import com.exercise.carrotproject.domain.post.service.PostServiceImpl;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.UrlResource;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -32,6 +35,14 @@ public class PostController {
 
     private final PostServiceImpl postService;
 
+
+    @Value("${default.postImg}")
+    private String defaultPostImg;
+
+
+
+
+
     @GetMapping("/board")
     public String home(){
         return "redirect:/post/board";
@@ -55,21 +66,28 @@ public class PostController {
     public String postDetail(@PathVariable Long postId, Model model){
         //Post하나 불러오기
         PostDto postDto = postService.selectOnePost(postId);
-//        postDto.setContent(postDto.getContent().replace("<br>","\r\n")); //줄개행
-//        log.info("content줄바꿈확인:{}",postDto.getContent());
 
         //해당 포스트의 이미지 리스트
         List<PostImgDto> postImgDtoList = postService.selectPostImgs(postId);
         //이미지 아이디만 담은 리스트
         List<Long> postImgIdList = postImgDtoList.stream().map(PostImgDto::getImgId).collect(Collectors.toList());
-//        log.info("컨트롤러단 이미지아이디 리스트:{}",postImgIdList.size());
 
+        //기본이미지 넣을 수 있게 존재하지 않는 id 넣어줌.
         if (postImgIdList.size() == 0) {
            postImgIdList.add(0L);
         }
 
+        //거래희망장소 지도 정보
+        MtPlaceDto mtPlaceDto = postService.selectMtPlace(postId);
+//        if(mtPlaceDto == null){
+//            model.addAttribute("mtPlace", "noMtPlace");
+//        } else{
+            model.addAttribute("mtPlace", mtPlaceDto);
+//        }
+
         model.addAttribute("post", postDto);
         model.addAttribute("imgIds", postImgIdList);
+
 
 
         return "detail";
@@ -85,13 +103,14 @@ public class PostController {
     //게시글 업로드
     @PostMapping("/post/upload")
 //    @ResponseBody
-    public ResponseEntity<String> insPost(PostDto postDto, @RequestParam MultipartFile[] uploadFiles, HttpSession session) throws IOException {
-//        log.info("컨트롤러단 postDto:", postDto);
+    public ResponseEntity<String> insPost(PostDto postDto, @RequestParam MultipartFile[] uploadFiles, MtPlaceDto mtPlaceDto, HttpSession session) throws IOException {
+//        log.info("컨트롤러단 mtPlaceDto:", postDto);
+        System.out.println("컨트롤러단 mtPlaceDto = " + mtPlaceDto);
 //        log.info("controller uploadfiles-length {}", uploadFiles.length);
 
         //제목, 카테고리, 내용 null체크
         if(postDto.getTitle().isEmpty() || postDto.getCategory()==null || postDto.getContent().isEmpty()){
-            return new ResponseEntity<>("제목, 카테고리, 내용을 입력해주세요.", HttpStatus.BAD_REQUEST);
+            return new ResponseEntity<>("제목, 카테고리, 제품 설명을 입력해주세요.", HttpStatus.BAD_REQUEST);
         }
 
         
@@ -103,13 +122,12 @@ public class PostController {
         postDto.setContent(postDto.getContent().replace("\r\n","<br>")); //줄개행
 
         //DB에 insert
-        String a = postService.insertPost(postDto, uploadFiles);
-         if(a.equals("이미지타입오류")){
+        String insResult = postService.insertPost(postDto, uploadFiles, mtPlaceDto);
+         if(insResult.equals("이미지타입오류")){
              return new ResponseEntity<>("이미지 파일이 아닙니다.",HttpStatus.BAD_REQUEST);
-         } else if(a.equals("성공")){
-             return new ResponseEntity<>("상품이 게시되었습니다.",HttpStatus.OK);
-
          }
+
+
 
         return new ResponseEntity<>("상품이 게시되었습니다.",HttpStatus.OK);
     }
@@ -122,7 +140,7 @@ public class PostController {
         List<PostImgDto> postImgDtoList = postService.selectPostImgs(postId);
 //        log.info("컨트롤러단 postImgDtoList:{}", postImgDtoList);
 
-        String firstImgPath = "C:/upload/default_image.png";
+        String firstImgPath = defaultPostImg;
         if(!postImgDtoList.isEmpty()) {
             firstImgPath = postImgDtoList.get(0).getSavedPath();
         }
@@ -136,11 +154,9 @@ public class PostController {
     @GetMapping("/post/img/{imgId}")
     @ResponseBody
     public UrlResource postImgUrl(@PathVariable Long imgId) throws MalformedURLException {
-        String imgPath = "C:/upload/default_image.png";
-
+        String imgPath = defaultPostImg;
         if(imgId != 0) {
             PostImgDto postImgDto = postService.selectOnePostImg(imgId);
-//            log.info("컨트롤러단 postImgDto:{}", postImgDto);
             imgPath = postImgDto.getSavedPath();
         }
 
@@ -215,20 +231,24 @@ public class PostController {
     public ResponseEntity<String> udtHideState(@RequestParam Long postId, @RequestParam String hideStateName){
 //        log.info("컨트롤러 udtHideState()로 넘어온 postId:{}, hideStateName:{}", postId, hideStateName);
 
-        if(hideStateName.equals("보임")){
-            postService.updateHideState(postId, HideState.HIDE);
-            return new ResponseEntity<>("게시물이 이웃에게 보이지 않게 숨깁니다.",HttpStatus.OK);
-        }
-        if(hideStateName.equals("숨김")){
-            postService.updateHideState(postId, HideState.SHOW);
-            return new ResponseEntity<>("게시물이 이웃에게 다시 보입니다.",HttpStatus.OK);
+        String resultMsg = postService.updateHideState(postId, hideStateName);
 
-        }
-        return new ResponseEntity<>("숨김/보이기 처리에 실패했습니다.",HttpStatus.BAD_REQUEST);
+        return new ResponseEntity<>(resultMsg, HttpStatus.OK);
 
     }
 
+    //sellState 판매여부 변경
+    @PostMapping("/post/sellState")
+    public ResponseEntity<String> udtSellState(@RequestParam Long postId, @RequestParam String sellStateName){
+//        log.info("컨트롤러 도착 sellState!!!!!!!postId:{}, sellState:{}", postId, sellStateName);
 
+        String resultMsg = postService.updateSellState(postId, sellStateName);
+        if (resultMsg.equals("판매완료")){
+            postService.insertSellList(postId);
+        }
+
+        return new ResponseEntity<>(resultMsg+"로 변경되었습니다.", HttpStatus.OK);
+    }
 
 
 

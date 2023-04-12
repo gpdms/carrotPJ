@@ -8,6 +8,7 @@ import com.exercise.carrotproject.domain.chat.entity.QChatRoom;
 import com.exercise.carrotproject.domain.chat.repoisitory.ChatRepository;
 import com.exercise.carrotproject.domain.chat.repoisitory.ChatRoomRepository;
 import com.exercise.carrotproject.domain.chat.service.ChatService;
+import com.exercise.carrotproject.domain.enumList.ReadState;
 import com.exercise.carrotproject.domain.member.MemberEntityDtoMapper;
 import com.exercise.carrotproject.domain.member.dto.MemberDto;
 import com.exercise.carrotproject.domain.member.entity.Member;
@@ -89,13 +90,53 @@ public class ChatController {
     public int getChatNoti(HttpSession session) {
         MemberDto memberDto = (MemberDto) session.getAttribute(LOGIN_MEMBER);
         Member memberEntity = MemberEntityDtoMapper.toMemberEntity(memberDto);
-        List<Chat> chatList = chatRepository.findByToAndReadState(memberEntity, 0);//미확인 메세지 조회
+        List<Chat> chatList = chatRepository.findByToAndReadState(memberEntity, ReadState.NOTREAD);//미확인 메세지 조회
         return chatList.size();
     }
 
     @GetMapping("/chatRoomListByPost/{postId}")
-    public String chatRoomListByPost(Model model, @PathVariable Long postId) {
-        //chatRoom select, where by postId
+    public String chatRoomListByPost(Model model, HttpSession session, @PathVariable Long postId) {
+        MemberDto memberDto = (MemberDto) session.getAttribute(LOGIN_MEMBER);
+        Member memberEntity = MemberEntityDtoMapper.toMemberEntity(memberDto);
+
+        List<Long> ids = jpaQueryFactory.select(QChat.chat.chatId.max())
+                .from(QChat.chat)
+                .where(QChat.chat.from.eq(memberEntity).or(QChat.chat.to.eq(memberEntity)))
+                .groupBy(QChat.chat.room.roomId)
+                .fetch();
+
+        List<ChatRoomDto> chatRoomList = jpaQueryFactory
+                .select(Projections.constructor(ChatRoomDto.class,
+                                QChatRoom.chatRoom.roomId,
+                                QChatRoom.chatRoom.post.postId,
+                                QChatRoom.chatRoom.seller.memId.as("sellerId"),
+                                QChatRoom.chatRoom.buyer.memId.as("buyerId"),
+                                QChat.chat.message,
+                                QChat.chat.createdTime,
+                                ExpressionUtils.as(
+                                        JPAExpressions.select(QChat.chat.chatId.count())
+                                                .from(QChat.chat)
+                                                .where(QChat.chat.room.eq(QChatRoom.chatRoom)
+                                                        .and(QChat.chat.readState.eq(ReadState.NOTREAD))
+                                                        .and(QChat.chat.from.ne(memberEntity))
+                                                ),
+                                        "unacknowledgedMessageCount"
+                                )
+                        )
+                )
+                .from(QChatRoom.chatRoom)
+                .leftJoin(QChat.chat)
+                .on(QChatRoom.chatRoom.roomId.eq(QChat.chat.room.roomId))
+                .where(
+                        (QChatRoom.chatRoom.seller.eq(memberEntity)
+                                .or(QChatRoom.chatRoom.buyer.eq(memberEntity))
+                        )
+                                .and(QChatRoom.chatRoom.post.postId.eq(postId))
+                                .and(QChat.chat.chatId.in(ids))
+                )
+                .orderBy(QChat.chat.createdTime.desc())
+                .fetch();
+        model.addAttribute("chatRoomList", chatRoomList);
 
         //만약 생성된 채팅이 없으면 이동하지 않고 오류메세지 출력하도록 해야함. 그럼.. ajax 써야하나..??
 
@@ -110,12 +151,14 @@ public class ChatController {
 
         List<Long> ids = jpaQueryFactory.select(QChat.chat.chatId.max())
                 .from(QChat.chat)
+                .where(QChat.chat.from.eq(memberEntity).or(QChat.chat.to.eq(memberEntity)))
                 .groupBy(QChat.chat.room.roomId)
                 .fetch();
 
         List<ChatRoomDto> chatRoomList = jpaQueryFactory
                 .select(Projections.constructor(ChatRoomDto.class,
                                 QChatRoom.chatRoom.roomId,
+                                QChatRoom.chatRoom.post.postId,
                                 QChatRoom.chatRoom.seller.memId.as("sellerId"),
                                 QChatRoom.chatRoom.buyer.memId.as("buyerId"),
                                 QChat.chat.message,
@@ -124,7 +167,7 @@ public class ChatController {
                                         JPAExpressions.select(QChat.chat.chatId.count())
                                                 .from(QChat.chat)
                                                 .where(QChat.chat.room.eq(QChatRoom.chatRoom)
-                                                        .and(QChat.chat.readState.eq(0))
+                                                        .and(QChat.chat.readState.eq(ReadState.NOTREAD))
                                                         .and(QChat.chat.from.ne(memberEntity))
                                                 ),
                                         "unacknowledgedMessageCount"
@@ -144,6 +187,11 @@ public class ChatController {
                 .fetch();
         model.addAttribute("chatRoomList", chatRoomList);
         return "chat/chatRoomList";
+    }
+
+    @MessageMapping("/chat/test")
+    public void enterChatTest(@Payload String message) {
+        System.out.println("입장메세지 테스트 >>> " + message);
     }
 
     @MessageMapping("/chat/{postId}/{seller}/{buyer}")
@@ -183,6 +231,8 @@ public class ChatController {
         map.put("chat", chat.getMessage()); //채팅메세지
         map.put("from", memberDto.getMemId()); //보내는이
         map.put("room", chat.getRoom().getRoomId()); //채팅방 id
+        map.put("createdTime", chat.getCreatedTimeByString()); //보낸시간
+        map.put("readState", chat.getReadState().getReadStateName()); //읽음여부
 
         //알림메세지 보내기
         simpMessagingTemplate.convertAndSend("/topic/chatNoti/" + chat.getTo().getMemId(), "알람메세지");
@@ -198,9 +248,17 @@ public class ChatController {
     @Transactional
     public String getChatMsg(@PathVariable Long roomId, HttpSession session) {
         long updateResult = jpaQueryFactory.update(QChat.chat)
-                .set(QChat.chat.readState, 1)
-                .where(QChat.chat.room.roomId.eq(roomId), QChat.chat.to.memId.eq(((MemberDto) session.getAttribute(LOGIN_MEMBER)).getMemId()), QChat.chat.readState.eq(0))
+                .set(QChat.chat.readState, ReadState.READ)
+                .where(QChat.chat.room.roomId.eq(roomId), QChat.chat.to.memId.eq(((MemberDto) session.getAttribute(LOGIN_MEMBER)).getMemId()), QChat.chat.readState.eq(ReadState.NOTREAD))
                 .execute();
+
+        ChatRoom chatRoom = em.find(ChatRoom.class, roomId);
+        Long postId = chatRoom.getPost().getPostId();
+        String seller = chatRoom.getSeller().getMemId();
+        String buyer = chatRoom.getBuyer().getMemId();
+        Map map = new HashMap();
+        map.put("readComplete", "readComplete");
+        simpMessagingTemplate.convertAndSend("/topic/chat/" + postId + "/" + seller + "/" + buyer, map);
         return "성공!";
     }
 
@@ -218,6 +276,7 @@ public class ChatController {
         ChatRoomDto chatRoomDto = jpaQueryFactory
                 .select(Projections.constructor(ChatRoomDto.class,
                                 QChatRoom.chatRoom.roomId,
+                                QChatRoom.chatRoom.post.postId,
                                 QChatRoom.chatRoom.seller.memId.as("sellerId"),
                                 QChatRoom.chatRoom.buyer.memId.as("buyerId"),
                                 QChat.chat.message,
@@ -226,7 +285,7 @@ public class ChatController {
                                         JPAExpressions.select(QChat.chat.chatId.count())
                                                 .from(QChat.chat)
                                                 .where(QChat.chat.room.eq(QChatRoom.chatRoom)
-                                                        .and(QChat.chat.readState.eq(0))
+                                                        .and(QChat.chat.readState.eq(ReadState.NOTREAD))
                                                         .and(QChat.chat.from.ne(memberEntity))
                                                 ),
                                         "unacknowledgedMessageCount"

@@ -31,6 +31,7 @@
                 <span th:text="|구매자:${sellOne.buyerId}|"> </span>
                 <button th:onclick="|location.href='@{/reviews/buyer(postId=${sellOne.postDto.postId})}'|" th:if="${sellOne.reviewBuyerId==0}">리뷰 남기기 </button>
                 <button th:onclick="|location.href='@{/reviews/buyer/{reviewBuyerId}(reviewBuyerId=${sellOne.reviewBuyerId})}'|" th:if="${sellOne.reviewBuyerId!=0}" >리뷰 보기 </button>
+
             </div>
         </th:block>
         <th:block th:if="${sellList.isEmpty()}">
