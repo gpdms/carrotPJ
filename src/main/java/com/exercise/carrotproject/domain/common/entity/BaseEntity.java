@@ -10,6 +10,8 @@ import javax.persistence.EntityListeners;
 import javax.persistence.MappedSuperclass;
 import java.sql.Timestamp;
 
+import static com.exercise.carrotproject.domain.common.util.DateUtil.CALCULATE_TIME;
+
 @MappedSuperclass
 @EntityListeners(AuditingEntityListener.class)
 @Getter
@@ -21,4 +23,8 @@ public abstract class BaseEntity {
     @UpdateTimestamp
     @Column(insertable = false)
     private Timestamp updatedTime;
+
+    public String getCreatedTimeByString() {
+        return CALCULATE_TIME(this.createdTime);
+    }
 }

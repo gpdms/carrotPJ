@@ -13,14 +13,16 @@ import static com.exercise.carrotproject.domain.common.util.DateUtil.CALCULATE_T
 @Data
 public class ChatRoomDto {
     private Long roomId;
+    private Long postId;
     private String sellerId;
     private String buyerId;
     private String message;
     private String createdTime;
     private Long unacknowledgedMessageCount;
 
-    public ChatRoomDto(Long roomId, String sellerId, String buyerId, String message, Timestamp createdTime, Long unacknowledgedMessageCount) {
+    public ChatRoomDto(Long roomId, Long postId, String sellerId, String buyerId, String message, Timestamp createdTime, Long unacknowledgedMessageCount) {
         this.roomId = roomId;
+        this.postId = postId;
         this.sellerId = sellerId;
         this.buyerId = buyerId;
         this.message = message;

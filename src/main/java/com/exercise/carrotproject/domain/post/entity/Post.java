@@ -55,10 +55,4 @@ public class Post {
         this.hideState = this.hideState == null ? HideState.SHOW : this.hideState;
         this.sellState = this.sellState == null ? SellState.ON_SALE : this.sellState;
     }
-
-
-
-
-
-
 }
