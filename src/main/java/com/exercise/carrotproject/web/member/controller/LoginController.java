@@ -1,6 +1,5 @@
 package com.exercise.carrotproject.web.member.controller;
 
-import com.exercise.carrotproject.domain.member.ouath.GoogleOauth;
 import com.exercise.carrotproject.web.common.SessionConst;
 import com.exercise.carrotproject.domain.member.dto.MemberDto;
 import com.exercise.carrotproject.domain.member.service.LoginService;

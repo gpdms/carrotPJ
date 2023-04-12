@@ -244,7 +244,6 @@ public class PostController {
 
         String resultMsg = postService.updateSellState(postId, sellStateName);
         if (resultMsg.equals("판매완료")){
-            postService.insertSellList(postId);
         }
 
         return new ResponseEntity<>(resultMsg+"로 변경되었습니다.", HttpStatus.OK);
