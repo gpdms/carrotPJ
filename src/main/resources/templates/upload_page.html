@@ -106,11 +106,12 @@
 <script src="https://code.jquery.com/ui/1.13.2/jquery-ui.min.js" integrity="sha256-lSjKY0/srUM9BE3dPm+c4fBo1dky2v27Gdjm2uoZaL0=" crossorigin="anonymous"></script>
 <!--지도API: head, body 등 어떠한 위치에 넣어도 상관없지만, 반드시 실행 코드보다 먼저 선언되어야 합니다.-->
 <script type="text/javascript" src="//dapi.kakao.com/v2/maps/sdk.js?appkey=e133f6ea3b90b5b74b80864ba7037219"></script>
+<script th:inline="javascript">
 
-<script>
     //위도,경도 초기값
-    var initLat= 33.450701;
-    var initLon= 126.570667;
+    var initLat= [[${session.loginMember.getLoc().getLat()}]];
+    var initLon= [[${session.loginMember.getLoc().getLon()}]];
+
     <!--지도 띄우기-->
     var mapContainer = document.getElementById('map'), // 지도를 표시할 div
         mapOption = {
@@ -154,187 +155,131 @@
         //장소정보 입력창 보이기
         document.getElementById('inputPlace').style.display='block';
         document.getElementById('cfmPlace').style.display="inline-block";
+    });
+    //'장소선택하기'버튼 클릭시 위도,경도,장소정보 set
+    document.getElementById('cfmPlace').addEventListener('click',function () {
+        lat = marker.getPosition().getLat();
+        lon = marker.getPosition().getLng();
+        placeInfo = document.getElementById('placeInfo').value;
 
-        //'장소선택하기'버튼 클릭시 위도,경도,장소정보 set
-        document.getElementById('cfmPlace').addEventListener('click',function () {
-            lat = marker.getPosition().getLat();
-            lon = marker.getPosition().getLng();
-            placeInfo = document.getElementById('placeInfo').value;
-
-           if (!placeInfo){ //문자열 비어있을 때 true를 반환
-                alert("장소명을 입력해주세요.")
-            }
-
-            if(lat && lon && placeInfo){ //문자열이 있을 때 true를 반환
-                console.log("마커의 lat:{}, lon:{}, placeinfo:{}", lat, lon, placeInfo);
-                $('#mapArea').hide();
-                $('#uploadBtn').show();
-
-            }
-
-        });
+        console.log("장소선택클릭시:lat, lon, placeInfo:", lat, lon, placeInfo);
+        if (!placeInfo){ //문자열 비어있을 때 true를 반환
+            alert("장소명을 입력해주세요.")
+        } else if (!lat || !lon){
+            alert("거래희망장소를 지도에서 클릭해주세요.")
+        } else {
+            console.log("마커의 lat:{}, lon:{}, placeinfo:{}", lat, lon, placeInfo);
+            $('#mapArea').hide();
+            $('#uploadBtn').show();
+        }
     });
 
 
-
-        // 아래 코드는 지도 위의 마커를 제거하는 코드입니다
-        // marker.setMap(null);
-
-
-    //지도 숨겼다가 거래희망장소등록 버튼 클릭시 보이기 (지도생성 코드 아래에 위치하기)
-    $('#mapArea').hide();
-
-    $('#regPlace').click(function (){
-        $('#mapArea').show();
-        relayout();
-        //업로드버튼 숨기기
-        $('#uploadBtn').hide();
-    });
-
-    //장소선택안함 클릭시 지도 숨기기
-    $('#noPlace').click(function (){
+        //지도 숨겼다가 거래희망장소등록 버튼 클릭시 보이기 (지도생성 코드 아래에 위치하기)
         $('#mapArea').hide();
-        lat=null;
-        lon=null;
-        placeInfo=null;
-        marker.setMap(null);
-        document.getElementById('placeInfo').value=null;
-        console.log("장소선택안함클릭시 lat:{}, lon:{}, placeinfo:{}", lat, lon, placeInfo);
 
-        //업로드버튼 보이기
-        $('#uploadBtn').show();
+        $('#regPlace').click(function (){
+            $('#mapArea').show();
+            relayout();
+            //업로드버튼 숨기기
+            $('#uploadBtn').hide();
+        });
 
-    })
+        //장소선택안함 클릭시 지도 숨기기
+        $('#noPlace').click(function (){
+            $('#mapArea').hide();
+            lat=null;
+            lon=null;
+            placeInfo=null;
+            marker.setMap(null);
+            document.getElementById('placeInfo').value=null;
+            console.log("장소선택안함클릭시 lat:{}, lon:{}, placeinfo:{}", lat, lon, placeInfo);
 
-    function relayout() {
-        // 지도를 표시하는 div 크기를 변경한 이후 지도가 정상적으로 표출되지 않을 수도 있습니다
-        // 크기를 변경한 이후에는 반드시  map.relayout 함수를 호출해야 합니다
-        // window의 resize 이벤트에 의한 크기변경은 map.relayout 함수가 자동으로 호출됩니다
-        map.relayout();
-    }
+            //업로드버튼 보이기
+            $('#uploadBtn').show();
 
+        })
 
-
-        // const handler = {
-        //     init() {
-        //         const fileInput = document.querySelector('#inputImage');
-        //         const preview = document.querySelector('#preview');
-        //         fileInput.addEventListener('change', () => {
-        //             console.dir(fileInput)
-        //             const files = Array.from(fileInput.files)
-        //             files.forEach(file => {
-        //                 preview.innerHTML += `
-        //                 <p id="${file.lastModified}">
-        //                     ${file.name}
-        //                     <button data-index='${file.lastModified}' class='file-remove'>X</button>
-        //                 </p>`;
-        //             });
-        //         });
-        //     },
-        //
-        //
-        //     removeFile: () => {
-        //         document.addEventListener('click', (e) => {
-        //             if(e.target.className !== 'file-remove') return;
-        //             const removeTargetId = e.target.dataset.index;
-        //             const removeTarget = document.getElementById(removeTargetId);
-        //             const files = document.querySelector('#inputImage').files;
-        //             const dataTranster = new DataTransfer();
-        //
-        //             // document.querySelector('#file-input').files =
-        //             //             Array.from(files).filter(file => file.lastModified !== removeTarget);
-        //
-        //
-        //             Array.from(files)
-        //                 .filter(file => file.lastModified != removeTargetId)
-        //                 .forEach(file => {
-        //                     dataTranster.items.add(file);
-        //                 });
-        //
-        //             document.querySelector('#inputImage').files = dataTranster.files;
-        //
-        //             removeTarget.remove();
-        //         })
-        //     }
-        // }
-        //
-        // handler.init()
-        // handler.removeFile()
+        function relayout() {
+            // 지도를 표시하는 div 크기를 변경한 이후 지도가 정상적으로 표출되지 않을 수도 있습니다
+            // 크기를 변경한 이후에는 반드시  map.relayout 함수를 호출해야 합니다
+            // window의 resize 이벤트에 의한 크기변경은 map.relayout 함수가 자동으로 호출됩니다
+            map.relayout();
+        }
 
 
 
+    //미리보기 이미지------------------------------------------------
 
-        //미리보기 이미지------------------------------------------------
+        //드래그 앤 드롭
+        // $(".sortable").sortable();
 
-            //드래그 앤 드롭
-            // $(".sortable").sortable();
+        //이미지 등록
+        $("#inputImage").change(function(e){
+            //div 내용 비워주기
+            $('#Preview').empty();
 
-            //이미지 등록
-            $("#inputImage").change(function(e){
-                //div 내용 비워주기
-                $('#Preview').empty();
+            // const fileInput = document.querySelector('#inputImage');
+            var files = e.target.files; //선택한 파일을 가져옴.
+            var arr = Array.from(files);
 
-                // const fileInput = document.querySelector('#inputImage');
-                var files = e.target.files; //선택한 파일을 가져옴.
-                var arr = Array.from(files);
+            // var arr = Array.prototype.slice.call(files);
+            //Array 객체의 slice() 메서드를 사용하여 객체(files)를 배열(arr)로 변환.
+            //call() 메소드를 사용하여 slice() 메소드를 호출하면, 인수로 전달된 객체가 slice() 메소드의 this 값이 됨.
 
-                // var arr = Array.prototype.slice.call(files);
-                //Array 객체의 slice() 메서드를 사용하여 객체(files)를 배열(arr)로 변환.
-                //call() 메소드를 사용하여 slice() 메소드를 호출하면, 인수로 전달된 객체가 slice() 메소드의 this 값이 됨.
-
-                //업로드 가능 파일인지 체크
-                for(var i=0; i<files.length; i++){
-                    if(!checkExtension(files[i].name,files[i].size)){
-                        return false;
-                    }
+            //업로드 가능 파일인지 체크
+            for(var i=0; i<files.length; i++){
+                if(!checkExtension(files[i].name,files[i].size)){
+                    return false;
                 }
-                preview(arr);
+            }
+            preview(arr);
 
-                function checkExtension(fileName,fileSize){
-                    // var regex = new RegExp("(.*?)\.(exe|sh|zip|alz)$");
-                    var maxSize = 20971520;  //20MB
+            function checkExtension(fileName,fileSize){
+                // var regex = new RegExp("(.*?)\.(exe|sh|zip|alz)$");
+                var maxSize = 20971520;  //20MB
 
-                    if(fileSize >= maxSize){
-                        alert('이미지 크기가 초과되었습니다.');
-                        $("#inputImage").val("");  //파일 초기화
-                        return false;
-                    }
-
-                    // if(regex.test(fileName)){
-                    //     alert('확장자명을 확인해주세요.');
-                    //     $("#inputImage").val("");  //파일 초기화
-                    //     return false;
-                    // }
-                    return true;
+                if(fileSize >= maxSize){
+                    alert('이미지 크기가 초과되었습니다.');
+                    $("#inputImage").val("");  //파일 초기화
+                    return false;
                 }
 
-                function preview(arr){
-                    arr.forEach(function(f){
+                // if(regex.test(fileName)){
+                //     alert('확장자명을 확인해주세요.');
+                //     $("#inputImage").val("");  //파일 초기화
+                //     return false;
+                // }
+                return true;
+            }
 
-                        //이미지 파일 미리보기
-                        if(f.type.match('image.*')){
-                            //파일을 읽기 위한 FileReader객체 생성
-                            var reader = new FileReader();
-                            reader.onload = function (e) {
-                                //파일 읽어들이기를 성공했을때 호출되는 이벤트 핸들러
-                                //div에 이미지 추가
-                                var str = `<li class="ui-state-default">
-                                           <img id="${f.lastModified}" src="${e.target.result}" title="${f.name}" width=80 height=80>
-                                           <span data-index="${f.lastModified}" class="delBtn" onclick="delImg(this)">x</span>
-                                           </li>`
-                                $(str).appendTo('#Preview');
+            function preview(arr){
+                arr.forEach(function(f){
 
-                            }
-                            reader.readAsDataURL(f); //reader에게 e.target.files[0](업로드된 파일)를 URL로 읽으라고 명령
-
-                        }else{
-                            //이미지 파일 아닐 경우
-                            alert('이미지가 아닌 파일은 업로드할 수 없습니다.');
+                    //이미지 파일 미리보기
+                    if(f.type.match('image.*')){
+                        //파일을 읽기 위한 FileReader객체 생성
+                        var reader = new FileReader();
+                        reader.onload = function (e) {
+                            //파일 읽어들이기를 성공했을때 호출되는 이벤트 핸들러
+                            //div에 이미지 추가
+                            var str = `<li class="ui-state-default">
+                                       <img id="${f.lastModified}" src="${e.target.result}" title="${f.name}" width=80 height=80>
+                                       <span data-index="${f.lastModified}" class="delBtn" onclick="delImg(this)">x</span>
+                                       </li>`
+                            $(str).appendTo('#Preview');
 
                         }
-                    })
-                }
-            })
+                        reader.readAsDataURL(f); //reader에게 e.target.files[0](업로드된 파일)를 URL로 읽으라고 명령
+
+                    }else{
+                        //이미지 파일 아닐 경우
+                        alert('이미지가 아닌 파일은 업로드할 수 없습니다.');
+
+                    }
+                })
+            }
+        })
 
         //미리보기 이미지 삭제, 파일리스트에서 삭제
         function delImg(e){
@@ -441,9 +386,6 @@
 
             }); //$.ajax
         }); //end click
-
-
-
 
     </script>
 </body>
