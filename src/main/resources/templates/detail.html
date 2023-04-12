@@ -321,15 +321,15 @@
                     data: data,
                     success: function(result){
                         console.log(result);
-                        if(result == "판매완료"){
-                            let truefalse = confirm("후기를 작성하시겠습니까?")
-                            if(truefalse==true){
-
-                            }
-                        }
                         //화면 처리
                         alert(result+"로 변경되었습니다.");
-                        // location.reload();
+
+                        if(result == "판매완료"){
+                            let trueFalse = confirm("거래후기를 작성하시겠습니까?")
+                            if(trueFalse==true){
+                                location.href=`/chat/chatRoomListByPost/${postId}`;
+                            }
+                        }
                     },
                     error: function(jqXHR, textStatus, errorThrown){
                         console.log(jqXHR.statusText);
