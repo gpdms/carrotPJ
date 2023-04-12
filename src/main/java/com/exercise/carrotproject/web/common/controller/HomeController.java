@@ -2,6 +2,7 @@ package com.exercise.carrotproject.web.common.controller;
 
 
 import com.exercise.carrotproject.domain.enumList.Loc;
+import com.exercise.carrotproject.domain.enumList.Role;
 import com.exercise.carrotproject.domain.member.MemberEntityDtoMapper;
 import com.exercise.carrotproject.domain.member.dto.MemberDto;
 import com.exercise.carrotproject.domain.member.entity.Member;
@@ -35,15 +36,16 @@ public class HomeController {
     private final SecurityUtils securityUtils;
     private final PostRepository postRepository;
     private final ReviewServiceImpl reviewService;
-//    @PostConstruct
+
+    @PostConstruct
     public void init() {
-        Member member3 = Member.builder().memId("tester3").mannerScore(36.5).nickname("3Nick").loc(Loc.GANGBUK).memPwd(securityUtils.getHashedPwd("tester33")).build();
+        Member member3 = Member.builder().memId("tester3").mannerScore(36.5).nickname("3Nick").loc(Loc.GANGBUK).memPwd(securityUtils.getHashedPwd("tester33")).role(Role.USER).build();
         memberRepository.save(member3);
-        Member member2 = Member.builder().memId("tester2").mannerScore(36.5).nickname("2Nick").loc(Loc.GANGBUK).memPwd(securityUtils.getHashedPwd("tester22")).build();
+        Member member2 = Member.builder().memId("tester2").mannerScore(36.5).nickname("2Nick").loc(Loc.GANGBUK).memPwd(securityUtils.getHashedPwd("tester22")).role(Role.USER).build();
         memberRepository.save(member2);
-        Member member1 = Member.builder().memId("tester1").mannerScore(36.5).nickname("1Nick").loc(Loc.GANGBUK).memPwd(securityUtils.getHashedPwd("tester11")).build();
+        Member member1 = Member.builder().memId("tester1").mannerScore(36.5).nickname("1Nick").loc(Loc.GANGBUK).memPwd(securityUtils.getHashedPwd("tester11")).role(Role.USER).build();
         memberRepository.save(member1);
-        Member admin = Member.builder().memId("admin1").mannerScore(36.5).nickname("adminNick").loc(Loc.GANGSEO).memPwd(securityUtils.getHashedPwd("admin1234")).build();
+        Member admin = Member.builder().memId("admin1").mannerScore(36.5).nickname("adminNick").loc(Loc.GANGSEO).memPwd(securityUtils.getHashedPwd("admin1234")).role(Role.ADMIN).build();
         memberRepository.save(admin);
     }
     @GetMapping("/init")

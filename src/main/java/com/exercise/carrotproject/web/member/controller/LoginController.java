@@ -1,5 +1,6 @@
 package com.exercise.carrotproject.web.member.controller;
 
+import com.exercise.carrotproject.domain.member.ouath.GoogleOauth;
 import com.exercise.carrotproject.web.common.SessionConst;
 import com.exercise.carrotproject.domain.member.dto.MemberDto;
 import com.exercise.carrotproject.domain.member.service.LoginService;
@@ -8,10 +9,7 @@ import com.exercise.carrotproject.web.member.form.LoginForm;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
@@ -62,5 +60,6 @@ public class LoginController {
         }
         return "redirect:/";
     }
+
 
 }
