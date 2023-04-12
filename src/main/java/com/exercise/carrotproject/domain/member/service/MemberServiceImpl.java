@@ -1,5 +1,9 @@
 package com.exercise.carrotproject.domain.member.service;
 
+import com.exercise.carrotproject.domain.enumList.Loc;
+import com.exercise.carrotproject.domain.enumList.Role;
+import com.exercise.carrotproject.domain.member.MemberEntityDtoMapper;
+import com.exercise.carrotproject.domain.member.dto.MemberDto;
 import com.exercise.carrotproject.domain.member.entity.Block;
 import com.exercise.carrotproject.domain.member.entity.Member;
 import com.exercise.carrotproject.domain.member.repository.BlockRepository;
@@ -12,8 +16,12 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.imageio.ImageIO;
+import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.time.LocalDate;
 import java.util.*;
 
@@ -28,6 +36,10 @@ public class MemberServiceImpl {
     @Value("${dir.img-profile}")
     private String rootProfileImgDir;
 
+    //소셜로그인을 위한 아이디 난수생성
+    public String createMemId() {
+        return UUID.randomUUID().toString();
+    }
 
     //@Override
     public Member findOneMember(String memId) {
@@ -50,7 +62,51 @@ public class MemberServiceImpl {
         Member newMember = memberRepository.save(member);
         saveResult.put("resultCode", "success");
         return saveResult;
+    }
 
+    @Transactional
+    public MemberDto insertSocialMember(Map<String, Object> userinfo, Role role) {
+        String save_path = userinfo.get("profileImgUrl").toString();
+        if(!save_path.isEmpty()) {
+            save_path = saveSocialProfImg(save_path);
+        }
+        Member member = Member.builder().memId(createMemId())
+                .mannerScore(36.5)
+                .email(userinfo.get("email").toString())
+                .nickname(userinfo.get("nickname").toString())
+                .loc((Loc)userinfo.get("loc"))
+                .profPath(save_path)
+                .role(role)
+                .build();
+        memberRepository.save(member);
+        return MemberEntityDtoMapper.toMemberDto(member);
+    }
+
+    public String saveSocialProfImg(String url) {
+        String save_path = url;
+        System.out.println("save_path############## = " + save_path);
+        try {
+            URL imgURL = new URL(url);
+            String extension = url.substring(url.lastIndexOf(".")+1); // 확장자
+
+            File profImgDir = new File(rootProfileImgDir + LocalDate.now());
+            profImgDir.mkdir();
+
+            String uuid = UUID.randomUUID().toString();
+            String save_name = uuid +"."+ extension;
+            save_path = profImgDir + "/" + save_name;
+
+            BufferedImage image = ImageIO.read(imgURL);
+            File file = new File(save_path);
+
+            ImageIO.write(image, extension, file); // image를 file로 업로드
+            System.out.println("이미지 업로드 완료!");
+        } catch (MalformedURLException e) {
+            throw new RuntimeException(e);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+        return save_path;
     }
 
     //@Override
@@ -146,6 +202,13 @@ public class MemberServiceImpl {
         blockRepository.deleteById(block.getBlockId());
     }
 
+    public boolean hasSocialMember(String email, Role role) {
+        return memberRepository.existsByEmailAndRole(email, role);
+    }
+    public MemberDto findOneSocialMember(String email, Role role) {
+        Member member = memberRepository.findByEmailAndRole(email, role);
+        return  MemberEntityDtoMapper.toMemberDto(member);
+    }
 
 
 }

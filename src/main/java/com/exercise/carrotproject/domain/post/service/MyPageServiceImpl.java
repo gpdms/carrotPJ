@@ -25,7 +25,6 @@ public class MyPageServiceImpl {
     private final PostRepository postRepository;
     private final MemberRepository memberRepository;
 
-
 //    @Override
     public Map selectPostBySellState(String memId){
         Member member = memberRepository.findById(memId).orElseThrow();

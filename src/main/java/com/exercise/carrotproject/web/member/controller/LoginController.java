@@ -1,5 +1,6 @@
 package com.exercise.carrotproject.web.member.controller;
 
+import com.exercise.carrotproject.domain.enumList.Role;
 import com.exercise.carrotproject.web.common.SessionConst;
 import com.exercise.carrotproject.domain.member.dto.MemberDto;
 import com.exercise.carrotproject.domain.member.service.LoginService;
@@ -40,8 +41,8 @@ public class LoginController {
         MemberDto loginMemberDto = MemberDto.builder().memId(loginMember.getMemId())
                 .nickname(loginMember.getNickname())
                 .mannerScore(loginMember.getMannerScore())
+                .role(Role.USER)
                 .loc(loginMember.getLoc()).build();
-
         //로그인 성공 처리
         //세션이 있으면 있는 세션 반환, 없으면 신규 세션을 생성
         HttpSession session = request.getSession();

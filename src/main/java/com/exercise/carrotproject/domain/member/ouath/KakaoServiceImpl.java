@@ -1,18 +1,26 @@
 package com.exercise.carrotproject.domain.member.ouath;
 
 import com.exercise.carrotproject.domain.enumList.Role;
+import com.exercise.carrotproject.domain.member.dto.MemberDto;
+import com.exercise.carrotproject.domain.member.entity.Member;
 import com.exercise.carrotproject.domain.member.repository.MemberRepository;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import org.apache.tomcat.util.json.JSONParser;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
+import javax.imageio.ImageIO;
+import java.awt.image.BufferedImage;
 import java.io.*;
 import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
 import java.net.URL;
+import java.time.LocalDate;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
@@ -68,7 +76,6 @@ public class KakaoServiceImpl {
             System.out.println("accessToken = " + accessToken);
             System.out.println("refreshToken = " + refreshToken);
 
-
             br.close();
             bw.close();
         } catch (IOException e) {
@@ -79,7 +86,6 @@ public class KakaoServiceImpl {
     }
 
     public HashMap<String, Object> getUserInfo(String accessToken) throws Throwable {
-        // 요청하는 클라이언트마다 가진 정보가 다를 수 있기에 HashMap타입으로 선언
         HashMap<String, Object> userInfo = new HashMap<String, Object>();
         String reqURL = "https://kapi.kakao.com/v2/user/me";
         try {
@@ -98,26 +104,23 @@ public class KakaoServiceImpl {
             while ((line = br.readLine()) != null) {
                 result += line;
             }
-            System.out.println("response body : " + result);
-            System.out.println("result type" + result.getClass().getName()); // java.lang.String
+            //System.out.println("response body : " + result);
+           //System.out.println("result type" + result.getClass().getName()); // java.lang.String
 
             try {
                 // jackson objectmapper 객체 생성
                 ObjectMapper objectMapper = new ObjectMapper();
                 // JSON String -> Map
                 Map<String, Object> jsonMap = objectMapper.readValue(result, new TypeReference<Map<String, Object>>(){});
-
                 Map<String, Object> kakao_account = (Map<String, Object>) jsonMap.get("kakao_account");
                 Map<String, Object> profile = (Map<String, Object>) kakao_account.get("profile");
 
-                String nickname = profile.get("nickname").toString();
-                String email = kakao_account.get("email").toString();
                 String profileImgUrl = "";
-                if(!(Boolean)profile.get("is_default_image")) {
-                    profileImgUrl = profile.get("profile_img_url").toString();
+                if (!(boolean)profile.get("is_default_image")) { //디폴트 이미지면 빈문자열만 보낸다.
+                    profileImgUrl = profile.get("profile_image_url").toString() ;
                 }
-                userInfo.put("nickname", nickname);
-                userInfo.put("email", email);
+                userInfo.put("nickname", profile.get("nickname"));
+                userInfo.put("email", kakao_account.get("email"));
                 userInfo.put("profileImgUrl", profileImgUrl);
             } catch (Exception e) {
                 e.printStackTrace();
@@ -128,11 +131,6 @@ public class KakaoServiceImpl {
         }
         return userInfo;
     }
-
-/*    public void isExsitedKakaoMember(String email, Role role) {
-        memberRepository.existsByEmailAndRole()
-        boolean existsByEmailAndRole(String email, Role role);
-    }*/
 
   /*  public void kakaoLogout(String accessToken) {
         String reqURL = "https://kapi.kakao.com/v1/user/logout";

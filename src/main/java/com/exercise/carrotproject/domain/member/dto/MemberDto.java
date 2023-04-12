@@ -4,6 +4,7 @@ package com.exercise.carrotproject.domain.member.dto;
 import com.exercise.carrotproject.domain.common.entity.BaseEntity;
 import com.exercise.carrotproject.domain.converter.LocAttributeConverter;
 import com.exercise.carrotproject.domain.enumList.Loc;
+import com.exercise.carrotproject.domain.enumList.Role;
 import com.exercise.carrotproject.domain.member.entity.Block;
 import com.exercise.carrotproject.domain.review.entity.ReviewBuyer;
 import com.exercise.carrotproject.domain.review.entity.ReviewSeller;
@@ -34,6 +35,7 @@ public class MemberDto {
     private Loc loc;
     private Timestamp createdTime;
     private Timestamp updatedTime;
+    private Role role;
 
     //Block테이블
     //private List<Block> blockfromMemList = new ArrayList<>();

@@ -30,10 +30,10 @@ import java.util.stream.Collectors;
 @DynamicInsert
 public class Member extends BaseEntity {
     @Id
-    @Size(min = 6, max = 30)
+    @Size(min = 6, max = 40)
     private String memId;
 
-    @NotNull
+    //@NotNull
     @Size(min = 8)
     private String memPwd;
 
@@ -43,7 +43,6 @@ public class Member extends BaseEntity {
 
     private String email;
 
-    @NotNull
     @Size(min = 2, max = 15)
     private String nickname;
 
@@ -103,6 +102,11 @@ public class Member extends BaseEntity {
     public Loc getLoc() {
         return loc;
     }
+
+    public Role getRole() {
+        return role;
+    }
+
     public List<Block> getBlockfromMemList() {
         return blockfromMemList.stream().
                 collect(Collectors.toUnmodifiableList());

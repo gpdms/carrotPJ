@@ -1,6 +1,7 @@
 package com.exercise.carrotproject.web.member.controller;
 
 
+import com.exercise.carrotproject.domain.enumList.Role;
 import com.exercise.carrotproject.domain.member.dto.MemberDto;
 import com.exercise.carrotproject.domain.member.entity.Member;
 import com.exercise.carrotproject.domain.member.repository.MemberRepository;
@@ -55,7 +56,8 @@ public class MemberController {
 
 
     @GetMapping("/signup")
-    public String signupForm(@ModelAttribute("signupForm") SignupForm form) {
+    public String signupForm(@ModelAttribute("signupForm") SignupForm form, Model model) {
+        model.addAttribute("isSocial", false);
         return "/member/signupForm";
     }
     @PostMapping("/signup")
@@ -72,6 +74,7 @@ public class MemberController {
         Member member = Member.builder().memId(form.getMemId())
                 .memPwd(hashedPwd)
                 .nickname(form.getNickname())
+                .role(Role.USER)
                 .loc(form.getLoc()).build();
         Map<String, Object> saveResult = memberService.insertMember(member);
         //log.info("saveResult {}", saveResult.containsValue("fail-DM"));
@@ -135,7 +138,7 @@ public class MemberController {
     @GetMapping("/{memId}/profileImg")
     public Resource viewProfileImg(@PathVariable("memId") String memId) throws IOException {
         String profPath = memberService.getProfPath(memId);
-        if(profPath == null) {
+        if(profPath.isEmpty()) {
             profPath = rootProfileImgDir+"profile_img.png";
         }
         UrlResource urlResource = new UrlResource("file:" + profPath);

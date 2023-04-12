@@ -24,53 +24,58 @@
     <div class="py-5 text-center">
         <h2>회원 가입</h2>
     </div>
-    <h4 class="mb-3">회원 정보 입력</h4>
-    <form action="" th:action th:object="${signupForm}" method="post">
-<!--
-        <div th:if="${#fields.hasGlobalErrors()}">
-            <p class="field-error" th:each="err : ${#fields.globalErrors()}"
-               th:text="${err}">전체 오류 메시지</p>
-        </div>
--->
-        <div>
-            <label for="memId">아이디</label>
-            <input type="text" id="memId" th:field="*{memId}"
-                   class="formcontrol"
-                   th:errorclass="field-error">
-            <div class="field-error" th:errors="*{memId}" />
-        </div>
-        <div>
-            <label for="memPwd">비밀번호</label>
-            <input type="password" id="memPwd" th:field="*{pwd}"
-                   class="formcontrol"
-                   th:errorclass="field-error">
-            <div class="field-error" th:errors="*{pwd}" />
-        </div>
-        <div>
-            <label for="pwdConfirm">비밀번호 재확인</label>
-            <input type="password" id="pwdConfirm" th:field="*{pwdConfirm}"
-                   class="formcontrol"
-                   th:errorclass="field-error">
-            <div class="field-error" th:errors="*{pwdConfirm}" />
-        </div>
-        <div>
-            <label for="nickname">닉네임</label>
-            <input type="text" id="nickname" th:field="*{nickname}"
-                   class="formcontrol"
-                   th:errorclass="field-error">
-            <div class="field-error" th:errors="*{nickname}" />
-        </div>
-
-        <div>
-            <label for="loc">내 동네</label>
-            <select id="loc" th:field="*{loc}" th:onchange="locTest()">
+    <div th:if="${isSocial}">
+        <h4 class="mb-3">내 동네 입력</h4>
+            <label for="locSocial">내 동네</label>
+            <select id="locSocial"  th:onchange="locTest()" name="locSocial">
                 <option th:each="locValue:${T(com.exercise.carrotproject.domain.enumList.Loc).values()}"
                         th:value="${locValue}"
                         th:text="${locValue.locName}"></option>
             </select>
-            <div class="field-error" th:errors="*{loc}" />
-        </div>
+    </div>
 
+    <form action="" th:action th:object="${signupForm}" method="post">
+        <div th:unless="${isSocial}">
+            <h4 class="mb-3">회원 정보 입력</h4>
+            <div>
+                <label for="memId">아이디</label>
+                <input type="text" id="memId" th:field="*{memId}"
+                       class="formcontrol"
+                       th:errorclass="field-error">
+                <div class="field-error" th:errors="*{memId}" />
+            </div>
+            <div>
+                <label for="memPwd">비밀번호</label>
+                <input type="password" id="memPwd" th:field="*{pwd}"
+                       class="formcontrol"
+                       th:errorclass="field-error">
+                <div class="field-error" th:errors="*{pwd}" />
+            </div>
+            <div>
+                <label for="pwdConfirm">비밀번호 재확인</label>
+                <input type="password" id="pwdConfirm" th:field="*{pwdConfirm}"
+                       class="formcontrol"
+                       th:errorclass="field-error">
+                <div class="field-error" th:errors="*{pwdConfirm}" />
+            </div>
+            <div>
+                <label for="nickname">닉네임</label>
+                <input type="text" id="nickname" th:field="*{nickname}"
+                       class="formcontrol"
+                       th:errorclass="field-error">
+                <div class="field-error" th:errors="*{nickname}" />
+            </div>
+
+            <div>
+                <label for="loc">내 동네</label>
+                <select id="loc" th:field="*{loc}" th:onchange="locTest()">
+                    <option th:each="locValue:${T(com.exercise.carrotproject.domain.enumList.Loc).values()}"
+                            th:value="${locValue}"
+                            th:text="${locValue.locName}"></option>
+                </select>
+                <div class="field-error" th:errors="*{loc}"> </div>
+            </div>
+        </div>
         <hr class="my-4">
         <div class="row">
             <div class="col">
@@ -83,11 +88,16 @@
                 <button class="w-100 btn btn-secondary btn-lg"
                         onclick="location.href='/member/loginForm'"
                         th:onclick="|location.href='@{/login}'|"
-                        type="button">로그인</button>
+                        type="button">로그인 폼으로</button>
             </div>
-            <div class="col">
+            <div class="col" th:unless="${isSocial}">
                 <button class="w-100 btn btn-primary btn-lg"
                         type="submit"> 회원 가입 </button>
+            </div>
+            <div class="col" th:if="${isSocial}">
+                <button class="w-100 btn btn-primary btn-lg"
+                        th:onclick="setMyLoc([[${platform}]])"
+                        type="button"> 회원 가입 </button>
             </div>
         </div>
     </form>
@@ -97,5 +107,32 @@
 <div layout:fragment="script" th:inline="javascript">
 <!--  <script type="text/javascript" src="http://map.vworld.kr/js/vworldMapInit.js.do?version=2.0&apiKey=[593AE8E8-EC6D-350F-8E69-BC6C4E15A535]"></script>-->
 <script th:inline="javascript">
+    const isSocial= [[${isSocial}]];
+    console.log(isSocial)
+    window.onload = function () {
+        if(isSocial) {
+            alert("망고마켓 서비스를 이용하기 위해서는 내 동네 설정이 필요합니다.")
+        }
+    }
+
+    function setMyLoc(wherePlatform) {
+        console.log(wherePlatform);
+        $.ajax({
+            type: 'post',
+            url: '/signup/'+wherePlatform,
+            data:  JSON.stringify({
+                loc : $("select[name=locSocial]").val(),
+                 }),
+            contentType: "application/json",
+            success: function (data) {
+                alert("내동네 등록에 성공했습니다.");
+                location.href="/"
+            },
+            error: function (err) {
+                console.log(err);
+                alert("내동네 등록에 실패했습니다.");
+            }
+        })
+    }
 </script>
 </div>
