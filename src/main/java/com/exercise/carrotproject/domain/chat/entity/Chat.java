@@ -1,16 +1,20 @@
 package com.exercise.carrotproject.domain.chat.entity;
 
 import com.exercise.carrotproject.domain.common.entity.BaseEntity;
+import com.exercise.carrotproject.domain.converter.HideStateConverter;
+import com.exercise.carrotproject.domain.converter.ReadStateConverter;
+import com.exercise.carrotproject.domain.enumList.ReadState;
 import com.exercise.carrotproject.domain.member.entity.Member;
 import com.exercise.carrotproject.domain.post.entity.Post;
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.*;
 import org.hibernate.annotations.ColumnDefault;
-import org.hibernate.annotations.DynamicInsert;
 
 import javax.persistence.*;
+import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
+
+import static com.exercise.carrotproject.domain.common.util.DateUtil.CALCULATE_TIME;
 
 @Entity
 @NoArgsConstructor
@@ -45,7 +49,8 @@ public class Chat extends BaseEntity {
             nullable = false)
     @ColumnDefault("0")
     @Builder.Default()
-    private Integer readState = 0;
+    @Convert(converter = ReadStateConverter.class)
+    private ReadState readState = ReadState.NOTREAD;
 
     @Column(name = "message")
     private String message;

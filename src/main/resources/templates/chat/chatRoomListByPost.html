@@ -45,7 +45,7 @@
 
 <script layout:fragment="script" th:inline="javascript">
     console.log("script.....................");
-    function connect3() {
+    function connect4() {
         //StompConfig.java에 설정된 endpoint로 SockJS 객체, StompClient 객체 생성
         var socket = new SockJS("http://localhost:8888/gs-guide-websocket");
         //do Handshake
@@ -57,7 +57,11 @@
                 //게시글번호/판매자/구매자
                 sub = stompClient3.subscribe('/topic/chatRoomList/' + [[${session.loginMember}]]["memId"], function (e) {
                     //e.body에 전송된 data가 들어있다
-                    showMessage3(e.body);
+                    showMessage4(e.body);
+                    console.log('------------------------')
+                    console.log(e)
+                    console.log(e.body)
+                    console.log('------------------------')
                 });
             },
             function (e) {
@@ -67,9 +71,9 @@
         );
     }
 
-    connect3();
+    connect4();
 
-    function showMessage3(roomId) {
+    function showMessage4(roomId) {
         $.ajax({
             url:"/chat/getChatRoom/"+roomId,
             type:"post",
