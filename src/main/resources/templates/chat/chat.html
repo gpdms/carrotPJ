@@ -21,11 +21,13 @@
                             <div class="chat-body clearfix">
                                 <div class="header">
                                     <strong class="primary-font">[[${chat.from.memId}]]</strong>
-                                    <small class="pull-right text-muted"><i class="fa fa-clock-o"></i> 12 mins ago</small>
+                                    <small class="pull-right text-muted"><i class="fa fa-clock-o"></i>[[${chat.getCreatedTimeByString()}]]</small>
                                 </div>
                                 <p>
                                     [[${chat.message}]]
                                 </p>
+                                <hr>
+                                <span class="read_state" th:text="${chat.readState.readStateName}"></span>
                             </div>
                         </li>
                         <li th:unless="${session.loginMember.memId}==${chat.from.memId}" class="left clearfix">
@@ -35,7 +37,7 @@
                             <div class="chat-body clearfix">
                                 <div class="header">
                                     <strong class="primary-font">[[${chat.from.memId}]]</strong>
-                                    <small class="pull-right text-muted"><i class="fa fa-clock-o"></i> 13 mins ago</small>
+                                    <small class="pull-right text-muted"><i class="fa fa-clock-o"></i>[[${chat.getCreatedTimeByString()}]]</small>
                                 </div>
                                 <p>
                                     [[${chat.message}]]
@@ -51,6 +53,8 @@
                            placeholder="Type your message here">
                     <span class="input-group-btn">
             			<button class="btn btn-success no-rounded" type="button" th:onclick="send()">Send</button>
+                        <input type="file" id="fileUpload" multiple>
+            			<button class="btn btn-success no-rounded" type="button" th:onclick="sendImg()">SendImg</button>
             		</span>
                 </div><!-- /input-group -->
             </div>
@@ -72,8 +76,14 @@
                 //게시글번호/판매자/구매자
                 sub = stompClient2.subscribe('/topic/chat/' + [[${postId}]] + "/" + [[${seller}]] + "/" + [[${buyer}]], function (e) {
                     //e.body에 전송된 data가 들어있다
+                    if (JSON.parse(e.body).readComplete == "readComplete") {
+                        $(".read_state").text("읽음");
+                        return;
+                    }
                     showMessage2(JSON.parse(e.body));
                 });
+
+                stompClient2.send("/app/chat/test", {}, "입장시 메세지 테스트");
             },
             function (e) {
                 //에러 콜백
@@ -87,7 +97,6 @@
     //화면에 메시지를 표시하는 함수
     function showMessage2(data) {
         console.log('채팅메세지를 수신하였습니다.')
-        // $('#chatting').append("<p class='me'>" + data.from + " : " + data.chat + "</p>");
         let message;
         if ([[${session.loginMember.memId}]] == data.from) {
             message =
@@ -97,12 +106,12 @@
                         </span>
                     <div class="chat-body clearfix">
                         <div class="header">
-                            <strong class="primary-font">` + data.from + `</strong>
-                            <small class="pull-right text-muted"><i class="fa fa-clock-o"></i> 13 mins ago</small>
+                            <strong class="primary-font">${data.from}</strong>
+                            <small class="pull-right text-muted"><i class="fa fa-clock-o"></i>${data.createdTime}</small>
                         </div>
-                        <p>`
-                + data.chat +
-                `</p>
+                        <p>${data.chat}</p>
+                        <hr>
+                        <span class="read_state">${data.readState}</span>
                     </div>
                 </li>`;
         } else {
@@ -113,21 +122,19 @@
                     	</span>
                     <div class="chat-body clearfix">
                         <div class="header">
-                            <strong class="primary-font">` + data.from + `</strong>
-                            <small class="pull-right text-muted"><i class="fa fa-clock-o"></i> 12 mins ago</small>
+                            <strong class="primary-font">${data.from}</strong>
+                            <small class="pull-right text-muted"><i class="fa fa-clock-o"></i>${data.createdTime}</small>
                         </div>
-                        <p>`
-                + data.chat +
-                `</p>
+                        <p>${data.chat}</p>
                     </div>
                 </li>`;
 
             $.ajax({
                 type: "POST",
-                url: "/chat/getChatMsg/"+data.room,
+                url: "/chat/getChatMsg/" + data.room,
                 success: function (result) {
                     console.log('수신한 메세지 확인 처리 완료! >>> ' + result);
-                    $('#chat').text(Number($('#chat').text())-1);
+                    $('#chat').text(Number($('#chat').text()) - 1);
                 },
             });
         }
@@ -144,4 +151,28 @@
         stompClient2.send("/app/chat/" + [[${postId}]] + "/" + [[${seller}]] + "/" + [[${buyer}]], {}, $("#msg").val());
         $("#msg").val('');
     }
+
+    function sendImg() {
+        console.log("이미지 전송!!");
+        $("#fildUpload").click();
+    }
+
+    $("#fildUpload").change(e=>{
+        let files = e.target.files;
+        console.log(files);
+
+        //한번에 10장까지 업로드 가능
+        if (files.length > 10) {
+            alert('한번에 10장까지 전송이 가능합니다.');
+            return false;
+        }
+
+        //업로드 가능 파일인지 체크
+        for(var i=0; i<files.length; i++){
+            if (!/\.(gif|jpg|jpeg|png)$/i.test(files[i].name)) {
+                alert('gif, jpg, png 파일만 선택해 주세요.\n\n현재 파일 : ' + files[i].name);
+                return false;
+            }
+        }
+    });
 </script>

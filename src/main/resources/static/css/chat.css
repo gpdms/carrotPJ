@@ -21,11 +21,22 @@ body {
   border-bottom: 1px solid #eee;
 }
 
-.friend-list li a img {
+.friend-list li a .profile_img img {
   float: left;
   width: 45px;
   height: 45px;
   margin-right: 10px;
+}
+
+.friend-list li a .product_thumbnail img {
+  float: right;
+  width: 45px;
+  height: 45px;
+  margin-right: 10px;
+}
+
+.name_message {
+  float:left;
 }
 
 .friend-list li a {
@@ -64,7 +75,7 @@ body {
 .friend-list li a .time {
   position: absolute;
   top: 10px;
-  right: 8px;
+  right: 75px;
 }
 
 small, .small {
@@ -73,7 +84,7 @@ small, .small {
 
 .friend-list li a .chat-alert {
   position: absolute;
-  right: 8px;
+  right: 75px;
   top: 27px;
   font-size: 10px;
   padding: 3px 5px;
@@ -110,6 +121,7 @@ img {
 
 .chat li.left .chat-body {
   margin-left: 70px;
+  margin-right: 100px;
   background-color: #fff;
 }
 
@@ -174,6 +186,7 @@ img {
 
 .chat li.right .chat-body {
   margin-right: 70px;
+  margin-left: 100px;
   background-color: #fff;
 }
 
@@ -203,3 +216,7 @@ a:hover, a:active, a:focus {
   outline: 0;
 }
 */
+
+#fildUpload {
+  display: none;
+}
