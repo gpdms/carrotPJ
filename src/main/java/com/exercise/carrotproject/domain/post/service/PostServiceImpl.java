@@ -48,16 +48,13 @@ public class PostServiceImpl {
 
     private final PostRepository postRepository;
     private final PostImgRepository postImgRepository;
-    private final SellListRepository sellListRepository;
     private final MemberRepository memberRepository;
     private final MtPlaceRepository mtPlaceRepository;
     private final JPAQueryFactory jpaQueryFactory; //QuerydslConfig파일에 bean등록함
 //    private final PostRepositoryImpl customPostRepository; //후에 CustomPostRepository로 바꿔주기
 
-
     @Value("${file.postImg}")
     private String uploadPath;
-
 
 
 //    @Override
@@ -390,20 +387,6 @@ public class PostServiceImpl {
 
         return msg;
     }
-
-    //sellList 판매내역 insert
-//    @Override
-    public void insertSellList(Long postId){
-        Post post = postRepository.findById(postId).orElseThrow();
-        Member member = memberRepository.findById(post.getMember().getMemId()).orElseThrow();
-
-        SellList sellListEntity = SellList.builder().post(post).seller(member).build();
-        sellListRepository.save(sellListEntity);
-
-        log.info("sellList insert 성공!!!!!!!!!!!");
-    }
-
-
 
 
 

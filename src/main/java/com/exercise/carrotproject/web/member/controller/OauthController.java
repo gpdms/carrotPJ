@@ -22,10 +22,10 @@ public class OauthController {
 
     @GetMapping("/login/getKakaoLoginURL")
     @ResponseBody
-    public String toKakaoLoginForm(){
+    public String toKakaoLoginForm() {
         String kakaoUrl = kaKaoOauth.getKakaoLoginUrl()
-                +"/oauth/authorize?client_id="+kaKaoOauth.getKakaoClientId()
-                +"&redirect_uri="+kaKaoOauth.getKakaoLoginRedirectUri()+"&response_type=code";
+                + "/oauth/authorize?client_id=" + kaKaoOauth.getKakaoClientId()
+                + "&redirect_uri=" + kaKaoOauth.getKakaoLoginRedirectUri() + "&response_type=code";
         return kakaoUrl;
     }
 
@@ -40,8 +40,6 @@ public class OauthController {
         System.out.println("userInfo 프로필 이미지 = " + userInfo.get("profileImgUrl"));
         System.out.println("userInfo 닉네임 = " + userInfo.get("nickname"));
         System.out.println("userInfo 프로필 이미지 = " + userInfo.get("email"));
-
-
         //ci는 비즈니스 전환후 검수신청 -> 허락받아야 수집 가능
         return "redirect:/";
     }
@@ -50,8 +48,8 @@ public class OauthController {
     @ResponseBody
     public String toKakaoLogoutForm() {
         String kakaoUrl = kaKaoOauth.getKakaoLoginUrl()
-                +"/oauth/logout?client_id="+kaKaoOauth.getKakaoClientId()
-                +"&logout_redirect_uri="+kaKaoOauth.getKakaoLoginRedirectUri();
+                + "/oauth/logout?client_id=" + kaKaoOauth.getKakaoClientId()
+                + "&logout_redirect_uri=" + kaKaoOauth.getKakaoLoginRedirectUri();
         return kakaoUrl;
     }
 
@@ -60,5 +58,6 @@ public class OauthController {
     public String kakaoLogout() {
 
     }*/
+}
 
 
