@@ -403,7 +403,11 @@ public class PostServiceImpl {
         log.info("sellList insert 성공!!!!!!!!!!!");
     }
 
-
+    public SellList selectSellList(Long postId){
+        Post post = postRepository.findById(postId).orElseThrow();
+        SellList sellList = sellListRepository.findByPost(post);
+        return sellList;
+    }
 
 
 

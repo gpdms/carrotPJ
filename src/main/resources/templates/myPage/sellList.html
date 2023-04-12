@@ -30,7 +30,7 @@
                 </div>
             </div>
             <button th:if="${post.sellState.getSellStateName().equals('판매중')}">끌어올리기</button>
-            <button th:if="${post.sellState.getSellStateName().equals('판매중')}">예약중</button>
+            <button th:if="${post.sellState.getSellStateName().equals('판매중')}" th:onclick="sellState([[${post.postId}]],'예약중')">예약중</button>
             <button th:if="${post.sellState.getSellStateName().equals('판매중')}">거래완료</button>
 
             <button th:if="${post.sellState.getSellStateName().equals('예약중')}">판매중으로 변경</button>
@@ -119,6 +119,29 @@
                 },
                 error: function(jqXHR, textStatus, errorThrown){
                     console.log(jqXHR.responseText);
+                    alert("변경에 실패했습니다.");
+                }
+            }); //$.ajax
+        }
+
+        //판매여부 변경
+        function sellState(postId, sellStateName){
+            console.log("postId:",postId,"sellStateName:",sellStateName);
+
+            let data = {"postId" : postId, "sellStateName": sellStateName};
+
+            $.ajax({
+                url: '/post/sellState',
+                type: 'POST',
+                data: data,
+                success: function(result){
+                    console.log(result);
+                    //화면 처리
+                    alert(result);
+                    // location.reload();
+                },
+                error: function(jqXHR, textStatus, errorThrown){
+                    console.log(jqXHR.statusText);
                     alert("변경에 실패했습니다.");
                 }
             }); //$.ajax
