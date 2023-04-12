@@ -22,7 +22,6 @@ import java.io.IOException;
 @RequiredArgsConstructor
 public class LoginController {
     private final LoginService loginService;
-    private final GoogleOauth googleOauth;
 
     @GetMapping("/login")
     public String loginForm(@ModelAttribute("loginForm") LoginForm form) {
@@ -65,15 +64,5 @@ public class LoginController {
         return "redirect:/";
     }
 
-    // 구글 로그인창 호출
-/*    @GetMapping ("/login/getGoogleAuthUrl")
-    @ResponseBody
-    public String getGoogleAuthUrl(HttpServletRequest request) throws Exception {
-        String reqUrl = googleOauth.getGoogleLoginUrl() +
-                "/o/oauth2/v2/auth?client_id="
-                + googleOauth.getGoogleClientId() +
-                "&redirect_uri=" + googleOauth.getGoogleRedirectUrl()
-                + "&response_type=code&scope=email%20profile%20openid&access_type=offline";
-        return reqUrl;
-    }*/
+
 }

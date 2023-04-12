@@ -79,13 +79,28 @@
     function handleCredentialResponse(response) {
       console.log("Encoded JWT ID token: " + response.credential);
       const responsePayload = decodeJwtResponse(response.credential);
-
       console.log("ID: " + responsePayload.sub);
       console.log('Full Name: ' + responsePayload.name);
       console.log('Given Name: ' + responsePayload.given_name);
       console.log('Family Name: ' + responsePayload.family_name);
       console.log("Image URL: " + responsePayload.picture);
       console.log("Email: " + responsePayload.email);
+
+      // ajax 호출
+      $.ajax({
+        type: "POST",
+        url: "/api/auth/google",
+        contentType: "application/json",
+        data: JSON.stringify({
+          idToken: response.credential
+        }),
+        success: function(response) {
+          console.log(response);
+        },
+        error: function(error) {
+          console.log(error);
+        }
+      });
     }
     window.onload = function () {
       google.accounts.id.initialize({
@@ -107,14 +122,7 @@
 
       return JSON.parse(jsonPayload);
     };
-/*    function loginWithGoogle() {
-      $.ajax({
-        url: '/login/getGoogleAuthUrl',
-        type: 'get',
-      }).done(function (res) {
-        location.href = res;
-      });
-    }*/
+
   </script>
 </div>
 </html>
