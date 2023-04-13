@@ -8,6 +8,7 @@ import com.exercise.carrotproject.domain.member.repository.MemberRepository;
 import com.exercise.carrotproject.domain.member.service.MemberServiceImpl;
 import com.exercise.carrotproject.domain.post.entity.Trade;
 import com.exercise.carrotproject.domain.post.repository.PostRepository;
+import com.exercise.carrotproject.domain.post.repository.TradeCustomRepository;
 import com.exercise.carrotproject.domain.post.repository.TradeRepository;
 import com.exercise.carrotproject.domain.review.service.ReviewBuyerServiceImpl;
 import com.exercise.carrotproject.domain.review.service.ReviewSellerServiceImpl;
@@ -51,6 +52,7 @@ public class MemberController {
 
     //for Review
     private final TradeRepository tradeRepository;
+    private final TradeCustomRepository tradeCustomRepository;
     private final ReviewSellerServiceImpl reviewSellerService;
     private final ReviewBuyerServiceImpl reviewBuyerService;
 
@@ -149,12 +151,10 @@ public class MemberController {
         return urlResource;
     }
 
-
     //buyList 뽑아오는 것
     @GetMapping("/{memId}/trade/buyList")
     public String buyList(@PathVariable String memId, Model model) {
-        Member buyer = memberService.findOneMember(memId);
-        List<Trade> buyList = tradeRepository.findByBuyer(buyer);
+        List<Trade> buyList = tradeCustomRepository.getBuyList(memId);//나중에 TradeService
         List<MyBuyListForm> buyFormList = new ArrayList<>();
         if(buyList != null) {
             for (Trade buyOne : buyList) {
@@ -164,7 +164,6 @@ public class MemberController {
             }
         }
         model.addAttribute("buyList", buyFormList);
-        model.addAttribute("memId", memId);
         return "member/myBuyList";
     }
     //sellList

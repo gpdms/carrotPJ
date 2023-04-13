@@ -32,9 +32,9 @@
                 </form>
                 <form class="d-flex" th:if="${session.loginMember != null}"
                       th:action="@{/logout}" method="get">
-                <button  th:if="${session.loginMember?.role.name().equals('USER')}"
+                <button  th:if="${session.loginMember.role.name().equals('USER')}"
                          class="btn btn-outline-dark" type="submit"> 로그아웃 </button>
-                <button  th:if="${session.loginMember?.role.name().contains('SOCIAL')}"
+                <button  th:if="${session.loginMember.role.name().contains('SOCIAL')}"
                              class="btn btn-outline-dark" type="button"
                         th:onclick="logoutSocial([[${session.loginMember?.role.name()}]])"> 로그아웃 </button>
                 <button  class="btn btn-outline-dark" type="button"

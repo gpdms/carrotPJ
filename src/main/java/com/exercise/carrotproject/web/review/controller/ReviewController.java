@@ -12,6 +12,8 @@ import com.exercise.carrotproject.domain.review.entity.ReviewBuyer;
 import com.exercise.carrotproject.domain.review.entity.ReviewSeller;
 import com.exercise.carrotproject.domain.review.repository.ReviewBuyerCustomRepository;
 import com.exercise.carrotproject.domain.review.repository.ReviewSellerCustomRepository;
+import com.exercise.carrotproject.domain.review.repository.basic.ReviewBuyerRepository;
+import com.exercise.carrotproject.domain.review.repository.basic.ReviewSellerRepository;
 import com.exercise.carrotproject.domain.review.service.ReviewBuyerServiceImpl;
 import com.exercise.carrotproject.domain.review.service.ReviewSellerServiceImpl;
 import com.exercise.carrotproject.domain.review.service.ReviewServiceImpl;
@@ -45,6 +47,8 @@ public class ReviewController {
     private final PostRepository postRepository;
     private final TradeRepository tradeRepository;
 
+    private final ReviewBuyerRepository reviewBuyerRepository;
+    private final ReviewSellerRepository reviewSellerRepository;
     private final ReviewBuyerCustomRepository reviewBuyerCustomRepository;
     private final ReviewSellerCustomRepository reviewSellerCustomRepository;
 
@@ -106,7 +110,7 @@ public class ReviewController {
     @ResponseBody
     public String addBuyerReview(@RequestBody ReviewForm reviewForm, RedirectAttributes redirectAttributes) {
         Post post = postRepository.findById(reviewForm.getPostId()).orElseThrow(() -> new NoSuchElementException("Post Not Found"));
-       /* if(reviewBuyerService.findReviewBuyerIdByPost(post) != 0L) { //이미 등록된 판매자 리뷰가 있으면 판매완료 페이지로
+       /*if(reviewBuyerService.findReviewBuyerIdByPost(post) != 0L) { //이미 등록된 판매자 리뷰가 있으면 판매완료 페이지로
             redirectAttributes.addAttribute("me", reviewForm.getSellerId());
             return "redirect:/members/{me}/trade/sellList";
         }*/
