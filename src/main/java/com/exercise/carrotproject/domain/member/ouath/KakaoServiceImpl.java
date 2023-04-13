@@ -115,7 +115,8 @@ public class KakaoServiceImpl {
             if (!profile.isEmpty()) {
                 if(profile.containsKey("is_default_image") && !(boolean)profile.get("is_default_image")) {
                     profileImgUrl = profile.get("profile_image_url").toString();  //디폴트 이미지면 빈문자열만 보낸다.
-                } else if(profile.containsKey("nickname")) {
+                }
+                if(profile.containsKey("nickname")) {
                     nickname = profile.get("nickname").toString();
                 }
             }
