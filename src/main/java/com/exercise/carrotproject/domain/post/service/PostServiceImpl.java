@@ -1,7 +1,13 @@
 package com.exercise.carrotproject.domain.post.service;
 
+import com.exercise.carrotproject.domain.chat.dto.ChatRoomDto;
+import com.exercise.carrotproject.domain.chat.entity.QChat;
+import com.exercise.carrotproject.domain.chat.entity.QChatRoom;
 import com.exercise.carrotproject.domain.enumList.HideState;
+import com.exercise.carrotproject.domain.enumList.ReadState;
 import com.exercise.carrotproject.domain.enumList.SellState;
+import com.exercise.carrotproject.domain.member.MemberEntityDtoMapper;
+import com.exercise.carrotproject.domain.member.dto.MemberDto;
 import com.exercise.carrotproject.domain.member.entity.Member;
 import com.exercise.carrotproject.domain.member.entity.QMember;
 import com.exercise.carrotproject.domain.member.repository.MemberRepository;
@@ -10,6 +16,9 @@ import com.exercise.carrotproject.domain.post.entity.*;
 import com.exercise.carrotproject.domain.post.dto.PostDto;
 import com.exercise.carrotproject.domain.post.dto.PostImgDto;
 import com.exercise.carrotproject.domain.post.repository.*;
+import com.exercise.carrotproject.web.common.SessionConst;
+import com.querydsl.core.types.ExpressionUtils;
+import com.querydsl.core.types.Projections;
 import com.querydsl.jpa.JPAExpressions;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
@@ -27,6 +36,7 @@ import org.springframework.web.multipart.MultipartFile;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
+import javax.servlet.http.HttpSession;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Path;
@@ -50,6 +60,7 @@ public class PostServiceImpl {
     private final PostImgRepository postImgRepository;
     private final MemberRepository memberRepository;
     private final MtPlaceRepository mtPlaceRepository;
+    private final TradeRepository tradeRepository;
     private final JPAQueryFactory jpaQueryFactory; //QuerydslConfig파일에 bean등록함
 //    private final PostRepositoryImpl customPostRepository; //후에 CustomPostRepository로 바꿔주기
 
@@ -388,10 +399,72 @@ public class PostServiceImpl {
         return msg;
     }
 
+//    @Override
 
+    public List<ChatRoomDto> selectBuyersByPost(MemberDto memberDto, Long postId){
+        Member memberEntity = MemberEntityDtoMapper.toMemberEntity(memberDto);
 
+        List<Long> ids = jpaQueryFactory.select(QChat.chat.chatId.max())
+                .from(QChat.chat)
+                .where(QChat.chat.from.eq(memberEntity).or(QChat.chat.to.eq(memberEntity)))
+                .groupBy(QChat.chat.room.roomId)
+                .fetch();
 
+        List<ChatRoomDto> chatRoomList = jpaQueryFactory
+                .select(Projections.constructor(ChatRoomDto.class,
+                                QChatRoom.chatRoom.roomId,
+                                QChatRoom.chatRoom.post.postId,
+                                QChatRoom.chatRoom.seller.memId.as("sellerId"),
+                                QChatRoom.chatRoom.buyer.memId.as("buyerId"),
+                                QChat.chat.message,
+                                QChat.chat.createdTime,
+                                ExpressionUtils.as(
+                                        JPAExpressions.select(QChat.chat.chatId.count())
+                                                .from(QChat.chat)
+                                                .where(QChat.chat.room.eq(QChatRoom.chatRoom)
+                                                        .and(QChat.chat.readState.eq(ReadState.NOTREAD))
+                                                        .and(QChat.chat.from.ne(memberEntity))
+                                                ),
+                                        "unacknowledgedMessageCount"
+                                )
+                        )
+                )
+                .from(QChatRoom.chatRoom)
+                .leftJoin(QChat.chat)
+                .on(QChatRoom.chatRoom.roomId.eq(QChat.chat.room.roomId))
+                .where(
+                        (QChatRoom.chatRoom.seller.eq(memberEntity)
+                                .or(QChatRoom.chatRoom.buyer.eq(memberEntity))
+                        )
+                                .and(QChatRoom.chatRoom.post.postId.eq(postId))
+                                .and(QChat.chat.chatId.in(ids))
+                )
+                .orderBy(QChat.chat.createdTime.desc())
+                .fetch();
 
+        return chatRoomList;
+    }
+
+//    @Override
+    public Trade selectTradeByPost(Long postId){
+        Post post = postRepository.findById(postId).orElseThrow();
+        Trade trade = tradeRepository.findByPost(post);
+        if(trade == null){
+            return null;
+        }
+        return trade;
+    }
+
+//    @Override
+    @Transactional
+    public void insertTrade(Long postId, String buyerId){
+        Post post = postRepository.findById(postId).orElseThrow();
+        Member seller = memberRepository.findById(post.getMember().getMemId()).orElseThrow();
+        Member buyer = memberRepository.findById(buyerId).orElseThrow();
+        Trade trade = Trade.builder()
+                        .post(post).seller(seller).buyer(buyer).hideStateBuyer(HideState.SHOW).build();
+        tradeRepository.save(trade);
+    }
 
 
 

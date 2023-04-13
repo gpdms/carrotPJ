@@ -1,7 +1,6 @@
 package com.exercise.carrotproject.domain.post.controller;
 
-import com.exercise.carrotproject.domain.enumList.HideState;
-import com.exercise.carrotproject.domain.enumList.SellState;
+import com.exercise.carrotproject.domain.chat.dto.ChatRoomDto;
 import com.exercise.carrotproject.domain.post.dto.MtPlaceDto;
 import com.exercise.carrotproject.web.common.SessionConst;
 import com.exercise.carrotproject.domain.member.dto.MemberDto;
@@ -58,7 +57,7 @@ public class PostController {
         Page<PostDto> page = postService.paging(postList, pageable);
         model.addAttribute("list", page);
 
-        return "board";
+        return "post/board";
     }
 
     //게시글 상세정보 detail
@@ -90,14 +89,14 @@ public class PostController {
 
 
 
-        return "detail";
+        return "post/detail";
     }
 
 
     @GetMapping("/post/uploadPage")
     public String categoryOption(Model model){
 
-        return "upload_page";
+        return "post/upload_page";
     }
 
     //게시글 업로드
@@ -191,7 +190,7 @@ public class PostController {
 
 
 
-        return "update_post";
+        return "update/update_post";
     }
 
     //게시글 수정한 것 업로드
@@ -255,6 +254,40 @@ public class PostController {
     }
 
 
+
+
+    //거래후기보내기 클릭시 구매자 선택유뮤 확인
+    @GetMapping("/post/tradeReview/{postId}")
+    public String tradeReviewCheck(@PathVariable Long postId){
+
+        //trade테이블에 없으면 구매자 선택 페이지
+        if (postService.selectTradeByPost(postId) == null) {
+            return "redirect:/post/buyers/"+postId;
+        }
+
+        //trade테이블에 있으면 거래후기 적는 페이지로
+        return "redirect:/reviews/buyer?postId="+postId;
+        
+    }
+
+    //구매자선택 페이지로
+    @GetMapping("/post/buyers/{postId}")
+    public String buyerList(Model model, HttpSession session, @PathVariable Long postId) {
+        MemberDto memberDto = (MemberDto) session.getAttribute(SessionConst.LOGIN_MEMBER);
+
+        List<ChatRoomDto> chatRoomList = postService.selectBuyersByPost(memberDto, postId);
+        model.addAttribute("chatRoomList", chatRoomList);
+
+        return "post/buyerListByPost";
+    }
+
+    //구매자 선택시 trade테이블에 insert
+    @GetMapping("/post/buyer/{postId}/{buyerId}")
+    public String addTrade(@PathVariable Long postId, @PathVariable String buyerId){
+        postService.insertTrade(postId, buyerId);
+
+        return "redirect:/reviews/buyer?postId="+postId;
+    }
 
 
 
