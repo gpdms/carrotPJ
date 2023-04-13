@@ -26,9 +26,6 @@ public class PostEntityDtoMapper {
                 .build();
     }
 
-
-
-
     //Entity->Dto 변환
     public static PostDto entityToDto (Post post) {
         return PostDto.builder()
