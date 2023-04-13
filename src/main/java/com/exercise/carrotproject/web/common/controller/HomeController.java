@@ -53,6 +53,7 @@ public class HomeController {
         Member loginMember = memberRepository.findById("tester2").orElse(null);
         MemberDto loginMemberDto = MemberDto.builder().memId(loginMember.getMemId())
                 .nickname(loginMember.getNickname())
+                .role(Role.USER)
                 .mannerScore(loginMember.getMannerScore())
                 .loc(loginMember.getLoc()).build();
         HttpSession session = request.getSession();
