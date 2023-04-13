@@ -150,8 +150,8 @@ public class MemberController {
     }
 
 
-    //buyList
-    @GetMapping("/{memId}/transaction/buyList")
+    //buyList 뽑아오는 것
+    @GetMapping("/{memId}/trade/buyList")
     public String buyList(@PathVariable String memId, Model model) {
         Member buyer = memberService.findOneMember(memId);
         List<Trade> buyList = tradeRepository.findByBuyer(buyer);
@@ -168,7 +168,7 @@ public class MemberController {
         return "member/myBuyList";
     }
     //sellList
-    @GetMapping("/{memId}/transaction/sellList")
+    /*@GetMapping("/{memId}/trade/sellList")
     public String sellList(@PathVariable String memId, Model model) {
         Member seller= memberService.findOneMember(memId);
         List<Trade> sellList = tradeRepository.findBySeller(seller);
@@ -182,7 +182,7 @@ public class MemberController {
         }
         model.addAttribute("sellList", sellFormList);
         return "member/mySellList";
-    }
+    }*/
 
 
 
