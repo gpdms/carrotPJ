@@ -82,9 +82,10 @@
             }
         </script>
         <script th:inline="javascript">
-            function logoutWithKakao() {
+            function logoutSocial(wherePlatform) {
+                if(wherePlatform=='SOCIAL_KAKAO') {wherePlatform = 'Kakao'}
                 $.ajax({
-                    url: '/logout/getKakaoLogoutURL',
+                    url: `/logout/get${wherePlatform}LogoutURL`,
                     type: 'get',
                 }).done(function (res) {
                     location.href = res;

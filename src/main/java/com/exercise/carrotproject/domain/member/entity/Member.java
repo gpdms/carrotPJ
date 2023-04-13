@@ -43,6 +43,7 @@ public class Member extends BaseEntity {
 
     private String email;
 
+    @NotNull
     @Size(min = 2, max = 15)
     private String nickname;
 

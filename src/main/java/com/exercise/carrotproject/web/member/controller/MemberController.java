@@ -79,8 +79,13 @@ public class MemberController {
         Map<String, Object> saveResult = memberService.insertMember(member);
         //log.info("saveResult {}", saveResult.containsValue("fail-DM"));
         //중복된 아이디 -> field 오류로 알릴 수 있다.
-        if (saveResult.containsValue("fail-DM")) {
-            bindingResult.rejectValue("memId", "duplicatedMemId");
+        if(saveResult.containsKey("fail")) {
+            if (saveResult.containsValue("id")) {
+                bindingResult.rejectValue("memId", "duplicatedMemId");
+            }
+            if (saveResult.containsValue("nickname")) {
+                bindingResult.rejectValue("nickname", "duplicateNickname");
+            }
             return "/member/signupForm";
         }
         return "redirect:/login";
@@ -111,7 +116,6 @@ public class MemberController {
             bindingResult.rejectValue("pwdConfirm", "pwdConfirmIncorrect", "암호가 일치하지 않습니다.");
             return  "/member/memberInfo";
         }
-
         //db에 업데이트 실패 -> 검증오류(PwdUpdateForm에 관한 문제) 아니고, 서버 오류일 것이다
         //bindingResult에 담아서 보내지 말아야하지 않을까?
         String hashedPwd = securityUtils.getHashedPwd(pwdUpdateForm.getPwd());

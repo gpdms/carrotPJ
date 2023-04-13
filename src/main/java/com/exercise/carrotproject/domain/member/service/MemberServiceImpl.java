@@ -51,22 +51,35 @@ public class MemberServiceImpl {
     public boolean hasDuplicatedMemberId(String memId) {
         return memberRepository.existsById(memId) ? true : false;
     }
+    public boolean hasDuplicatedNickname(String nickname) {
+        return memberRepository.existsByNickname(nickname) ? true : false;
+    }
 
     //@Override
     public Map<String, Object> insertMember(Member member) {
         Map<String, Object> saveResult = new HashMap<>();
         if (hasDuplicatedMemberId(member.getMemId())) {
-            saveResult.put("resultCode", "fail-DM");
+            saveResult.put("fail", "id");
+            return saveResult;
+        }
+        if(hasDuplicatedNickname(member.getNickname())) {
+            saveResult.put("fail", "nickname");
             return saveResult;
         }
         Member newMember = memberRepository.save(member);
-        saveResult.put("resultCode", "success");
+        saveResult.put("success", "저장 성공");
         return saveResult;
     }
 
+
     @Transactional
-    public MemberDto insertSocialMember(Map<String, Object> userinfo, Role role) {
-        String save_path = userinfo.get("profileImgUrl").toString();
+    public Map<String, Object> insertSocialMember(Map<String, Object> userinfo, Role role) {
+        HashMap<String, Object> resultMap = new HashMap<>();
+        if(hasDuplicatedNickname(userinfo.get("nickname").toString())) {
+            resultMap.put("fail", "nickname");
+            return resultMap;
+        }
+        String save_path = userinfo.get("profPath").toString();
         if(!save_path.isEmpty()) {
             save_path = saveSocialProfImg(save_path);
         }
@@ -79,12 +92,12 @@ public class MemberServiceImpl {
                 .role(role)
                 .build();
         memberRepository.save(member);
-        return MemberEntityDtoMapper.toMemberDto(member);
+        resultMap.put("success", MemberEntityDtoMapper.toMemberDto(member));
+        return resultMap;
     }
 
     public String saveSocialProfImg(String url) {
         String save_path = url;
-        System.out.println("save_path############## = " + save_path);
         try {
             URL imgURL = new URL(url);
             String extension = url.substring(url.lastIndexOf(".")+1); // 확장자
@@ -205,7 +218,7 @@ public class MemberServiceImpl {
     public boolean hasSocialMember(String email, Role role) {
         return memberRepository.existsByEmailAndRole(email, role);
     }
-    public MemberDto findOneSocialMember(String email, Role role) {
+    public MemberDto findOneSocialMemberDto(String email, Role role) {
         Member member = memberRepository.findByEmailAndRole(email, role);
         return  MemberEntityDtoMapper.toMemberDto(member);
     }
