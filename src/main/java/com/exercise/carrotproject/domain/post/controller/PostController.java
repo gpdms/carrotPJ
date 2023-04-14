@@ -248,11 +248,11 @@ public class PostController {
         String resultMsg = postService.updateSellState(postId, sellStateName);
 
         if (resultMsg.equals("판매완료")){
-//            postService.insertSellList(postId);
         }
         if(resultMsg.equals("판매중")||resultMsg.equals("예약중")){
             //trade에서 delete
             //review 삭제
+            tradeService.deleteTradeAndReview(postId);
         }
 
         return new ResponseEntity<>(resultMsg, HttpStatus.OK);
