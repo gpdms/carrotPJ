@@ -43,9 +43,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 
 
 @RequiredArgsConstructor
@@ -399,6 +397,41 @@ public class PostServiceImpl {
         return msg;
     }
 
+    //판매여부로 게시글들 반환
+    //    @Override
+    public Map selectPostBySellState(String memId){
+        Member member = memberRepository.findById(memId).orElseThrow();
+
+        //판매중,예약중
+        List<Post> onSalePostList = postRepository.findByMemberAndHideStateAndSellStateOrSellStateOrderByPostIdDesc(member, HideState.SHOW, SellState.ON_SALE,SellState.RESERVATION);
+        //entity리스트->dto리스트
+        List<PostDto> postDtoOnSaleList = PostEntityDtoMapper.toDtoList(onSalePostList);
+
+
+        //판매완료
+        List<Post> soldPostList = postRepository.findByMemberAndSellStateAndHideStateOrderByPostIdDesc(member, SellState.SOLD, HideState.SHOW);
+        //entity리스트->dto리스트
+        List<PostDto> postDtoSoldList = PostEntityDtoMapper.toDtoList(soldPostList);
+
+        Map map = new HashMap();
+        map.put("onSaleAndRsvList", postDtoOnSaleList);
+        map.put("soldList", postDtoSoldList);
+
+        return map;
+    }
+
+    //숨김 게시글들 반환
+    //    @Override
+    public List<PostDto> selectHidePost(String memId){
+        Member member = memberRepository.findById(memId).orElseThrow();
+
+        List<Post> postList = postRepository.findByMemberAndHideStateOrderByPostIdDesc(member,HideState.HIDE);
+        //entity리스트->dto리스트
+        List<PostDto> postDtoList = PostEntityDtoMapper.toDtoList(postList);
+
+        return postDtoList;
+    }
+
 //    @Override
 
     public List<ChatRoomDto> selectBuyersByPost(MemberDto memberDto, Long postId){
@@ -464,6 +497,19 @@ public class PostServiceImpl {
         Trade trade = Trade.builder()
                         .post(post).seller(seller).buyer(buyer).hideStateBuyer(HideState.SHOW).build();
         tradeRepository.save(trade);
+    }
+
+    //    @Override
+    @Transactional
+    public void updateTrade(Long postId, String buyerId){
+        Member buyer = memberRepository.findById(buyerId).orElseThrow();
+
+        QTrade qTrade = QTrade.trade;
+        jpaQueryFactory
+                .update(qTrade)
+                .set(qTrade.buyer, buyer)
+                .where(qTrade.post.postId.eq(postId))
+                .execute();
     }
 
 

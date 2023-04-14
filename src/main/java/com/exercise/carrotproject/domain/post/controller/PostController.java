@@ -2,6 +2,7 @@ package com.exercise.carrotproject.domain.post.controller;
 
 import com.exercise.carrotproject.domain.chat.dto.ChatRoomDto;
 import com.exercise.carrotproject.domain.post.dto.MtPlaceDto;
+import com.exercise.carrotproject.domain.post.entity.Trade;
 import com.exercise.carrotproject.web.common.SessionConst;
 import com.exercise.carrotproject.domain.member.dto.MemberDto;
 import com.exercise.carrotproject.domain.post.dto.PostDto;
@@ -9,6 +10,7 @@ import com.exercise.carrotproject.domain.post.dto.PostImgDto;
 import com.exercise.carrotproject.domain.post.service.PostServiceImpl;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.coyote.Response;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.UrlResource;
 import org.springframework.data.domain.Page;
@@ -247,7 +249,8 @@ public class PostController {
 //            postService.insertSellList(postId);
         }
         if(resultMsg.equals("판매중")||resultMsg.equals("예약중")){
-
+            //trade에서 delete
+            //review 삭제
         }
 
         return new ResponseEntity<>(resultMsg, HttpStatus.OK);
@@ -256,21 +259,23 @@ public class PostController {
 
 
 
-    //거래후기보내기 클릭시 구매자 선택유뮤 확인
-    @GetMapping("/post/tradeReview/{postId}")
-    public String tradeReviewCheck(@PathVariable Long postId){
+    //거래후기보내기 클릭시 구매자 선택 페이지
+//    @GetMapping("/post/tradeReview/{postId}")
+//    public String tradeReviewCheck(@PathVariable Long postId, Model model){
+//
+//        //trade테이블에 없으면 구매자 선택 페이지
+//       Trade selectedBuyer = postService.selectTradeByPost(postId);
+////            return "redirect:/post/buyers/"+postId;
+//
+//        //trade테이블에 있으면 거래후기 적는 페이지로
+////        return "redirect:/reviews/buyer?postId="+postId;
+//
+//        model.addAttribute("selectedBuyer", selectedBuyer);
+//
+//        return "post/buyerListByPost";
+//    }
 
-        //trade테이블에 없으면 구매자 선택 페이지
-        if (postService.selectTradeByPost(postId) == null) {
-            return "redirect:/post/buyers/"+postId;
-        }
-
-        //trade테이블에 있으면 거래후기 적는 페이지로
-        return "redirect:/reviews/buyer?postId="+postId;
-        
-    }
-
-    //구매자선택 페이지로
+    //구매자선택 페이지
     @GetMapping("/post/buyers/{postId}")
     public String buyerList(Model model, HttpSession session, @PathVariable Long postId) {
         MemberDto memberDto = (MemberDto) session.getAttribute(SessionConst.LOGIN_MEMBER);
@@ -278,13 +283,33 @@ public class PostController {
         List<ChatRoomDto> chatRoomList = postService.selectBuyersByPost(memberDto, postId);
         model.addAttribute("chatRoomList", chatRoomList);
 
+//        Trade selectedBuyer = postService.selectTradeByPost(postId);
+//        if(selectedBuyer == null){
+//            model.addAttribute("selectedBuyerId", null);
+//        } else {
+//            String selectedBuyerId = selectedBuyer.getBuyer().getMemId();
+//            model.addAttribute("selectedBuyerId", selectedBuyerId);
+//        }
+
         return "post/buyerListByPost";
     }
 
-    //구매자 선택시 trade테이블에 insert
+    //구매자 선택시
     @GetMapping("/post/buyer/{postId}/{buyerId}")
-    public String addTrade(@PathVariable Long postId, @PathVariable String buyerId){
-        postService.insertTrade(postId, buyerId);
+    public String chooseBuyer(@PathVariable Long postId, @PathVariable String buyerId){
+
+        Trade trade = postService.selectTradeByPost(postId);
+
+        if (trade == null){
+            //trade에 없을 경우
+            postService.insertTrade(postId, buyerId);
+
+        } else if (trade.getBuyer().getMemId() != buyerId) {
+            //trade에 있는 buyer와 다른 buyer를 선택했을 경우
+            postService.updateTrade(postId, buyerId);
+        } else{
+            //trade에 있는 buyer와 같은 buyer를 선택했을 경우
+        }
 
         return "redirect:/reviews/buyer?postId="+postId;
     }
