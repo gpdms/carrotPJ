@@ -3,6 +3,7 @@ package com.exercise.carrotproject.domain.post.controller;
 import com.exercise.carrotproject.domain.chat.dto.ChatRoomDto;
 import com.exercise.carrotproject.domain.post.dto.MtPlaceDto;
 import com.exercise.carrotproject.domain.post.entity.Trade;
+import com.exercise.carrotproject.domain.post.service.TradeServiceImpl;
 import com.exercise.carrotproject.web.common.SessionConst;
 import com.exercise.carrotproject.domain.member.dto.MemberDto;
 import com.exercise.carrotproject.domain.post.dto.PostDto;
@@ -35,6 +36,7 @@ import java.util.stream.Collectors;
 public class PostController {
 
     private final PostServiceImpl postService;
+    private final TradeServiceImpl tradeService;
 
 
     @Value("${default.postImg}")
@@ -298,15 +300,15 @@ public class PostController {
     @GetMapping("/post/buyer/{postId}/{buyerId}")
     public String chooseBuyer(@PathVariable Long postId, @PathVariable String buyerId){
 
-        Trade trade = postService.selectTradeByPost(postId);
+        Trade trade = tradeService.selectTradeByPost(postId);
 
         if (trade == null){
             //trade에 없을 경우
-            postService.insertTrade(postId, buyerId);
+            tradeService.insertTrade(postId, buyerId);
 
         } else if (trade.getBuyer().getMemId() != buyerId) {
             //trade에 있는 buyer와 다른 buyer를 선택했을 경우
-            postService.updateTrade(postId, buyerId);
+            tradeService.updateTrade(postId, buyerId);
         } else{
             //trade에 있는 buyer와 같은 buyer를 선택했을 경우
         }

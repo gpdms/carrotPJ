@@ -478,39 +478,7 @@ public class PostServiceImpl {
         return chatRoomList;
     }
 
-//    @Override
-    public Trade selectTradeByPost(Long postId){
-        Post post = postRepository.findById(postId).orElseThrow();
-        Trade trade = tradeRepository.findByPost(post);
-        if(trade == null){
-            return null;
-        }
-        return trade;
-    }
 
-//    @Override
-    @Transactional
-    public void insertTrade(Long postId, String buyerId){
-        Post post = postRepository.findById(postId).orElseThrow();
-        Member seller = memberRepository.findById(post.getMember().getMemId()).orElseThrow();
-        Member buyer = memberRepository.findById(buyerId).orElseThrow();
-        Trade trade = Trade.builder()
-                        .post(post).seller(seller).buyer(buyer).hideStateBuyer(HideState.SHOW).build();
-        tradeRepository.save(trade);
-    }
-
-    //    @Override
-    @Transactional
-    public void updateTrade(Long postId, String buyerId){
-        Member buyer = memberRepository.findById(buyerId).orElseThrow();
-
-        QTrade qTrade = QTrade.trade;
-        jpaQueryFactory
-                .update(qTrade)
-                .set(qTrade.buyer, buyer)
-                .where(qTrade.post.postId.eq(postId))
-                .execute();
-    }
 
 
 
