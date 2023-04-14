@@ -57,4 +57,17 @@ public class TradeServiceImpl {
                 .where(qTrade.post.postId.eq(postId))
                 .execute();
     }
+
+//    @Override
+    @Transactional
+    public void deleteTradeAndReview(Long postId){
+        Post post = postRepository.findById(postId).orElseThrow();
+        //trade테이블에서 delete
+            tradeRepository.deleteByPost(post);
+
+
+    }
+
+
+
 }
