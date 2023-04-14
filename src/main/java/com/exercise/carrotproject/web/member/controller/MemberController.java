@@ -144,7 +144,7 @@ public class MemberController {
     @GetMapping("/{memId}/profileImg")
     public Resource viewProfileImg(@PathVariable("memId") String memId) throws IOException {
         String profPath = memberService.getProfPath(memId);
-        if(profPath.isEmpty()) {
+        if(profPath == null || profPath.isEmpty()) {
             profPath = rootProfileImgDir+"profile_img.png";
         }
         UrlResource urlResource = new UrlResource("file:" + profPath);
