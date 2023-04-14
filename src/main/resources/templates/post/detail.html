@@ -315,6 +315,11 @@
                 let sellStateName = $("#selSellState").val();
                 let data = {"postId" : postId, "sellStateName": sellStateName};
 
+                if(sellStateName == "예약중" || sellStateName =="판매중"){
+                    let ok = confirm("작성하신 거래후기가 있을 경우 거래후기가 삭제됩니다. 변경하시겠습니까?");
+                    if(!ok) return;
+                }
+
                 $.ajax({
                     url: '/post/sellState',
                     type: 'POST',
@@ -327,7 +332,7 @@
                         if(result == "판매완료"){
                             let trueFalse = confirm("거래후기를 작성하시겠습니까?")
                             if(trueFalse==true){
-                                location.href=`/chat/chatRoomListByPost/${postId}`;
+                                location.href=`/post/buyers/${postId}`;
                             }
                         }
                     },

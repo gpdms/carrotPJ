@@ -103,7 +103,7 @@
     <br/>
     <br/>
     <button class="w-50 btn btn-secondary btn-group-sm"
-            type="button" th:onclick="|location.href='@{/myPage/mySellList/{memId}(memId=${session.loginMember.memId})}'|">판매내역</button>
+            type="button" th:onclick="|location.href='@{/members/{memId}/trade/sellList(memId=${session.loginMember.memId})}'|">판매내역</button>
 
 </div>
 
