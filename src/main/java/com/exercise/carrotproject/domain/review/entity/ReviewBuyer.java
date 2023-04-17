@@ -22,6 +22,7 @@ import java.util.List;
 @Builder
 @ToString (exclude = "reviewBuyerDetailList")
 @Getter
+@DynamicInsert
 public class ReviewBuyer extends BaseEntity {
     @Id @GeneratedValue(strategy= GenerationType.IDENTITY)
     private Long reviewBuyerId;
@@ -37,7 +38,7 @@ public class ReviewBuyer extends BaseEntity {
     private Double totalScore;
     private String message;
 
-    @NotNull @ColumnDefault("0")
+    @ColumnDefault("0") @Column(nullable = false)
     @Convert(converter = HideStateConverter.class)
     private HideState hideState;
     @NotNull @Convert(converter = ReviewStateConverter.class)

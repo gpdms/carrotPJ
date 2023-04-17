@@ -125,7 +125,7 @@ public class ReviewController {
                 .message(reviewForm.getMessage())
                 .build();
         reviewBuyerService.insertReviewBuyer(reviewBuyer, indicatorList);
-        return "review/reviewForm";
+        return "성공";
     }
     @GetMapping("/buyer/{reviewBuyerId}")
     public String reviewBuyerDetail (@PathVariable String reviewBuyerId,

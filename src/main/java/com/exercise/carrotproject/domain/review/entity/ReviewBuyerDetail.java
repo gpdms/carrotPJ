@@ -18,7 +18,7 @@ import java.sql.Timestamp;
 @Getter
 public class ReviewBuyerDetail {
     @Id @GeneratedValue(strategy= GenerationType.IDENTITY)
-    private Long reviewBuyerReviewId;
+    private Long reviewBuyerDetailId;
 
     @NotNull @ManyToOne @JoinColumn(name="review_buyer_id")
     private ReviewBuyer reviewBuyer;
