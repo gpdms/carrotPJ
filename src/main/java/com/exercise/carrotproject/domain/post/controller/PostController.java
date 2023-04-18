@@ -1,8 +1,9 @@
 package com.exercise.carrotproject.domain.post.controller;
 
-import com.exercise.carrotproject.domain.enumList.HideState;
-import com.exercise.carrotproject.domain.enumList.SellState;
+import com.exercise.carrotproject.domain.chat.dto.ChatRoomDto;
 import com.exercise.carrotproject.domain.post.dto.MtPlaceDto;
+import com.exercise.carrotproject.domain.post.entity.Trade;
+import com.exercise.carrotproject.domain.post.service.TradeServiceImpl;
 import com.exercise.carrotproject.web.common.SessionConst;
 import com.exercise.carrotproject.domain.member.dto.MemberDto;
 import com.exercise.carrotproject.domain.post.dto.PostDto;
@@ -10,6 +11,7 @@ import com.exercise.carrotproject.domain.post.dto.PostImgDto;
 import com.exercise.carrotproject.domain.post.service.PostServiceImpl;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.coyote.Response;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.UrlResource;
 import org.springframework.data.domain.Page;
@@ -34,6 +36,7 @@ import java.util.stream.Collectors;
 public class PostController {
 
     private final PostServiceImpl postService;
+    private final TradeServiceImpl tradeService;
 
 
     @Value("${default.postImg}")
@@ -58,7 +61,7 @@ public class PostController {
         Page<PostDto> page = postService.paging(postList, pageable);
         model.addAttribute("list", page);
 
-        return "board";
+        return "post/board";
     }
 
     //게시글 상세정보 detail
@@ -90,14 +93,14 @@ public class PostController {
 
 
 
-        return "detail";
+        return "post/detail";
     }
 
 
     @GetMapping("/post/uploadPage")
     public String categoryOption(Model model){
 
-        return "upload_page";
+        return "post/upload_page";
     }
 
     //게시글 업로드
@@ -191,7 +194,7 @@ public class PostController {
 
 
 
-        return "update_post";
+        return "update/update_post";
     }
 
     //게시글 수정한 것 업로드
@@ -245,16 +248,73 @@ public class PostController {
         String resultMsg = postService.updateSellState(postId, sellStateName);
 
         if (resultMsg.equals("판매완료")){
-//            postService.insertSellList(postId);
         }
         if(resultMsg.equals("판매중")||resultMsg.equals("예약중")){
-
+            //trade에서 delete
+            //review 삭제
+            tradeService.deleteTradeAndReview(postId);
         }
 
         return new ResponseEntity<>(resultMsg, HttpStatus.OK);
     }
 
 
+
+
+    //거래후기보내기 클릭시 구매자 선택 페이지
+//    @GetMapping("/post/tradeReview/{postId}")
+//    public String tradeReviewCheck(@PathVariable Long postId, Model model){
+//
+//        //trade테이블에 없으면 구매자 선택 페이지
+//       Trade selectedBuyer = postService.selectTradeByPost(postId);
+////            return "redirect:/post/buyers/"+postId;
+//
+//        //trade테이블에 있으면 거래후기 적는 페이지로
+////        return "redirect:/reviews/buyer?postId="+postId;
+//
+//        model.addAttribute("selectedBuyer", selectedBuyer);
+//
+//        return "post/buyerListByPost";
+//    }
+
+    //구매자선택 페이지
+    @GetMapping("/post/buyers/{postId}")
+    public String buyerList(Model model, HttpSession session, @PathVariable Long postId) {
+        MemberDto memberDto = (MemberDto) session.getAttribute(SessionConst.LOGIN_MEMBER);
+
+        List<ChatRoomDto> chatRoomList = postService.selectBuyersByPost(memberDto, postId);
+        model.addAttribute("chatRoomList", chatRoomList);
+
+//        Trade selectedBuyer = postService.selectTradeByPost(postId);
+//        if(selectedBuyer == null){
+//            model.addAttribute("selectedBuyerId", null);
+//        } else {
+//            String selectedBuyerId = selectedBuyer.getBuyer().getMemId();
+//            model.addAttribute("selectedBuyerId", selectedBuyerId);
+//        }
+
+        return "post/buyerListByPost";
+    }
+
+    //구매자 선택시
+    @GetMapping("/post/buyer/{postId}/{buyerId}")
+    public String chooseBuyer(@PathVariable Long postId, @PathVariable String buyerId){
+
+        Trade trade = tradeService.selectTradeByPost(postId);
+
+        if (trade == null){
+            //trade에 없을 경우
+            tradeService.insertTrade(postId, buyerId);
+
+        } else if (trade.getBuyer().getMemId() != buyerId) {
+            //trade에 있는 buyer와 다른 buyer를 선택했을 경우
+            tradeService.updateTrade(postId, buyerId);
+        } else{
+            //trade에 있는 buyer와 같은 buyer를 선택했을 경우
+        }
+
+        return "redirect:/reviews/buyer?postId="+postId;
+    }
 
 
 

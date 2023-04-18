@@ -51,14 +51,16 @@ dependencies {
     //querydsl
     implementation "com.querydsl:querydsl-jpa:${queryDslVersion}"
     implementation "com.querydsl:querydsl-apt:${queryDslVersion}"
-<<<<<<< Updated upstream
-    //batch
-    implementation 'org.springframework.boot:spring-boot-starter-batch'
-
-=======
     implementation "com.querydsl:querydsl-sql:${queryDslVersion}"
     implementation "com.querydsl:querydsl-sql-spring:${queryDslVersion}"
->>>>>>> Stashed changes
+    //batch
+    implementation 'org.springframework.boot:spring-boot-starter-batch'
+    //oauth
+//    implementation 'org.springframework.boot:spring-boot-starter-oauth2-client'
+    // https://mvnrepository.com/artifact/io.github.pityka/fileutils
+    implementation group: 'io.github.pityka', name: 'fileutils_2.11', version: '1.0.0'
+    // https://mvnrepository.com/artifact/commons-io/commons-io
+    implementation 'commons-io:commons-io:2.6' //파일 업로드 관련 라이브러리
 }
 
 tasks.named('test') {

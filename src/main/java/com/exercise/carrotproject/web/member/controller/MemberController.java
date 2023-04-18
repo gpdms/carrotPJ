@@ -6,10 +6,12 @@ import com.exercise.carrotproject.domain.member.dto.MemberDto;
 import com.exercise.carrotproject.domain.member.entity.Member;
 import com.exercise.carrotproject.domain.member.repository.MemberRepository;
 import com.exercise.carrotproject.domain.member.service.MemberServiceImpl;
+import com.exercise.carrotproject.domain.post.dto.PostDto;
 import com.exercise.carrotproject.domain.post.entity.Trade;
 import com.exercise.carrotproject.domain.post.repository.PostRepository;
 import com.exercise.carrotproject.domain.post.repository.TradeCustomRepository;
 import com.exercise.carrotproject.domain.post.repository.TradeRepository;
+import com.exercise.carrotproject.domain.post.service.PostServiceImpl;
 import com.exercise.carrotproject.domain.review.service.ReviewBuyerServiceImpl;
 import com.exercise.carrotproject.domain.review.service.ReviewSellerServiceImpl;
 import com.exercise.carrotproject.web.common.SessionConst;
@@ -46,6 +48,7 @@ import java.util.Optional;
 public class MemberController {
     private final MemberServiceImpl memberService;
     private final SecurityUtils securityUtils;
+    private final PostServiceImpl postService;
 
     @Value("${dir.img-profile}")
     private String rootProfileImgDir;
@@ -183,6 +186,25 @@ public class MemberController {
         return "member/mySellList";
     }*/
 
+    //sellList
+    @GetMapping("/{memId}/trade/sellList")
+    public String mySellList(@PathVariable String memId, Model model){
+
+        //판매중,예약중 게시글
+        Map map = postService.selectPostBySellState(memId);
+        List<PostDto> onSaleAndRsvList = (List) map.get("onSaleAndRsvList");
+        List<PostDto> soldList = (List) map.get("soldList");
+
+        model.addAttribute("onSaleAndRsv", onSaleAndRsvList);
+        model.addAttribute("soldList", soldList);
+
+        //숨김 게시글
+        List<PostDto> hidePostList = postService.selectHidePost(memId);
+        model.addAttribute("hidePostList", hidePostList);
+
+//        log.info("숨김 게시글들>>>>>>>>>{}",hidePostList);
+        return "myPage/sellList";
+    }
 
 
 }
