@@ -1,15 +1,16 @@
 package com.exercise.carrotproject.domain.chat.controller;
 
+import com.exercise.carrotproject.domain.chat.dto.ChatDto;
 import com.exercise.carrotproject.domain.chat.dto.ChatRoomDto;
 import com.exercise.carrotproject.domain.chat.dto.MessageDto;
 import com.exercise.carrotproject.domain.chat.entity.Chat;
 import com.exercise.carrotproject.domain.chat.entity.ChatRoom;
-import com.exercise.carrotproject.domain.chat.repoisitory.ChatRoomRepository;
 import com.exercise.carrotproject.domain.chat.service.ChatService;
 import com.exercise.carrotproject.domain.member.dto.MemberDto;
-import com.querydsl.jpa.impl.JPAQueryFactory;
 import groovy.util.logging.Slf4j;
 import lombok.RequiredArgsConstructor;
+import org.springframework.core.io.Resource;
+import org.springframework.core.io.UrlResource;
 import org.springframework.messaging.handler.annotation.DestinationVariable;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.Payload;
@@ -21,6 +22,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpSession;
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -71,11 +73,12 @@ public class ChatController {
         String memId = ((MemberDto) session.getAttribute(LOGIN_MEMBER)).getMemId();
         long updateChatReadStateResult = chatService.updateChatReadState(roomId, memId);
 
-        Map<String, List<Chat>> chatSectionList = chatService.getChatListByRoom(roomId);
+//        Map<String, List<Chat>> chatSectionList = chatService.getChatListByRoom(roomId);
+        Map<String, List<ChatDto>> chatSectionList = chatService.getChatListByRoom(roomId);
 
         model.addAttribute("chatSectionList", chatSectionList);
 
-        return "chat/chat";
+        return "chat/chat2";
     }
 
     @PostMapping("/getChatNoti")
@@ -181,5 +184,14 @@ public class ChatController {
         ChatRoomDto chatRoomDto = chatService.getChatRoom(memberDto, roomId);
 
         return chatRoomDto;
+    }
+
+    //채팅 이미지 출력
+    @ResponseBody
+    @GetMapping("/chatImg/{chatImgId}")
+    public Resource viewProfileImg(@PathVariable("chatImgId") Long chatImgId) throws IOException {
+        String imgPath = chatService.getChatImgPath(chatImgId);
+        UrlResource urlResource = new UrlResource("file:" + imgPath);
+        return urlResource;
     }
 }

@@ -1,5 +1,6 @@
 package com.exercise.carrotproject.domain.chat.service;
 
+import com.exercise.carrotproject.domain.chat.dto.ChatDto;
 import com.exercise.carrotproject.domain.chat.dto.ChatRoomDto;
 import com.exercise.carrotproject.domain.chat.dto.MessageDto;
 import com.exercise.carrotproject.domain.chat.entity.Chat;
@@ -18,7 +19,8 @@ public interface ChatService {
     long updateChatReadState(Long roomId, String memId);
     
     //해당 방의 채팅 메세지 호출
-    Map<String, List<Chat>> getChatListByRoom(Long roomId);
+//    Map<String, List<Chat>> getChatListByRoom(Long roomId);
+    Map<String, List<ChatDto>> getChatListByRoom(Long roomId);
 
     //채팅방 존재 여부 확인
     Optional<ChatRoom> getChatRoomByPostAndSellerAndBuyer(Long postId, String sellerId, String buyerId);
@@ -34,4 +36,7 @@ public interface ChatService {
 
     //채팅방 호출 (채팅 목록에서 채팅방 비동기 갱신 용도)
     ChatRoomDto getChatRoom(MemberDto memberDto, Long roomId);
+    
+    //채팅 이미지 호출
+    String getChatImgPath(Long chatImgId);
 }
