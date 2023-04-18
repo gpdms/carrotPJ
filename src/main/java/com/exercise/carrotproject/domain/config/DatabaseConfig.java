@@ -9,6 +9,7 @@ import org.springframework.transaction.PlatformTransactionManager;
 
 import javax.sql.DataSource;
 
+/*
 @Configuration
 public class DatabaseConfig {
     @Autowired
@@ -20,3 +21,4 @@ public class DatabaseConfig {
         return new DataSourceTransactionManager(dataSource);
     }
 }
+*/

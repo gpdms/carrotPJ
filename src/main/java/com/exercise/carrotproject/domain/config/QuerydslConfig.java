@@ -27,8 +27,8 @@ public class QuerydslConfig {
     @PersistenceContext
     EntityManager em;
 
-    @Autowired
-    private PlatformTransactionManager transactionManager;
+  /*  @Autowired
+    private PlatformTransactionManager transactionManager;*/
     @Autowired
     private DataSource dataSource;
 
@@ -40,7 +40,7 @@ public class QuerydslConfig {
     @Bean
     public SQLQueryFactory queryFactory() {
         SQLTemplates templates = H2Templates.builder().build();
-        return new SQLQueryFactory(templates, new SpringConnectionProvider(d));
+        return new SQLQueryFactory(templates, new SpringConnectionProvider(dataSource));
     }
 
 /*

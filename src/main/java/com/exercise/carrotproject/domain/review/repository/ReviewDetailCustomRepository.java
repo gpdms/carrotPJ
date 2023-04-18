@@ -2,8 +2,11 @@ package com.exercise.carrotproject.domain.review.repository;
 
 import com.exercise.carrotproject.domain.enumList.ReviewIndicator;
 import com.querydsl.core.Tuple;
+import com.querydsl.core.types.SubQueryExpression;
 import com.querydsl.core.types.dsl.BooleanExpression;
+import com.querydsl.core.types.dsl.EnumPath;
 import com.querydsl.jpa.impl.JPAQueryFactory;
+import com.querydsl.sql.SQLExpressions;
 import com.querydsl.sql.SQLQuery;
 import com.querydsl.sql.SQLQueryFactory;
 import lombok.RequiredArgsConstructor;
@@ -18,6 +21,21 @@ import static com.exercise.carrotproject.domain.review.entity.QReviewBuyerDetail
 import static com.exercise.carrotproject.domain.review.entity.QReviewSellerDetail.reviewSellerDetail;
 import static org.springframework.util.StringUtils.hasText;
 
+
+import java.io.IOException;
+import java.sql.SQLException;
+import java.util.Arrays;
+import java.util.List;
+
+
+import com.mysema.commons.lang.CloseableIterator;
+import com.querydsl.core.Tuple;
+import com.querydsl.core.types.Expression;
+import com.querydsl.core.types.Projections;
+import com.querydsl.core.types.SubQueryExpression;
+import com.querydsl.core.types.dsl.Expressions;
+import com.querydsl.core.types.dsl.NumberPath;
+
 @Repository
 @Transactional
 @RequiredArgsConstructor
@@ -26,22 +44,28 @@ public class ReviewDetailCustomRepository {
     private final SQLQueryFactory sqlQueryFactory;
 
     public Map<ReviewIndicator, Long> getMannerDetail(String memId, String keyword) {
-        SQLQuery<?> reviewSellerQuery = sqlQueryFactory
-                .select(reviewSellerDetail.reviewSellerIndicator.as("reviewIndicator"),
+
+//        NumberPath<Integer> countIndicator = Expressions.numberPath(Integer.class, "countIndicator");
+//        EnumPath<ReviewIndicator> reviewIndicator = Expressions.enumPath(ReviewIndicator.class, "reviewIndicator");
+
+        SubQueryExpression<Tuple> reviewSellerQuery =sqlQueryFactory.query()
+                .from(reviewSellerDetail)
+                .select(reviewSellerDetail.reviewSellerIndicator.stringValue().as("reviewIndicator"),
                         reviewSellerDetail.reviewSellerIndicator.count().as("count"))
                 .where(reviewSellerDetail.reviewSellerIndicator.stringValue().like("%"+keyword+"%"),
                         sellerIdEq(memId))
                 .groupBy(reviewSellerDetail.reviewSellerIndicator);
 
-        SQLQuery<?> reviewBuyerQuery = sqlQueryFactory
-                .select(reviewBuyerDetail.reviewBuyerIndicator.as("reviewIndicator"),
+        SubQueryExpression<Tuple> reviewBuyerQuery =sqlQueryFactory.query()
+                .from(reviewBuyerDetail)
+                .select(reviewBuyerDetail.reviewBuyerIndicator.stringValue().as("reviewIndicator"),
                         reviewBuyerDetail.reviewBuyerIndicator.count().as("count"))
                 .where(reviewBuyerDetail.reviewBuyerIndicator.stringValue().like("%"+keyword+"%"),
                        buyerIdEq(memId))
                 .groupBy(reviewBuyerDetail.reviewBuyerIndicator);
 
-        List<?> fetch = reviewSellerQuery.unionAll(reviewBuyerQuery)
-                .fetch();
+        List<?> fetch = sqlQueryFactory.query().unionAll(reviewSellerQuery, reviewBuyerQuery).fetch();
+
         List<Tuple> fetch1 = (List<Tuple>) fetch;
         for (Tuple tuple : fetch1) {
             System.out.println("tuple.get(0, String.class)테스트= " + tuple.get(0, String.class));
@@ -56,7 +80,10 @@ public class ReviewDetailCustomRepository {
                 ));
 
     }
-
+    public List<Long> getMannerDetail2() {
+        return sqlQueryFactory.query().select(reviewSellerDetail.reviewSellerDetailId).from(reviewBuyerDetail)
+                .fetch();
+    }
     private BooleanExpression buyerIdEq(String memId) {
         return hasText(memId) ? reviewBuyerDetail.buyer.memId.eq(memId) : null;
     }

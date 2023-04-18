@@ -16,6 +16,7 @@ import java.sql.Timestamp;
 @Builder
 @ToString
 @Getter
+@Table(name = "REVIEW_BUYER_DETAIL")
 public class ReviewBuyerDetail {
     @Id @GeneratedValue(strategy= GenerationType.IDENTITY)
     private Long reviewBuyerDetailId;
