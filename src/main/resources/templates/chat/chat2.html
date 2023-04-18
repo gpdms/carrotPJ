@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout/basic.html}">
+<head layout:fragment="head">
+    <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css" rel="stylesheet">
+    <!--    <link href="/css/chat.css" rel="stylesheet" />-->
+    <title>채팅 테스트</title>
+</head>
+<div class="container bootstrap snippets bootdey" layout:fragment="content">
+    <div class="row">
+        <!-- selected chat -->
+        <div class="col-md-15 bg-white ">
+            <div class="chat-message">
+                <th:block th:if="${chatSectionList != null}">
+                    <th:block th:each="chatSection : ${chatSectionList.keySet()}">
+                        [[${chatSection}]]
+                        <ul class="chatting chat" th:each="chat : ${chatSectionList.get(chatSection)}">
+                            <li th:if="${session.loginMember.memId}==${chat.fromId}" class="right clearfix">
+                                <span class="chat-img pull-right">
+                                    <img th:src="|/members/${chat.fromId}/profileImg|" alt="User Avatar">
+                                </span>
+                                <div class="chat-body clearfix">
+                                    <div class="header">
+                                        <strong class="primary-font" th:text="${chat.fromId}"></strong>
+                                        <small class="pull-right text-muted"><i class="fa fa-clock-o"></i>[[${chat.getCreatedTimeByString()}]]</small>
+                                    </div>
+                                    <p th:if="${chat.imgState.imgStateCode=='0'}">
+                                        [[${chat.message}]]
+                                    </p>
+                                    <p th:if="${chat.imgState.imgStateCode=='1'}">
+                                        <img th:src="|/chat/chatImg/${chat.chatImgList.get(0).getChatImgId()}|" alt="Chat Image">
+                                    </p>
+                                    <hr>
+                                    <span class="read_state" th:text="${chat.readState.readStateName}"></span>
+                                </div>
+                            </li>
+                            <li th:unless="${session.loginMember.memId}==${chat.fromId}" class="left clearfix">
+                                <span class="chat-img pull-left">
+                                    <img th:src="|/members/${chat.fromId}/profileImg|" alt="User Avatar">
+                                </span>
+                                <div class="chat-body clearfix">
+                                    <div class="header">
+                                        <strong class="primary-font">[[${chat.fromId}]]</strong>
+                                        <small class="pull-right text-muted"><i class="fa fa-clock-o"></i>[[${chat.getCreatedTimeByString()}]]</small>
+                                    </div>
+                                    <p th:if="${chat.imgState.imgStateCode=='0'}">
+                                        [[${chat.message}]]
+                                    </p>
+                                    <p th:if="${chat.imgState.imgStateCode=='1'}">
+                                        <img th:src="|/chat/chatImg/${chat.chatImgList.get(0).getChatImgId()}|" alt="Chat Image">
+                                    </p>
+                                </div>
+                            </li>
+                        </ul>
+                    </th:block>
+                </th:block>
+            </div>
+            <div class="chat-box bg-white">
+                <div class="input-group">
+                    <input id="msg" class="form-control border no-shadow no-rounded"
+                           placeholder="Type your message here">
+                    <span class="input-group-btn">
+            			<button class="btn btn-success no-rounded" type="button" th:onclick="send()">Send</button>
+                        <input type="file" id="fileUpload" multiple>
+            			<button class="btn btn-success no-rounded" type="button" th:onclick="sendImg()">SendImg</button>
+            		</span>
+                </div><!-- /input-group -->
+            </div>
+        </div>
+    </div>
+</div>
+<script layout:fragment="script" th:inline="javascript">
+    console.log("script.....................");
+
+    function connect2() {
+        //StompConfig.java에 설정된 endpoint로 SockJS 객체, StompClient 객체 생성
+        var socket = new SockJS("http://localhost:8888/gs-guide-websocket");
+        //do Handshake
+        stompClient2 = Stomp.over(socket);
+
+        // connect(header,연결 성공시 콜백,에러발생시 콜백)
+        stompClient2.connect({}, function () {
+                //subscribe(subscribe url,해당 url로 메시지를 받을때마다 실행할 함수)
+                //게시글번호/판매자/구매자
+                sub = stompClient2.subscribe('/topic/chat/' + [[${postId}]] + "/" + [[${sellerId}]] + "/" + [[${buyerId}]], function (e) {
+                    //e.body에 전송된 data가 들어있다
+                    if (JSON.parse(e.body).readComplete == "readComplete") {
+                        $(".read_state").text("읽음");
+                        return;
+                    }
+                    showMessage2(JSON.parse(e.body));
+                });
+
+                stompClient2.send("/app/chat/test", {}, "입장시 메세지 테스트");
+            },
+            function (e) {
+                //에러 콜백
+                alert('에러발생!!!!!!');
+            }
+        );
+    }
+
+    connect2();
+
+    //화면에 메시지를 표시하는 함수
+    function showMessage2(data) {
+        console.log('채팅메세지를 수신하였습니다.')
+        console.log(data.imgState);
+        console.log(data.imgList);
+        let message;
+        if ([[${session.loginMember.memId}]] == data.from) {
+            message =
+                `<li class="right clearfix">
+                        <span class="chat-img pull-right">
+                            <img src="/members/${data.from}/profileImg" alt="My Avatar">
+                        </span>
+                    <div class="chat-body clearfix">
+                        <div class="header">
+                            <strong class="primary-font">${data.from}</strong>
+                            <small class="pull-right text-muted"><i class="fa fa-clock-o"></i>${data.createdTime}</small>
+                        </div>
+                        <p>${data.chat}</p>
+                        <hr>
+                        <span class="read_state">${data.readState}</span>
+                    </div>
+                </li>`;
+        } else {
+            message =
+                `<li class="left clearfix">
+                    	<span class="chat-img pull-left">
+                    		<img src="/members/${data.from}/profileImg" alt="Not My Avatar">
+                    	</span>
+                    <div class="chat-body clearfix">
+                        <div class="header">
+                            <strong class="primary-font">${data.from}</strong>
+                            <small class="pull-right text-muted"><i class="fa fa-clock-o"></i>${data.createdTime}</small>
+                        </div>
+                        <p>${data.chat}</p>
+                    </div>
+                </li>`;
+
+            $.ajax({
+                type: "POST",
+                url: "/chat/getChatMsg/" + data.room + "/" + [[${postId}]] + "/" + [[${sellerId}]] + "/" + [[${buyerId}]],
+                success: function (result) {
+                    console.log('수신한 메세지 확인 처리 완료! >>> ' + result);
+                    $('#chat').text(Number($('#chat').text()) - 1);
+                },
+            });
+        }
+        $('.chatting').last().append(message);
+    }
+
+    //엔터 눌렀을때 전송
+    $('#msg').keypress(function (e) {
+        if (e.keyCode === 13) send();
+    });
+
+    //메시지 브로커로 메시지 전송
+    function send() {
+        stompClient2.send("/app/chat/" + [[${postId}]] + "/" + [[${sellerId}]] + "/" + [[${buyerId}]], {}, JSON.stringify({message:$("#msg").val()}));
+        $("#msg").val('');
+    }
+
+    function sendImg() {
+        $("#fileUpload").click();
+    }
+
+    $("#fileUpload").change(e=>{
+        let files = e.target.files;
+        console.log(files);
+
+        //한번에 10장까지 업로드 가능
+        if (files.length > 10) {
+            alert('한번에 10장까지 전송이 가능합니다.');
+            return false;
+        }
+
+        //업로드 가능 파일인지 체크
+        for(var i=0; i<files.length; i++){
+            if (!/\.(gif|jpg|jpeg|png)$/i.test(files[i].name)) {
+                alert('gif, jpg, png 파일만 선택해 주세요.\n\n현재 파일 : ' + files[i].name);
+                return false;
+            }
+        }
+
+        let images = [];
+        for (let i = 0; i < files.length; i++) {
+            let FR = new FileReader();
+            FR.onload = function(e) {
+                images.push(e.target.result);
+                if (images.length === files.length) {
+                    stompClient2.send("/app/chat/" + [[${postId}]] + "/" + [[${sellerId}]] + "/" + [[${buyerId}]], {}, JSON.stringify({message:"이미지 전송", imgCode:images}));
+                    // $("#msg").val('');
+                }
+            };
+            FR.readAsDataURL(files[i]);
+        }
+    });
+</script>
