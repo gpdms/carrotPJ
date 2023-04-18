@@ -52,12 +52,12 @@ public class OauthController {
                 + "&logout_redirect_uri=" + kaKaoOauth.getKakaoLoginRedirectUri();
         return kakaoUrl;
     }
+}
 
 /*    @GetMapping("/logout/kakao")
     @ResponseBody
     public String kakaoLogout() {
 
     }*/
-}
 
 

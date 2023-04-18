@@ -1,8 +1,9 @@
 package com.exercise.carrotproject.domain.chat.entity;
 
 import com.exercise.carrotproject.domain.common.entity.BaseEntity;
-import com.exercise.carrotproject.domain.converter.HideStateConverter;
+import com.exercise.carrotproject.domain.converter.ImgStateConverter;
 import com.exercise.carrotproject.domain.converter.ReadStateConverter;
+import com.exercise.carrotproject.domain.enumList.ImgState;
 import com.exercise.carrotproject.domain.enumList.ReadState;
 import com.exercise.carrotproject.domain.member.entity.Member;
 import com.exercise.carrotproject.domain.post.entity.Post;
@@ -10,11 +11,8 @@ import lombok.*;
 import org.hibernate.annotations.ColumnDefault;
 
 import javax.persistence.*;
-import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
-
-import static com.exercise.carrotproject.domain.common.util.DateUtil.CALCULATE_TIME;
 
 @Entity
 @NoArgsConstructor
@@ -29,7 +27,7 @@ public class Chat extends BaseEntity {
     @Column(name = "chat_id")
     private Long chatId;
 
-    @ManyToOne
+    @ManyToOne(cascade = CascadeType.PERSIST)
     @JoinColumn(name = "room_id")
     private ChatRoom room;
 
@@ -59,8 +57,10 @@ public class Chat extends BaseEntity {
             nullable = false)
     @ColumnDefault("0")
     @Builder.Default()
-    private Integer imgState = 0;
+    @Convert(converter = ImgStateConverter.class)
+    private ImgState imgState = ImgState.NOTATTACH;
 
-    @OneToMany(mappedBy = "chat")
+    @OneToMany(mappedBy = "chat", cascade = {CascadeType.PERSIST, CascadeType.MERGE})
+    @Builder.Default()
     private List<ChatImg> chatImgList = new ArrayList<>();
 }

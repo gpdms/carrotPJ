@@ -2,31 +2,27 @@ package com.exercise.carrotproject.domain.post.service;
 
 import com.exercise.carrotproject.domain.enumList.HideState;
 import com.exercise.carrotproject.domain.enumList.SellState;
-import com.exercise.carrotproject.domain.member.entity.Member;
-import com.exercise.carrotproject.domain.member.entity.QMember;
 import com.exercise.carrotproject.domain.member.repository.MemberRepository;
 import com.exercise.carrotproject.domain.post.dto.MtPlaceDto;
-import com.exercise.carrotproject.domain.post.entity.*;
 import com.exercise.carrotproject.domain.post.dto.PostDto;
 import com.exercise.carrotproject.domain.post.dto.PostImgDto;
-import com.exercise.carrotproject.domain.post.repository.*;
-import com.querydsl.jpa.JPAExpressions;
+import com.exercise.carrotproject.domain.post.entity.*;
+import com.exercise.carrotproject.domain.post.repository.MtPlaceRepository;
+import com.exercise.carrotproject.domain.post.repository.PostImgRepository;
+import com.exercise.carrotproject.domain.post.repository.PostRepository;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.hibernate.annotations.DynamicUpdate;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.util.ObjectUtils;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
-import javax.persistence.Query;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Path;
@@ -387,11 +383,4 @@ public class PostServiceImpl {
 
         return msg;
     }
-
-
-
-
-
-
-
 }
