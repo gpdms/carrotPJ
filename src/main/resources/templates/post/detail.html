@@ -70,7 +70,7 @@
                                 Add to cart
                             </button>
                             <button th:if="${session.loginMember.memId}==${post.member.memId}" class="btn btn-outline-dark flex-shrink-0" type="button" th:onclick="|location.href='@{/chat/chatRoomListByPost/{postId}(postId=${postId})}'|">대화 중인 채팅방</button>
-                            <button th:unless="${session.loginMember.memId}==${post.member.memId}" class="btn btn-outline-dark flex-shrink-0" type="button" th:onclick="|location.href='@{/chat/post/{postId}(postId=${postId})}'|">채팅하기</button>
+                            <button th:unless="${session.loginMember.memId}==${post.member.memId}" class="btn btn-outline-dark flex-shrink-0" type="button" th:onclick="|location.href='@{/chat/post/{postId}/{sellerId}(postId=${postId}, sellerId=${post.member.memId})}'|">채팅하기</button>
                         </div>
 
 
