@@ -1,18 +1,27 @@
 package com.exercise.carrotproject.domain.member.ouath;
 
 import com.exercise.carrotproject.domain.enumList.Role;
+import com.exercise.carrotproject.domain.member.dto.MemberDto;
+import com.exercise.carrotproject.domain.member.entity.Member;
 import com.exercise.carrotproject.domain.member.repository.MemberRepository;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import org.apache.tomcat.util.json.JSONParser;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
+import javax.imageio.ImageIO;
+import java.awt.image.BufferedImage;
 import java.io.*;
 import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
+import java.net.ProtocolException;
 import java.net.URL;
+import java.time.LocalDate;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
@@ -20,12 +29,10 @@ public class KakaoServiceImpl {
     private final KaKaoOauth kaKaoOauth;
     private final MemberRepository memberRepository;
 
-    public String getToken(String code) throws IOException {
-        // 인가코드로 토큰받기
+    // 인가코드로 토큰받기
+    public String getAccessToken(String code) throws IOException {
         String reqURL  = "https://kauth.kakao.com/oauth/token";
         String accessToken = "";
-        String refreshToken = "";
-
         URL url = new URL(reqURL);
         HttpURLConnection urlConnection = (HttpURLConnection) url.openConnection();
         try {
@@ -54,21 +61,14 @@ public class KakaoServiceImpl {
             while ((line = br.readLine()) != null) {
                 result += line;
             }
-            System.out.println("response body : " + result);
+            System.out.println("getToken_response body : " + result);
 
             // jackson objectmapper 객체 생성
             ObjectMapper objectMapper = new ObjectMapper();
             // JSON String -> Map
             Map<String, Object> jsonMap = objectMapper.readValue(result, new TypeReference<Map<String, Object>>() {
             });
-
             accessToken = jsonMap.get("access_token").toString();
-            refreshToken = jsonMap.get("refresh_token").toString();
-
-            System.out.println("accessToken = " + accessToken);
-            System.out.println("refreshToken = " + refreshToken);
-
-
             br.close();
             bw.close();
         } catch (IOException e) {
@@ -79,7 +79,6 @@ public class KakaoServiceImpl {
     }
 
     public HashMap<String, Object> getUserInfo(String accessToken) throws Throwable {
-        // 요청하는 클라이언트마다 가진 정보가 다를 수 있기에 HashMap타입으로 선언
         HashMap<String, Object> userInfo = new HashMap<String, Object>();
         String reqURL = "https://kapi.kakao.com/v2/user/me";
         try {
@@ -98,63 +97,80 @@ public class KakaoServiceImpl {
             while ((line = br.readLine()) != null) {
                 result += line;
             }
-            System.out.println("response body : " + result);
-            System.out.println("result type" + result.getClass().getName()); // java.lang.String
+           System.out.println("response body : " + result);
+           System.out.println("result type" + result.getClass().getName()); // java.lang.String
 
-            try {
-                // jackson objectmapper 객체 생성
-                ObjectMapper objectMapper = new ObjectMapper();
-                // JSON String -> Map
-                Map<String, Object> jsonMap = objectMapper.readValue(result, new TypeReference<Map<String, Object>>(){});
-
-                Map<String, Object> kakao_account = (Map<String, Object>) jsonMap.get("kakao_account");
-                Map<String, Object> profile = (Map<String, Object>) kakao_account.get("profile");
-
-                String nickname = profile.get("nickname").toString();
-                String email = kakao_account.get("email").toString();
-                String profileImgUrl = "";
-                if(!(Boolean)profile.get("is_default_image")) {
-                    profileImgUrl = profile.get("profile_img_url").toString();
+            // jackson objectmapper 객체 생성
+            ObjectMapper objectMapper = new ObjectMapper();
+            // JSON String -> Map
+            Map<String, Object> jsonMap = objectMapper.readValue(result, new TypeReference<Map<String, Object>>(){});
+            Map<String, Object> kakao_account = (Map<String, Object>) jsonMap.get("kakao_account");
+            Map<String, Object> profile = new HashMap<>();
+            if (kakao_account.containsKey("profile")) {
+                profile = (Map<String, Object>) kakao_account.get("profile");
+            };
+            //선택동의 항목처리
+            String profileImgUrl = "";
+            String nickname = "";
+            if (!profile.isEmpty()) {
+                if(profile.containsKey("is_default_image") && !(boolean)profile.get("is_default_image")) {
+                    profileImgUrl = profile.get("profile_image_url").toString();  //디폴트 이미지면 빈문자열만 보낸다.
                 }
-                userInfo.put("nickname", nickname);
-                userInfo.put("email", email);
-                userInfo.put("profileImgUrl", profileImgUrl);
-            } catch (Exception e) {
-                e.printStackTrace();
+                if(profile.containsKey("nickname")) {
+                    nickname = profile.get("nickname").toString();
+                }
             }
-
+            userInfo.put("nickname", nickname);
+            userInfo.put("email", kakao_account.get("email"));
+            userInfo.put("profPath", profileImgUrl);
         } catch (IOException e) {
             e.printStackTrace();
         }
         return userInfo;
     }
 
-/*    public void isExsitedKakaoMember(String email, Role role) {
-        memberRepository.existsByEmailAndRole()
-        boolean existsByEmailAndRole(String email, Role role);
-    }*/
-
-  /*  public void kakaoLogout(String accessToken) {
-        String reqURL = "https://kapi.kakao.com/v1/user/logout";
+    public void kakaoUnlink(String accessToken) {
+        String unlinkReqUrl = "https://kapi.kakao.com/v1/user/unlink";
         try {
-            URL url = new URL(reqURL);
-            HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+            URL unlinkUrl = new URL(unlinkReqUrl);
+            HttpURLConnection conn = (HttpURLConnection) unlinkUrl.openConnection();
             conn.setRequestMethod("POST");
             conn.setRequestProperty("Authorization", "Bearer " + accessToken);
-
             int responseCode = conn.getResponseCode();
-            System.out.println("responseCode : " + responseCode);
+            System.out.println("responseCode Unlink : " + responseCode);
+        }  catch (MalformedURLException e) {
+            throw new RuntimeException(e);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+   /* public String getAgreementInfo(String access_token) {
+        String result = "";
+        String host = "https://kapi.kakao.com/v2/user/scopes";
+        try{
+            URL url = new URL(host);
+            HttpURLConnection urlConnection = (HttpURLConnection)url.openConnection();
+            urlConnection.setRequestMethod("GET");
+            urlConnection.setRequestProperty("Authorization", "Bearer "+access_token);
 
-            BufferedReader br = new BufferedReader(new InputStreamReader(conn.getInputStream()));
-
-            String result = "";
+            BufferedReader br = new BufferedReader(new InputStreamReader(urlConnection.getInputStream()));
             String line = "";
-            while ((line = br.readLine()) != null) {
-                result += line;
+            while((line=br.readLine())!=null) {
+                result+=line;
             }
-            System.out.println(result);
+            int responseCode = urlConnection.getResponseCode();
+            System.out.println("responseCode = " + responseCode);
+            // result is json format
+            br.close();
+        } catch (MalformedURLException e) {
+            e.printStackTrace();
+        } catch (ProtocolException e) {
+            e.printStackTrace();
         } catch (IOException e) {
             e.printStackTrace();
         }
+        return result;
     }*/
+
+
 }

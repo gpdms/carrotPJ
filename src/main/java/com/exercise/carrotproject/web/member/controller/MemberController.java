@@ -1,13 +1,17 @@
 package com.exercise.carrotproject.web.member.controller;
 
 
+import com.exercise.carrotproject.domain.enumList.Role;
 import com.exercise.carrotproject.domain.member.dto.MemberDto;
 import com.exercise.carrotproject.domain.member.entity.Member;
 import com.exercise.carrotproject.domain.member.repository.MemberRepository;
 import com.exercise.carrotproject.domain.member.service.MemberServiceImpl;
+import com.exercise.carrotproject.domain.post.dto.PostDto;
 import com.exercise.carrotproject.domain.post.entity.Trade;
 import com.exercise.carrotproject.domain.post.repository.PostRepository;
+import com.exercise.carrotproject.domain.post.repository.TradeCustomRepository;
 import com.exercise.carrotproject.domain.post.repository.TradeRepository;
+import com.exercise.carrotproject.domain.post.service.PostServiceImpl;
 import com.exercise.carrotproject.domain.review.service.ReviewBuyerServiceImpl;
 import com.exercise.carrotproject.domain.review.service.ReviewSellerServiceImpl;
 import com.exercise.carrotproject.web.common.SessionConst;
@@ -44,18 +48,21 @@ import java.util.Optional;
 public class MemberController {
     private final MemberServiceImpl memberService;
     private final SecurityUtils securityUtils;
+    private final PostServiceImpl postService;
 
     @Value("${dir.img-profile}")
     private String rootProfileImgDir;
 
     //for Review
     private final TradeRepository tradeRepository;
+    private final TradeCustomRepository tradeCustomRepository;
     private final ReviewSellerServiceImpl reviewSellerService;
     private final ReviewBuyerServiceImpl reviewBuyerService;
 
 
     @GetMapping("/signup")
-    public String signupForm(@ModelAttribute("signupForm") SignupForm form) {
+    public String signupForm(@ModelAttribute("signupForm") SignupForm form, Model model) {
+        model.addAttribute("isSocial", false);
         return "/member/signupForm";
     }
     @PostMapping("/signup")
@@ -72,12 +79,18 @@ public class MemberController {
         Member member = Member.builder().memId(form.getMemId())
                 .memPwd(hashedPwd)
                 .nickname(form.getNickname())
+                .role(Role.USER)
                 .loc(form.getLoc()).build();
         Map<String, Object> saveResult = memberService.insertMember(member);
         //log.info("saveResult {}", saveResult.containsValue("fail-DM"));
         //중복된 아이디 -> field 오류로 알릴 수 있다.
-        if (saveResult.containsValue("fail-DM")) {
-            bindingResult.rejectValue("memId", "duplicatedMemId");
+        if(saveResult.containsKey("fail")) {
+            if (saveResult.containsValue("id")) {
+                bindingResult.rejectValue("memId", "duplicatedMemId");
+            }
+            if (saveResult.containsValue("nickname")) {
+                bindingResult.rejectValue("nickname", "duplicateNickname");
+            }
             return "/member/signupForm";
         }
         return "redirect:/login";
@@ -108,7 +121,6 @@ public class MemberController {
             bindingResult.rejectValue("pwdConfirm", "pwdConfirmIncorrect", "암호가 일치하지 않습니다.");
             return  "/member/memberInfo";
         }
-
         //db에 업데이트 실패 -> 검증오류(PwdUpdateForm에 관한 문제) 아니고, 서버 오류일 것이다
         //bindingResult에 담아서 보내지 말아야하지 않을까?
         String hashedPwd = securityUtils.getHashedPwd(pwdUpdateForm.getPwd());
@@ -135,19 +147,17 @@ public class MemberController {
     @GetMapping("/{memId}/profileImg")
     public Resource viewProfileImg(@PathVariable("memId") String memId) throws IOException {
         String profPath = memberService.getProfPath(memId);
-        if(profPath == null) {
+        if(profPath == null || profPath.isEmpty()) {
             profPath = rootProfileImgDir+"profile_img.png";
         }
         UrlResource urlResource = new UrlResource("file:" + profPath);
         return urlResource;
     }
 
-
-    //buyList
-    @GetMapping("/{memId}/transaction/buyList")
+    //buyList 뽑아오는 것
+    @GetMapping("/{memId}/trade/buyList")
     public String buyList(@PathVariable String memId, Model model) {
-        Member buyer = memberService.findOneMember(memId);
-        List<Trade> buyList = tradeRepository.findByBuyer(buyer);
+        List<Trade> buyList = tradeCustomRepository.getBuyList(memId);//나중에 TradeService
         List<MyBuyListForm> buyFormList = new ArrayList<>();
         if(buyList != null) {
             for (Trade buyOne : buyList) {
@@ -157,11 +167,10 @@ public class MemberController {
             }
         }
         model.addAttribute("buyList", buyFormList);
-        model.addAttribute("memId", memId);
         return "member/myBuyList";
     }
     //sellList
-    @GetMapping("/{memId}/transaction/sellList")
+    /*@GetMapping("/{memId}/trade/sellList")
     public String sellList(@PathVariable String memId, Model model) {
         Member seller= memberService.findOneMember(memId);
         List<Trade> sellList = tradeRepository.findBySeller(seller);
@@ -175,8 +184,27 @@ public class MemberController {
         }
         model.addAttribute("sellList", sellFormList);
         return "member/mySellList";
-    }
+    }*/
 
+    //sellList
+    @GetMapping("/{memId}/trade/sellList")
+    public String mySellList(@PathVariable String memId, Model model){
+
+        //판매중,예약중 게시글
+        Map map = postService.selectPostBySellState(memId);
+        List<PostDto> onSaleAndRsvList = (List) map.get("onSaleAndRsvList");
+        List<PostDto> soldList = (List) map.get("soldList");
+
+        model.addAttribute("onSaleAndRsv", onSaleAndRsvList);
+        model.addAttribute("soldList", soldList);
+
+        //숨김 게시글
+        List<PostDto> hidePostList = postService.selectHidePost(memId);
+        model.addAttribute("hidePostList", hidePostList);
+
+//        log.info("숨김 게시글들>>>>>>>>>{}",hidePostList);
+        return "myPage/sellList";
+    }
 
 
 }

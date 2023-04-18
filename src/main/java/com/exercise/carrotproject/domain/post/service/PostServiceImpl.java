@@ -1,15 +1,24 @@
 package com.exercise.carrotproject.domain.post.service;
 
+import com.exercise.carrotproject.domain.chat.dto.ChatRoomDto;
+import com.exercise.carrotproject.domain.chat.entity.QChat;
+import com.exercise.carrotproject.domain.chat.entity.QChatRoom;
 import com.exercise.carrotproject.domain.enumList.HideState;
+import com.exercise.carrotproject.domain.enumList.ReadState;
 import com.exercise.carrotproject.domain.enumList.SellState;
+import com.exercise.carrotproject.domain.member.MemberEntityDtoMapper;
+import com.exercise.carrotproject.domain.member.dto.MemberDto;
+import com.exercise.carrotproject.domain.member.entity.Member;
+import com.exercise.carrotproject.domain.member.entity.QMember;
 import com.exercise.carrotproject.domain.member.repository.MemberRepository;
 import com.exercise.carrotproject.domain.post.dto.MtPlaceDto;
 import com.exercise.carrotproject.domain.post.dto.PostDto;
 import com.exercise.carrotproject.domain.post.dto.PostImgDto;
-import com.exercise.carrotproject.domain.post.entity.*;
-import com.exercise.carrotproject.domain.post.repository.MtPlaceRepository;
-import com.exercise.carrotproject.domain.post.repository.PostImgRepository;
-import com.exercise.carrotproject.domain.post.repository.PostRepository;
+import com.exercise.carrotproject.domain.post.repository.*;
+import com.exercise.carrotproject.web.common.SessionConst;
+import com.querydsl.core.types.ExpressionUtils;
+import com.querydsl.core.types.Projections;
+import com.querydsl.jpa.JPAExpressions;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -23,15 +32,15 @@ import org.springframework.web.multipart.MultipartFile;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+import javax.persistence.Query;
+import javax.servlet.http.HttpSession;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 
 
 @RequiredArgsConstructor
@@ -46,6 +55,7 @@ public class PostServiceImpl {
     private final PostImgRepository postImgRepository;
     private final MemberRepository memberRepository;
     private final MtPlaceRepository mtPlaceRepository;
+    private final TradeRepository tradeRepository;
     private final JPAQueryFactory jpaQueryFactory; //QuerydslConfig파일에 bean등록함
 //    private final PostRepositoryImpl customPostRepository; //후에 CustomPostRepository로 바꿔주기
 
@@ -383,4 +393,90 @@ public class PostServiceImpl {
 
         return msg;
     }
+
+    //판매여부로 게시글들 반환
+    //    @Override
+    public Map selectPostBySellState(String memId){
+        Member member = memberRepository.findById(memId).orElseThrow();
+
+        //판매중,예약중
+        List<Post> onSalePostList = postRepository.findByMemberAndHideStateAndSellStateOrSellStateOrderByPostIdDesc(member, HideState.SHOW, SellState.ON_SALE,SellState.RESERVATION);
+        //entity리스트->dto리스트
+        List<PostDto> postDtoOnSaleList = PostEntityDtoMapper.toDtoList(onSalePostList);
+
+
+        //판매완료
+        List<Post> soldPostList = postRepository.findByMemberAndSellStateAndHideStateOrderByPostIdDesc(member, SellState.SOLD, HideState.SHOW);
+        //entity리스트->dto리스트
+        List<PostDto> postDtoSoldList = PostEntityDtoMapper.toDtoList(soldPostList);
+
+        Map map = new HashMap();
+        map.put("onSaleAndRsvList", postDtoOnSaleList);
+        map.put("soldList", postDtoSoldList);
+
+        return map;
+    }
+
+    //숨김 게시글들 반환
+    //    @Override
+    public List<PostDto> selectHidePost(String memId){
+        Member member = memberRepository.findById(memId).orElseThrow();
+
+        List<Post> postList = postRepository.findByMemberAndHideStateOrderByPostIdDesc(member,HideState.HIDE);
+        //entity리스트->dto리스트
+        List<PostDto> postDtoList = PostEntityDtoMapper.toDtoList(postList);
+
+        return postDtoList;
+    }
+
+//    @Override
+
+    public List<ChatRoomDto> selectBuyersByPost(MemberDto memberDto, Long postId){
+        Member memberEntity = MemberEntityDtoMapper.toMemberEntity(memberDto);
+
+        List<Long> ids = jpaQueryFactory.select(QChat.chat.chatId.max())
+                .from(QChat.chat)
+                .where(QChat.chat.from.eq(memberEntity).or(QChat.chat.to.eq(memberEntity)))
+                .groupBy(QChat.chat.room.roomId)
+                .fetch();
+
+        List<ChatRoomDto> chatRoomList = jpaQueryFactory
+                .select(Projections.constructor(ChatRoomDto.class,
+                                QChatRoom.chatRoom.roomId,
+                                QChatRoom.chatRoom.post.postId,
+                                QChatRoom.chatRoom.seller.memId.as("sellerId"),
+                                QChatRoom.chatRoom.buyer.memId.as("buyerId"),
+                                QChat.chat.message,
+                                QChat.chat.createdTime,
+                                ExpressionUtils.as(
+                                        JPAExpressions.select(QChat.chat.chatId.count())
+                                                .from(QChat.chat)
+                                                .where(QChat.chat.room.eq(QChatRoom.chatRoom)
+                                                        .and(QChat.chat.readState.eq(ReadState.NOTREAD))
+                                                        .and(QChat.chat.from.ne(memberEntity))
+                                                ),
+                                        "unacknowledgedMessageCount"
+                                )
+                        )
+                )
+                .from(QChatRoom.chatRoom)
+                .leftJoin(QChat.chat)
+                .on(QChatRoom.chatRoom.roomId.eq(QChat.chat.room.roomId))
+                .where(
+                        (QChatRoom.chatRoom.seller.eq(memberEntity)
+                                .or(QChatRoom.chatRoom.buyer.eq(memberEntity))
+                        )
+                                .and(QChatRoom.chatRoom.post.postId.eq(postId))
+                                .and(QChat.chat.chatId.in(ids))
+                )
+                .orderBy(QChat.chat.createdTime.desc())
+                .fetch();
+
+        return chatRoomList;
+    }
+
+
+
+
+
 }

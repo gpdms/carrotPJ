@@ -28,10 +28,10 @@
 
 
         <button class="w-50 btn btn-secondary btn-group-sm"
-                type="button"  th:onclick="|location.href='@{/members/{memId}/transaction/buyList(memId=${session.loginMember.memId})}'|">구매내역 보기</button>
+                type="button"  th:onclick="|location.href='@{/members/{memId}/trade/buyList(memId=${session.loginMember.memId})}'|">구매내역 보기</button>
         <div style="height: 10px"></div>
-        <button class="w-50 btn btn-secondary btn-group-sm"
-                 type="button" th:onclick="|location.href='@{/members/{memId}/transaction/sellList(memId=${session.loginMember.memId})}'|">판매완료내역 보기</button>
+        <!--<button class="w-50 btn btn-secondary btn-group-sm"
+                 type="button" th:onclick="|location.href='@{/members/{memId}/transaction/sellList(memId=${session.loginMember.memId})}'|">판매완료내역 보기</button>-->
 
 
 
@@ -103,7 +103,7 @@
     <br/>
     <br/>
     <button class="w-50 btn btn-secondary btn-group-sm"
-            type="button" th:onclick="|location.href='@{/myPage/mySellList/{memId}(memId=${session.loginMember.memId})}'|">판매내역</button>
+            type="button" th:onclick="|location.href='@{/members/{memId}/trade/sellList(memId=${session.loginMember.memId})}'|">판매내역</button>
 
 </div>
 
