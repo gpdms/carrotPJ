@@ -1,7 +1,6 @@
 package com.exercise.carrotproject.domain.chat.service;
 
 import com.exercise.carrotproject.domain.chat.dto.ChatDto;
-import com.exercise.carrotproject.domain.chat.dto.ChatImgDto;
 import com.exercise.carrotproject.domain.chat.dto.ChatRoomDto;
 import com.exercise.carrotproject.domain.chat.dto.MessageDto;
 import com.exercise.carrotproject.domain.chat.entity.*;
@@ -16,6 +15,7 @@ import com.exercise.carrotproject.domain.member.entity.Member;
 import com.exercise.carrotproject.domain.member.repository.MemberRepository;
 import com.exercise.carrotproject.domain.post.entity.Post;
 import com.exercise.carrotproject.domain.post.repository.PostRepository;
+import com.querydsl.core.group.GroupBy;
 import com.querydsl.core.types.ExpressionUtils;
 import com.querydsl.core.types.Projections;
 import com.querydsl.jpa.JPAExpressions;
@@ -114,46 +114,58 @@ public class ChatServiceImpl implements ChatService {
         ChatRoom chatRoom = chatRoomRepository.findById(roomId).get();
         List<Chat> chatList = chatRepository.findByRoom(chatRoom);
 
-        List<ChatDto> chatDtoList = jpaQueryFactory.select(Projections.constructor(ChatDto.class,
-                        QChat.chat.chatId,
-                        QChat.chat.room.roomId,
-                        QChat.chat.post.postId,
-                        QChat.chat.from.memId.as("fromId"),
-                        QChat.chat.to.memId.as("toId"),
-                        QChat.chat.readState,
-                        QChat.chat.message,
-                        QChat.chat.imgState,
-                        Projections.list(Projections.constructor(ChatImgDto.class,
-                                QChatImg.chatImg.chatImgId,
-                                QChatImg.chatImg.chat.chatId,
-                                QChatImg.chatImg.imgPath)),
-                        QChat.chat.createdTime))
-                .from(QChat.chat)
+//        List<ChatDto> chatDtoList = jpaQueryFactory.select(Projections.constructor(ChatDto.class,
+//                        QChat.chat.chatId,
+//                        QChat.chat.room.roomId,
+//                        QChat.chat.post.postId,
+//                        QChat.chat.from.memId.as("fromId"),
+//                        QChat.chat.to.memId.as("toId"),
+//                        QChat.chat.readState,
+//                        QChat.chat.message,
+//                        QChat.chat.imgState,
+//                        QChatImg.chatImg.chatImgId,
+//                        QChat.chat.createdTime))
+//                .from(QChat.chat)
+//                .leftJoin(QChatImg.chatImg)
+//                .on(QChat.chat.eq(QChatImg.chatImg.chat))
+//                .where(QChat.chat.room.roomId.eq(roomId))
+//                .fetch();
+
+        List<ChatDto> chatDtoList = jpaQueryFactory.from(QChat.chat)
                 .leftJoin(QChatImg.chatImg)
                 .on(QChat.chat.eq(QChatImg.chatImg.chat))
                 .where(QChat.chat.room.roomId.eq(roomId))
-                .fetch();
+                .transform(GroupBy.groupBy(QChat.chat.createdTime).list(
+                        Projections.constructor(ChatDto.class,
+                                QChat.chat.chatId,
+                                QChat.chat.room.roomId,
+                                QChat.chat.post.postId,
+                                QChat.chat.from.memId.as("fromId"),
+                                QChat.chat.to.memId.as("toId"),
+                                QChat.chat.readState,
+                                QChat.chat.message,
+                                QChat.chat.imgState,
+                                GroupBy.list(
+                                        QChatImg.chatImg.chatImgId
+                                ),
+                                QChat.chat.createdTime)
+                ));
+
         chatDtoList.stream().forEach(chatDto -> {
             System.out.println(chatDto);
         });
 
         //채팅 날짜별로 나누기
-//        Map<String, List<Chat>> chatSectionList = new HashMap<>();
         Map<String, List<ChatDto>> chatSectionList = new HashMap<>();
-//        chatList.stream().forEach(chat->{
         chatDtoList.stream().forEach(chatDto->{
-//            Timestamp createdTime = chat.getCreatedTime();
             Timestamp createdTime = chatDto.getCreatedTime();
             long time = createdTime.getTime();
 
-//            String format = new SimpleDateFormat("yyyy-MM-dd HH:mm").format(time);
             String format = new SimpleDateFormat("yyyy-MM-dd").format(time);
             if (chatSectionList.get(format) == null) {
                 chatSectionList.put(format, new ArrayList<>());
-//                chatSectionList.get(format).add(chat);
                 chatSectionList.get(format).add(chatDto);
             } else {
-//                chatSectionList.get(format).add(chat);
                 chatSectionList.get(format).add(chatDto);
             }
         });
