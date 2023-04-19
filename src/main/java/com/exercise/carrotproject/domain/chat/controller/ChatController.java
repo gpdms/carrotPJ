@@ -53,7 +53,8 @@ public class ChatController {
         //기생성된 채팅방이 존재하면 redirect
         Optional<ChatRoom> optionalChatRoom = chatService.getChatRoomByPostAndSellerAndBuyer(postId, sellerId, buyerId);
         if (optionalChatRoom.isPresent()) {
-            return "redirect:/chat/chatRoom/"+optionalChatRoom.get().getRoomId();
+            ChatRoom chatRoom = optionalChatRoom.get();
+            return "redirect:/chat/chatRoom/"+ chatRoom.getRoomId() + "/" + chatRoom.getPost().getPostId() + "/" + chatRoom.getSeller().getMemId() + "/" + chatRoom.getBuyer().getMemId();
         }
 
         model.addAttribute("buyerId", buyerId);
@@ -70,8 +71,7 @@ public class ChatController {
             Model model,
             HttpSession session) {
 
-        String memId = ((MemberDto) session.getAttribute(LOGIN_MEMBER)).getMemId();
-        long updateChatReadStateResult = chatService.updateChatReadState(roomId, memId);
+        getChatMsg(roomId, postId, sellerId, buyerId, session); //채팅 확인 업데이트
 
         Map<String, List<ChatDto>> chatSectionList = chatService.getChatListByRoom(roomId);
 
