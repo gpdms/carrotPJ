@@ -82,7 +82,7 @@
                     fromId = result.buyerId
                 }
                 let newChatRoomHtml = `<li id="roomId${result.roomId}">
-                    <a href="/chat/chatRoom/${result.roomId}" class="clearfix">
+                    <a href="/chat/chatRoom/${result.roomId}/${result.postId}/${result.sellerId}/${result.buyerId}" class="clearfix">
                         <div class="profile_img">
                             <img src="/members/${fromId}/profileImg" alt="프로필이미지">
                         </div>

@@ -22,11 +22,12 @@ public class ChatDto {
     private ReadState readState;
     private String message;
     private ImgState imgState;
-    private List<ChatImgDto> chatImgList;
-//    private String createdTime;
+//    private List<ChatImgDto> chatImgList;
+//    private Long chatImgId
+    private List<Long> chatImgIdList;
     private Timestamp createdTime;
 
-    public ChatDto(Long chatId, Long roomId, Long postId, String fromId, String toId, ReadState readState, String message, ImgState imgState, List<ChatImgDto> chatImgList, Timestamp createdTime) {
+    public ChatDto(Long chatId, Long roomId, Long postId, String fromId, String toId, ReadState readState, String message, ImgState imgState, List<Long> chatImgIdList, Timestamp createdTime) {
         this.chatId = chatId;
         this.roomId = roomId;
         this.postId = postId;
@@ -35,12 +36,9 @@ public class ChatDto {
         this.readState = readState;
         this.message = message;
         this.imgState = imgState;
-        this.chatImgList = chatImgList;
-//        this.createdTime = CALCULATE_TIME(createdTime);
+//        this.chatImgList = chatImgList;
+//        this.chatImgId = chatImgId;
+        this.chatImgIdList = chatImgIdList;
         this.createdTime = createdTime;
-    }
-
-    public String getCreatedTimeByString() {
-        return CALCULATE_TIME(this.createdTime);
     }
 }

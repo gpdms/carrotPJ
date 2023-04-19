@@ -73,12 +73,11 @@ public class ChatController {
         String memId = ((MemberDto) session.getAttribute(LOGIN_MEMBER)).getMemId();
         long updateChatReadStateResult = chatService.updateChatReadState(roomId, memId);
 
-//        Map<String, List<Chat>> chatSectionList = chatService.getChatListByRoom(roomId);
         Map<String, List<ChatDto>> chatSectionList = chatService.getChatListByRoom(roomId);
 
         model.addAttribute("chatSectionList", chatSectionList);
 
-        return "chat/chat2";
+        return "chat/chat";
     }
 
     @PostMapping("/getChatNoti")
@@ -99,9 +98,8 @@ public class ChatController {
 
         model.addAttribute("chatRoomList", chatRoomList);
 
-        //만약 생성된 채팅이 없으면 이동하지 않고 오류메세지 출력하도록 해야함. 그럼.. ajax 써야하나..??
-
-        //html파일 만들어야함..
+        //만약 생성된 채팅이 없으면 채팅목록에 아무것도 없는 빈페이지로 이동함
+        //그러므로 채팅이 없는 경우에는 페이지 이동하지 않고 오류메세지 출력하도록 해야함. 그럼.. ajax 써야하나..??
 
         return "chat/chatRoomListByPost";
     }
