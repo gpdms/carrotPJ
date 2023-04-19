@@ -37,6 +37,7 @@ body {
 
 .name_message {
   float:left;
+  width: 80%;
 }
 
 .friend-list li a {
@@ -65,8 +66,9 @@ body {
   color: #777;
 }
 
+/*.friend-list li a .last-message {*/
 .friend-list li a .last-message {
-  width: 65%;
+  width: 80%;
   white-space: nowrap;
   text-overflow: ellipsis;
   overflow: hidden;
