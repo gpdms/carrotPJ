@@ -105,6 +105,7 @@ public class ChatServiceImpl implements ChatService {
                 .set(QChat.chat.readState, ReadState.READ)
                 .where(QChat.chat.room.roomId.eq(roomId), QChat.chat.to.memId.eq(memId), QChat.chat.readState.eq(ReadState.NOTREAD))
                 .execute();
+
         return updateResult;
     }
 

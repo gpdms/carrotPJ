@@ -94,8 +94,6 @@
                     }
                     showMessage2(JSON.parse(e.body));
                 });
-
-                stompClient2.send("/app/chat/test", {}, "입장시 메세지 테스트");
             },
             function (e) {
                 //에러 콜백
