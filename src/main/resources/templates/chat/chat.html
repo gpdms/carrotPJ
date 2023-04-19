@@ -33,7 +33,7 @@
                                     [[${chat.message}]]
                                 </p>
                                 <p th:if="${chat.imgState.imgStateCode=='1'}">
-                                    <img th:each="chatImgId : ${chat.chatImgIdList}" th:src="|/chat/chatImg/${chatImgId}|" alt="Chat Image">
+                                    <img class="chatImg" th:each="chatImgId : ${chat.chatImgIdList}" th:src="|/chat/chatImg/${chatImgId}|" alt="Chat Image">
                                 </p>
                                 <hr>
                                 <span class="read_state" th:text="${chat.readState.readStateName}"></span>
@@ -52,7 +52,7 @@
                                     [[${chat.message}]]
                                 </p>
                                 <p th:if="${chat.imgState.imgStateCode=='1'}">
-                                    <img th:each="chatImgId : ${chat.chatImgIdList}" th:src="|/chat/chatImg/${chatImgId}|" alt="Chat Image">
+                                    <img class="chatImg" th:each="chatImgId : ${chat.chatImgIdList}" th:src="|/chat/chatImg/${chatImgId}|" alt="Chat Image">
                                 </p>
                             </div>
                         </li>
@@ -157,7 +157,7 @@
         if (data.imgState == 1) {
             let chatImg = "";
             for (let i = 0; i < data.imgList.length; i++) {
-                chatImg += `<img src="/chat/chatImg/${data.imgList[i].chatImgId}" alt="Chat Image">`;
+                chatImg += `<img class="chatImg" src="/chat/chatImg/${data.imgList[i].chatImgId}" alt="Chat Image">`;
             }
             $('.chatting:last-child li:last-child p').html(chatImg);
         }
