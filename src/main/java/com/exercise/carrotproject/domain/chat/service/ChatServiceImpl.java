@@ -151,10 +151,6 @@ public class ChatServiceImpl implements ChatService {
                                 QChat.chat.createdTime)
                 ));
 
-        chatDtoList.stream().forEach(chatDto -> {
-            System.out.println(chatDto);
-        });
-
         //채팅 날짜별로 나누기
         Map<String, List<ChatDto>> chatSectionList = new HashMap<>();
         chatDtoList.stream().forEach(chatDto->{

@@ -41,4 +41,8 @@ public class ChatDto {
         this.chatImgIdList = chatImgIdList;
         this.createdTime = createdTime;
     }
+
+    public String getCreatedTimeByString() {
+        return CALCULATE_TIME(this.createdTime);
+    }
 }
