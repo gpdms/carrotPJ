@@ -22,7 +22,7 @@ import java.sql.Connection;
 import java.util.function.Supplier;
 
 @Configuration
-@EnableTransactionManagement
+//@EnableTransactionManagement
 public class QuerydslConfig {
     @PersistenceContext
     EntityManager em;
@@ -39,23 +39,16 @@ public class QuerydslConfig {
 
     @Bean
     public SQLQueryFactory queryFactory() {
-        SQLTemplates templates = H2Templates.builder().build();
-        return new SQLQueryFactory(templates, new SpringConnectionProvider(dataSource));
+        //SQLTemplates templates = H2Templates.builder().build();
+        return new SQLQueryFactory(configuration(), new SpringConnectionProvider(dataSource));
     }
 
-/*
+
     @Bean
-    @Qualifier("transactionManager")
-    public PlatformTransactionManager transactionManager() {
-        return new DataSourceTransactionManager(dataSource);
-    }
-*/
-
-/*    @Bean
     public com.querydsl.sql.Configuration configuration() {
         SQLTemplates templates = H2Templates.builder().build();
         com.querydsl.sql.Configuration configuration = new com.querydsl.sql.Configuration(templates);
         configuration.setExceptionTranslator(new SpringExceptionTranslator());
         return configuration;
-    }*/
+    }
 }

@@ -4,6 +4,7 @@ import com.exercise.carrotproject.domain.enumList.ReviewIndicator;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Map;
@@ -25,10 +26,21 @@ class ReviewDetailCustomRepositoryTest {
     }
 
     @Test
-    public void test() {
+    public void test2() {
         List<Long> mannerDetail2 = reviewDetailCustomRepository.getMannerDetail2();
+        System.out.println("mannerDetail2 = " + mannerDetail2);
         for (Long aLong : mannerDetail2) {
             System.out.println("aLong = " + aLong);
         }
     }
+    @Test
+    @Transactional
+    public void test3() {
+        List<String> mannerDetail3 = reviewDetailCustomRepository.getMannerDetail3();
+        System.out.println("mannerDetail3 = " + mannerDetail3);
+        for (String memId: mannerDetail3) {
+            System.out.println("memId = " + memId);
+        }
+    }
+
 }
