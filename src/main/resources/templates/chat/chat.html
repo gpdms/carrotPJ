@@ -11,45 +11,54 @@
     <div class="row">
         <!-- selected chat -->
         <div class="col-md-15 bg-white ">
-            <div class="chat-message">
-                <th:block th:if="${chatSectionList != null}">
-                    <th:block th:each="chatSection : ${chatSectionList.keySet()}">
-                        [[${chatSection}]]
-                        <ul class="chatting chat" th:each="chat : ${chatSectionList.get(chatSection)}">
-                            <li th:if="${session.loginMember.memId}==${chat.from.memId}" class="right clearfix">
-                                <span class="chat-img pull-right">
-                                    <img th:src="|/members/${chat.from.memId}/profileImg|" alt="User Avatar">
-                                </span>
-                                <div class="chat-body clearfix">
-                                    <div class="header">
-                                        <strong class="primary-font">[[${chat.from.memId}]]</strong>
-                                        <small class="pull-right text-muted"><i class="fa fa-clock-o"></i>[[${chat.getCreatedTimeByString()}]]</small>
-                                    </div>
-                                    <p>
-                                        [[${chat.message}]]
-                                    </p>
-                                    <hr>
-                                    <span class="read_state" th:text="${chat.readState.readStateName}"></span>
+            <th:block th:if="${chatSectionList == null}">
+                <div class="chat-message">
+                    <ul class="chatting chat"></ul>
+                </div>
+            </th:block>
+            <th:block th:if="${chatSectionList != null}">
+                <div class="chat-message" th:each="chatSection : ${chatSectionList.keySet()}">
+                    [[${chatSection}]]
+                    <ul class="chatting chat" th:each="chat : ${chatSectionList.get(chatSection)}">
+                        <li th:if="${session.loginMember.memId}==${chat.fromId}" class="right clearfix">
+                            <span class="chat-img pull-right">
+                                <img th:src="|/members/${chat.fromId}/profileImg|" alt="User Avatar">
+                            </span>
+                            <div class="chat-body clearfix">
+                                <div class="header">
+                                    <strong class="primary-font" th:text="${chat.fromId}"></strong>
+                                    <small class="pull-right text-muted"><i class="fa fa-clock-o"></i>[[${chat.getCreatedTimeByString()}]]</small>
                                 </div>
-                            </li>
-                            <li th:unless="${session.loginMember.memId}==${chat.from.memId}" class="left clearfix">
-                                <span class="chat-img pull-left">
-                                    <img th:src="|/members/${chat.from.memId}/profileImg|" alt="User Avatar">
-                                </span>
-                                <div class="chat-body clearfix">
-                                    <div class="header">
-                                        <strong class="primary-font">[[${chat.from.memId}]]</strong>
-                                        <small class="pull-right text-muted"><i class="fa fa-clock-o"></i>[[${chat.getCreatedTimeByString()}]]</small>
-                                    </div>
-                                    <p>
-                                        [[${chat.message}]]
-                                    </p>
+                                <p th:if="${chat.imgState.imgStateCode=='0'}">
+                                    [[${chat.message}]]
+                                </p>
+                                <p th:if="${chat.imgState.imgStateCode=='1'}">
+                                    <img class="chatImg" th:each="chatImgId : ${chat.chatImgIdList}" th:src="|/chat/chatImg/${chatImgId}|" alt="Chat Image">
+                                </p>
+                                <hr>
+                                <span class="read_state" th:text="${chat.readState.readStateName}"></span>
+                            </div>
+                        </li>
+                        <li th:unless="${session.loginMember.memId}==${chat.fromId}" class="left clearfix">
+                            <span class="chat-img pull-left">
+                                <img th:src="|/members/${chat.fromId}/profileImg|" alt="User Avatar">
+                            </span>
+                            <div class="chat-body clearfix">
+                                <div class="header">
+                                    <strong class="primary-font">[[${chat.fromId}]]</strong>
+                                    <small class="pull-right text-muted"><i class="fa fa-clock-o"></i>[[${chat.getCreatedTimeByString()}]]</small>
                                 </div>
-                            </li>
-                        </ul>
-                    </th:block>
-                </th:block>
-            </div>
+                                <p th:if="${chat.imgState.imgStateCode=='0'}">
+                                    [[${chat.message}]]
+                                </p>
+                                <p th:if="${chat.imgState.imgStateCode=='1'}">
+                                    <img class="chatImg" th:each="chatImgId : ${chat.chatImgIdList}" th:src="|/chat/chatImg/${chatImgId}|" alt="Chat Image">
+                                </p>
+                            </div>
+                        </li>
+                    </ul>
+                </div>
+            </th:block>
             <div class="chat-box bg-white">
                 <div class="input-group">
                     <input id="msg" class="form-control border no-shadow no-rounded"
@@ -85,8 +94,6 @@
                     }
                     showMessage2(JSON.parse(e.body));
                 });
-
-                stompClient2.send("/app/chat/test", {}, "입장시 메세지 테스트");
             },
             function (e) {
                 //에러 콜백
@@ -100,8 +107,7 @@
     //화면에 메시지를 표시하는 함수
     function showMessage2(data) {
         console.log('채팅메세지를 수신하였습니다.')
-        console.log(data.imgState);
-        console.log(data.imgList);
+
         let message;
         if ([[${session.loginMember.memId}]] == data.from) {
             message =
@@ -144,6 +150,15 @@
             });
         }
         $('.chatting').last().append(message);
+
+        //이미지 첨부한 경우
+        if (data.imgState == 1) {
+            let chatImg = "";
+            for (let i = 0; i < data.imgList.length; i++) {
+                chatImg += `<img class="chatImg" src="/chat/chatImg/${data.imgList[i].chatImgId}" alt="Chat Image">`;
+            }
+            $('.chatting:last-child li:last-child p').html(chatImg);
+        }
     }
 
     //엔터 눌렀을때 전송
@@ -163,7 +178,6 @@
 
     $("#fileUpload").change(e=>{
         let files = e.target.files;
-        console.log(files);
 
         //한번에 10장까지 업로드 가능
         if (files.length > 10) {

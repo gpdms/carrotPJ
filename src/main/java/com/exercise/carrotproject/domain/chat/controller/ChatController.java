@@ -1,15 +1,16 @@
 package com.exercise.carrotproject.domain.chat.controller;
 
+import com.exercise.carrotproject.domain.chat.dto.ChatDto;
 import com.exercise.carrotproject.domain.chat.dto.ChatRoomDto;
 import com.exercise.carrotproject.domain.chat.dto.MessageDto;
 import com.exercise.carrotproject.domain.chat.entity.Chat;
 import com.exercise.carrotproject.domain.chat.entity.ChatRoom;
-import com.exercise.carrotproject.domain.chat.repoisitory.ChatRoomRepository;
 import com.exercise.carrotproject.domain.chat.service.ChatService;
 import com.exercise.carrotproject.domain.member.dto.MemberDto;
-import com.querydsl.jpa.impl.JPAQueryFactory;
 import groovy.util.logging.Slf4j;
 import lombok.RequiredArgsConstructor;
+import org.springframework.core.io.Resource;
+import org.springframework.core.io.UrlResource;
 import org.springframework.messaging.handler.annotation.DestinationVariable;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.Payload;
@@ -21,6 +22,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpSession;
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -51,7 +53,8 @@ public class ChatController {
         //기생성된 채팅방이 존재하면 redirect
         Optional<ChatRoom> optionalChatRoom = chatService.getChatRoomByPostAndSellerAndBuyer(postId, sellerId, buyerId);
         if (optionalChatRoom.isPresent()) {
-            return "redirect:/chat/chatRoom/"+optionalChatRoom.get().getRoomId();
+            ChatRoom chatRoom = optionalChatRoom.get();
+            return "redirect:/chat/chatRoom/"+ chatRoom.getRoomId() + "/" + chatRoom.getPost().getPostId() + "/" + chatRoom.getSeller().getMemId() + "/" + chatRoom.getBuyer().getMemId();
         }
 
         model.addAttribute("buyerId", buyerId);
@@ -68,10 +71,9 @@ public class ChatController {
             Model model,
             HttpSession session) {
 
-        String memId = ((MemberDto) session.getAttribute(LOGIN_MEMBER)).getMemId();
-        long updateChatReadStateResult = chatService.updateChatReadState(roomId, memId);
+        getChatMsg(roomId, postId, sellerId, buyerId, session); //채팅 확인 업데이트
 
-        Map<String, List<Chat>> chatSectionList = chatService.getChatListByRoom(roomId);
+        Map<String, List<ChatDto>> chatSectionList = chatService.getChatListByRoom(roomId);
 
         model.addAttribute("chatSectionList", chatSectionList);
 
@@ -96,9 +98,8 @@ public class ChatController {
 
         model.addAttribute("chatRoomList", chatRoomList);
 
-        //만약 생성된 채팅이 없으면 이동하지 않고 오류메세지 출력하도록 해야함. 그럼.. ajax 써야하나..??
-
-        //html파일 만들어야함..
+        //만약 생성된 채팅이 없으면 채팅목록에 아무것도 없는 빈페이지로 이동함
+        //그러므로 채팅이 없는 경우에는 페이지 이동하지 않고 오류메세지 출력하도록 해야함. 그럼.. ajax 써야하나..??
 
         return "chat/chatRoomListByPost";
     }
@@ -181,5 +182,14 @@ public class ChatController {
         ChatRoomDto chatRoomDto = chatService.getChatRoom(memberDto, roomId);
 
         return chatRoomDto;
+    }
+
+    //채팅 이미지 출력
+    @ResponseBody
+    @GetMapping("/chatImg/{chatImgId}")
+    public Resource viewProfileImg(@PathVariable("chatImgId") Long chatImgId) throws IOException {
+        String imgPath = chatService.getChatImgPath(chatImgId);
+        UrlResource urlResource = new UrlResource("file:" + imgPath);
+        return urlResource;
     }
 }
