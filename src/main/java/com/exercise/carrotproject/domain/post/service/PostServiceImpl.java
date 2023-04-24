@@ -189,6 +189,34 @@ public class PostServiceImpl {
         mtPlaceRepository.save(mtPlaceEntity);
     }
 
+    //거래희망장소 update
+//    @Override
+    @Transactional
+    public void updateMtPlace(PostDto postDto, MtPlaceDto mtPlaceDto){
+        Post post = PostEntityDtoMapper.dtoToEntity(postDto);
+        MtPlace mtPlace= mtPlaceRepository.findByPost(post);
+
+        if (mtPlaceDto.getLat() == 0 || mtPlaceDto.getLon()==0 || mtPlaceDto.getPlaceInfo()==""){
+            deleteMtPlace(post);
+        } else if(mtPlace == null){
+            insertMtPlace(post, mtPlaceDto);
+        } else{
+            QMtPlace qMtPlace = QMtPlace.mtPlace;
+            jpaQueryFactory.update(qMtPlace)
+                    .set(qMtPlace.lat, mtPlaceDto.getLat())
+                    .set(qMtPlace.lon, mtPlaceDto.getLon())
+                    .set(qMtPlace.placeInfo, mtPlaceDto.getPlaceInfo())
+                    .where(qMtPlace.mtPlaceId.eq(mtPlace.getMtPlaceId()))
+                    .execute();
+        }
+    }
+
+    //거래희망장소 delete
+    //    @Override
+    @Transactional
+    public void deleteMtPlace(Post post){
+        mtPlaceRepository.deleteByPost(post);
+    }
 
 
 //    @Override
@@ -265,17 +293,14 @@ public class PostServiceImpl {
         return mtPlaceDto;
     }
 
-
-
-
-
-
-    //게시글 이미지 삭제
+    //게시글 이미지 아이디로 삭제
 //    @Override
     @Transactional
     public void deleteOnePostImg(Long imgId){
         postImgRepository.deleteById(imgId);
     }
+
+    
 
     //게시글 업데이트
 //    @Override
@@ -285,7 +310,7 @@ public class PostServiceImpl {
         Post post = PostEntityDtoMapper.dtoToEntity(postDto);
 
         Post rs = postRepository.save(post);
-        log.info("게시글 업데이트 성공?:{}",rs);
+//        log.info("게시글 업데이트 성공?:{}",rs);
 
         //파일이 비어있을 경우
         for(MultipartFile file : uploadFiles) {
@@ -298,7 +323,10 @@ public class PostServiceImpl {
         //새이미지 추가
         insertPostImg(post, uploadFiles);
 
+
     }
+
+
 
     //게시글 삭제
 //    @Override
@@ -308,21 +336,11 @@ public class PostServiceImpl {
         Post post = postRepository.findById(postId).orElse(null);
         //게시글 이미지 삭제
         postImgRepository.deleteByPost(post);
-
-        //QueryDSL시도하다가...
-//        QPostImg qPostImg = QPostImg.postImg;
-//
-//        jpaQueryFactory.delete(qPostImg)
-//                .where(qPostImg.post.postId(postId))
-//                .execute();
+        //거래희망장소 삭제
+        mtPlaceRepository.deleteByPost(post);
 
 
-        //JPQL 게시글 이미지 삭제
-//        String jpql = "delete from PostImg i where i.post.postId = :postId";
-//        Query query = em.createQuery(jpql).setParameter("postId", postId);
-//        int rows = query.executeUpdate(); //제거한 행의 수 반환
-//        log.info("Query반환값이 뭔지 확인해보자:{}", query);
-        
+
         //게시글 삭제
         postRepository.deleteById(postId);
 
@@ -474,6 +492,8 @@ public class PostServiceImpl {
 
         return chatRoomList;
     }
+
+
 
 
 

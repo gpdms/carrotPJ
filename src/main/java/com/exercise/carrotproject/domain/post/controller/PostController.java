@@ -82,11 +82,8 @@ public class PostController {
 
         //거래희망장소 지도 정보
         MtPlaceDto mtPlaceDto = postService.selectMtPlace(postId);
-//        if(mtPlaceDto == null){
-//            model.addAttribute("mtPlace", "noMtPlace");
-//        } else{
+
             model.addAttribute("mtPlace", mtPlaceDto);
-//        }
 
         model.addAttribute("post", postDto);
         model.addAttribute("imgIds", postImgIdList);
@@ -107,7 +104,7 @@ public class PostController {
     @PostMapping("/post/upload")
 //    @ResponseBody
     public ResponseEntity<String> insPost(PostDto postDto, @RequestParam MultipartFile[] uploadFiles, MtPlaceDto mtPlaceDto, HttpSession session) throws IOException {
-//        log.info("컨트롤러단 mtPlaceDto:", postDto);
+        log.info("컨트롤러단 mtPlaceDto:", mtPlaceDto);
         System.out.println("컨트롤러단 mtPlaceDto = " + mtPlaceDto);
 //        log.info("controller uploadfiles-length {}", uploadFiles.length);
 
@@ -123,6 +120,15 @@ public class PostController {
         postDto.setLoc(loginMember.getLoc());
         //게시글 내용 개행 처리
         postDto.setContent(postDto.getContent().replace("\r\n","<br>")); //줄개행
+
+        //거래희망장소 null처리
+        if (mtPlaceDto.getLat() == 0 || mtPlaceDto.getLon()==0 || mtPlaceDto.getPlaceInfo()==""){
+            mtPlaceDto.setLat(null);
+            mtPlaceDto.setLon(null);
+            mtPlaceDto.setPlaceInfo(null);
+        }
+
+
 
         //DB에 insert
         String insResult = postService.insertPost(postDto, uploadFiles, mtPlaceDto);
@@ -188,20 +194,25 @@ public class PostController {
         //이미지 리스트 반환
         List<PostImgDto> postImgDtoList = postService.selectPostImgs(postId);
 
+        //거래희망장소
+        MtPlaceDto mtPlaceDto = postService.selectMtPlace(postId);
 
         model.addAttribute("post", postDto);
         model.addAttribute("postImgs", postImgDtoList);
+        model.addAttribute("mtPlace", mtPlaceDto);
 
 
 
-        return "update/update_post";
+        return "post/update_post";
     }
 
-    //게시글 수정한 것 업로드
+    //게시글 수정 업로드
     @PostMapping("/post/updatePost/{postId}")
-    public ResponseEntity<String> udtPost(PostDto postDto, @RequestParam List<Long> imgIdList, @RequestParam MultipartFile[] uploadFiles, HttpSession session) throws IOException {
+    public ResponseEntity<String> udtPost(PostDto postDto, MtPlaceDto mtPlaceDto, @RequestParam List<Long> imgIdList, @RequestParam MultipartFile[] uploadFiles, HttpSession session) throws IOException {
         log.info("게시글수정 컨트롤러에 온 postDto:{}", postDto);
         log.info("게시글수정 컨트롤러에 온 imgId:{}", imgIdList);
+        log.info("게시글수정 컨트롤러에 온 mtPlaceDto:{}", mtPlaceDto);
+
 
         //제목, 카테고리, 내용 null체크
         if(postDto.getTitle().isEmpty() || postDto.getCategory()==null || postDto.getContent().isEmpty()){
@@ -223,6 +234,10 @@ public class PostController {
 
         //DB에 내용 update, 새 이미지 추가
         postService.updatePost(postDto, uploadFiles);
+
+        //거래희망장소 변경
+        postService.updateMtPlace(postDto, mtPlaceDto);
+
 
         return new ResponseEntity<>("수정되었습니다.",HttpStatus.OK);
 
