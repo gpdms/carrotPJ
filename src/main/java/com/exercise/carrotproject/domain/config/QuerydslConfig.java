@@ -22,15 +22,17 @@ import java.sql.Connection;
 import java.util.function.Supplier;
 
 @Configuration
-//@EnableTransactionManagement
 public class QuerydslConfig {
     @PersistenceContext
     EntityManager em;
 
-  /*  @Autowired
-    private PlatformTransactionManager transactionManager;*/
     @Autowired
     private DataSource dataSource;
+
+    @Bean
+    public SQLTemplates mysqlTemplates() {
+        return H2Templates.builder().build();
+    }
 
     @Bean
     public JPAQueryFactory jpaQueryFactory() {
@@ -39,7 +41,6 @@ public class QuerydslConfig {
 
     @Bean
     public SQLQueryFactory queryFactory() {
-        //SQLTemplates templates = H2Templates.builder().build();
         return new SQLQueryFactory(configuration(), new SpringConnectionProvider(dataSource));
     }
 
