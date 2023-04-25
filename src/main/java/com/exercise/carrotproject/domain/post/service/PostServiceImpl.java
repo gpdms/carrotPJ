@@ -67,9 +67,14 @@ public class PostServiceImpl {
     @Transactional
     public String insertPost(PostDto postDto, MultipartFile[] uploadFiles, MtPlaceDto mtPlaceDto) throws IOException {
 //        log.info("uploadfiles-length {}", uploadFiles.length);
-//        log.info("서비스단 postDto:",postDto);
+        log.info("서비스단 mtPlaceDto:{}",mtPlaceDto);
         //Dto->Entity 변환
         Post postEntity = PostEntityDtoMapper.dtoToEntity(postDto);
+
+        //거래희망장소 테이블에 insert
+        if(mtPlaceDto.getLat() != null && mtPlaceDto.getLon() != null && mtPlaceDto.getPlaceInfo()!=null){
+            insertMtPlace(postEntity, mtPlaceDto);
+        }
 
         for(MultipartFile file : uploadFiles) {
             //1개이상 파일 올리고 && 이미지 타입이 아닐때 -> post에 저장하지 않는다.
@@ -90,11 +95,6 @@ public class PostServiceImpl {
         //이미지 테이블에 insert
         insertPostImg(postEntity, uploadFiles);
 
-        //거래희망장소 테이블에 insert
-        if(mtPlaceDto.getLat() != null && mtPlaceDto.getLon() != null && mtPlaceDto.getPlaceInfo()!=null){
-            insertMtPlace(postEntity, mtPlaceDto);
-
-        }
 
         
         return "성공";
@@ -333,11 +333,11 @@ public class PostServiceImpl {
     @Transactional
     public void deletePost(Long postId){
         //postId로 post엔티티 조회
-        Post post = postRepository.findById(postId).orElse(null);
+//        Post post = postRepository.findById(postId).orElse(null);
         //게시글 이미지 삭제
-        postImgRepository.deleteByPost(post);
+//        postImgRepository.deleteByPost(post);
         //거래희망장소 삭제
-        mtPlaceRepository.deleteByPost(post);
+//        mtPlaceRepository.deleteByPost(post);
 
 
 

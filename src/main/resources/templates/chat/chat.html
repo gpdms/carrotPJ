@@ -26,8 +26,10 @@
                             </span>
                             <div class="chat-body clearfix">
                                 <div class="header">
-                                    <strong class="primary-font" th:text="${chat.fromId}"></strong>
-                                    <small class="pull-right text-muted"><i class="fa fa-clock-o"></i>[[${chat.getCreatedTimeByString()}]]</small>
+
+                                    <strong class="primary-font">[[${chat.from.memId}]]</strong>
+                                    <small class="pull-right text-muted"><i class="fa fa-clock-o"></i>[[${chat.getCalculatedTimeForChat()}]]</small>
+
                                 </div>
                                 <p th:if="${chat.imgState.imgStateCode=='0'}">
                                     [[${chat.message}]]
@@ -45,8 +47,10 @@
                             </span>
                             <div class="chat-body clearfix">
                                 <div class="header">
-                                    <strong class="primary-font">[[${chat.fromId}]]</strong>
-                                    <small class="pull-right text-muted"><i class="fa fa-clock-o"></i>[[${chat.getCreatedTimeByString()}]]</small>
+
+                                    <strong class="primary-font">[[${chat.from.memId}]]</strong>
+                                    <small class="pull-right text-muted"><i class="fa fa-clock-o"></i>[[${chat.getCalculatedTimeForChat()}]]</small>
+
                                 </div>
                                 <p th:if="${chat.imgState.imgStateCode=='0'}">
                                     [[${chat.message}]]

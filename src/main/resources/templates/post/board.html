@@ -24,7 +24,7 @@
                                     <!-- 제목-->
                                     <h5 class="fw-bolder" th:text="${post.title}">제목</h5>
                                     <!--지역, 시간-->
-                                    <p class="fw">[[${post.loc.locName}]] / 1시간 전</p>
+                                    <p class="fw">[[${post.loc.locName}]] / [[${post.createdTime}]]</p>
                                     <!-- 가격-->
                                     <h6 class="fw-bolder" th:text="|${post.price}원|">가격</h6>
                                 </div>

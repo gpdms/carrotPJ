@@ -140,7 +140,7 @@ public class ChatController {
         map.put("chat", chat.getMessage()); //채팅메세지
         map.put("from", memberDto.getMemId()); //보내는이
         map.put("room", chat.getRoom().getRoomId()); //채팅방 id
-        map.put("createdTime", chat.getCreatedTimeByString()); //보낸시간
+        map.put("createdTime", chat.getCalculatedTimeForChat()); //보낸시간
         map.put("readState", chat.getReadState().getReadStateName()); //읽음여부
         map.put("imgState", chat.getImgState().getImgStateCode());//이미지여부
         map.put("imgList", chat.getChatImgList());//이미지리스트
