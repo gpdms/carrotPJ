@@ -9,8 +9,6 @@ import com.exercise.carrotproject.domain.review.entity.ReviewBuyerDetail;
 import com.exercise.carrotproject.domain.review.entity.ReviewSeller;
 import com.exercise.carrotproject.domain.review.entity.ReviewSellerDetail;
 import com.exercise.carrotproject.domain.review.repository.ReviewBuyerCustomRepository;
-import com.exercise.carrotproject.domain.review.repository.ReviewBuyerDetailCustomRepository;
-import com.exercise.carrotproject.domain.review.repository.ReviewSellerDetailCustomRepository;
 import com.exercise.carrotproject.domain.review.repository.basic.ReviewBuyerDetailRepository;
 import com.exercise.carrotproject.domain.review.repository.basic.ReviewBuyerRepository;
 import com.exercise.carrotproject.domain.review.repository.basic.ReviewSellerDetailRepository;
@@ -29,7 +27,6 @@ import java.util.stream.Collectors;
 @Service
 @RequiredArgsConstructor
 public class ReviewBuyerServiceImpl {
-    private final ReviewBuyerDetailCustomRepository reviewBuyerDetailCustomRepository;
     private final ReviewBuyerCustomRepository reviewBuyerCustomRepository;
     private final ReviewBuyerRepository reviewBuyerRepository;
     private final ReviewBuyerDetailRepository reviewBuyerDetailRepository;

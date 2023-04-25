@@ -96,7 +96,7 @@ public class HomeController {
         }
         Long countPost = 0L;
         Long countReviewMessage = countReviewMessage = reviewService.countGoodReviewMessage(memId);
-        Map<Object, Long> positiveMannerBrief =  reviewService.getPositiveMannerBrief(memId, 3L);
+        Map<ReviewIndicator, Long> positiveMannerBrief = reviewService.getPositiveMannerDetailsBrief(memId, 3L);
         List<ReviewMessageDto> reviewMessageBrief =reviewService.goodReviewMessagesBrief(memId, 3L);
         if(blockState == false) {
             countPost = postRepository.countByMember(member);
@@ -111,17 +111,5 @@ public class HomeController {
     }
 
 
-    @GetMapping("/test/{memId}")
-    private String toTest(@PathVariable String memId,  Model model) {
-        //Map<ReviewIndicator, Long> mannerDetail = reviewDetailCustomRepository.getMannerDetail("tester3", "P");
-        List<String> mannerDetail2 = reviewDetailCustomRepository.getMannerDetail3();
-        System.out.println("mannerDetail2 = " + mannerDetail2);
-        for (String aLong : mannerDetail2) {
-            System.out.println("aLong = " + aLong);
-        }
-       // model.addAttribute("mannerDetail", mannerDetail);
-        model.addAttribute("mannerDetail2", mannerDetail2);
-        return "review/test";
-    }
 
 }

@@ -26,30 +26,8 @@ public class QuerydslConfig {
     @PersistenceContext
     EntityManager em;
 
-    @Autowired
-    private DataSource dataSource;
-
-    @Bean
-    public SQLTemplates mysqlTemplates() {
-        return H2Templates.builder().build();
-    }
-
     @Bean
     public JPAQueryFactory jpaQueryFactory() {
         return new JPAQueryFactory(em);
-    }
-
-    @Bean
-    public SQLQueryFactory queryFactory() {
-        return new SQLQueryFactory(configuration(), new SpringConnectionProvider(dataSource));
-    }
-
-
-    @Bean
-    public com.querydsl.sql.Configuration configuration() {
-        SQLTemplates templates = H2Templates.builder().build();
-        com.querydsl.sql.Configuration configuration = new com.querydsl.sql.Configuration(templates);
-        configuration.setExceptionTranslator(new SpringExceptionTranslator());
-        return configuration;
     }
 }
