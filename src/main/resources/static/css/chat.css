@@ -37,6 +37,7 @@ body {
 
 .name_message {
   float:left;
+  width: 80%;
 }
 
 .friend-list li a {
@@ -65,8 +66,9 @@ body {
   color: #777;
 }
 
+/*.friend-list li a .last-message {*/
 .friend-list li a .last-message {
-  width: 65%;
+  width: 80%;
   white-space: nowrap;
   text-overflow: ellipsis;
   overflow: hidden;
@@ -103,12 +105,18 @@ small, .small {
   background: #f9f9f9;
 }
 
-.chat li img {
+.chat li .chat-img img {
   width: 45px;
   height: 45px;
   border-radius: 50em;
   -moz-border-radius: 50em;
   -webkit-border-radius: 50em;
+}
+
+.chat li .chatImg {
+  width: 200px;
+  height: 200px;
+  border: 1px solid black;
 }
 
 img {
@@ -217,6 +225,6 @@ a:hover, a:active, a:focus {
 }
 */
 
-#fildUpload {
+#fileUpload {
   display: none;
 }
