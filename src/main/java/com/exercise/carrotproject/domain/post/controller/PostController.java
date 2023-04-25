@@ -61,6 +61,9 @@ public class PostController {
         Page<PostDto> page = postService.paging(postList, pageable);
         model.addAttribute("list", page);
 
+        //시간
+
+
         return "post/board";
     }
 
@@ -104,8 +107,7 @@ public class PostController {
     @PostMapping("/post/upload")
 //    @ResponseBody
     public ResponseEntity<String> insPost(PostDto postDto, @RequestParam MultipartFile[] uploadFiles, MtPlaceDto mtPlaceDto, HttpSession session) throws IOException {
-        log.info("컨트롤러단 mtPlaceDto:", mtPlaceDto);
-        System.out.println("컨트롤러단 mtPlaceDto = " + mtPlaceDto);
+        log.info("컨트롤러단 mtPlaceDto:{}", mtPlaceDto);
 //        log.info("controller uploadfiles-length {}", uploadFiles.length);
 
         //제목, 카테고리, 내용 null체크
@@ -128,6 +130,7 @@ public class PostController {
             mtPlaceDto.setPlaceInfo(null);
         }
 
+        log.info("컨트롤러단 아래 mtPlaceDto:{}", mtPlaceDto);
 
 
         //DB에 insert
@@ -276,21 +279,6 @@ public class PostController {
 
 
 
-    //거래후기보내기 클릭시 구매자 선택 페이지
-//    @GetMapping("/post/tradeReview/{postId}")
-//    public String tradeReviewCheck(@PathVariable Long postId, Model model){
-//
-//        //trade테이블에 없으면 구매자 선택 페이지
-//       Trade selectedBuyer = postService.selectTradeByPost(postId);
-////            return "redirect:/post/buyers/"+postId;
-//
-//        //trade테이블에 있으면 거래후기 적는 페이지로
-////        return "redirect:/reviews/buyer?postId="+postId;
-//
-//        model.addAttribute("selectedBuyer", selectedBuyer);
-//
-//        return "post/buyerListByPost";
-//    }
 
     //구매자선택 페이지
     @GetMapping("/post/buyers/{postId}")

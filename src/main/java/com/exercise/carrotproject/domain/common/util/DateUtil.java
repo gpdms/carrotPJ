@@ -17,6 +17,34 @@ public class DateUtil {
      * @param 날짜
      * @return 분 표시
      */
+
+    public static String CALCULATE_TIME_POST(Timestamp ts) {
+        String msg;
+
+        long curTime = System.currentTimeMillis();
+        long regTime = ts.getTime();
+        long diffTime = (curTime - regTime) / 1000;
+
+        if (diffTime < SEC) {
+            msg = diffTime + "초 전";
+        } else if ((diffTime /= SEC) < MIN) {
+            msg = diffTime + "분 전";
+        } else if ((diffTime /= MIN) < HOUR) {
+//            msg = (diffTime) + "시간 전";
+            msg = new SimpleDateFormat("HH:mm").format(ts);
+        } else if ((diffTime /= HOUR) < DAY) {
+            msg = (diffTime) + "일 전";
+        } else if ((diffTime /= DAY) < MONTH) {
+            msg = (diffTime) + "달 전";
+        } else {
+            msg = diffTime + "년 전";
+        }
+
+        return msg;
+
+    }
+
+
     public static String CALCULATE_TIME(Timestamp ts) {
         String msg;
 
@@ -44,4 +72,10 @@ public class DateUtil {
         return msg;
 
     }
+
+
+
+
+
+
 }
