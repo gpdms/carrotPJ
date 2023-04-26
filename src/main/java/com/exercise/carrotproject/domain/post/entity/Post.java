@@ -1,5 +1,7 @@
 package com.exercise.carrotproject.domain.post.entity;
 
+import com.exercise.carrotproject.domain.chat.entity.Chat;
+import com.exercise.carrotproject.domain.chat.entity.ChatRoom;
 import com.exercise.carrotproject.domain.common.entity.BaseEntity;
 import com.exercise.carrotproject.domain.converter.HideStateConverter;
 import com.exercise.carrotproject.domain.converter.LocAttributeConverter;
@@ -60,6 +62,11 @@ public class Post extends BaseEntity {
     private List<PostImg> postImgList = new ArrayList<>();
     @OneToOne(mappedBy = "post", cascade = CascadeType.REMOVE)
     private MtPlace mtPlace;
+    @OneToMany(mappedBy = "post", cascade = CascadeType.REMOVE)
+    private List<Chat> chatList = new ArrayList<>();
+    @OneToMany(mappedBy = "post", cascade = CascadeType.REMOVE)
+    private List<ChatRoom> chatRoomList = new ArrayList<>();
+
 
     //ColumnDefault, nullable=false는 데이터베이스에만 적용되고 영속성컨텍스트에는 null이기때문에
     //영속 상태 되기 이전에 실행하여 영속컨텍스트에도 담아줌.
