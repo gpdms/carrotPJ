@@ -32,7 +32,7 @@ public class Chat extends BaseEntity {
     private ChatRoom room;
 
     @ManyToOne
-    @JoinColumn(name = "post_id", foreignKey = @ForeignKey(ConstraintMode.NO_CONSTRAINT))
+    @JoinColumn(name = "post_id")
     private Post post;
 
     @ManyToOne
