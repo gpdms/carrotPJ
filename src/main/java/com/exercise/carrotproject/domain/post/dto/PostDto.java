@@ -9,6 +9,7 @@ import com.exercise.carrotproject.domain.member.dto.MemberDto;
 import com.exercise.carrotproject.domain.member.entity.Member;
 import lombok.*;
 
+import java.sql.Timestamp;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -30,5 +31,6 @@ public class PostDto {
     private SellState sellState;
     private Integer hits;
     private String wishPlace;
+    private String createdTime;
 
 }

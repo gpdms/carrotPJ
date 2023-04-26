@@ -23,7 +23,7 @@ public class ChatRoom extends BaseEntity {
     private Long roomId;
 
     @ManyToOne
-    @JoinColumn(name = "post_id")
+    @JoinColumn(name = "post_id", foreignKey = @ForeignKey(ConstraintMode.NO_CONSTRAINT))
     private Post post;
 
     @ManyToOne

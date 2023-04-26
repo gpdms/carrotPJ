@@ -22,7 +22,6 @@ public class PostEntityDtoMapper {
                 .hideState(postDto.getHideState())
                 .sellState(postDto.getSellState())
                 .hits(postDto.getHits())
-                .wishPlace(postDto.getWishPlace())
                 .build();
     }
 
@@ -39,7 +38,7 @@ public class PostEntityDtoMapper {
                 .hideState(post.getHideState())
                 .sellState(post.getSellState())
                 .hits(post.getHits())
-                .wishPlace(post.getWishPlace())
+                .createdTime(post.getCalculatedTimeForPost())
                 .build();
     }
 

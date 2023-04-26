@@ -11,6 +11,7 @@ import javax.persistence.MappedSuperclass;
 import java.sql.Timestamp;
 
 import static com.exercise.carrotproject.domain.common.util.DateUtil.CALCULATE_TIME;
+import static com.exercise.carrotproject.domain.common.util.DateUtil.CALCULATE_TIME_POST;
 
 @MappedSuperclass
 @EntityListeners(AuditingEntityListener.class)
@@ -24,7 +25,12 @@ public abstract class BaseEntity {
     @Column(insertable = false)
     private Timestamp updatedTime;
 
-    public String getCreatedTimeByString() {
+    public String getCalculatedTimeForChat() {
         return CALCULATE_TIME(this.createdTime);
     }
+
+    public String getCalculatedTimeForPost() {
+        return CALCULATE_TIME_POST(this.createdTime);
+    }
+
 }

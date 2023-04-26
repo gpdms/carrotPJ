@@ -118,22 +118,22 @@
 
     // 지도를 클릭한 위치에 표출할 마커입니다
     var marker = new kakao.maps.Marker({
-        // 지도 중심좌표에 마커를 생성합니다
+        // 지도 중심좌표
         position: map.getCenter()
     });
-
+    // 지도에 마커를 표시합니다
+    marker.setMap(map);
 
 
     //위도, 경도, 장소정보
-    var lat;
-    var lon;
-    var placeInfo;
+    var lat=0;
+    var lon=0;
+    var placeInfo="";
 
     // 지도에 클릭 이벤트를 등록합니다
     // 지도를 클릭하면 마지막 파라미터로 넘어온 함수를 호출합니다
     kakao.maps.event.addListener(map, 'click', function(mouseEvent) {
-        // 지도에 마커를 표시합니다
-        marker.setMap(map);
+
 
         // 클릭한 위도, 경도 정보를 가져옵니다
         var latlng = mouseEvent.latLng;
@@ -141,16 +141,11 @@
         // 마커 위치를 클릭한 위치로 옮깁니다
         marker.setPosition(latlng);
 
-        // var message = '클릭한 위치의 위도는 ' + latlng.getLat() + ' 이고, ';
-        // message += '경도는 ' + latlng.getLng() + ' 입니다';
-        //
-        // var resultDiv = document.getElementById('clickLatlng');
-        // resultDiv.innerHTML = message;
-
         //장소정보 입력창 보이기
         document.getElementById('inputPlace').style.display='block';
         document.getElementById('cfmPlace').style.display="inline-block";
     });
+
     //'장소선택하기'버튼 클릭시 위도,경도,장소정보 set
     document.getElementById('cfmPlace').addEventListener('click',function () {
         lat = marker.getPosition().getLat();
@@ -186,7 +181,7 @@
             lat=0;
             lon=0;
             placeInfo="";
-            marker.setMap(null);
+            // marker.setMap(null);
             document.getElementById('placeInfo').value=null;
             console.log("장소선택안함클릭시 lat:{}, lon:{}, placeinfo:{}", lat, lon, placeInfo);
 
