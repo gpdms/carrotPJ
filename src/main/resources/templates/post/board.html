@@ -26,7 +26,7 @@
                                     <!--지역, 시간-->
                                     <p class="fw">[[${post.loc.locName}]] / [[${post.createdTime}]]</p>
                                     <!-- 가격-->
-                                    <h6 class="fw-bolder" th:text="|${post.price}원|">가격</h6>
+                                    <h6 class="fw-bolder" th:if="${post.price}!=0" th:text="|${post.price}원|">가격</h6>
                                 </div>
                             </div>
                             <!-- Product actions-->
