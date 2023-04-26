@@ -4,6 +4,7 @@ package com.exercise.carrotproject.domain.review.service;
 import com.exercise.carrotproject.domain.enumList.ReviewBuyerIndicator;
 import com.exercise.carrotproject.domain.enumList.ReviewSellerIndicator;
 import com.exercise.carrotproject.domain.post.entity.Post;
+import com.exercise.carrotproject.domain.review.dto.ReviewBuyerDto;
 import com.exercise.carrotproject.domain.review.entity.ReviewBuyer;
 import com.exercise.carrotproject.domain.review.entity.ReviewBuyerDetail;
 import com.exercise.carrotproject.domain.review.entity.ReviewSeller;
@@ -82,5 +83,9 @@ public class ReviewBuyerServiceImpl {
             resultMap.put("fail", "숨김에 성공했습니다");
         }
         return resultMap;
+    }
+
+    public List<ReviewBuyerDto> findReviewsByPostId(List<Long> postIds) {
+       return reviewBuyerCustomRepository.getReviewIdsByPostIds(postIds);
     }
 }

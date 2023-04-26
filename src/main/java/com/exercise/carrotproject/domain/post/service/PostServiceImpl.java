@@ -55,6 +55,7 @@ public class PostServiceImpl {
     private final MtPlaceRepository mtPlaceRepository;
     private final TradeRepository tradeRepository;
     private final JPAQueryFactory jpaQueryFactory; //QuerydslConfig파일에 bean등록함
+    private final PostRepositoryImpl customPostRepository;
 //    private final PostRepositoryImpl customPostRepository; //후에 CustomPostRepository로 바꿔주기
 
     @Value("${file.postImg}")
@@ -422,13 +423,12 @@ public class PostServiceImpl {
 
 
         //판매완료
-        List<Post> soldPostList = postRepository.findByMemberAndSellStateAndHideStateOrderByPostIdDesc(member, SellState.SOLD, HideState.SHOW);
+        //List<Post> soldPostList = postRepository.findByMemberAndSellStateAndHideStateOrderByPostIdDesc(member, SellState.SOLD, HideState.SHOW);
         //entity리스트->dto리스트
-        List<PostDto> postDtoSoldList = PostEntityDtoMapper.toDtoList(soldPostList);
-
+        //List<PostDto> postDtoSoldList = PostEntityDtoMapper.toDtoList(soldPostList);
         Map map = new HashMap();
         map.put("onSaleAndRsvList", postDtoOnSaleList);
-        map.put("soldList", postDtoSoldList);
+        map.put("soldList", customPostRepository.getSoldList(memId));
 
         return map;
     }

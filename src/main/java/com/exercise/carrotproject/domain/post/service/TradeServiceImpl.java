@@ -9,6 +9,7 @@ import com.exercise.carrotproject.domain.post.entity.Trade;
 import com.exercise.carrotproject.domain.post.repository.PostRepository;
 import com.exercise.carrotproject.domain.post.repository.TradeRepository;
 import com.exercise.carrotproject.domain.review.repository.basic.ReviewBuyerRepository;
+import com.exercise.carrotproject.domain.review.repository.basic.ReviewSellerRepository;
 import com.querydsl.jpa.impl.JPAQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
@@ -25,6 +26,7 @@ public class TradeServiceImpl {
     private final MemberRepository memberRepository;
     private final JPAQueryFactory jpaQueryFactory;
     private final ReviewBuyerRepository reviewBuyerRepository;
+    private final ReviewSellerRepository reviewSellerRepository;
 
     //    @Override
     public Trade selectTradeByPost(Long postId){
@@ -68,6 +70,7 @@ public class TradeServiceImpl {
             tradeRepository.deleteByPost(post);
             //리뷰도 삭제
             reviewBuyerRepository.deleteByPost(post);
+            reviewSellerRepository.deleteByPost(post);
     }
 
 
