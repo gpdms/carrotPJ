@@ -54,6 +54,7 @@ public class PostServiceImpl {
     private final MemberRepository memberRepository;
     private final MtPlaceRepository mtPlaceRepository;
     private final TradeRepository tradeRepository;
+    private final WishRepository wishRepository;
     private final JPAQueryFactory jpaQueryFactory; //QuerydslConfig파일에 bean등록함
     private final PostRepositoryImpl customPostRepository;
 //    private final PostRepositoryImpl customPostRepository; //후에 CustomPostRepository로 바꿔주기
@@ -446,7 +447,6 @@ public class PostServiceImpl {
     }
 
 //    @Override
-
     public List<ChatRoomDto> selectBuyersByPost(MemberDto memberDto, Long postId){
         Member memberEntity = MemberEntityDtoMapper.toMemberEntity(memberDto);
 
@@ -491,8 +491,42 @@ public class PostServiceImpl {
         return chatRoomList;
     }
 
+//    @Override
+    @Transactional
+    public void insertWish(Long postId, String memId){
+        Post post = postRepository.findById(postId).orElseThrow();
+        Member member = memberRepository.findById(memId).orElseThrow();
+        Wish wishEntity = Wish.builder()
+                .post(post)
+                .member(member)
+                .build();
 
+        wishRepository.save(wishEntity);
+    }
 
+    //    @Override
+    @Transactional
+    public void deleteWish(Long postId, String memId){
+        Post post = postRepository.findById(postId).orElseThrow();
+        Member member = memberRepository.findById(memId).orElseThrow();
+
+        wishRepository.deleteByPostAndMember(post, member);
+
+    }
+
+//    @Override
+    public String isWishExist(Long postId, String memId){
+        Post post = postRepository.findById(postId).orElseThrow();
+        Member member = memberRepository.findById(memId).orElseThrow();
+
+        Wish wish = wishRepository.findByPostAndMember(post, member);
+
+        if(wish != null){
+            return "exist";
+        } else{
+            return "none";
+        }
+    }
 
 
 

@@ -64,7 +64,7 @@ public class PostController {
 
     //게시글 상세정보 detail
     @GetMapping("/post/detail/{postId}")
-    public String postDetail(@PathVariable Long postId, Model model){
+    public String postDetail(@PathVariable Long postId, Model model, HttpSession session){
         //Post하나 불러오기
         PostDto postDto = postService.selectOnePost(postId);
 
@@ -81,10 +81,15 @@ public class PostController {
         //거래희망장소 지도 정보
         MtPlaceDto mtPlaceDto = postService.selectMtPlace(postId);
 
-            model.addAttribute("mtPlace", mtPlaceDto);
+        //찜 여부
+        String memId = ((MemberDto) session.getAttribute(SessionConst.LOGIN_MEMBER)).getMemId();
+        String isWishExist = postService.isWishExist(postId, memId);
+        log.info("컨트롤러단 isWishExist:{}", isWishExist);
 
         model.addAttribute("post", postDto);
         model.addAttribute("imgIds", postImgIdList);
+        model.addAttribute("mtPlace", mtPlaceDto);
+        model.addAttribute("isWishExist", isWishExist);
 
 
 
@@ -313,7 +318,25 @@ public class PostController {
     }
 
 
+    //찜하기
+    @PostMapping("/post/addWish")
+    @ResponseBody
+    public String insWish(@RequestParam Long postId, @RequestParam String memId){
+        log.info("컨트롤러에 온 postId:{}, memId:{}",postId, memId);
+        postService.insertWish(postId, memId);
 
+        return "관심목록에 추가되었습니다.";
+    }
+
+    //찜 해제하기
+    @PostMapping("/post/rmvWish")
+    @ResponseBody
+    public String dltWish(@RequestParam Long postId, @RequestParam String memId){
+        log.info("컨트롤러에 온 postId:{}, memId:{}",postId, memId);
+        postService.deleteWish(postId, memId);
+
+        return "관심목록에서 제거되었습니다.";
+    }
 
 
 
