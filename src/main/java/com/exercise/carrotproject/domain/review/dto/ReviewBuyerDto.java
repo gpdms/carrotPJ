@@ -19,7 +19,7 @@ import java.sql.Timestamp;
 public class ReviewBuyerDto {
     private Long reviewBuyerId;
 
-    private String postId;
+    private Long postId;
 
     private MemberDto seller;
 
@@ -42,4 +42,9 @@ public class ReviewBuyerDto {
         this.createdTime = createdTime;
     }
 
+    @QueryProjection
+    public ReviewBuyerDto(Long reviewBuyerId, Long postId) {
+     this.reviewBuyerId = reviewBuyerId;
+      this.postId = postId;
+    }
 }

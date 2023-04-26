@@ -55,7 +55,7 @@ public class ReviewController {
     //테스트 db
    @GetMapping
    @ResponseBody
-   public void toReviewBuyerForm(HttpServletRequest request) {
+   public void testDB(HttpServletRequest request) {
        Member mem1 = memberService.findOneMember("tester1");
        Member mem2 = memberService.findOneMember("tester2");
        Member mem3 = memberService.findOneMember("tester3");
@@ -85,14 +85,13 @@ public class ReviewController {
    }
 
     @GetMapping("/{memId}")
-    public String toPublicReviewDetail(@PathVariable String memId, Model model) {
+    public String toPublicReviewMessagesDetail(@PathVariable String memId, Model model) {
         model.addAttribute("messageMap",reviewService.goodReviewMessagesDetail(memId));
         return "review/publicReviewDetail";
     }
 
     @GetMapping("/buyer")
     public String toBuyerReviewForm(@RequestParam String postId,  HttpSession session, RedirectAttributes redirectAttributes, Model model){
-
        MemberDto loginMember = (MemberDto) session.getAttribute(SessionConst.LOGIN_MEMBER);
         Post post = postRepository.findById(Long.valueOf(postId)).orElseThrow(() -> new NoSuchElementException("Post Not Found"));
 /*        if(reviewBuyerService.findReviewBuyerIdByPost(post) != 0L) { //이미 등록된 판매자 리뷰가 있으면 판매완료 페이지로
@@ -126,7 +125,7 @@ public class ReviewController {
                 .message(reviewForm.getMessage())
                 .build();
         reviewBuyerService.insertReviewBuyer(reviewBuyer, indicatorList);
-        return "review/reviewForm";
+        return "성공";
     }
     @GetMapping("/buyer/{reviewBuyerId}")
     public String reviewBuyerDetail (@PathVariable String reviewBuyerId,
@@ -215,20 +214,18 @@ public class ReviewController {
        return new ResponseEntity<>(Collections.singletonMap("message", "삭제에 성공했습니다."), HttpStatus.OK);
     }
 
-    //매너 지표 디테일
+    //매너 디테일 지표
     @GetMapping("/manner/{memId}")
     public String toMannerDetail(@PathVariable String memId, Model model) {
-        Map<String, Map<Object, Long>> mannerDetailMap = reviewService.getMannerDetailMap(memId);
-        model.addAttribute("positiveMannerMap", mannerDetailMap.get("positiveMannerMap"));
-        model.addAttribute("negativeMannerMap", mannerDetailMap.get("negativeMannerMap"));
+        model.addAttribute("positiveMannerMap", reviewService.getPositiveMannerDetails(memId));
+        model.addAttribute("negativeMannerMap", reviewService.getNegativeMannerDetails(memId));
         return  "review/mannerDetail";
     }
 
-    //숨김기능
+    //숨김 기능
     @PostMapping("/seller/hide")
     @ResponseBody
     public ResponseEntity<Map<String, String>> hideSellerReviewMessage(@RequestParam String reviewSellerId) {
-        System.out.println("숨김 reviewSellerId = " + reviewSellerId);
         Map<String, String> resultMap = reviewSellerService.hideReviewSeller(Long.valueOf(reviewSellerId));
         if(resultMap.containsKey("fail")) {
             return new ResponseEntity<>(resultMap, HttpStatus.BAD_REQUEST);
@@ -238,7 +235,6 @@ public class ReviewController {
     @PostMapping("/buyer/hide")
     @ResponseBody
     public ResponseEntity<Map<String, String>> hideBuyerReviewMessage(@RequestParam String reviewBuyerId) {
-        System.out.println("숨김 reviewBuyerId = " + reviewBuyerId);
         Map<String, String> resultMap = reviewBuyerService.hideReviewBuyer(Long.valueOf(reviewBuyerId));
         if(resultMap.containsKey("fail")) {
             return new ResponseEntity<>(resultMap, HttpStatus.BAD_REQUEST);

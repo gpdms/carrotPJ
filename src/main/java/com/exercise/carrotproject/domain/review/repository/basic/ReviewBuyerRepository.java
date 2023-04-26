@@ -9,4 +9,5 @@ import java.util.Optional;
 public interface ReviewBuyerRepository extends JpaRepository<ReviewBuyer, Long> {
 
  ReviewBuyer findByPost(Post post);
+ void deleteByPost(Post post);
 }

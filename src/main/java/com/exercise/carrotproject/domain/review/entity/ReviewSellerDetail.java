@@ -15,10 +15,11 @@ import java.sql.Timestamp;
 @Builder
 @ToString
 @Getter
+@Table(name = "REVIEW_SELLER_DETAIL")
 public class ReviewSellerDetail {
     @Id
     @GeneratedValue(strategy= GenerationType.IDENTITY)
-    private Long reviewSellerReviewId;
+    private Long reviewSellerDetailId;
 
     @ManyToOne
     @JoinColumn(name="review_seller_id")

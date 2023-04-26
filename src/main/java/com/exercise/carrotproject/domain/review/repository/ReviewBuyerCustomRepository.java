@@ -8,6 +8,7 @@ import com.exercise.carrotproject.domain.review.dto.ReviewBuyerDto;
 import com.exercise.carrotproject.domain.review.dto.ReviewMessageDto;
 import com.exercise.carrotproject.domain.review.entity.QReviewBuyer;
 import com.exercise.carrotproject.domain.review.entity.ReviewBuyer;
+import com.querydsl.core.Tuple;
 import com.querydsl.core.annotations.QueryProjection;
 import com.querydsl.core.types.Projections;
 import com.querydsl.core.types.dsl.BooleanExpression;
@@ -61,6 +62,13 @@ public class ReviewBuyerCustomRepository {
                 .set(reviewBuyer.hideState, HideState.HIDE)
                 .where(reviewBuyer.reviewBuyerId.eq(reviewBuyerId))
                 .execute();
+    }
+
+    public List<ReviewBuyerDto> getReviewIdsByPostIds(List<Long> postIds) {
+       return queryFactory.select(new QReviewBuyerDto(reviewBuyer.post.postId, reviewBuyer.reviewBuyerId)
+                ).from(reviewBuyer)
+                .where(reviewBuyer.post.postId.in(postIds))
+                .fetch();
     }
 
     private BooleanExpression buyerIdEq(String memId) {

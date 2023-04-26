@@ -7,6 +7,7 @@ import com.exercise.carrotproject.domain.member.entity.Member;
 import com.exercise.carrotproject.domain.member.repository.MemberRepository;
 import com.exercise.carrotproject.domain.member.service.MemberServiceImpl;
 import com.exercise.carrotproject.domain.post.dto.PostDto;
+import com.exercise.carrotproject.domain.post.dto.SoldPostDto;
 import com.exercise.carrotproject.domain.post.entity.Trade;
 import com.exercise.carrotproject.domain.post.repository.PostRepository;
 import com.exercise.carrotproject.domain.post.repository.TradeCustomRepository;
@@ -40,6 +41,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Slf4j
 @Controller
@@ -54,11 +56,9 @@ public class MemberController {
     private String rootProfileImgDir;
 
     //for Review
-    private final TradeRepository tradeRepository;
     private final TradeCustomRepository tradeCustomRepository;
     private final ReviewSellerServiceImpl reviewSellerService;
     private final ReviewBuyerServiceImpl reviewBuyerService;
-
 
     @GetMapping("/signup")
     public String signupForm(@ModelAttribute("signupForm") SignupForm form, Model model) {
@@ -189,12 +189,14 @@ public class MemberController {
     //sellList
     @GetMapping("/{memId}/trade/sellList")
     public String mySellList(@PathVariable String memId, Model model){
-
         //판매중,예약중 게시글
         Map map = postService.selectPostBySellState(memId);
         List<PostDto> onSaleAndRsvList = (List) map.get("onSaleAndRsvList");
-        List<PostDto> soldList = (List) map.get("soldList");
-
+        //판매완료
+        List<SoldPostDto> soldList = (List) map.get("soldList");
+        for (SoldPostDto soldPostDto : soldList) {
+            System.out.println("soldPostDto = " + soldPostDto);
+        }
         model.addAttribute("onSaleAndRsv", onSaleAndRsvList);
         model.addAttribute("soldList", soldList);
 
@@ -203,6 +205,7 @@ public class MemberController {
         model.addAttribute("hidePostList", hidePostList);
 
 //        log.info("숨김 게시글들>>>>>>>>>{}",hidePostList);
+
         return "myPage/sellList";
     }
 

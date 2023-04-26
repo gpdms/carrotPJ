@@ -46,23 +46,31 @@
     <h1>판매완료</h1>
     <div class="container px-4 px-lg-5 mt-5">
         <div class="row gx-4 gx-lg-5 row-cols-2 row-cols-md-3 row-cols-xl-4 justify-content-center">
-            <div class="col mb-5" th:each = "soldPost:${soldList}">
-                <div class="card h-100" th:onclick="|location.href='@{|/post/detail/${soldPost.postId}|}'|" style="cursor: pointer;">
+            <div class="col mb-5" th:unless="${soldList.isEmpty()}"  th:each = "soldPost:${soldList}">
+                <div class="card h-100" th:onclick="|location.href='@{|/post/detail/${soldPost.postDto.postId}|}'|" style="cursor: pointer;">
                 <!-- 제품사진-->
-                <img class="card-img-top" th:src="|/post/firstImg/${soldPost.postId}|" alt="제품사진" />
+                <img class="card-img-top" th:src="|/post/firstImg/${soldPost.postDto.postId}|" alt="제품사진" />
                 <!-- Product details-->
                 <div class="card-body p-4">
                     <div class="text-center">
                         <!-- 제목-->
-                        <h5 class="fw-bolder" th:text="${soldPost.title}">제목</h5>
+                        <h5 class="fw-bolder" th:text="${soldPost.postDto.title}">제목</h5>
                         <!--지역, 시간-->
-                        <p class="fw">[[${soldPost.loc.locName}]] / 1시간 전</p>
+                        <p class="fw">[[${soldPost.postDto.loc.locName}]] / 1시간 전</p>
                         <!-- 가격-->
-                        <h6 class="fw-bolder" th:text="|${soldPost.price}원|">가격</h6>
+                        <h6 class="fw-bolder" th:text="|${soldPost.postDto.price}원|">가격</h6>
                     </div>
                 </div>
                 </div>
-                <a th:href="@{/post/buyers/{postId}(postId=${soldPost.postId})}">거래후기 보내기</a>
+                <div>
+                    <a  th:if="${soldPost.reviewBuyerId == null}"
+                        th:href="@{/post/buyers/{postId}(postId=${soldPost.postDto.postId})}">
+                        거래후기 보내기</a>
+                    <a  th:if="${soldPost.reviewBuyerId != null}"
+                        th:href="@{/reviews/buyer/{reviewBuyerId}(reviewBuyerId=${soldPost.reviewBuyerId})}">
+                        거래후기 보기</a>
+                </div>
+
             </div>
         </div>
     </div>

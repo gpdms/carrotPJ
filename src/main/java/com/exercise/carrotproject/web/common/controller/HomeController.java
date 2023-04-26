@@ -2,6 +2,7 @@ package com.exercise.carrotproject.web.common.controller;
 
 
 import com.exercise.carrotproject.domain.enumList.Loc;
+import com.exercise.carrotproject.domain.enumList.ReviewIndicator;
 import com.exercise.carrotproject.domain.enumList.Role;
 import com.exercise.carrotproject.domain.member.MemberEntityDtoMapper;
 import com.exercise.carrotproject.domain.member.dto.MemberDto;
@@ -10,6 +11,7 @@ import com.exercise.carrotproject.domain.member.repository.MemberRepository;
 import com.exercise.carrotproject.domain.member.service.MemberServiceImpl;
 import com.exercise.carrotproject.domain.post.repository.PostRepository;
 import com.exercise.carrotproject.domain.review.dto.ReviewMessageDto;
+import com.exercise.carrotproject.domain.review.repository.ReviewDetailCustomRepository;
 import com.exercise.carrotproject.domain.review.service.ReviewServiceImpl;
 import com.exercise.carrotproject.web.argumentresolver.Login;
 import com.exercise.carrotproject.web.common.SessionConst;
@@ -36,6 +38,7 @@ public class HomeController {
     private final SecurityUtils securityUtils;
     private final PostRepository postRepository;
     private final ReviewServiceImpl reviewService;
+    private final ReviewDetailCustomRepository reviewDetailCustomRepository;
 
     @PostConstruct
     public void init() {
@@ -93,7 +96,7 @@ public class HomeController {
         }
         Long countPost = 0L;
         Long countReviewMessage = countReviewMessage = reviewService.countGoodReviewMessage(memId);
-        Map<Object, Long> positiveMannerBrief =  reviewService.getPositiveMannerBrief(memId, 3L);
+        Map<ReviewIndicator, Long> positiveMannerBrief = reviewService.getPositiveMannerDetailsBrief(memId, 3L);
         List<ReviewMessageDto> reviewMessageBrief =reviewService.goodReviewMessagesBrief(memId, 3L);
         if(blockState == false) {
             countPost = postRepository.countByMember(member);
@@ -106,5 +109,7 @@ public class HomeController {
         model.addAttribute("reviewMessageBrief", reviewMessageBrief);
         return "memberHome";
     }
+
+
 
 }

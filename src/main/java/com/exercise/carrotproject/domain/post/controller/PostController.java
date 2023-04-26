@@ -34,16 +34,11 @@ import java.util.stream.Collectors;
 @Slf4j
 @RequiredArgsConstructor
 public class PostController {
-
     private final PostServiceImpl postService;
     private final TradeServiceImpl tradeService;
 
-
     @Value("${default.postImg}")
     private String defaultPostImg;
-
-
-
 
 
     @GetMapping("/board")
@@ -312,8 +307,6 @@ public class PostController {
         } else if (trade.getBuyer().getMemId() != buyerId) {
             //trade에 있는 buyer와 다른 buyer를 선택했을 경우
             tradeService.updateTrade(postId, buyerId);
-        } else{
-            //trade에 있는 buyer와 같은 buyer를 선택했을 경우
         }
 
         return "redirect:/reviews/buyer?postId="+postId;
