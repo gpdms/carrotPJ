@@ -42,7 +42,7 @@ public class ChatDto {
         this.createdTime = createdTime;
     }
 
-    public String getCreatedTimeByString() {
+    public String getCalculatedTimeForChat() {
         return CALCULATE_TIME(this.createdTime);
     }
 }
