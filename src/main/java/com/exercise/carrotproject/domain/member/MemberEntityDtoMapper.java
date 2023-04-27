@@ -11,6 +11,7 @@ public class MemberEntityDtoMapper {
                 .memId(memberDto.getMemId())
                 .nickname(memberDto.getNickname())
                 .mannerScore(memberDto.getMannerScore())
+                .loc(memberDto.getLoc())
                 .role(memberDto.getRole())
                 .build();
     }
