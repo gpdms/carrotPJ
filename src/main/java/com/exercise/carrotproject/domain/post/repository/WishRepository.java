@@ -10,4 +10,5 @@ import org.springframework.stereotype.Repository;
 public interface WishRepository extends JpaRepository<Wish,Long> {
     void deleteByPostAndMember(Post post, Member member);
     Wish findByPostAndMember(Post post, Member member);
+    Wish findByMember(Member member);
 }

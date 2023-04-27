@@ -4,6 +4,7 @@ import com.exercise.carrotproject.domain.chat.dto.ChatRoomDto;
 import com.exercise.carrotproject.domain.chat.entity.QChat;
 import com.exercise.carrotproject.domain.chat.entity.QChatRoom;
 import com.exercise.carrotproject.domain.enumList.HideState;
+import com.exercise.carrotproject.domain.enumList.Loc;
 import com.exercise.carrotproject.domain.enumList.ReadState;
 import com.exercise.carrotproject.domain.enumList.SellState;
 import com.exercise.carrotproject.domain.member.MemberEntityDtoMapper;
@@ -220,10 +221,15 @@ public class PostServiceImpl {
 
 
 //    @Override
-    public List<PostDto> selectAllPost(){
-        //JPQL
-        String sql = "select p from Post p order by p.postId desc";
-        List<Post> postEntityList = em.createQuery(sql, Post.class).getResultList();
+    public List<PostDto> selectAllPost(MemberDto memberDto){
+        log.info("memberDto:{}", memberDto);
+
+        Member member = MemberEntityDtoMapper.toMemberEntity(memberDto);
+        log.info("member:{}", member);
+//        Loc loc = member.getLoc();
+//        HideState hideState = HideState.SHOW;
+
+        List<Post> postEntityList = customPostRepository.selectBoardPost(member);
 
         //Entity리스트 -> Dto 리스트
         List<PostDto> postDtoList = PostEntityDtoMapper.toDtoList(postEntityList);
@@ -528,7 +534,10 @@ public class PostServiceImpl {
         }
     }
 
+//    @Override
+    public void selectWish(){
 
+    }
 
 
 }
