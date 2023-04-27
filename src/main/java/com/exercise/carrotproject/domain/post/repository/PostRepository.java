@@ -6,12 +6,13 @@ import com.exercise.carrotproject.domain.member.entity.Member;
 import com.exercise.carrotproject.domain.post.dto.PostDto;
 import com.exercise.carrotproject.domain.post.entity.Post;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
 
 @Repository
-public interface PostRepository extends JpaRepository<Post,Long> {
+public interface PostRepository extends JpaRepository<Post,Long>, CustomPostRepository {
 
     //포스트 갯수 메소드
     Long countByMember(Member member);
@@ -21,4 +22,7 @@ public interface PostRepository extends JpaRepository<Post,Long> {
     List<Post> findByMemberAndHideStateAndSellStateOrSellStateOrderByPostIdDesc(Member member, HideState hideState, SellState onSale,SellState reservation);
     //숨김 포스트들 반환
     List<Post> findByMemberAndHideStateOrderByPostIdDesc(Member member, HideState hideState);
+
+
+
 }

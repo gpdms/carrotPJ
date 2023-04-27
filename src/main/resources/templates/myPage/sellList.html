@@ -29,12 +29,12 @@
                     </div>
                 </div>
             </div>
-            <button th:if="${post.sellState.getSellStateName().equals('판매중')}">끌어올리기</button>
-            <button th:if="${post.sellState.getSellStateName().equals('판매중')}" th:onclick="sellState([[${post.postId}]],'예약중')">예약중</button>
-            <button th:if="${post.sellState.getSellStateName().equals('판매중')}">거래완료</button>
+<!--            <button th:if="${post.sellState.getSellStateName().equals('판매중')}">끌어올리기</button>-->
+            <button th:if="${post.sellState.getSellStateName().equals('판매중')}" th:onclick="sellState([[${post.postId}]],'예약중')">예약중으로 변경</button>
+            <button th:if="${post.sellState.getSellStateName().equals('판매중')}" th:onclick="sellState([[${post.postId}]],'판매완료')">판매완료</button>
 
-            <button th:if="${post.sellState.getSellStateName().equals('예약중')}">판매중으로 변경</button>
-            <button th:if="${post.sellState.getSellStateName().equals('예약중')}">거래완료</button>
+            <button th:if="${post.sellState.getSellStateName().equals('예약중')}" th:onclick="sellState([[${post.postId}]],'판매중')">판매중으로 변경</button>
+            <button th:if="${post.sellState.getSellStateName().equals('예약중')}" th:onclick="sellState([[${post.postId}]],'판매완료')">판매완료</button>
         </div>
     </div>
 </div>
@@ -143,10 +143,20 @@
                 type: 'POST',
                 data: data,
                 success: function(result){
-                    console.log(result);
+                    // console.log(result);
                     //화면 처리
-                    alert(result);
-                    // location.reload();
+                    alert(result+"(으)로 변경되었습니다.");
+                    if(result == "판매완료"){
+                        let trueFalse = confirm("거래후기를 작성하시겠습니까?")
+                        if(trueFalse==true){
+                            location.href=`/post/buyers/${postId}`;
+                        } else{
+                            location.reload();
+                        }
+                    } else{
+                        location.reload();
+                    }
+
                 },
                 error: function(jqXHR, textStatus, errorThrown){
                     console.log(jqXHR.statusText);

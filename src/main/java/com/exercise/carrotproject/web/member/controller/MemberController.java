@@ -169,22 +169,6 @@ public class MemberController {
         model.addAttribute("buyList", buyFormList);
         return "member/myBuyList";
     }
-    //sellList
-    /*@GetMapping("/{memId}/trade/sellList")
-    public String sellList(@PathVariable String memId, Model model) {
-        Member seller= memberService.findOneMember(memId);
-        List<Trade> sellList = tradeRepository.findBySeller(seller);
-        List<MySellListForm> sellFormList = new ArrayList<>();
-        if(sellList != null) {
-            for (Trade sellOne : sellList) {
-                Long reviewBuyerId = reviewBuyerService.findReviewBuyerIdByPost(sellOne.getPost());
-                MySellListForm sellForm = new MySellListForm(sellOne.getTradeId(), sellOne.getPost(), sellOne.getSeller().getMemId(), sellOne.getBuyer().getMemId(), reviewBuyerId);
-                sellFormList.add(sellForm);
-            }
-        }
-        model.addAttribute("sellList", sellFormList);
-        return "member/mySellList";
-    }*/
 
     //sellList
     @GetMapping("/{memId}/trade/sellList")
@@ -204,9 +188,14 @@ public class MemberController {
         List<PostDto> hidePostList = postService.selectHidePost(memId);
         model.addAttribute("hidePostList", hidePostList);
 
-//        log.info("숨김 게시글들>>>>>>>>>{}",hidePostList);
-
         return "myPage/sellList";
+    }
+
+    //관심목록
+    @GetMapping("/{memId}/wishes")
+    public String wishList(){
+
+        return "myPage/wishList";
     }
 
 

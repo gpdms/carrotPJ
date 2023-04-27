@@ -1,7 +1,10 @@
 package com.exercise.carrotproject.domain.post.controller;
 
 import com.exercise.carrotproject.domain.chat.dto.ChatRoomDto;
+import com.exercise.carrotproject.domain.enumList.Loc;
+import com.exercise.carrotproject.domain.member.entity.Member;
 import com.exercise.carrotproject.domain.post.dto.MtPlaceDto;
+import com.exercise.carrotproject.domain.post.dto.SoldPostDto;
 import com.exercise.carrotproject.domain.post.entity.Trade;
 import com.exercise.carrotproject.domain.post.service.TradeServiceImpl;
 import com.exercise.carrotproject.web.common.SessionConst;
@@ -28,6 +31,7 @@ import javax.servlet.http.HttpSession;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 @Controller
@@ -47,24 +51,23 @@ public class PostController {
     }
 
     @GetMapping("/post/board")
-    public String board(Model model, @PageableDefault(page = 0, size = 20) Pageable pageable){
+    public String board(Model model, HttpSession session, @PageableDefault(page = 0, size = 20) Pageable pageable){
+
+        MemberDto member = (MemberDto) session.getAttribute(SessionConst.LOGIN_MEMBER);
 
         //모든 게시물 불러오기
-        List<PostDto> postList = postService.selectAllPost();
+        List<PostDto> postList = postService.selectAllPost(member);
 
         //페이징
         Page<PostDto> page = postService.paging(postList, pageable);
         model.addAttribute("list", page);
-
-        //시간
-
 
         return "post/board";
     }
 
     //게시글 상세정보 detail
     @GetMapping("/post/detail/{postId}")
-    public String postDetail(@PathVariable Long postId, Model model){
+    public String postDetail(@PathVariable Long postId, Model model, HttpSession session){
         //Post하나 불러오기
         PostDto postDto = postService.selectOnePost(postId);
 
@@ -81,10 +84,15 @@ public class PostController {
         //거래희망장소 지도 정보
         MtPlaceDto mtPlaceDto = postService.selectMtPlace(postId);
 
-            model.addAttribute("mtPlace", mtPlaceDto);
+        //찜 여부
+        String memId = ((MemberDto) session.getAttribute(SessionConst.LOGIN_MEMBER)).getMemId();
+        String isWishExist = postService.isWishExist(postId, memId);
+        log.info("컨트롤러단 isWishExist:{}", isWishExist);
 
         model.addAttribute("post", postDto);
         model.addAttribute("imgIds", postImgIdList);
+        model.addAttribute("mtPlace", mtPlaceDto);
+        model.addAttribute("isWishExist", isWishExist);
 
 
 
@@ -274,7 +282,6 @@ public class PostController {
 
 
 
-
     //구매자선택 페이지
     @GetMapping("/post/buyers/{postId}")
     public String buyerList(Model model, HttpSession session, @PathVariable Long postId) {
@@ -313,7 +320,25 @@ public class PostController {
     }
 
 
+    //찜하기
+    @PostMapping("/post/addWish")
+    @ResponseBody
+    public String insWish(@RequestParam Long postId, @RequestParam String memId){
+//        log.info("컨트롤러에 온 postId:{}, memId:{}",postId, memId);
+        postService.insertWish(postId, memId);
 
+        return "관심목록에 추가되었습니다.";
+    }
+
+    //찜 해제하기
+    @PostMapping("/post/rmvWish")
+    @ResponseBody
+    public String dltWish(@RequestParam Long postId, @RequestParam String memId){
+//        log.info("컨트롤러에 온 postId:{}, memId:{}",postId, memId);
+        postService.deleteWish(postId, memId);
+
+        return "관심목록에서 제거되었습니다.";
+    }
 
 
 

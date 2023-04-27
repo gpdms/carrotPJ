@@ -4,6 +4,7 @@ import com.exercise.carrotproject.domain.chat.dto.ChatRoomDto;
 import com.exercise.carrotproject.domain.chat.entity.QChat;
 import com.exercise.carrotproject.domain.chat.entity.QChatRoom;
 import com.exercise.carrotproject.domain.enumList.HideState;
+import com.exercise.carrotproject.domain.enumList.Loc;
 import com.exercise.carrotproject.domain.enumList.ReadState;
 import com.exercise.carrotproject.domain.enumList.SellState;
 import com.exercise.carrotproject.domain.member.MemberEntityDtoMapper;
@@ -54,6 +55,7 @@ public class PostServiceImpl {
     private final MemberRepository memberRepository;
     private final MtPlaceRepository mtPlaceRepository;
     private final TradeRepository tradeRepository;
+    private final WishRepository wishRepository;
     private final JPAQueryFactory jpaQueryFactory; //QuerydslConfig파일에 bean등록함
     private final PostRepositoryImpl customPostRepository;
 //    private final PostRepositoryImpl customPostRepository; //후에 CustomPostRepository로 바꿔주기
@@ -219,10 +221,15 @@ public class PostServiceImpl {
 
 
 //    @Override
-    public List<PostDto> selectAllPost(){
-        //JPQL
-        String sql = "select p from Post p order by p.postId desc";
-        List<Post> postEntityList = em.createQuery(sql, Post.class).getResultList();
+    public List<PostDto> selectAllPost(MemberDto memberDto){
+        log.info("memberDto:{}", memberDto);
+
+        Member member = MemberEntityDtoMapper.toMemberEntity(memberDto);
+        log.info("member:{}", member);
+//        Loc loc = member.getLoc();
+//        HideState hideState = HideState.SHOW;
+
+        List<Post> postEntityList = customPostRepository.selectBoardPost(member);
 
         //Entity리스트 -> Dto 리스트
         List<PostDto> postDtoList = PostEntityDtoMapper.toDtoList(postEntityList);
@@ -446,7 +453,6 @@ public class PostServiceImpl {
     }
 
 //    @Override
-
     public List<ChatRoomDto> selectBuyersByPost(MemberDto memberDto, Long postId){
         Member memberEntity = MemberEntityDtoMapper.toMemberEntity(memberDto);
 
@@ -491,10 +497,47 @@ public class PostServiceImpl {
         return chatRoomList;
     }
 
+//    @Override
+    @Transactional
+    public void insertWish(Long postId, String memId){
+        Post post = postRepository.findById(postId).orElseThrow();
+        Member member = memberRepository.findById(memId).orElseThrow();
+        Wish wishEntity = Wish.builder()
+                .post(post)
+                .member(member)
+                .build();
 
+        wishRepository.save(wishEntity);
+    }
 
+    //    @Override
+    @Transactional
+    public void deleteWish(Long postId, String memId){
+        Post post = postRepository.findById(postId).orElseThrow();
+        Member member = memberRepository.findById(memId).orElseThrow();
 
+        wishRepository.deleteByPostAndMember(post, member);
 
+    }
+
+//    @Override
+    public String isWishExist(Long postId, String memId){
+        Post post = postRepository.findById(postId).orElseThrow();
+        Member member = memberRepository.findById(memId).orElseThrow();
+
+        Wish wish = wishRepository.findByPostAndMember(post, member);
+
+        if(wish != null){
+            return "exist";
+        } else{
+            return "none";
+        }
+    }
+
+//    @Override
+    public void selectWish(){
+
+    }
 
 
 }

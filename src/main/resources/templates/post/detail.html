@@ -59,16 +59,17 @@
                         <div class="small mb-1" th:text="${post.category.getCategory()}">SKU: BST-498</div>
                         <!--제목-->
                         <h1 class="display-5 fw-bolder" th:text="${post.title}">제목</h1>
+                        <!--가격-->
                         <div class="fs-5 mb-5">
-<!--                            <span class="text-decoration-line-through" >$45.00</span>-->
-                            <span th:text="|${post.price}원|">$40.00</span>
+                            <span th:if="${post.price}!=0" th:text="|${post.price}원|">가격</span>
                         </div>
                         <p class="lead" th:utext="${post.content}">상품설명</p>
                         <div class="d-flex">
-                            <button class="btn btn-outline-dark flex-shrink-0" type="button">
-                                <i class="bi-cart-fill me-1"></i>
-                                Add to cart
-                            </button>
+
+                            <!--찜-->
+                            <i id="emptyHeart" class="bi bi-heart" th:onclick="addWish([[${post.postId}]])" style="display:none; font-size: 2rem; margin-right: 5%" ></i>
+                            <i id="fillHeart" class="bi bi-heart-fill" th:onclick="rmvWish([[${post.postId}]])" style="display:none; font-size: 2rem; color: red; margin-right: 5%"></i>
+                            <!--채팅하기-->
                             <button th:if="${session.loginMember.memId}==${post.member.memId}" class="btn btn-outline-dark flex-shrink-0" type="button" th:onclick="|location.href='@{/chat/chatRoomListByPost/{postId}(postId=${postId})}'|">대화 중인 채팅방</button>
                             <button th:unless="${session.loginMember.memId}==${post.member.memId}" class="btn btn-outline-dark flex-shrink-0" type="button" th:onclick="|location.href='@{/chat/post/{postId}/{sellerId}(postId=${postId}, sellerId=${post.member.memId})}'|">채팅하기</button>
                         </div>
@@ -246,20 +247,79 @@
         <!-- Core theme JS-->
         <script src="/js/scripts.js"></script>
 
-        <!--사진 박스슬라이더-->
+
         <script>
+            //사진 박스슬라이더
             $(document).ready(function(){
                 $(".slider").bxSlider();
             });
-        </script>
-
-        <script>
 
             //모달창 띄우기
             function viewModal() {
                 const modal = new bootstrap.Modal(document.querySelector(".modal"));
                 modal.show();
             }
+        </script>
+
+        <script th:inline="javascript">
+
+            //찜
+            let value = [[${isWishExist}]];
+            console.log("wishExist:", value);
+            if (value=="exist"){
+                $('#fillHeart').show();
+            }else if(value=="none"){
+                $('#emptyHeart').show();
+            }else{
+                console.log("value안잡힘")
+            }
+            //찜 추가
+            function addWish(postId) {
+                let memId = [[${session.loginMember.getMemId()}]];
+                let data = {"postId" : postId, "memId": memId};
+
+                $.ajax({
+                    url: '/post/addWish',
+                    type: 'POST',
+                    data: data,
+                    success: function(result){
+                        // console.log();
+                        //화면 처리
+                        alert(result);
+                        // location.reload();
+                        $('#emptyHeart').hide();
+                        $("#fillHeart").show();
+                    },
+                    error: function(jqXHR, textStatus, errorThrown){
+                        console.log(jqXHR.responseText);
+                        alert("찜하기에 실패했습니다.");
+                    }
+                })
+            };
+            //찜 해제
+            function rmvWish(postId) {
+                let memId = [[${session.loginMember.getMemId()}]];
+                let data = {"postId" : postId, "memId": memId};
+
+                $.ajax({
+                    url: '/post/rmvWish',
+                    type: 'POST',
+                    data: data,
+                    success: function(result){
+                        // console.log();
+                        //화면 처리
+                        alert(result);
+                        // location.reload();
+                        $("#fillHeart").hide();
+                        $("#emptyHeart").show();
+                    },
+                    error: function(jqXHR, textStatus, errorThrown){
+                        console.log(jqXHR.responseText);
+                        alert("실패했습니다.");
+                    }
+                })
+            };
+
 
             //게시물 숨기기/보이기
             function hideState(postId, hideStateName){
@@ -327,7 +387,7 @@
                     success: function(result){
                         console.log(result);
                         //화면 처리
-                        alert(result+"로 변경되었습니다.");
+                        alert(result+"(으)로 변경되었습니다.");
 
                         if(result == "판매완료"){
                             let trueFalse = confirm("거래후기를 작성하시겠습니까?")

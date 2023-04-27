@@ -137,7 +137,7 @@
             }).then(data => {
                 alert(data.message);
                 let me = [[${reviewDetailForm.sellerId}]];
-                window.location.href = `/members/${me}/transaction/sellList`;
+                window.location.href = `/members/${me}/trade/sellList`;
             }).catch(err => {
                 console.log(err);
                 alert('삭제에 실패했습니다.');
@@ -165,7 +165,7 @@
             }).then(data => {
                     alert(data.message);
                     let me = [[${reviewDetailForm.buyerId}]];
-                    window.location.href = `/members/${me}/transaction/buyList`
+                    window.location.href = `/members/${me}/trade/buyList`
             }).catch(err => {
                     console.log(err);
                     alert("삭제에 실패했습니다.")
