@@ -38,7 +38,6 @@ public class HomeController {
     private final SecurityUtils securityUtils;
     private final PostRepository postRepository;
     private final ReviewServiceImpl reviewService;
-    private final ReviewDetailCustomRepository reviewDetailCustomRepository;
 
     @PostConstruct
     public void init() {
@@ -109,7 +108,5 @@ public class HomeController {
         model.addAttribute("reviewMessageBrief", reviewMessageBrief);
         return "memberHome";
     }
-
-
 
 }
