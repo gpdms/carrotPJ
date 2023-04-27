@@ -66,6 +66,8 @@ public class Post extends BaseEntity {
     private List<Chat> chatList = new ArrayList<>();
     @OneToMany(mappedBy = "post", cascade = CascadeType.REMOVE)
     private List<ChatRoom> chatRoomList = new ArrayList<>();
+    @OneToMany(mappedBy = "post", cascade = CascadeType.REMOVE)
+    private List<Wish> wishList = new ArrayList<>();
 
 
     //ColumnDefault, nullable=false는 데이터베이스에만 적용되고 영속성컨텍스트에는 null이기때문에
