@@ -341,6 +341,15 @@ public class PostController {
     }
 
 
+    //판매중인 상품
+    @GetMapping("/post/onSale/{memId}")
+    public void onSalePost(@PathVariable String memId, Model model){
+
+        //판매중,예약중 게시글
+        Map map = postService.selectPostBySellState(memId);
+        List<PostDto> onSaleAndRsvList = (List) map.get("onSaleAndRsvList");
+        model.addAttribute("postList", onSaleAndRsvList);
+    }
 
 
 
