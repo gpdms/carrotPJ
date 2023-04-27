@@ -8,6 +8,7 @@ import com.exercise.carrotproject.domain.member.repository.MemberRepository;
 import com.exercise.carrotproject.domain.member.service.MemberServiceImpl;
 import com.exercise.carrotproject.domain.post.dto.PostDto;
 import com.exercise.carrotproject.domain.post.dto.SoldPostDto;
+import com.exercise.carrotproject.domain.post.dto.WishDto;
 import com.exercise.carrotproject.domain.post.entity.Trade;
 import com.exercise.carrotproject.domain.post.repository.PostRepository;
 import com.exercise.carrotproject.domain.post.repository.TradeCustomRepository;
@@ -193,7 +194,10 @@ public class MemberController {
 
     //관심목록
     @GetMapping("/{memId}/wishes")
-    public String wishList(){
+    public String wishList(@PathVariable String memId, Model model){
+        List<PostDto> postList = postService.selectPostListFromWish(memId);
+
+        model.addAttribute("postList", postList);
 
         return "myPage/wishList";
     }

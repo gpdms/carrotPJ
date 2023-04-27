@@ -10,10 +10,12 @@ import com.exercise.carrotproject.domain.enumList.SellState;
 import com.exercise.carrotproject.domain.member.MemberEntityDtoMapper;
 import com.exercise.carrotproject.domain.member.dto.MemberDto;
 import com.exercise.carrotproject.domain.member.entity.Member;
+import com.exercise.carrotproject.domain.member.entity.QMember;
 import com.exercise.carrotproject.domain.member.repository.MemberRepository;
 import com.exercise.carrotproject.domain.post.dto.MtPlaceDto;
 import com.exercise.carrotproject.domain.post.dto.PostDto;
 import com.exercise.carrotproject.domain.post.dto.PostImgDto;
+import com.exercise.carrotproject.domain.post.dto.WishDto;
 import com.exercise.carrotproject.domain.post.entity.*;
 import com.exercise.carrotproject.domain.post.repository.*;
 import com.exercise.carrotproject.web.common.SessionConst;
@@ -535,8 +537,16 @@ public class PostServiceImpl {
     }
 
 //    @Override
-    public void selectWish(){
+    public List<PostDto> selectPostListFromWish(String memId){
 
+        QWish qWish = QWish.wish;
+        List<Post> postList = jpaQueryFactory.select(qWish.post)
+                                .from(qWish)
+                                .where(qWish.member.memId.eq(memId))
+                                .fetch();
+        List<PostDto> postDtoList = PostEntityDtoMapper.toDtoList(postList);
+
+        return postDtoList;
     }
 
 
