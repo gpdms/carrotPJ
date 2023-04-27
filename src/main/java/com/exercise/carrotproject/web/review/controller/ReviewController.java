@@ -9,10 +9,13 @@ import com.exercise.carrotproject.domain.post.entity.Trade;
 import com.exercise.carrotproject.domain.post.repository.PostRepository;
 import com.exercise.carrotproject.domain.post.repository.TradeRepository;
 import com.exercise.carrotproject.domain.review.entity.ReviewBuyer;
+import com.exercise.carrotproject.domain.review.entity.ReviewBuyerDetail;
 import com.exercise.carrotproject.domain.review.entity.ReviewSeller;
 import com.exercise.carrotproject.domain.review.repository.ReviewBuyerCustomRepository;
 import com.exercise.carrotproject.domain.review.repository.ReviewSellerCustomRepository;
+import com.exercise.carrotproject.domain.review.repository.basic.ReviewBuyerDetailRepository;
 import com.exercise.carrotproject.domain.review.repository.basic.ReviewBuyerRepository;
+import com.exercise.carrotproject.domain.review.repository.basic.ReviewSellerDetailRepository;
 import com.exercise.carrotproject.domain.review.repository.basic.ReviewSellerRepository;
 import com.exercise.carrotproject.domain.review.service.ReviewBuyerServiceImpl;
 import com.exercise.carrotproject.domain.review.service.ReviewSellerServiceImpl;
@@ -29,9 +32,14 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+import javax.persistence.Query;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 import java.util.*;
+
+import static java.util.Arrays.asList;
 
 
 @Slf4j
@@ -51,31 +59,80 @@ public class ReviewController {
     private final ReviewSellerRepository reviewSellerRepository;
     private final ReviewBuyerCustomRepository reviewBuyerCustomRepository;
     private final ReviewSellerCustomRepository reviewSellerCustomRepository;
+    private final ReviewSellerDetailRepository reviewSellerDetailRepository;
+    private final ReviewBuyerDetailRepository reviewBuyerDetailRepository;
 
+    @PersistenceContext
+    EntityManager em;
     //테스트 db
-   @GetMapping
+   @GetMapping()
    @ResponseBody
    public void testDB(HttpServletRequest request) {
        Member mem1 = memberService.findOneMember("tester1");
        Member mem2 = memberService.findOneMember("tester2");
        Member mem3 = memberService.findOneMember("tester3");
-       for(int i = 1 ; i <= 20; i++ ){
+       for(int i = 1 ; i <= 120; i++ ){
            if(i% 4  == 0 ){
+               //mem1->mem2
                Post postBuild1 = Post.builder().title("글" + i).member(mem1).price(i * 1000).category(Category.ETC).loc(mem1.getLoc()).hideState(HideState.SHOW).sellState(SellState.SOLD).content("내용" + i).build();
                Post post1 = postRepository.save(postBuild1);
                Trade trade = Trade.builder().post(post1).buyer(mem2).seller(mem1).hideStateBuyer(HideState.SHOW).build();
                tradeRepository.save(trade);
+               if(i < 40) {
+                   List<ReviewBuyerIndicator> bi= asList(ReviewBuyerIndicator.P1, ReviewBuyerIndicator.P2, ReviewBuyerIndicator.PB1);
+                   ReviewBuyer save = reviewBuyerRepository.save(
+                           ReviewBuyer.builder().seller(mem1).buyer(mem2).totalScore(ReviewBuyerIndicator.sumScore(bi))
+                                   .hideState(HideState.SHOW).reviewState(ReviewState.BEST).build()
+                   );
+                   String sql = "INSERT INTO review_buyer_detail (review_buyer_id, buyer_id, review_buyer_indicator) " +
+                           " VALUES ( :reviewBuyerId, 'tester2', :review_buyer_indicator) ";
+                   Query query = em.createNativeQuery(sql);
+                   for (ReviewBuyerIndicator reviewBuyerIndicator : bi) {
+                       query.setParameter("reviewBuyerId",  bi);
+                       query.getResultList();
+                   }
+               } else if (i < 80) {
+                   List<ReviewBuyerIndicator> bi2= asList(ReviewBuyerIndicator.P2, ReviewBuyerIndicator.PB1);
+                   ReviewBuyer save = reviewBuyerRepository.save(
+                           ReviewBuyer.builder().seller(mem1).buyer(mem2).totalScore(ReviewBuyerIndicator.sumScore(bi2))
+                                   .hideState(HideState.SHOW).reviewState(ReviewState.GOOD).build()
+                   );
+                   String sql = "INSERT INTO review_buyer_detail (review_buyer_id, buyer_id, review_buyer_indicator) " +
+                           " VALUES ( :reviewBuyerId, 'tester2', :review_buyer_indicator) ";
+                   Query query = em.createNativeQuery(sql);
+                   for (ReviewBuyerIndicator reviewBuyerIndicator : bi2) {
+                       query.setParameter("reviewBuyerId",  bi2);
+                       query.getResultList();
+                   }
+               } else {
+                   List<ReviewBuyerIndicator> bi2= asList(ReviewBuyerIndicator.N2, ReviewBuyerIndicator.N3,
+                           ReviewBuyerIndicator.N4, ReviewBuyerIndicator.NB1);
+                   ReviewBuyer save = reviewBuyerRepository.save(
+                           ReviewBuyer.builder().seller(mem1).buyer(mem2).totalScore(ReviewBuyerIndicator.sumScore(bi2))
+                                   .hideState(HideState.SHOW).reviewState(ReviewState.BAD).build()
+                   );
+                   String sql = "INSERT INTO review_buyer_detail (review_buyer_id, buyer_id, review_buyer_indicator) " +
+                           " VALUES ( :reviewBuyerId, 'tester2', :review_buyer_indicator) ";
+                   Query query = em.createNativeQuery(sql);
+                   for (ReviewBuyerIndicator reviewBuyerIndicator : bi2) {
+                       query.setParameter("reviewBuyerId",  bi2);
+                       query.getResultList();
+                   }
+               }
            } else if(i% 4  == 1 ) {
+               //mem2->mem3
                Post postBuild2 = Post.builder().title("글" + i).member(mem2).price(i * 1000).category(Category.DIGITAL_DEVICE).loc(mem2.getLoc()).hideState(HideState.SHOW).sellState(SellState.SOLD).content("내용" + i).build();
                Post post2 = postRepository.save(postBuild2);
                Trade trade = Trade.builder().post(post2).buyer(mem3).seller(mem2).hideStateBuyer(HideState.SHOW).build();
                tradeRepository.save(trade);
            } else if(i% 4  == 2 ) {
+               //mem3->mem2
                Post postBuild3 = Post.builder().title("글" + i).member(mem3).price(i * 1000).category(Category.BOOK).loc(mem3.getLoc()).hideState(HideState.SHOW).sellState(SellState.SOLD).content("내용" + i).build();
                Post post2 = postRepository.save(postBuild3);
-               Trade trade = Trade.builder().post(post2).buyer(mem1).seller(mem3).hideStateBuyer(HideState.SHOW).build();
+               Trade trade = Trade.builder().post(post2).buyer(mem1).seller(mem2).hideStateBuyer(HideState.SHOW).build();
                tradeRepository.save(trade);
            } else {
+               //mem2->mem1
                Post postBuild2 = Post.builder().title("글" + i).member(mem2).price(i * 1000).category(Category.FOOD).loc(mem2.getLoc()).hideState(HideState.SHOW).sellState(SellState.SOLD).content("내용" + i).build();
                Post post2 = postRepository.save(postBuild2);
                Trade trade = Trade.builder().post(post2).buyer(mem1).seller(mem2).hideStateBuyer(HideState.SHOW).build();
