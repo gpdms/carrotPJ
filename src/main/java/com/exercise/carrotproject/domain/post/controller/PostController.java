@@ -44,7 +44,6 @@ public class PostController {
     @Value("${default.postImg}")
     private String defaultPostImg;
 
-
     @GetMapping("/board")
     public String home(){
         return "redirect:/post/board";

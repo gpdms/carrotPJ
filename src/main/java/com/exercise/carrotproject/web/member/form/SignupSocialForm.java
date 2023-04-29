@@ -22,5 +22,4 @@ public class SignupSocialForm {
     private Loc loc;
 
     private String profPath;
-
 }

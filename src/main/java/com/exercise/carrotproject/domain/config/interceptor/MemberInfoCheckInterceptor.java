@@ -18,7 +18,6 @@ public class MemberInfoCheckInterceptor implements HandlerInterceptor {
         log.info("MemberInfo 인증 체크 인터셉터 실행 {}", requestURI);
         String[] requestUriBits = requestURI.split("/"); // 가져온 uri의 정보를 /기준으로 쪼개기
         String accessibleMemberId = requestUriBits[2];
-
         HttpSession session = request.getSession(false);
         MemberDto loginMember = (MemberDto) session.getAttribute(SessionConst.LOGIN_MEMBER);
         if (loginMember.getMemId().equals(accessibleMemberId)) {

@@ -20,6 +20,9 @@ public class ChatRoomDto {
     private String createdTime;
     private Long unacknowledgedMessageCount;
 
+    private String sellerNickname;
+    private String buyerNickname;
+
     public ChatRoomDto(Long roomId, Long postId, String sellerId, String buyerId, String message, Timestamp createdTime, Long unacknowledgedMessageCount) {
         this.roomId = roomId;
         this.postId = postId;

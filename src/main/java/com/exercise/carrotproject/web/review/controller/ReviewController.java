@@ -55,12 +55,6 @@ public class ReviewController {
     private final PostRepository postRepository;
     private final TradeRepository tradeRepository;
 
-    private final ReviewBuyerRepository reviewBuyerRepository;
-    private final ReviewSellerRepository reviewSellerRepository;
-    private final ReviewBuyerCustomRepository reviewBuyerCustomRepository;
-    private final ReviewSellerCustomRepository reviewSellerCustomRepository;
-    private final ReviewSellerDetailRepository reviewSellerDetailRepository;
-    private final ReviewBuyerDetailRepository reviewBuyerDetailRepository;
 
     @GetMapping("/{memId}")
     public String toPublicReviewMessagesDetail(@PathVariable String memId, Model model) {

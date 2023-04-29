@@ -170,21 +170,35 @@ public class MemberServiceImpl {
 
     //@Override
     @Transactional
-    public Member profileUpdate(Member updateMember, MultipartFile profImg) {
-        if (profImg.getContentType().startsWith("image") == false) {
-            return null;
-        }
+    public Map<String, Object> profileUpdate(Member updateMember, MultipartFile profImg) {
+        Map<String, Object> profileUpdateMap = new HashMap<>();
         Member member = memberRepository.findById(updateMember.getMemId()).orElseThrow(
                 ()-> new NoSuchElementException());
         String profPath = member.getProfPath();
-        if(profPath != null) {
-            profPath = createProfPath(profImg);
-            saveImgServer(profImg, profPath);
-            member.updateProfile(updateMember.getNickname(), profPath, updateMember.getLoc());
-            log.info("afterUpdateMember {}",member);
-            return member;
+        //프로필 이미지를 변경한다면
+        if(!profImg.isEmpty()) {
+            if(profImg.getContentType().startsWith("image")==false) {
+                profileUpdateMap.put("fail-image", "NotImageType");
+            } else {
+                profPath = createProfPath(profImg);
+                saveImgServer(profImg, profPath) ;
+            }
         }
-        return member;
+        //닉네임을 변경한다면
+        if(!member.getNickname().equals(updateMember.getNickname())) {
+            if(hasDuplicatedNickname(updateMember.getNickname()))
+                profileUpdateMap.put("fail-nickname", "duplicatedNickname");
+        }
+        //하나라도 실패하면
+        boolean hasFail = profileUpdateMap.keySet().stream().anyMatch(key -> key.contains("fail"));
+        if(hasFail) {
+            return profileUpdateMap;
+        }
+        //아니라면 업데이트 진행
+        member.updateProfile(updateMember.getNickname(), profPath, updateMember.getLoc());
+        log.info("afterUpdateMember {}", member);
+        profileUpdateMap.put("success", member);
+        return profileUpdateMap;
     }
 
     //@Override
