@@ -11,7 +11,7 @@ import lombok.*;
 @Builder
 public class MtPlaceDto {
     private Long mtPlaceId;
-    private Post post;
+    private PostDto post;
     private Double lat;
     private Double lon;
     private String placeInfo;

@@ -2,7 +2,10 @@
 <html xmlns:th="http://www.thymeleaf.org" th:fragment="fragment-nav">
     <nav class="navbar navbar-expand-lg navbar-light bg-light">
         <div class="container px-4 px-lg-5">
-            <a class="navbar-brand" href="/">망고 마켓</a>
+            <a class="navbar-brand" href="/">
+                <img class="img-icon" src="/css/images/main_icon.png"/>
+                <img class="img-logo" src="/css/images/main_logo.png"/>
+            </a>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation"><span class="navbar-toggler-icon"></span></button>
             <div class="collapse navbar-collapse" id="navbarSupportedContent">
                 <ul class="navbar-nav me-auto mb-2 mb-lg-0 ms-lg-4">
@@ -26,23 +29,26 @@
 
                 <form class="d-flex" th:if="${session.loginMember == null}">
                     <button th:if="${session.loginMember == null}"
-                            class="btn btn-outline-dark" type="button"
+                            class="btn" type="button"
                             onclick="location.href='/member/loginForm'"
                             th:onclick="|location.href='@{/login}'|"> 회원가입/로그인 </button>
                 </form>
-                <form class="d-flex" th:if="${session.loginMember != null}"
-                      th:action="@{/logout}" method="get">
-                <button  th:if="${session.loginMember.role.name().equals('USER')}"
-                         class="btn btn-outline-dark" type="submit"> 로그아웃 </button>
-                <button  th:if="${session.loginMember.role.name().contains('SOCIAL')}"
-                             class="btn btn-outline-dark" type="button"
-                        th:onclick="logoutSocial([[${session.loginMember?.role.name()}]])"> 로그아웃 </button>
-                <button  class="btn btn-outline-dark" type="button"
-                        th:onclick="|location.href='@{/members/{memId}/edit(memId=${session.loginMember.memId})}'|"> 회원정보 </button>
-                </form>
-                <button th:if="${not #strings.isEmpty(session.loginMember)}" class="btn btn-outline-dark" type="button"
-                        th:onclick="|location.href='@{/chat/chatRoomList}'|"> 채팅 <span id="chat">0</span>
+
+                <button  class="btn" th:if="${not #strings.isEmpty(session.loginMember)}" type="button"
+                         th:onclick="|location.href='@{/chat/chatRoomList}'|"> 채팅 <span id="chat">0</span>
                 </button>
+                <form class="form-check-inline" th:if="${session.loginMember != null}"
+                      th:action="@{/logout}" method="get">
+                <button  class="btn" type="button"
+                         th:onclick="|location.href='@{/members/{memId}/edit(memId=${session.loginMember.memId})}'|"> 회원정보 </button>
+                <button  th:if="${session.loginMember.role.name().equals('USER')}"
+                         class="btn" type="submit"> 로그아웃 </button>
+                <button  th:if="${session.loginMember.role.name().contains('SOCIAL')}"
+                             class="btn" type="button"
+                        th:onclick="logoutSocial([[${session.loginMember?.role.name()}]])"> 로그아웃 </button>
+
+                </form>
+
         </div>
     </div>
 </nav>

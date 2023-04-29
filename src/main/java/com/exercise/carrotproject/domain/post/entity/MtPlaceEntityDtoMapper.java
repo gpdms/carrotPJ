@@ -8,6 +8,7 @@ public class MtPlaceEntityDtoMapper {
     public static MtPlace dtoToEntity(MtPlaceDto mtPlaceDto){
         return MtPlace.builder()
                 .mtPlaceId(mtPlaceDto.getMtPlaceId())
+                .post(PostEntityDtoMapper.dtoToEntity(mtPlaceDto.getPost()))
                 .lat(mtPlaceDto.getLat())
                 .lon(mtPlaceDto.getLon())
                 .placeInfo(mtPlaceDto.getPlaceInfo())
@@ -19,6 +20,7 @@ public class MtPlaceEntityDtoMapper {
     public static MtPlaceDto entityToDto (MtPlace mtPlace){
         return MtPlaceDto.builder()
                 .mtPlaceId(mtPlace.getMtPlaceId())
+                .post(PostEntityDtoMapper.entityToDto(mtPlace.getPost()))
                 .lat(mtPlace.getLat())
                 .lon(mtPlace.getLon())
                 .placeInfo(mtPlace.getPlaceInfo())
