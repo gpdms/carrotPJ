@@ -87,13 +87,17 @@ public class PostController {
         //찜 여부
         String memId = ((MemberDto) session.getAttribute(SessionConst.LOGIN_MEMBER)).getMemId();
         String isWishExist = postService.isWishExist(postId, memId);
-        log.info("컨트롤러단 isWishExist:{}", isWishExist);
+
+        //판매중인 상품 리스트
+        Map map = postService.selectPostBySellState(memId);
+        List<PostDto> onSaleAndRsvList = (List<PostDto>) map.get("onSaleAndRsvList");
+
 
         model.addAttribute("post", postDto);
         model.addAttribute("imgIds", postImgIdList);
         model.addAttribute("mtPlace", mtPlaceDto);
         model.addAttribute("isWishExist", isWishExist);
-
+        model.addAttribute("sellerProductList", onSaleAndRsvList);
 
 
         return "post/detail";

@@ -1,25 +1,17 @@
 <!DOCTYPE html>
-<html lang="ko" xmlns:th="http://www.thymeleaf.org">
-<head>
-    <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout/basic.html}">
+
+<head layout:fragment="head">
     <title>상품 수정</title>
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
-<!--    <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">-->
-<!--    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-slider/10.6.2/css/bootstrap-slider.min.css" integrity="sha256-G3IAYJYIQvZgPksNQDbjvxd/Ca1SfCDFwu2s2lt0oGo=" crossorigin="anonymous" />-->
-<!--    <link rel="stylesheet" type="text/css" href="css/style.css">-->
     <!--이미지 미리보기 css-->
     <link rel="stylesheet" href="/css/previewImg.css">
 </head>
-<body>
-<!--    <nav class="navbar nav-global fixed-top navbar-expand-sm">-->
-<!--        <div class="container">-->
-<!--            <a class="navbar-brand" href="javascript:history.back()">-->
-<!--                <i class="material-icons ic-filter">arrow_back_ios</i>뒤로-->
-<!--            </a>-->
-<!--        </div>-->
-<!--    </nav>-->
 
+
+<div layout:fragment="content">
     <div class="container container-sm container-item-create">
         <h5 class="container-headline">게시글 수정</h5>
         <form id="upload_form" class="form-item-create">
@@ -84,7 +76,6 @@
             </div>
             <button id="cfmPlace" type="button" style="display: none;">장소선택하기</button>
 
-            <!--                <div id="clickLatlng"></div>-->
             <button id="noPlace" type="button" >장소선택 안함</button>
         </div>
 
@@ -92,10 +83,10 @@
         <button type="button" id="uploadBtn" class="btn btn-primary btn-submit">상품 등록하기</button>
 
     </div>
+</div>
 
 
-
-
+<div layout:fragment="script" th:inline="javascript">
 <!--jquery CDN-->
 <script src="https://code.jquery.com/jquery-3.6.4.js" integrity="sha256-a9jBBRygX1Bh5lt8GZjXDzyOB+bWve9EiO7tROUtj/E=" crossorigin="anonymous"></script>
 <!--지도API-->
@@ -353,10 +344,6 @@
 
             }); //$.ajax
         }); //end click
-
-
-
-
     </script>
-</body>
-</html>
+
+</div>

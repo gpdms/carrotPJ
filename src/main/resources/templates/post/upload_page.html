@@ -1,47 +1,31 @@
 <!DOCTYPE html>
-<html lang="ko" xmlns:th="http://www.thymeleaf.org">
-<head>
-    <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout/basic.html}">
+
+<head layout:fragment="head">
     <title>상품 등록</title>
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
-<!--    <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">-->
-<!--    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-slider/10.6.2/css/bootstrap-slider.min.css" integrity="sha256-G3IAYJYIQvZgPksNQDbjvxd/Ca1SfCDFwu2s2lt0oGo=" crossorigin="anonymous" />-->
-<!--    <link rel="stylesheet" type="text/css" href="css/style.css">-->
     <!--이미지 미리보기 css-->
     <link rel="stylesheet" href="/css/previewImg.css">
-
 </head>
-<body>
-<!--    <nav class="navbar nav-global fixed-top navbar-expand-sm">-->
-<!--        <div class="container">-->
-<!--            <a class="navbar-brand" href="javascript:history.back()">-->
-<!--                <i class="material-icons ic-filter">arrow_back_ios</i>뒤로-->
-<!--            </a>-->
-<!--        </div>-->
-<!--    </nav>-->
 
+
+<div layout:fragment="content">
     <div class="container container-sm container-item-create">
         <h5 class="container-headline">중고거래 글쓰기</h5>
         <form id="upload_form" class="form-item-create">
             <div class="form-group form-picture">
                 <div class="file-box">
                 <!--사진-->
-<!--                    <input class="upload-name"  value="파일선택" disabled="disabled">-->
-<!--                    <label for="ex_filename" class="btn btn-secondary">업로드</label>-->
                     <div class="inputFile">
                     <label for='inputImage' class="addImgBtn">사진선택</label>
                     <input type="file" multiple="multiple" name="uploadFiles" id='inputImage' accept="image/*" style="display: none;">
                     </div>
                 <!--사진 미리보기-->
-<!--                    <img src="https://i0.wp.com/adventure.co.kr/wp-content/uploads/2020/09/no-image.jpg" class="image-box"-->
-<!--                    style=" width: 200px;height: 200px;object-fit: cover;display: block;margin: 20px auto;"/>-->
                     <ul id="Preview" class="sortable"></ul>
-<!--                    <div id="preview"></div>-->
                 </div>
                 <div class="uploadResult"></div>
-
-
             </div>
 
 
@@ -54,7 +38,6 @@
                     <option value="" disabled selected>카테고리를 선택해주세요.</option>
                     <!--카테고리: thymeleaf이용해 Enum클래스 정보 바로 가져오기-->
                     <option th:each = "categoryList:${T(com.exercise.carrotproject.domain.enumList.Category).values()}" th:value="${categoryList.name}" th:text="${categoryList.category}"></option>
-
                 </select>
             </div>
             <div class="form-group form-price">
@@ -82,22 +65,16 @@
                 <button id="noPlace" type="button" >장소선택 안함</button>
             </div>
 
-
-
             <br/><br/>
             <button type="button" id="uploadBtn" class="btn btn-primary btn-submit">상품 등록하기</button>
 
 
-
-
     </div>
+</div>
 
-
-
+<div layout:fragment="script" th:inline="javascript">
 <!--jquery CDN-->
 <script src="https://code.jquery.com/jquery-3.6.4.js" integrity="sha256-a9jBBRygX1Bh5lt8GZjXDzyOB+bWve9EiO7tROUtj/E=" crossorigin="anonymous"></script>
-<!--jquery UI CDN(드래그앤드롭)-->
-<!--<script src="https://code.jquery.com/ui/1.13.2/jquery-ui.min.js" integrity="sha256-lSjKY0/srUM9BE3dPm+c4fBo1dky2v27Gdjm2uoZaL0=" crossorigin="anonymous"></script>-->
 
 <!--지도API: head, body 등 어떠한 위치에 넣어도 상관없지만, 반드시 실행 코드보다 먼저 선언되어야 합니다.-->
 <script type="text/javascript" src="//dapi.kakao.com/v2/maps/sdk.js?appkey=e133f6ea3b90b5b74b80864ba7037219"></script>
@@ -300,41 +277,6 @@
             $(e).parent('li').remove();
         }
 
-        //미리보기 삭제----------------------------------------------
-
-        // const files = $('#inputImage')[0].files;
-        //
-        // // const delImg = (fileNum) => {	//fileNum은 li 의 index 값
-        // function delImg(fileNum) {
-        //     const index = $(fileNum).parent('li').index(); // 해당 요소의 부모 li 요소 선택
-        //     // const index = $li.index(); // li 요소의 인덱스 구하기
-        //
-        //     console.log("delImg진입")
-        //     console.log("index:"+index)
-        //
-        //     const dataTransfer = new DataTransfer();
-        //
-        //     let files = $('#inputImage')[0].files;	//사용자가 입력한 파일을 변수에 할당
-        //
-        //     let fileArray = Array.from(files);	//변수에 할당된 파일을 배열로 변환(FileList -> Array)
-        //
-        //     fileArray.splice(index, 1);	//해당하는 index의 파일을 배열에서 제거
-        //
-        //     fileArray.forEach(file => { dataTransfer.items.add(file); });
-        //     //남은 배열을 dataTransfer로 처리(Array -> FileList)
-        //
-        //     $('#inputImage')[0].files = dataTransfer.files;	//제거 처리된 FileList를 돌려줌
-        //
-        //     $(fileNum).parent('li').remove();
-        //
-        //
-        //     console.log("files:"+files);
-        // }
-        //
-        //
-
-
-
         //게시글 업로드-----------------------------------------------
         $('#uploadBtn').click(function( ) {
 
@@ -379,5 +321,4 @@
         }); //end click
 
     </script>
-</body>
-</html>
+</div>

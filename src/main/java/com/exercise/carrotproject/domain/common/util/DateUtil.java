@@ -13,9 +13,6 @@ public class DateUtil {
 
     /**
      * x초전, x분전, x시간 전m, x일 전, x개월전, x년전
-     *
-     * @param 날짜
-     * @return 분 표시
      */
 
     public static String CALCULATE_TIME_POST(Timestamp ts) {
@@ -30,8 +27,7 @@ public class DateUtil {
         } else if ((diffTime /= SEC) < MIN) {
             msg = diffTime + "분 전";
         } else if ((diffTime /= MIN) < HOUR) {
-//            msg = (diffTime) + "시간 전";
-            msg = new SimpleDateFormat("HH:mm").format(ts);
+            msg = (diffTime) + "시간 전";
         } else if ((diffTime /= HOUR) < DAY) {
             msg = (diffTime) + "일 전";
         } else if ((diffTime /= DAY) < MONTH) {
