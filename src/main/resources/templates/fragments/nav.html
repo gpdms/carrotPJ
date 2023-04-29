@@ -1,54 +1,58 @@
 <!DOCTYPE html>
+
 <html xmlns:th="http://www.thymeleaf.org" th:fragment="fragment-nav">
-    <nav class="navbar navbar-expand-lg navbar-light bg-light">
-        <div class="container px-4 px-lg-5">
+    <nav class="navbar navbar-expand-lg navbar-light bg-white fixed-top custom-navbar">
+        <div class="container custom-navbar-container fixed-top">
             <a class="navbar-brand" href="/">
                 <img class="img-icon" src="/css/images/main_icon.png"/>
-                <img class="img-logo" src="/css/images/main_logo.png"/>
+                <p class="img-logo">망고마켓</p>
             </a>
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation"><span class="navbar-toggler-icon"></span></button>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent"
+                    aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span></button>
             <div class="collapse navbar-collapse" id="navbarSupportedContent">
-                <ul class="navbar-nav me-auto mb-2 mb-lg-0 ms-lg-4">
-                    <li class="nav-item"><a class="nav-link active" aria-current="page" th:href="@{/post/board}">Home</a></li>
-
-                <li class="nav-item"><a class="nav-link" href="#!">About</a></li>
-
-                <li class="nav-item dropdown">
-                    <a class="nav-link dropdown-toggle" id="navbarDropdown" href="#" role="button"
-                       data-bs-toggle="dropdown" aria-expanded="false">Shop</a>
-                    <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
-                        <li><a class="dropdown-item" href="#!">All Products</a></li>
-                        <li>
-                            <hr class="dropdown-divider"/>
-                        </li>
-                        <li><a class="dropdown-item" href="#!">Popular Items</a></li>
-                        <li><a class="dropdown-item" href="#!">New Arrivals</a></li>
-                    </ul>
-                </li>
-            </ul>
-
-                <form class="d-flex" th:if="${session.loginMember == null}">
+                <ul class="navbar-nav me-auto mb-2 mb-lg-0 ms-xl-5">
+                    <li class="nav-item"><a class="nav-link active" aria-current="page"
+                                            th:href="@{/post/board}">Home</a></li>
+                    <li class="nav-item"><a class="nav-link" href="#!">About</a></li>
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" id="navbarDropdown" href="#" role="button"
+                           data-bs-toggle="dropdown" aria-expanded="false">Shop</a>
+                        <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
+                            <li><a class="dropdown-item" href="#!">All Products</a></li>
+                            <li>
+                                <hr class="dropdown-divider"/>
+                            </li>
+                            <li><a class="dropdown-item" href="#!">Popular Items</a></li>
+                            <li><a class="dropdown-item" href="#!">New Arrivals</a></li>
+                        </ul>
+                    </li>
+                 </ul>
+                <form class="d-flex search-bar" id="search-form" th:action="@{/post/search}" method="get">
+                    <input type="text" class="search-input" name="word" placeholder="물품을 검색해주세요">
+                    <button class="search-btn" type="button" th:onclick="search()">
+                        <span class="material-symbols-outlined">search</span>
+                    </button>
+                </form>
+                <form class="d-flex member-bar" th:if="${session.loginMember == null}">
                     <button th:if="${session.loginMember == null}"
-                            class="btn-orange" type="button"
+                            class="custom-btn" type="button"
                             onclick="location.href='/member/loginForm'"
                             th:onclick="|location.href='@{/login}'|"> 회원가입/로그인 </button>
                 </form>
-
-                <button  class="btn-orange" th:if="${not #strings.isEmpty(session.loginMember)}" type="button"
-                         th:onclick="|location.href='@{/chat/chatRoomList}'|"> 채팅 <span id="chat">0</span>
-                </button>
                 <form class="form-check-inline" th:if="${session.loginMember != null}"
                       th:action="@{/logout}" method="get">
-                <button  class="btn-orange" type="button"
-                         th:onclick="|location.href='@{/members/{memId}/edit(memId=${session.loginMember.memId})}'|"> 회원정보 </button>
-                <button  th:if="${session.loginMember.role.name().equals('USER')}"
-                         class="btn-orange" type="submit"> 로그아웃 </button>
-                <button  th:if="${session.loginMember.role.name().contains('SOCIAL')}"
-                             class="btn-orange" type="button"
-                        th:onclick="logoutSocial([[${session.loginMember?.role.name()}]])"> 로그아웃 </button>
-
+                    <button class="custom-btn" th:if="${not #strings.isEmpty(session.loginMember)}" type="button"
+                            th:onclick="|location.href='@{/chat/chatRoomList}'|"> 알림 <span id="chat">0</span> </button>
+                    <button  class="custom-btn" type="button"
+                             th:onclick="|location.href='@{/members/{memId}/edit(memId=${session.loginMember.memId})}'|">
+                        회원정보 </button>
+                    <button  th:if="${session.loginMember.role.name().equals('USER')}"
+                             class="custom-btn" type="submit"> 로그아웃 </button>
+                    <button  th:if="${session.loginMember.role.name().contains('SOCIAL')}"
+                             class="custom-btn" type="button"
+                             th:onclick="logoutSocial([[${session.loginMember?.role.name()}]])"> 로그아웃 </button>
                 </form>
-
         </div>
     </div>
 </nav>

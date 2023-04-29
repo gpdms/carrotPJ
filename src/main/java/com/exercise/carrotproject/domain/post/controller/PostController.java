@@ -20,6 +20,7 @@ import org.springframework.core.io.UrlResource;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
+import org.springframework.http.HttpRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
@@ -27,6 +28,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 import java.io.IOException;
 import java.net.MalformedURLException;
@@ -354,15 +356,12 @@ public class PostController {
         model.addAttribute("postList", onSaleAndRsvList);
     }
 
-
-
-
-
-
-
-
-
-
-
+    @GetMapping("/post/search")
+    public void searchPost(@RequestParam String word,
+                           HttpSession session,
+                           Model model) {
+        System.out.println("searchWord = " + word);
+        Object attribute = (MemberDto)session.getAttribute(SessionConst.LOGIN_MEMBER);
+    }
 
 }

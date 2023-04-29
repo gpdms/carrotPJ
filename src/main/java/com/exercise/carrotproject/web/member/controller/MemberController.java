@@ -141,6 +141,7 @@ public class MemberController {
             resultMap.put("nickname", bindingResult.getFieldError("nickname").getDefaultMessage());
             return ResponseEntity.badRequest().body(resultMap);
         }
+
         Member updateMember = Member.builder().memId(profileForm.getMemId())
                 .nickname(profileForm.getNickname())
                 .loc(profileForm.getLoc()).build();

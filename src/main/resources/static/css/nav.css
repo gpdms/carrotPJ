@@ -1,0 +1,116 @@
+.custom-navbar {
+    height: 50px;
+}
+.container {
+    height: 50px;
+    width: 100%;
+    padding: 0;
+    margin-top: 0px;
+    margin-left: 100px;
+    margin-right: 10px;
+}
+.navbar-brand {
+    height: 50px;
+    padding-top: 10px;
+}
+.img-icon{
+    height: 25px;
+    display: inline;
+}
+.img-logo{
+    font-family: 'Noto Sans KR', sans-serif;
+    display: inline;
+    font-size: 17px;
+    font-weight: 600;
+    color: #F2A33A;
+}
+
+.navbar-brand {
+    display: inline;
+}
+.navbar-toggler {
+    display: inline;
+}
+.navbar-collapse {
+}
+
+.search-input {
+    width: 200px;
+    height: 30px;
+    font-size: 13px;
+    border: 0;
+    border-radius: 10px;
+    outline: none;
+    padding-left: 10px;
+    background-color: #f1f3f5;
+    /*background-color: rgb(233, 233, 233);*/
+}
+.search-bar {
+    padding-top: 5px;
+}
+.search-btn {
+    border: 0;
+    background-color: transparent;
+    font-size: 20px;
+    padding: 3px 3px 0px 3px;
+}
+.search-icon {
+    color: #dee2e6;
+}
+.member-bar {
+
+}
+/*.fa,.fab,.fad,.fal,.far,.fas{
+    font-weight: 900 !important;
+}*/
+.material-symbols-outlined {
+     font-variation-settings:
+             'FILL' 0,
+             'wght' 400,
+             'GRAD' 300,
+             'opsz' 48;
+    font-size: 20px;
+}
+
+
+.custom-btn {
+    display: inline-block;
+    font-weight: 500;
+    line-height: 1.5;
+    color: black;
+    text-align: center;
+    text-decoration: none;
+    vertical-align: middle;
+    cursor: pointer;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+    background-color: white;
+    border: 1px solid #dee2e6;
+    padding: 0.375rem 0.75rem;
+    font-size: 0.75rem;
+    border-radius: 0.25rem;
+    transition: color 0.15s ease-in-out, background-color 0.15s ease-in-out, border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+}
+@media (prefers-reduced-motion: reduce) {
+    .custom-btn {
+        transition: none;
+    }
+}
+.custom-btn:hover {
+    color: #212529;
+    background-color: #f1f3f5;
+    /*border-color: #212529;*/
+
+}
+.custom-btn-check:focus + .custom-btn, .custom-btn:focus {
+    outline: 0;
+    box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.25);
+}
+.custom-btn:disabled, .custom-btn.disabled, fieldset:disabled .btn {
+    pointer-events: none;
+    opacity: 0.65;
+}
+
+

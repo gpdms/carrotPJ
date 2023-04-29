@@ -4,12 +4,15 @@ import com.exercise.carrotproject.domain.enumList.HideState;
 import com.exercise.carrotproject.domain.enumList.SellState;
 import com.exercise.carrotproject.domain.member.dto.MemberDto;
 import com.exercise.carrotproject.domain.member.entity.Member;
+import com.exercise.carrotproject.domain.member.entity.QBlock;
 import com.exercise.carrotproject.domain.post.dto.PostDto;
 import com.exercise.carrotproject.domain.post.dto.QSoldPostDto;
 import com.exercise.carrotproject.domain.post.dto.SoldPostDto;
 import com.exercise.carrotproject.domain.post.entity.Post;
 import com.exercise.carrotproject.domain.review.entity.QReviewBuyer;
 import com.querydsl.core.types.Projections;
+import com.querydsl.core.types.dsl.BooleanExpression;
+import com.querydsl.jpa.JPAExpressions;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
@@ -20,8 +23,10 @@ import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
 import java.util.List;
 
+import static com.exercise.carrotproject.domain.member.entity.QBlock.block;
 import static com.exercise.carrotproject.domain.post.entity.QPost.post;
 import static com.exercise.carrotproject.domain.review.entity.QReviewBuyer.reviewBuyer;
+import static org.springframework.util.StringUtils.hasText;
 
 @Repository
 @RequiredArgsConstructor
@@ -73,6 +78,35 @@ public class PostRepositoryImpl implements CustomPostRepository{
         return postEntityList;
     }
 
+/*    public List<Post> searchPost(String searchWord, String loginMemId){
+        //hidestate, sellstate, block 고려
+        String jpql = "select p from Post p " +
+                "where p.loc = :loc " +
+                "and p.hideState = :hideState " +
+                "and p.sellState <> :sellState " +
+                "and not exists (select b from Block b " +
+                "where b.toMem = :member and b.fromMem = p.member.memId " +
+                "or b.toMem =p.member.memId and b.fromMem=:member) " +
+                "order by p.createdTime desc";
 
+        BooleanExpression exists =JPAExpressions.select(block)
+                .from(block)
+                .where(fromIdEq(loginMemId).
+                        toIdEq())
+                .exists();
+        jpaQueryFactory.select(post)
+                .from(post)
+                .where(post.hideState.eq(HideState.SHOW),
+                        post.sellState.eq(SellState.ON_SALE),
+                        post.title.like("%"+searchWord+"%"),
+
+    }
+
+    public BooleanExpression fromIdEq(String loginMemId) {
+        return hasText(loginMemId) ? block.fromMem.memId.eq(loginMemId) : null;
+    }
+    public BooleanExpression toIdEq(String loginMemId) {
+        return hasText(loginMemId) ? block.toMem.memId.eq(loginMemId) : null;
+    }*/
 
 }
