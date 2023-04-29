@@ -29,22 +29,22 @@
 
                 <form class="d-flex" th:if="${session.loginMember == null}">
                     <button th:if="${session.loginMember == null}"
-                            class="btn" type="button"
+                            class="btn-orange" type="button"
                             onclick="location.href='/member/loginForm'"
                             th:onclick="|location.href='@{/login}'|"> 회원가입/로그인 </button>
                 </form>
 
-                <button  class="btn" th:if="${not #strings.isEmpty(session.loginMember)}" type="button"
+                <button  class="btn-orange" th:if="${not #strings.isEmpty(session.loginMember)}" type="button"
                          th:onclick="|location.href='@{/chat/chatRoomList}'|"> 채팅 <span id="chat">0</span>
                 </button>
                 <form class="form-check-inline" th:if="${session.loginMember != null}"
                       th:action="@{/logout}" method="get">
-                <button  class="btn" type="button"
+                <button  class="btn-orange" type="button"
                          th:onclick="|location.href='@{/members/{memId}/edit(memId=${session.loginMember.memId})}'|"> 회원정보 </button>
                 <button  th:if="${session.loginMember.role.name().equals('USER')}"
-                         class="btn" type="submit"> 로그아웃 </button>
+                         class="btn-orange" type="submit"> 로그아웃 </button>
                 <button  th:if="${session.loginMember.role.name().contains('SOCIAL')}"
-                             class="btn" type="button"
+                             class="btn-orange" type="button"
                         th:onclick="logoutSocial([[${session.loginMember?.role.name()}]])"> 로그아웃 </button>
 
                 </form>
