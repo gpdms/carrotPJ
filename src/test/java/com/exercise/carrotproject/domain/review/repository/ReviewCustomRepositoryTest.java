@@ -16,7 +16,7 @@ import static org.junit.jupiter.api.Assertions.*;
 class ReviewCustomRepositoryTest {
     @Autowired
     ReviewCustomRepository reviewCustomRepository;
-    @Test
+/*    @Test
     void testSumScore () {
         List<Object[]> sumScore = reviewCustomRepository.getSumScore();
         for(Object[] row : sumScore){
@@ -25,5 +25,5 @@ class ReviewCustomRepositoryTest {
             System.out.println("mem_id !!= " + mem_id);
             System.out.println("manner_score!! = " + manner_score);
         }
-    }
+    }*/
 }

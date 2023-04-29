@@ -27,6 +27,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.UrlResource;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -36,6 +38,7 @@ import org.springframework.web.multipart.MultipartFile;
 import javax.validation.Valid;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -129,14 +132,28 @@ public class MemberController {
     }
     @ResponseBody
     @PatchMapping("/{memId}/edit/profile")
-    public ProfileForm profileUpdate(@PathVariable String memId,
+    public ResponseEntity<Map<String, Object>> profileUpdate(@PathVariable String memId,
                                 @Valid @ModelAttribute("profileForm") ProfileForm profileForm,
-                                @RequestParam("profImg") MultipartFile profImg) {
+                                @RequestParam("profImg") MultipartFile profImg,
+                                                        BindingResult bindingResult) {
+        Map<String, Object> resultMap = new HashMap<>();
+        if(bindingResult.hasErrors()) {
+            resultMap.put("nickname", bindingResult.getFieldError("nickname").getDefaultMessage());
+            return ResponseEntity.badRequest().body(resultMap);
+        }
         Member updateMember = Member.builder().memId(profileForm.getMemId())
                 .nickname(profileForm.getNickname())
                 .loc(profileForm.getLoc()).build();
-        Member member = memberService.profileUpdate(updateMember, profImg);
-        return new ProfileForm(member.getMemId(), member.getProfPath(), member.getNickname(),member.getLoc());
+        resultMap = memberService.profileUpdate(updateMember, profImg);
+        if(!resultMap.containsKey("success")){
+            return ResponseEntity.badRequest().body(resultMap);
+        } else {
+            Member member = (Member) resultMap.get("success");
+            resultMap.clear();
+            resultMap.put("member",
+                    new ProfileForm(member.getMemId(), member.getProfPath(), member.getNickname(), member.getLoc()));
+            return ResponseEntity.ok().body(resultMap);
+        }
     }
 
     //프로필 이미지 출력

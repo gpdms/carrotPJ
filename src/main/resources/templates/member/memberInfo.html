@@ -17,6 +17,9 @@
             border-color: #dc3545;
             color: #dc3545;
         }
+        .field-error-border {
+            border-color: #dc3545;
+        }
     </style>
 </head>
 
@@ -25,15 +28,9 @@
         <div class="py-5 text-center">
             <h2>개인정보 수정</h2>
         </div>
-
-
         <button class="w-50 btn btn-secondary btn-group-sm"
                 type="button"  th:onclick="|location.href='@{/members/{memId}/trade/buyList(memId=${session.loginMember.memId})}'|">구매내역 보기</button>
         <div style="height: 10px"></div>
-
-
-
-
 
         <h4 class="mb-3"> 프로필 수정 </h4>
         <form id="profileEditForm">
@@ -43,8 +40,7 @@
                 <input type="text" id="nickname" name="nickname"
                        class="formcontrol" th:value="${profileForm.nickname}"
                        th:onchange="pfEditBtnActive()">
-<!--                       th:classappend="${errors?.containsKey('itemName')} ? 'fielderror' : _"-->
-                <div class="field-error" th:errors="*{profileForm.nickname}" />
+                <div id="nick-error"/>
             </div>
 
             <div>
@@ -55,8 +51,7 @@
                 <input type="file" id="profImg"  name="profImg"
                        class="formcontrol"
                        th:onchange="pfEditBtnActive()">
-<!--                <input id="profimg" type="file" name="profimg" required="required" onChange="fileChange();" style="display:none">-->
-                
+                <div id="image-error"/>
             </div>
 
             <div>
@@ -69,7 +64,7 @@
                             [[${locValue.locName}]]</option>
                     </th:block>
                 </select>
-                <div class="field-error" th:errors="*{profileForm.loc}" />
+                <!--<div class="field-error" th:errors="*{profileForm.loc}" />-->
             </div>
 
             <button class="w-50 btn btn-secondary btn-group-sm"
@@ -115,6 +110,47 @@
         const target = document.getElementById('pfEditBtn');
         target.disabled = false;
     }
+    $('#profileEditForm').on('submit', function(e) {
+        e.preventDefault();
+        let memId = [[${profileForm.memId}]];
+        let url = `/members/${memId}/edit/profile`;
+        const formData = new FormData($('#profileEditForm')[0]);
+        $.ajax({
+            url: url,
+            type: "PATCH",
+            data: formData,
+            contentType: false,
+            processData: false,
+            headers: {
+                "Accept": "application/json"
+            }
+        })
+        .done(function(data) {
+            console.log(data.member);
+            alert('프로필 변경에 성공했습니다');
+        })
+        .fail(function(err) {
+            alert('프로필 변경에 실패했습니다');
+            const message = err.responseJSON;
+            console.log(message);
+           if(message.nickname) {
+                $('#nick-error').replaceWith(`<div id="nick-error" class="field-error">${message.nickname}</div>`)
+                $("#nickname").addClass("field-error-border");
+            }if ('fail-nickname' in message) {
+                $('#nick-error').replaceWith(`<div id="nick-error" class="field-error">중복된 닉네임입니다.</div>`)
+                $("#nickname").addClass("field-error-border");
+            }if('fail-image' in message) {
+                $('#image-error').replaceWith(`<div id="image-error" class="field-error">
+                                    프로필 사진이 이미지 파일이 아닙니다. .jpg, .png, .gif의 이미지 파일만 업로드 가능합니다.
+                                    </div>`)
+            } if(!message.nickname && !'fail-nickname' in message && !'fail-image' in message)
+                alert('프로필 변경에 실패했습니다');
+
+        });
+
+    });
+
+    /*
     const profileEditForm = document.getElementById('profileEditForm');
     profileEditForm.addEventListener('submit', (e) => {
         e.preventDefault();
@@ -124,29 +160,31 @@
         const formData= new FormData(profileEditForm);
         fetch(url, {
             method: "PATCH",
-            body: formData
-        })
-        .then ((response) => {
-            console.log(response.json())
-            if (!response.ok){
-                throw new Error('400 or 500 에러 발생');
+            body: formData,
+            headers: {
+                "Accept": "application/json"
             }
         })
-        .then ((data) => {
-            console.log(data);
+        .then((response) => {
+            if (!response.ok){
+                return response.text().then(text => { throw new Error(text) })
+            } else {
+                return response.json()
+            };
+        })
+        .then((data) => {
+            console.log(data.member);
             alert('프로필 변경에 성공했습니다');
         })
-        // 에러처리
-        .catch(() => {
-            console.log('프로필 변경 에러');
-            alert('프로필 변경에 실패했습니다');
-        })
-    });
-
-
-    function buyListView() {
-        l
-    }
+        .catch((error) => {
+            const failUpdate = JSON.parse(error.message).fail_update;
+            if(failUpdate == 'imageType') {
+                alert('프로필 사진이 이미지 파일이 아닙니다. .jpg, .png, .gif의 이미지 파일만 업로드 가능합니다.');
+            } else{
+                alert('프로필 변경에 실패했습니다');
+            }
+        });
+    });*/
 
 /*function buyListView() {
     let memId = [[${session.loginMember.memId}]];
@@ -180,9 +218,5 @@
             }
         })
     }*/
-
-
-
-
 </script>
 </div>

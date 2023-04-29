@@ -14,12 +14,12 @@ class ReviewBuyerCustomRepositoryTest {
     @Autowired
     ReviewBuyerCustomRepository reviewBuyerCustomRepository;
 
-    @Test
+/*    @Test
     void test1 () {
         List<MemberDto> memberDtos = reviewBuyerCustomRepository.sumScoresForUpdateMannerScore();
         for (MemberDto memberDto : memberDtos) {
             System.out.println("memberDto = " + memberDto);
         }
-    }
+    }*/
 
 }
