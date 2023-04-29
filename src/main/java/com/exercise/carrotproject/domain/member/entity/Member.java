@@ -51,7 +51,7 @@ public class Member extends BaseEntity {
     private String profPath;
 
     @Column(nullable = false)
-    @ColumnDefault("36.5")
+    @ColumnDefault("365000")
     private Double mannerScore;
 
     @NotNull
@@ -60,7 +60,7 @@ public class Member extends BaseEntity {
 
     @PrePersist
     public void createDefault() {
-        this.mannerScore = 36.5;
+        this.mannerScore = 365000.0;
     }
 
     public void updatePwd(String memPwd) {
@@ -124,4 +124,6 @@ public class Member extends BaseEntity {
         return reviewSellerList.stream().
                 collect(Collectors.toUnmodifiableList());
     }
+
+
 }

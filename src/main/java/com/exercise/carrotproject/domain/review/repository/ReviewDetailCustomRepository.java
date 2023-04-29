@@ -47,18 +47,18 @@ import javax.persistence.Query;
 @Transactional
 public class ReviewDetailCustomRepository {
     @PersistenceContext
-    EntityManager em;
+    private EntityManager em;
 
     public  List<Object[]> getMannerDetails(String memId, String positiveORnegative) {
         String sql = "SELECT REVIEW_INDICATOR, SUM(COUNT_INDICATOR) AS TOTAL_COUNT " +
                 "FROM ( " +
                 "       SELECT REVIEW_SELLER_INDICATOR AS REVIEW_INDICATOR, COUNT(REVIEW_SELLER_INDICATOR) AS COUNT_INDICATOR " +
-                "       FROM REVIEW_SELLER_DETAIL " +
+                "       FROM review_seller_detail " +
                 "       WHERE REVIEW_SELLER_INDICATOR LIKE :indicatorName AND seller_id= :sellerId " +
                 "       GROUP BY REVIEW_SELLER_INDICATOR " +
                 "       UNION ALL " +
                 "       SELECT REVIEW_BUYER_INDICATOR, COUNT(REVIEW_BUYER_INDICATOR) " +
-                "       FROM REVIEW_BUYER_DETAIL " +
+                "       FROM review_buyer_detail " +
                 "       WHERE REVIEW_BUYER_INDICATOR LIKE :indicatorName AND buyer_id= :buyerId " +
                 "       GROUP BY REVIEW_BUYER_INDICATOR " +
                 "     ) AS T " +
