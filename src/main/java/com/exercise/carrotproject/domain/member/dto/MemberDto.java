@@ -37,14 +37,8 @@ public class MemberDto {
     private Timestamp updatedTime;
     private Role role;
 
-    //Block테이블
-    //private List<Block> blockfromMemList = new ArrayList<>();
-    //private List<Block> blocktoMemList = new ArrayList<>();
-
-    //reviewBuyer 테이블
-    //private List<ReviewBuyer> reviewBuyerList = new ArrayList<>();
-    //reviewSeller 테이블
-    //private List<ReviewSeller> reviewSellerList = new ArrayList<>();
-
-
+    public MemberDto(String mem_id, Double mannerScore) {
+        this.memId = mem_id;
+        this.mannerScore = mannerScore;
+    }
 }

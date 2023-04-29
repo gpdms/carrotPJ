@@ -21,7 +21,6 @@ import com.exercise.carrotproject.web.member.form.*;
 import com.exercise.carrotproject.web.member.form.memberInfo.MyBuyListForm;
 import com.exercise.carrotproject.web.member.form.memberInfo.ProfileForm;
 import com.exercise.carrotproject.web.member.form.memberInfo.PwdUpdateForm;
-import com.exercise.carrotproject.web.member.form.memberInfo.MySellListForm;
 import com.exercise.carrotproject.web.member.util.SecurityUtils;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -34,15 +33,12 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpSession;
 import javax.validation.Valid;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
-import java.util.stream.Collectors;
+
 
 @Slf4j
 @Controller

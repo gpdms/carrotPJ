@@ -3,10 +3,12 @@ package com.exercise.carrotproject.domain.review.repository;
 import com.exercise.carrotproject.domain.enumList.HideState;
 import com.exercise.carrotproject.domain.enumList.ReviewBuyerIndicator;
 import com.exercise.carrotproject.domain.enumList.ReviewState;
+import com.exercise.carrotproject.domain.member.dto.MemberDto;
 import com.exercise.carrotproject.domain.review.dto.QReviewBuyerDto;
 import com.exercise.carrotproject.domain.review.dto.ReviewBuyerDto;
 import com.exercise.carrotproject.domain.review.dto.ReviewMessageDto;
 import com.exercise.carrotproject.domain.review.entity.QReviewBuyer;
+import com.exercise.carrotproject.domain.review.entity.QReviewBuyerDetail;
 import com.exercise.carrotproject.domain.review.entity.ReviewBuyer;
 import com.querydsl.core.Tuple;
 import com.querydsl.core.annotations.QueryProjection;
@@ -16,10 +18,13 @@ import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 
+import java.sql.Timestamp;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+import static com.exercise.carrotproject.domain.member.entity.QMember.member;
 import static com.exercise.carrotproject.domain.post.entity.QPost.post;
 import static com.exercise.carrotproject.domain.review.entity.QReviewBuyer.reviewBuyer;
 import static com.exercise.carrotproject.domain.review.entity.QReviewBuyerDetail.reviewBuyerDetail;
@@ -71,7 +76,8 @@ public class ReviewBuyerCustomRepository {
                 .fetch();
     }
 
-    private BooleanExpression buyerIdEq(String memId) {
+
+    public BooleanExpression buyerIdEq(String memId) {
         return hasText(memId) ? reviewBuyer.buyer.memId.eq(memId) : null;
     }
 

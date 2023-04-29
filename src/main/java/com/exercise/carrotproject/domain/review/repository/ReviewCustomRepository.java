@@ -2,6 +2,7 @@ package com.exercise.carrotproject.domain.review.repository;
 
 import com.exercise.carrotproject.domain.enumList.HideState;
 import com.exercise.carrotproject.domain.enumList.ReviewState;
+import com.exercise.carrotproject.domain.member.dto.MemberDto;
 import com.exercise.carrotproject.domain.review.dto.ReviewMessageDto;
 import com.querydsl.core.types.Projections;
 import com.querydsl.core.types.dsl.BooleanExpression;
@@ -9,50 +10,69 @@ import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+import javax.persistence.Query;
+import java.sql.Timestamp;
+import java.time.LocalDateTime;
 import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
+import static com.exercise.carrotproject.domain.review.entity.QReviewBuyer.reviewBuyer;
 import static com.exercise.carrotproject.domain.review.entity.QReviewSeller.reviewSeller;
 import static org.springframework.util.StringUtils.hasText;
 
 @Repository
 @RequiredArgsConstructor
 public class ReviewCustomRepository {
-    private final JPAQueryFactory queryFactory;
+    @PersistenceContext
+    private EntityManager em;
 
-    public Long countMessageBySeller(String memId) {
-        return queryFactory
-                .select(reviewSeller.message.count())
-                .from(reviewSeller)
-                .where(sellerIdEq(memId), reviewSeller.message.ne(""),
-                        reviewSeller.reviewState.ne(ReviewState.BAD),
-                        reviewSeller.hideState.eq(HideState.SHOW))
-                .fetchOne();
-    }
+    private final JPAQueryFactory jpaQueryFactory;
 
-    public List<ReviewMessageDto> reviewMessageBySeller(String memId) {
-        return queryFactory
-                .select(Projections.constructor(ReviewMessageDto.class,
-                        reviewSeller.buyer,
-                        reviewSeller.reviewSellerId,
-                        reviewSeller.message,
-                        reviewSeller.createdTime))
-                .from(reviewSeller)
-                .where(sellerIdEq(memId),
-                        reviewSeller.message.ne(""),
-                        reviewSeller.reviewState.ne(ReviewState.BAD),
-                        reviewSeller.hideState.eq(HideState.SHOW))
+    public List<MemberDto> sumScoreForUpdateMannerScore() {
+        Timestamp from = Timestamp.valueOf(LocalDateTime.now().minusDays(1));
+        Timestamp to = Timestamp.valueOf(LocalDateTime.now().minusMinutes(1));
+        List<MemberDto> rb = jpaQueryFactory.select(
+                        Projections.constructor(MemberDto.class, reviewBuyer.buyer.memId, reviewBuyer.totalScore.sum()))
+                .from(reviewBuyer)
+                .groupBy(reviewBuyer.buyer.memId)
+                .where(reviewBuyer.createdTime.between(from, to))
                 .fetch();
+        List<MemberDto> rs = jpaQueryFactory.select(
+                        Projections.constructor(MemberDto.class,
+                                reviewSeller.seller.memId,
+                                reviewSeller.totalScore.sum()))
+                .from(reviewSeller)
+                .groupBy(reviewSeller.seller.memId)
+                .where(reviewSeller.createdTime.between(from, to))
+                .fetch();
+        return Stream.concat(rb.stream(), rs.stream())
+                .collect(Collectors.groupingBy(MemberDto::getMemId, Collectors.summingDouble(MemberDto::getMannerScore)))
+                .entrySet().stream()
+                .map(entry -> new MemberDto(entry.getKey(), entry.getValue()))
+                .collect(Collectors.toList());
     }
 
-    public long hideReviewSellerById(Long reviewSellerId) {
-        return queryFactory.update(reviewSeller)
-                .set(reviewSeller.hideState, HideState.HIDE)
-                .where(reviewSeller.reviewSellerId.eq(reviewSellerId))
-                .execute();
-    }
+/*    public  List<Object[]> getSumScore() {
+        String sql = "SELECT mem_id, SUM(total) AS manner_score " +
+                "FROM ( " +
+                "       SELECT rs.seller_id as mem_id, COUNT(rs.total_score) as total" +
+                "       FROM review_seller as rs" +
+                "       WHERE rs.created_time BETWEEN DATE_SUB(NOW(), INTERVAL 1 DAY) AND DATE_SUB(NOW(), INTERVAL 1 MINUTE) " +
+                "       GROUP BY rs.seller_id " +
+                "       UNION ALL " +
+                "       SELECT rb.buyer_id, COUNT(rb.total_score) " +
+                "       FROM review_buyer as rb " +
+                "       WHERE rb.created_time BETWEEN DATE_SUB(NOW(), INTERVAL 1 DAY) AND DATE_SUB(NOW(), INTERVAL 1 MINUTE) " +
+                "       GROUP BY rb.buyer_id " +
+                "     ) as t " +
+                "GROUP BY mem_id " +
+                "ORDER BY mem_id";
 
-    private BooleanExpression sellerIdEq(String sellerId) {
-        return hasText(sellerId) ? reviewSeller.seller.memId.eq(sellerId) : null;
-    }
+        Query query = em.createNativeQuery(sql);
+        return query.getResultList();
+    }*/
 
 }

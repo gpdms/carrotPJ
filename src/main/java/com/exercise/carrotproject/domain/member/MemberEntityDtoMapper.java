@@ -10,17 +10,18 @@ public class MemberEntityDtoMapper {
         return Member.builder()
                 .memId(memberDto.getMemId())
                 .nickname(memberDto.getNickname())
-                .mannerScore(memberDto.getMannerScore())
                 .loc(memberDto.getLoc())
                 .role(memberDto.getRole())
                 .build();
     }
     //memberEntity -> memberDto
     public static MemberDto toMemberDto(Member member){
+        System.out.println("member.getMannerScore() = " + member.getMannerScore());
         return MemberDto.builder()
                 .memId(member.getMemId())
                 .nickname(member.getNickname())
-                .mannerScore(member.getMannerScore())
+                .mannerScore(
+                        Math.round(member.getMannerScore() / 10000.0 * 10) / 10.0)
                 .loc(member.getLoc())
                 .role(member.getRole())
                 .build();
