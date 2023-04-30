@@ -13,13 +13,13 @@
 
 <div layout:fragment="content">
     <div class="container container-sm container-item-create">
-        <h5 class="container-headline">중고거래 글쓰기</h5>
+        <h2 class="container-headline ">중고거래 글쓰기</h2>
         <form id="upload_form" class="form-item-create">
             <div class="form-group form-picture">
                 <div class="file-box">
-                <!--사진-->
+                <!--사진선택-->
                     <div class="inputFile">
-                    <label for='inputImage' class="addImgBtn">사진선택</label>
+                    <label for='inputImage' class="addImgBtn text-center"><i class="bi bi-camera fs-1"></i></label>
                     <input type="file" multiple="multiple" name="uploadFiles" id='inputImage' accept="image/*" style="display: none;">
                     </div>
                 <!--사진 미리보기-->
@@ -49,24 +49,25 @@
         </form>
 
             <!--거래희망장소-->
-            <button id="regPlace" type="button">거래희망장소 선택하기</button>
+            <button id="regPlace" class="btn btn-outline-secondary" type="button">거래희망장소 선택하기</button>
             <!--카카오맵 지도-->
             <div id="mapArea">
-                <p style="font-weight: bold;">거래 희망하는 장소를 지도에서 클릭해주세요!</p>
+                <br/>
+                <p class="fw-bold">거래 희망하는 장소를 지도에서 클릭해주세요!</p>
 
                 <div id="map" style="width:100%;height:350px; margin: 20px;"></div>
 
                 <div id="inputPlace" class="form-group form-car-mileage" style="display: none;">
                     <input type="text" class="form-control" id="placeInfo" name="placeInfo" placeholder="장소명을 입력해주세요. 예)강남역 1번 출구">
                 </div>
-                <button id="cfmPlace" type="button" style="display: none;">장소선택하기</button>
+                <button id="cfmPlace" class="btn btn-outline-secondary" type="button" style="display: none;">장소선택하기</button>
 
                 <!--                <div id="clickLatlng"></div>-->
-                <button id="noPlace" type="button" >장소선택 안함</button>
+                <button id="noPlace" class="btn btn-outline-secondary" type="button" >장소선택 안함</button>
             </div>
 
             <br/><br/>
-            <button type="button" id="uploadBtn" class="btn btn-primary btn-submit">상품 등록하기</button>
+            <button type="button" id="uploadBtn" class="btn-orange">상품 등록하기</button>
 
 
     </div>
