@@ -362,7 +362,6 @@ public class PostController {
                            HttpSession session,
                            @PageableDefault(page = 0, size = 12) Pageable pageable,
                            Model model) {
-        System.out.println("searchWord = " + word);
         MemberDto loginMember = (MemberDto) session.getAttribute(SessionConst.LOGIN_MEMBER);
         String loginMemId = "";
         if(loginMember != null) {
