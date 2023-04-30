@@ -29,10 +29,16 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import java.io.IOException;
 import java.net.MalformedURLException;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
+import java.time.ZoneOffset;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -69,7 +75,46 @@ public class PostController {
 
     //게시글 상세정보 detail
     @GetMapping("/post/detail/{postId}")
-    public String postDetail(@PathVariable Long postId, Model model, HttpSession session){
+    public String postDetail(@PathVariable Long postId, Model model, HttpSession session, HttpServletRequest request, HttpServletResponse response){
+
+        /* 조회수 로직 */
+        Cookie oldCookie = null;
+        Cookie[] cookies = request.getCookies();
+        //쿠키 유지시간을 오늘 하루 자정까지로 설정
+        long todayEndSecond = LocalDate.now().atTime(LocalTime.MAX).toEpochSecond(ZoneOffset.UTC); // 하루 종료 시간을 시간초로 변환
+        long currentSecond = LocalDateTime.now().toEpochSecond(ZoneOffset.UTC);// 현재 시간을 시간초로 변환
+        int cookieTime = (int) (todayEndSecond - currentSecond); // 하루 종료까지 남은 시간초
+
+        if (cookies != null) {
+            for (Cookie cookie : cookies) {
+                log.info("cookie.getName():{}",cookie.getName());
+                log.info("cookie.getValue():{}",cookie.getValue());
+                if (cookie.getName().equals("postView")) {
+//                    log.info("cookie.getName():{}",cookie.getName());
+//                    log.info("cookie.getValue():{}",cookie.getValue());
+                    oldCookie = cookie;
+                }
+            }
+        }
+
+        if (oldCookie != null) {
+            if (!oldCookie.getValue().contains("["+ postId.toString() +"]")) {
+                postService.updateHits(postId);
+                oldCookie.setValue(oldCookie.getValue() + "_[" + postId + "]");
+                oldCookie.setPath("/");  //모든 경로에서 접근 가능
+                oldCookie.setMaxAge(cookieTime); // 쿠키 시간
+                response.addCookie(oldCookie);
+            }
+        } else {
+            postService.updateHits(postId);
+            Cookie newCookie = new Cookie("postView", "[" + postId + "]");
+            newCookie.setPath("/");
+            newCookie.setMaxAge(cookieTime); 	// 쿠키 시간
+            response.addCookie(newCookie);
+        }
+
+
+
         //Post하나 불러오기
         PostDto postDto = postService.selectOnePost(postId);
 
@@ -129,6 +174,7 @@ public class PostController {
         MemberDto loginMember = (MemberDto) session.getAttribute(SessionConst.LOGIN_MEMBER);
         postDto.setMember(loginMember);
         postDto.setLoc(loginMember.getLoc());
+        postDto.setHits(0);
         //게시글 내용 개행 처리
         postDto.setContent(postDto.getContent().replace("\r\n","<br>")); //줄개행
 

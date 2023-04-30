@@ -56,6 +56,7 @@ public class Post extends BaseEntity {
     @Convert(converter = SellStateConverter.class)
     private SellState sellState; //enum
 
+    @ColumnDefault("0") @Column(nullable = false)
     private Integer hits;
 
     @OneToMany(mappedBy = "post", cascade = CascadeType.REMOVE)

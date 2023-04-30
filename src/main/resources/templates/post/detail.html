@@ -48,6 +48,8 @@
                             <span th:if="${post.price}!=0" th:text="|${post.price}원|">가격</span>
                         </div>
                         <p class="lead" th:utext="${post.content}">상품설명</p>
+                        <p class="lead">조회수 [[${post.hits}]]</p>
+
                         <div class="d-flex">
 
                             <!--찜-->

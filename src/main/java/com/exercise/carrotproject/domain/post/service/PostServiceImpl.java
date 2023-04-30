@@ -554,4 +554,15 @@ public class PostServiceImpl {
         List<Post> postList = customPostRepository.searchPost(loginMemId, searchWord);
         return PostEntityDtoMapper.toDtoList(postList);
     }
+
+
+//    @Override
+    @Transactional
+    public void updateHits(Long postId){
+        QPost qPost = QPost.post;
+        jpaQueryFactory.update(qPost)
+                .set(qPost.hits, qPost.hits.add(1))
+                .where(qPost.postId.eq(postId))
+                .execute();
+    }
 }

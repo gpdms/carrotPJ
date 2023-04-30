@@ -66,7 +66,7 @@ public class PostRepositoryImpl implements CustomPostRepository{
                 "and not exists (select b from Block b " +
                     "where b.toMem = :member and b.fromMem = p.member.memId " +
                     "or b.toMem =p.member.memId and b.fromMem=:member) " +
-                "order by p.createdTime desc";
+                "order by p.postId desc";
 
         Query query = em.createQuery(jpql, Post.class);
         query.setParameter("loc", member.getLoc());
