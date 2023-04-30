@@ -5,6 +5,7 @@ import com.exercise.carrotproject.domain.enumList.Loc;
 import com.exercise.carrotproject.domain.member.entity.Member;
 import com.exercise.carrotproject.domain.post.dto.MtPlaceDto;
 import com.exercise.carrotproject.domain.post.dto.SoldPostDto;
+import com.exercise.carrotproject.domain.post.entity.Post;
 import com.exercise.carrotproject.domain.post.entity.Trade;
 import com.exercise.carrotproject.domain.post.service.TradeServiceImpl;
 import com.exercise.carrotproject.web.common.SessionConst;
@@ -357,11 +358,20 @@ public class PostController {
     }
 
     @GetMapping("/post/search")
-    public void searchPost(@RequestParam String word,
+    public String searchPost(@RequestParam String word,
                            HttpSession session,
+                           @PageableDefault(page = 0, size = 12) Pageable pageable,
                            Model model) {
         System.out.println("searchWord = " + word);
-        Object attribute = (MemberDto)session.getAttribute(SessionConst.LOGIN_MEMBER);
+        MemberDto loginMember = (MemberDto) session.getAttribute(SessionConst.LOGIN_MEMBER);
+        String loginMemId = "";
+        if(loginMember != null) {
+            loginMemId = loginMember.getMemId();
+        }
+        List<PostDto> postList = postService.searchPost(loginMemId, word);
+        model.addAttribute("postList", postService.paging(postList, pageable));
+        model.addAttribute("searchedWord", word);
+        return "post/searchList";
     }
 
 }

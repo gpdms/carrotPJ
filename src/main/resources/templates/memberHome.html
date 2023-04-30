@@ -7,8 +7,9 @@
     <link href="/css/profile.css" rel="stylesheet" />
     <link href="/css/review_modal.css" rel="stylesheet" />
     <style>
-        .container {
-            width: 800px;
+        .form_container {
+            max-width: 560px;
+            padding-left: 100px;
         }
         .profile_container{
             width: 200px;
@@ -35,7 +36,7 @@
 </head>
 
 <div layout:fragment="content">
-<div class="container">
+<div class="form_container">
     <div class="profile_container">
         <div class="profile-img-main">
             <img th:src="|/members/${member.memId}/profileImg|" alt="프로필이미지">
