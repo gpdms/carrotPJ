@@ -549,5 +549,9 @@ public class PostServiceImpl {
         return postDtoList;
     }
 
-
+//    @Override
+    public List<PostDto> searchPost(String loginMemId, String searchWord) {
+        List<Post> postList = customPostRepository.searchPost(loginMemId, searchWord);
+        return PostEntityDtoMapper.toDtoList(postList);
+    }
 }

@@ -78,35 +78,32 @@ public class PostRepositoryImpl implements CustomPostRepository{
         return postEntityList;
     }
 
-/*    public List<Post> searchPost(String searchWord, String loginMemId){
-        //hidestate, sellstate, block 고려
-        String jpql = "select p from Post p " +
-                "where p.loc = :loc " +
-                "and p.hideState = :hideState " +
-                "and p.sellState <> :sellState " +
-                "and not exists (select b from Block b " +
-                "where b.toMem = :member and b.fromMem = p.member.memId " +
-                "or b.toMem =p.member.memId and b.fromMem=:member) " +
-                "order by p.createdTime desc";
-
-        BooleanExpression exists =JPAExpressions.select(block)
-                .from(block)
-                .where(fromIdEq(loginMemId).
-                        toIdEq())
-                .exists();
-        jpaQueryFactory.select(post)
+    public List<Post> searchPost(String loginMemId, String searchWord){
+        BooleanExpression existsExpression = null;
+        if(fromIdEq(loginMemId) != null) {
+            existsExpression = JPAExpressions.selectFrom(block)
+                    .where(fromIdEq(loginMemId).or(toIdEq(loginMemId)))
+                    .exists().not();
+        }
+        return jpaQueryFactory.select(post)
                 .from(post)
                 .where(post.hideState.eq(HideState.SHOW),
-                        post.sellState.eq(SellState.ON_SALE),
-                        post.title.like("%"+searchWord+"%"),
-
+                        post.sellState.eq(SellState.SOLD),
+                        post.title.like("%" + searchWord + "%").or(
+                                post.content.like("%" + searchWord + "%")
+                        ),
+                        existsExpression
+                )
+                .fetch();
     }
 
     public BooleanExpression fromIdEq(String loginMemId) {
-        return hasText(loginMemId) ? block.fromMem.memId.eq(loginMemId) : null;
+        return hasText(loginMemId) ? block.fromMem.memId.eq(loginMemId).and(
+                block.toMem.memId.eq(post.member.memId)) : null;
     }
     public BooleanExpression toIdEq(String loginMemId) {
-        return hasText(loginMemId) ? block.toMem.memId.eq(loginMemId) : null;
-    }*/
+        return hasText(loginMemId) ? block.toMem.memId.eq(loginMemId).and(
+                block.fromMem.memId.eq(post.member.memId)) : null;
+    }
 
 }
