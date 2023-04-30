@@ -247,7 +247,9 @@ public class PostServiceImpl {
         final int start = (int) pageable.getOffset();
         final int end = Math.min((start + pageable.getPageSize()), postList.size());
         final Page<PostDto> page = new PageImpl<>(postList.subList(start, end), pageable, postList.size());
-//        log.info("start:{}, end:{}, page:{}", start, end, page);
+//        log.info("Page---------start:{}, end:{}, page:{}", start, end, page);
+        log.info("pageable.getPageNumber():{}", pageable.getPageNumber());
+        log.info("pageable.getPageSize():{}", pageable.getPageSize());
         return page;
     }
 
