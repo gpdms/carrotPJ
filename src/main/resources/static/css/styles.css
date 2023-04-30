@@ -11342,6 +11342,9 @@ textarea.form-control-lg {
 
 }
 .font-orange {
-  color: #ff6a00;
+  color: #ffd09c;
 }
 
+.bg-light-orange{
+  background-color: #fff2eb;
+}
