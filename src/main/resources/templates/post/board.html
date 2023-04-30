@@ -9,7 +9,7 @@
 </head>
 <div layout:fragment="content">
     <h1 class="text-center">[[${session.loginMember.loc.locName}]] 중고거래 상품</h1>
-    <button class="btn-orange float-md-start" th:onclick="|location.href='@{/post/uploadPage}'|">상품 올리기</button>
+    <button class="btn-orange float-md-end" th:onclick="|location.href='@{/post/uploadPage}'|">상품 올리기</button>
 
     <section class="py-5">
             <p class="text-center" th:if="${list.isEmpty()}">게시된 상품이 없습니다.</p>
