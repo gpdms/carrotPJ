@@ -4,38 +4,49 @@
       layout:decorate="~{layout/basic.html}">
 
 <head layout:fragment="head">
-    <title>판매목록</title>
-
+    <title>판매내역</title>
+    <link href="/css/sellList.css" rel="stylesheet" />
 </head>
 
 <div layout:fragment="content">
-<section class="py-5" >
-    <h1>판매중</h1>
+<!--    <h1 class="text-center">판매내역</h1>-->
+    <div class="d-flex">
+        <span class="span" onclick="onSaleFunc()">판매중</span>
+        <span class="span" onclick="soldFunc()">판매완료</span>
+        <span class="span" onclick="hiddenFunc()">숨김</span>
+    </div>
+
+<section id="sec_onSale" class="py-5" >
+    <h2>판매중</h2>
     <div class="container px-4 px-lg-5 mt-5">
         <div th:if="${onSaleAndRsv.isEmpty()}"><p>판매중인 상품이 없습니다.</p></div>
     <div class="row gx-4 gx-lg-5 row-cols-2 row-cols-md-3 row-cols-xl-4 justify-content-center">
-        <div class="col mb-5" th:unless="${onSaleAndRsv.isEmpty()}" th:each = "post:${onSaleAndRsv}">
+        <div class="col mb-6" th:unless="${onSaleAndRsv.isEmpty()}" th:each = "post:${onSaleAndRsv}">
             <div class="card h-100" th:onclick="|location.href='@{|/post/detail/${post.postId}|}'|" style="cursor: pointer;">
                 <!-- 제품사진-->
                 <img class="card-img-top" th:src="|/post/firstImg/${post.postId}|" alt="제품사진" />
                 <!-- Product details-->
-                <div class="card-body p-4">
+                <div class="card-body p-3">
                     <div class="text-center">
                         <!-- 제목-->
-                        <h5 class="fw-bolder" th:text="${post.title}">제목</h5>
+                        <h5 class="fw-bolder text-truncate" th:text="${post.title}">제목</h5>
                         <!--지역, 시간-->
-                        <p class="fw">[[${post.loc.locName}]] / [[${post.createdTime}]]</p>
+                        <p class="fw-normal text-secondary">[[${post.loc.locName}]] ∙ [[${post.createdTime}]]</p>
                         <!-- 가격-->
                         <h6 class="fw-bolder" th:if="${post.price}!=0" th:text="|${post.price}원|">가격</h6>
+                        <!--예약중 배지-->
+                        <span class="badge bg-success" th:if="${post.sellState.getSellStateName().equals('예약중')}">예약중</span>
                     </div>
                 </div>
             </div>
-<!--            <button th:if="${post.sellState.getSellStateName().equals('판매중')}">끌어올리기</button>-->
-            <button th:if="${post.sellState.getSellStateName().equals('판매중')}" th:onclick="sellState([[${post.postId}]],'예약중')">예약중으로 변경</button>
-            <button th:if="${post.sellState.getSellStateName().equals('판매중')}" th:onclick="sellState([[${post.postId}]],'판매완료')">판매완료</button>
+            <div class="d-flex">
+                <span class="span-inner" th:if="${post.sellState.getSellStateName().equals('판매중')}" th:onclick="sellState([[${post.postId}]],'예약중')">예약중으로 변경</span>
+                <span class="span-inner" th:if="${post.sellState.getSellStateName().equals('판매중')}" th:onclick="sellState([[${post.postId}]],'판매완료')">판매완료</span>
 
-            <button th:if="${post.sellState.getSellStateName().equals('예약중')}" th:onclick="sellState([[${post.postId}]],'판매중')">판매중으로 변경</button>
-            <button th:if="${post.sellState.getSellStateName().equals('예약중')}" th:onclick="sellState([[${post.postId}]],'판매완료')">판매완료</button>
+                <span class="span-inner" th:if="${post.sellState.getSellStateName().equals('예약중')}" th:onclick="sellState([[${post.postId}]],'판매중')">판매중으로 변경</span>
+                <span class="span-inner" th:if="${post.sellState.getSellStateName().equals('예약중')}" th:onclick="sellState([[${post.postId}]],'판매완료')">판매완료</span>
+            </div>
+
         </div>
     </div>
 </div>
@@ -43,34 +54,34 @@
 
 
 
-<section class="py-5">
-    <h1>판매완료</h1>
+<section id="sec_sold" class="py-5">
+    <h2>판매완료</h2>
     <div class="container px-4 px-lg-5 mt-5">
         <div th:if="${soldList.isEmpty()}"><p>판매완료한 상품이 없습니다.</p></div>
         <div class="row gx-4 gx-lg-5 row-cols-2 row-cols-md-3 row-cols-xl-4 justify-content-center">
-            <div class="col mb-5" th:unless="${soldList.isEmpty()}"  th:each = "soldPost:${soldList}">
+            <div class="col mb-6" th:unless="${soldList.isEmpty()}"  th:each = "soldPost:${soldList}">
                 <div class="card h-100" th:onclick="|location.href='@{|/post/detail/${soldPost.postDto.postId}|}'|" style="cursor: pointer;">
                 <!-- 제품사진-->
                 <img class="card-img-top" th:src="|/post/firstImg/${soldPost.postDto.postId}|" alt="제품사진" />
                 <!-- Product details-->
-                <div class="card-body p-4">
+                <div class="card-body p-3">
                     <div class="text-center">
                         <!-- 제목-->
-                        <h5 class="fw-bolder" th:text="${soldPost.postDto.title}">제목</h5>
+                        <h5 class="fw-bolder text-truncate" th:text="${soldPost.postDto.title}">제목</h5>
                         <!--지역, 시간-->
-                        <p class="fw">[[${soldPost.postDto.loc.locName}]] / [[${soldPost.postDto.createdTime}]]</p>
+                        <p class="fw-normal text-secondary">[[${soldPost.postDto.loc.locName}]] ∙ [[${soldPost.postDto.createdTime}]]</p>
                         <!-- 가격-->
                         <h6 class="fw-bolder" th:if="${soldPost.postDto.price}!=0" th:text="|${soldPost.postDto.price}원|">가격</h6>
                     </div>
                 </div>
                 </div>
-                <div>
-                    <a  th:if="${soldPost.reviewBuyerId == null}"
-                        th:href="@{/post/buyers/{postId}(postId=${soldPost.postDto.postId})}">
-                        거래후기 보내기</a>
-                    <a  th:if="${soldPost.reviewBuyerId != null}"
-                        th:href="@{/reviews/buyer/{reviewBuyerId}(reviewBuyerId=${soldPost.reviewBuyerId})}">
-                        거래후기 보기</a>
+                <div class="d-flex">
+                    <span class="span-inner" th:if="${soldPost.reviewBuyerId == null}"
+                          th:onclick="|location.href='@{/post/buyers/{postId}(postId=${soldPost.postDto.postId})}'|">
+                                    거래후기 보내기</span>
+                    <span class="span-inner" th:if="${soldPost.reviewBuyerId != null}"
+                          th:onclick="|location.href='@{/reviews/buyer/{reviewBuyerId}(reviewBuyerId=${soldPost.reviewBuyerId})}'|">
+                                    거래후기 보기</span>
                 </div>
 
             </div>
@@ -78,12 +89,12 @@
     </div>
 </section>
 
-<section class="py-5">
-    <h1>숨김</h1>
+<section id="sec_hidden" class="py-5">
+    <h2>숨김</h2>
     <div class="container px-4 px-lg-5 mt-5">
         <div th:if="${hidePostList.isEmpty()}"><p>숨긴 게시글이 없습니다.</p></div>
         <div class="row gx-4 gx-lg-5 row-cols-2 row-cols-md-3 row-cols-xl-4 justify-content-center">
-            <div class="col mb-5" th:unless="${hidePostList.isEmpty()}" th:each = "hidePost:${hidePostList}">
+            <div class="col mb-6" th:unless="${hidePostList.isEmpty()}" th:each = "hidePost:${hidePostList}">
             <div class="card h-100" th:onclick="|location.href='@{|/post/detail/${hidePost.postId}|}'|" style="cursor: pointer;">
                 <!-- 제품사진-->
                 <img class="card-img-top" th:src="|/post/firstImg/${hidePost.postId}|" alt="제품사진" />
@@ -91,21 +102,19 @@
                 <div class="card-body p-4">
                     <div class="text-center">
                         <!-- 제목-->
-                        <h5 class="fw-bolder" th:text="${hidePost.title}">제목</h5>
+                        <h5 class="fw-bolder text-truncate" th:text="${hidePost.title}">제목</h5>
                         <!--지역, 시간-->
-                        <p class="fw">[[${hidePost.loc.locName}]] / [[${hidePost.createdTime}]]</p>
+                        <p class="w-normal text-secondary">[[${hidePost.loc.locName}]]∙ [[${hidePost.createdTime}]]</p>
                         <!-- 가격-->
                         <h6 class="fw-bolder" th:if="${hidePost.price}!=0" th:text="|${hidePost.price}원|">가격</h6>
                     </div>
                 </div>
                 </div>
-                <button type="button" th:onclick="hideState([[${hidePost.postId}]], [[${hidePost.hideState.getHideStateName()}]])">숨기기 해제</button>
-                <!--Product actions-->
-<!--                <div class="card-footer p-4 pt-0 border-top-0 bg-transparent">-->
-<!--                    <div class="text-center"><a class="btn btn-outline-dark mt-auto" href="#">View options</a></div>-->
-<!--                </div>-->
+                <div class="d-flex">
+                    <span class="span-inner" th:onclick="hideState([[${hidePost.postId}]], [[${hidePost.hideState.getHideStateName()}]])">숨기기 해제</span>
+                </div>
             </div>
-        </div>
+
     </div>
 </section>
 
@@ -115,6 +124,24 @@
 
 <div layout:fragment="script" th:inline="javascript">
     <script th:inline="javascript">
+        $('#sec_sold').hide();
+        $('#sec_hidden').hide();
+
+        function onSaleFunc(){
+            $('#sec_onSale').show();
+            $('#sec_sold').hide();
+            $('#sec_hidden').hide();
+        }
+        function soldFunc(){
+            $('#sec_onSale').hide();
+            $('#sec_sold').show();
+            $('#sec_hidden').hide();
+        }
+        function hiddenFunc(){
+            $('#sec_onSale').hide();
+            $('#sec_sold').hide();
+            $('#sec_hidden').show();
+        }
 
         //게시물 숨기기
         function hideState(postId, hideStateName){
