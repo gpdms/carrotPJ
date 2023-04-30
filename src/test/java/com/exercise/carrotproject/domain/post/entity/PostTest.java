@@ -40,6 +40,7 @@ class PostTest {
                     .price(5000)
                     .member(member2)
                     .loc(Loc.GANGBUK)
+                    .hits(0)
                     .build();
             postRepository.save(post);
         }
