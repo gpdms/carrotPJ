@@ -8,11 +8,11 @@
 
 </head>
 <div layout:fragment="content">
-    <h1 class="text-center">[[${session.loginMember.loc.locName}]] 중고거래 상품</h1>
-    <button class="btn-orange float-md-end" th:onclick="|location.href='@{/post/uploadPage}'|">상품 올리기</button>
 
     <section class="py-5">
-            <p class="text-center" th:if="${list.isEmpty()}">게시된 상품이 없습니다.</p>
+        <h1 class="text-center">[[${session.loginMember.loc.locName}]] 중고거래 상품</h1>
+        <button class="btn-orange float-md-end" th:onclick="|location.href='@{/post/uploadPage}'|">상품 올리기</button>
+        <p class="text-center" th:if="${list.isEmpty()}">게시된 상품이 없습니다.</p>
             <div class="container px-4 px-lg-5 mt-5">
                 <div class="row gx-4 gx-lg-5 row-cols-2 row-cols-md-3 row-cols-xl-4 justify-content-center">
                     <div class="col mb-5" th:each = "post:${list}">

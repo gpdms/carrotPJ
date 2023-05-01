@@ -62,16 +62,13 @@ public class PostRepositoryImpl implements CustomPostRepository{
         String jpql = "select p from Post p " +
                 "where p.loc = :loc " +
                 "and p.hideState = :hideState " +
-                "and p.sellState <> :sellState " +
                 "and not exists (select b from Block b " +
                     "where b.toMem = :member and b.fromMem = p.member.memId " +
                     "or b.toMem =p.member.memId and b.fromMem=:member) " +
                 "order by p.postId desc";
-
         Query query = em.createQuery(jpql, Post.class);
         query.setParameter("loc", member.getLoc());
         query.setParameter("hideState", HideState.SHOW);
-        query.setParameter("sellState", SellState.SOLD);
         query.setParameter("member", member);
 
         List<Post> postEntityList = query.getResultList();
