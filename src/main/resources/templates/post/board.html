@@ -47,7 +47,7 @@
                 <!-- 전역 변수 선언 -->
                 <nav
                         th:with="pageNumber = ${list.pageable.pageNumber}, pageSize = ${list.pageable.pageSize},
-                        totalPages = ${list.totalPages}, startPage = ${T(java.lang.Math).floor(pageNumber / 10) * pageSize + 1},
+                        totalPages = ${list.totalPages}, startPage = ${T(java.lang.Math).floor(pageNumber / 10) * 10 + 1},
                         tempEndPage = ${startPage + 10 - 1}, endPage = (${tempEndPage < totalPages ? tempEndPage : totalPages})"
                         aria-label="Page navigation">
                     <ul class="pagination">
