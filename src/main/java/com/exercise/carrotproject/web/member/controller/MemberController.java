@@ -193,9 +193,7 @@ public class MemberController {
         List<PostDto> onSaleAndRsvList = (List) map.get("onSaleAndRsvList");
         //판매완료
         List<SoldPostDto> soldList = (List) map.get("soldList");
-        for (SoldPostDto soldPostDto : soldList) {
-            System.out.println("soldPostDto = " + soldPostDto);
-        }
+
         model.addAttribute("onSaleAndRsv", onSaleAndRsvList);
         model.addAttribute("soldList", soldList);
 

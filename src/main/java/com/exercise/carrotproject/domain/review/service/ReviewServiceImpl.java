@@ -44,7 +44,6 @@ public class ReviewServiceImpl {
                         LinkedHashMap::new
                 ));
     }
-
     public Map<ReviewIndicator, Long> getPositiveMannerDetails (String memId) {
       return reviewDetailCustomRepository.getMannerDetails(memId, "P")
                 .stream()

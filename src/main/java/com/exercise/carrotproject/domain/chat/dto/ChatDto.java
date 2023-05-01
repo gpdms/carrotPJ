@@ -9,7 +9,7 @@ import lombok.ToString;
 import java.sql.Timestamp;
 import java.util.List;
 
-import static com.exercise.carrotproject.domain.common.util.DateUtil.CALCULATE_TIME;
+import static com.exercise.carrotproject.domain.common.util.DateUtil.CALCULATE_TIME_CHAT;
 
 @ToString
 @Data
@@ -43,6 +43,6 @@ public class ChatDto {
     }
 
     public String getCalculatedTimeForChat() {
-        return CALCULATE_TIME(this.createdTime);
+        return CALCULATE_TIME_CHAT(this.createdTime);
     }
 }

@@ -58,12 +58,12 @@
                 <div class="col-lg">
                     <div th:if="${review.buyer != null}" >
                         <p th:text="|${review.buyer.nickname}|"></p>
-                        <span th:text="|${review.buyer.loc.locName} - 구매자 - ${review.createdTime}|"></span>
+                        <span th:text="|${review.buyer.loc.locName} - 구매자 - ${review.getCalculatedTimeForReview()}|"></span>
                         <p th:utext="${review.message}"></p>
                     </div>
                     <div th:if="${review.seller != null}">
                         <p th:text="|${review.seller.nickname}|"></p>
-                        <span th:text="|${review.seller.loc.locName} - 판매자 - ${review.createdTime}|"></span>
+                        <span th:text="|${review.seller.loc.locName} - 판매자 - ${review.getCalculatedTimeForReview()}|"></span>
                         <p th:utext="${review.message}"></p>
                     </div>
                 </div>
@@ -123,7 +123,7 @@
                 </div>
                 <div class="col-lg">
                     <p th:text="|${review.buyer.nickname}|"></p>
-                    <span th:text="|${review.buyer.loc.locName} - 구매자 - ${review.createdTime}|"></span>
+                    <span th:text="|${review.buyer.loc.locName} - 구매자 - ${review.getCalculatedTimeForReview()}|"></span>
                     <p th:utext="${review.message}"></p>
                 </div>
                 <!--setting 버튼-->
@@ -166,7 +166,7 @@
                 </div>
                 <div class="col-lg">
                     <p th:text="|${review.seller.nickname}|"></p>
-                    <span th:text="|${review.seller.loc.locName} - 판매자 - ${review.createdTime}|"></span>
+                    <span th:text="|${review.seller.loc.locName} - 판매자 - ${review.getCalculatedTimeForReview()}|"></span>
                     <p th:utext="${review.message}"></p>
                 </div>
                 <!-- setting 버튼-->

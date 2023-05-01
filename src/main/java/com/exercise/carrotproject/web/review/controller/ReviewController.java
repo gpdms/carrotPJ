@@ -2,21 +2,13 @@ package com.exercise.carrotproject.web.review.controller;
 
 import com.exercise.carrotproject.domain.enumList.*;
 import com.exercise.carrotproject.domain.member.dto.MemberDto;
-import com.exercise.carrotproject.domain.member.entity.Member;
 import com.exercise.carrotproject.domain.member.service.MemberServiceImpl;
 import com.exercise.carrotproject.domain.post.entity.Post;
 import com.exercise.carrotproject.domain.post.entity.Trade;
 import com.exercise.carrotproject.domain.post.repository.PostRepository;
 import com.exercise.carrotproject.domain.post.repository.TradeRepository;
 import com.exercise.carrotproject.domain.review.entity.ReviewBuyer;
-import com.exercise.carrotproject.domain.review.entity.ReviewBuyerDetail;
 import com.exercise.carrotproject.domain.review.entity.ReviewSeller;
-import com.exercise.carrotproject.domain.review.repository.ReviewBuyerCustomRepository;
-import com.exercise.carrotproject.domain.review.repository.ReviewSellerCustomRepository;
-import com.exercise.carrotproject.domain.review.repository.basic.ReviewBuyerDetailRepository;
-import com.exercise.carrotproject.domain.review.repository.basic.ReviewBuyerRepository;
-import com.exercise.carrotproject.domain.review.repository.basic.ReviewSellerDetailRepository;
-import com.exercise.carrotproject.domain.review.repository.basic.ReviewSellerRepository;
 import com.exercise.carrotproject.domain.review.service.ReviewBuyerServiceImpl;
 import com.exercise.carrotproject.domain.review.service.ReviewSellerServiceImpl;
 import com.exercise.carrotproject.domain.review.service.ReviewServiceImpl;
@@ -32,14 +24,8 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
-import javax.persistence.Query;
-import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 import java.util.*;
-
-import static java.util.Arrays.asList;
 
 
 @Slf4j
@@ -59,7 +45,7 @@ public class ReviewController {
     @GetMapping("/{memId}")
     public String toPublicReviewMessagesDetail(@PathVariable String memId, Model model) {
         model.addAttribute("messageMap",reviewService.goodReviewMessagesDetail(memId));
-        return "review/publicReviewDetail";
+        return "/review/publicReviews";
     }
 
     @GetMapping("/buyer")
