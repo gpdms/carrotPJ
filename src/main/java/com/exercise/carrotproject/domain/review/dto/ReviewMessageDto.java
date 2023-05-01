@@ -1,5 +1,6 @@
 package com.exercise.carrotproject.domain.review.dto;
 
+import com.exercise.carrotproject.domain.common.util.DateUtil;
 import com.exercise.carrotproject.domain.enumList.ReviewState;
 import com.exercise.carrotproject.domain.member.MemberEntityDtoMapper;
 import com.exercise.carrotproject.domain.member.dto.MemberDto;
@@ -9,6 +10,9 @@ import lombok.*;
 
 import javax.validation.constraints.NotNull;
 import java.sql.Timestamp;
+
+import static com.exercise.carrotproject.domain.common.util.DateUtil.CALCULATE_TIME;
+import static com.exercise.carrotproject.domain.common.util.DateUtil.CALCULATE_TIME_CHAT;
 
 
 @NoArgsConstructor
@@ -26,8 +30,8 @@ public class ReviewMessageDto {
     private String message;
 
     private Timestamp createdTime;
-    private Timestamp updatedTime;
 
+    //seller
     public ReviewMessageDto(Long reviewBuyerId, Member seller, String message, Timestamp createdTime) {
         this.reviewBuyerId = reviewBuyerId;
         this.seller = MemberEntityDtoMapper.toMemberDto(seller);
@@ -35,10 +39,15 @@ public class ReviewMessageDto {
         this.createdTime = createdTime;
     }
 
+    //buyer
     public ReviewMessageDto(Member buyer, Long reviewSellerId, String message, Timestamp createdTime) {
         this.buyer = MemberEntityDtoMapper.toMemberDto(buyer);
         this.reviewSellerId = reviewSellerId;
         this.message = message;
         this.createdTime = createdTime;
+    }
+
+    public String getCalculatedTimeForReview() {
+        return CALCULATE_TIME(this.createdTime);
     }
 }

@@ -7,7 +7,7 @@ import lombok.ToString;
 
 import java.sql.Timestamp;
 
-import static com.exercise.carrotproject.domain.common.util.DateUtil.CALCULATE_TIME;
+import static com.exercise.carrotproject.domain.common.util.DateUtil.CALCULATE_TIME_CHAT;
 
 @ToString
 @Data
@@ -29,7 +29,7 @@ public class ChatRoomDto {
         this.sellerId = sellerId;
         this.buyerId = buyerId;
         this.message = message;
-        this.createdTime = CALCULATE_TIME(createdTime);
+        this.createdTime = CALCULATE_TIME_CHAT(createdTime);
         this.unacknowledgedMessageCount = unacknowledgedMessageCount;
     }
 }
