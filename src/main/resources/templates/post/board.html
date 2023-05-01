@@ -8,9 +8,15 @@
 
 </head>
 <div layout:fragment="content">
-
     <section class="py-5">
-        <h1 class="text-center">[[${session.loginMember.loc.locName}]] 중고거래 상품</h1>
+        <div th:if="${category == null}">
+            <h1 class="text-center" th:if="${session.loginMember == null}">중고거래 상품</h1>
+            <h1 class="text-center" th:if="${session.loginMember != null}">[[${session.loginMember.loc.locName}]] 중고거래 상품</h1>
+        </div>
+        <div th:if="${category != null}">
+            <h1 class="text-center">[[${category.category}]]</h1>
+        </div>
+
         <button class="btn-orange float-md-end" th:onclick="|location.href='@{/post/uploadPage}'|">상품 올리기</button>
         <p class="text-center" th:if="${list.isEmpty()}">게시된 상품이 없습니다.</p>
             <div class="container px-4 px-lg-5 mt-5">

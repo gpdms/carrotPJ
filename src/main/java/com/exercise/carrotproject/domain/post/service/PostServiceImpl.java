@@ -3,10 +3,7 @@ package com.exercise.carrotproject.domain.post.service;
 import com.exercise.carrotproject.domain.chat.dto.ChatRoomDto;
 import com.exercise.carrotproject.domain.chat.entity.QChat;
 import com.exercise.carrotproject.domain.chat.entity.QChatRoom;
-import com.exercise.carrotproject.domain.enumList.HideState;
-import com.exercise.carrotproject.domain.enumList.Loc;
-import com.exercise.carrotproject.domain.enumList.ReadState;
-import com.exercise.carrotproject.domain.enumList.SellState;
+import com.exercise.carrotproject.domain.enumList.*;
 import com.exercise.carrotproject.domain.member.MemberEntityDtoMapper;
 import com.exercise.carrotproject.domain.member.dto.MemberDto;
 import com.exercise.carrotproject.domain.member.entity.Member;
@@ -224,14 +221,16 @@ public class PostServiceImpl {
 
 //    @Override
     public List<PostDto> selectAllPost(MemberDto memberDto){
-        log.info("memberDto:{}", memberDto);
-
-        Member member = MemberEntityDtoMapper.toMemberEntity(memberDto);
-        log.info("member:{}", member);
+        String loginMemId = null;
+        Loc loginMemLoc = null;
+        if(memberDto != null) {
+            loginMemId = memberDto.getMemId();
+            loginMemLoc = memberDto.getLoc();
+        }
+//        Member member = MemberEntityDtoMapper.toMemberEntity(memberDto);
 //        Loc loc = member.getLoc();
 //        HideState hideState = HideState.SHOW;
-
-        List<Post> postEntityList = customPostRepository.selectBoardPost(member);
+        List<Post> postEntityList = customPostRepository.selectBoardPost(loginMemId, loginMemLoc);
 
         //Entity리스트 -> Dto 리스트
         List<PostDto> postDtoList = PostEntityDtoMapper.toDtoList(postEntityList);
@@ -556,7 +555,17 @@ public class PostServiceImpl {
         List<Post> postList = customPostRepository.searchPost(loginMemId, searchWord);
         return PostEntityDtoMapper.toDtoList(postList);
     }
-
+    //    @Override
+    public List<PostDto> selectPostListByCategory(MemberDto memberDto, Category category) {
+        String loginMemId = null;
+        Loc loginMemLoc = null;
+        if(memberDto != null) {
+            loginMemId = memberDto.getMemId();
+            loginMemLoc = memberDto.getLoc();
+        }
+        List<Post> postList = customPostRepository.selectBoardPostByCategory(loginMemId, loginMemLoc, category);
+        return PostEntityDtoMapper.toDtoList(postList);
+    }
 
 //    @Override
     @Transactional

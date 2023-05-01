@@ -1,6 +1,7 @@
 package com.exercise.carrotproject.domain.post.controller;
 
 import com.exercise.carrotproject.domain.chat.dto.ChatRoomDto;
+import com.exercise.carrotproject.domain.enumList.Category;
 import com.exercise.carrotproject.domain.enumList.Loc;
 import com.exercise.carrotproject.domain.member.entity.Member;
 import com.exercise.carrotproject.domain.post.dto.MtPlaceDto;
@@ -39,6 +40,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.ZoneOffset;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -70,6 +72,21 @@ public class PostController {
         Page<PostDto> page = postService.paging(postList, pageable);
         model.addAttribute("list", page);
 
+        return "post/board";
+    }
+    @GetMapping("/post/board/{category}")
+    public String boardByCategory(@PathVariable String category,
+                                     HttpSession session,
+                                     @PageableDefault(page = 0, size = 20) Pageable pageable,
+                                     Model model) {
+        Category selectedCategory = Arrays.stream(Category.values())
+                .filter(e -> e.name().equals(category))
+                .findFirst()
+                .orElseThrow(() -> new IllegalArgumentException("Not exists Category like categoryName="+category));
+        MemberDto loginMember = (MemberDto) session.getAttribute(SessionConst.LOGIN_MEMBER);
+        List<PostDto> postList = postService.selectPostListByCategory(loginMember, selectedCategory);
+        model.addAttribute("list", postService.paging(postList, pageable));
+        model.addAttribute("category", selectedCategory);
         return "post/board";
     }
 
@@ -114,7 +131,6 @@ public class PostController {
         }
 
 
-
         //Post하나 불러오기
         PostDto postDto = postService.selectOnePost(postId);
 
@@ -150,10 +166,8 @@ public class PostController {
         return "post/detail";
     }
 
-
     @GetMapping("/post/uploadPage")
     public String categoryOption(Model model){
-
         return "post/upload_page";
     }
 
@@ -169,7 +183,6 @@ public class PostController {
             return new ResponseEntity<>("제목, 카테고리, 제품 설명을 입력해주세요.", HttpStatus.BAD_REQUEST);
         }
 
-        
         //작성자 정보 세팅
         MemberDto loginMember = (MemberDto) session.getAttribute(SessionConst.LOGIN_MEMBER);
         postDto.setMember(loginMember);
@@ -418,5 +431,6 @@ public class PostController {
         model.addAttribute("searchedWord", word);
         return "post/searchList";
     }
+
 
 }
