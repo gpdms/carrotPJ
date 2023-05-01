@@ -85,7 +85,6 @@ public class PostRepositoryImpl implements CustomPostRepository{
         return jpaQueryFactory.select(post)
                 .from(post)
                 .where(post.hideState.eq(HideState.SHOW),
-                        post.sellState.eq(SellState.ON_SALE),
                         post.title.like("%" + searchWord + "%").or(
                                 post.content.like("%" + searchWord + "%")
                         ),
