@@ -77,6 +77,7 @@ public class PostController {
     //게시글 상세정보 detail
     @GetMapping("/post/detail/{postId}")
     public String postDetail(@PathVariable Long postId, Model model, HttpSession session, HttpServletRequest request, HttpServletResponse response){
+        String sessionId = ((MemberDto) session.getAttribute(SessionConst.LOGIN_MEMBER)).getMemId();
 
         /* 조회수 로직 */
         Cookie oldCookie = null;
@@ -99,16 +100,16 @@ public class PostController {
         }
 
         if (oldCookie != null) {
-            if (!oldCookie.getValue().contains("["+ postId.toString() +"]")) {
+            if (!oldCookie.getValue().contains("["+ sessionId.toString()+"_"+ postId.toString() +"]")) {
                 postService.updateHits(postId);
-                oldCookie.setValue(oldCookie.getValue() + "_[" + postId + "]");
+                oldCookie.setValue(oldCookie.getValue() + "_[" + sessionId+"_"+ postId + "]");
                 oldCookie.setPath("/");  //모든 경로에서 접근 가능
                 oldCookie.setMaxAge(cookieTime); // 쿠키 시간
                 response.addCookie(oldCookie);
             }
         } else {
             postService.updateHits(postId);
-            Cookie newCookie = new Cookie("postView", "[" + postId + "]");
+            Cookie newCookie = new Cookie("postView", "[" + sessionId+"_"+ postId + "]");
             newCookie.setPath("/");
             newCookie.setMaxAge(cookieTime); 	// 쿠키 시간
             response.addCookie(newCookie);
