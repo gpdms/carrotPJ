@@ -6,7 +6,7 @@
     <head layout:fragment="head">
         <title>상품상세</title>
         <!-- Core theme CSS (includes Bootstrap)-->
-        <link href="/css/profile.css" rel="stylesheet" />
+        <link href="/css/detail.css" rel="stylesheet" />
         <!--사진 박스슬라이더-->
         <link rel="stylesheet" href="https://cdn.jsdelivr.net/bxslider/4.2.12/jquery.bxslider.css">
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
@@ -29,45 +29,86 @@
 <!--                        </li>-->
                     <div class="container w-75">
                        <!--프로필-->
-                        <p>[[${post.member.nickname}]]</p>
-                        <div class="profile-img">
-                            <a th:href="@{/home/{memId}(memId=${post.member.memId})}">
-                             <img th:src="|/members/${post.member.memId}/profileImg|" alt="프로필이미지"/>
-                            </a>
+                        <div class="d-flex py-sm-3 bd-top-bottom cursor" th:onclick="|location.href='@{/home/{memId}(memId=${post.member.memId})}'|">
+                            <div class="profile-img">
+                                <a th:href="@{/home/{memId}(memId=${post.member.memId})}">
+                                 <img th:src="|/members/${post.member.memId}/profileImg|" alt="프로필이미지"/>
+                                </a>
+                            </div>
+                            <div class="fx-in">
+                                <span class="fs-4 fw-bold" th:text="${post.member.nickname}">닉네임</span>
+                                <span class="fs-6 fw-normal small" th:text="${post.member.loc.getLocName()}">지역</span>
+                            </div>
+                            <!--매너온도-->
+                            <div class="fx-in">
+                                <span class="text-end fs-4 fw-bold f-orange" th:text="|${post.member.mannerScore}°C|"></span>
+                                <span class="text-end text-secondary" th:text="매너온도"></span>
+                            </div>
+                            <!--온도계 아이콘-->
+                            <i th:if="${post.member.mannerScore} <= 36.5" class="bi bi-thermometer-half fs-2 f-orange"></i>
+                            <i th:if="${post.member.mannerScore} > 36.5" class="bi bi-thermometer-high fs-2 text-danger"></i>
                         </div>
 
-                        <!--게시글 메뉴바: 삭제,숨김,수정-->
-                        <i th:if="${session.loginMember.memId}==${post.member.memId}" class="bi bi-three-dots-vertical fs-1" onclick="viewModal()"></i>
-
-                        <!--카테고리-->
-                        <div class="small mb-1" th:text="${post.category.getCategory()}">SKU: BST-498</div>
-                        <!--제목-->
-                        <h1 class="display-5 fw-bolder" th:text="${post.title}">제목</h1>
-                        <!--가격-->
-                        <div class="fs-5 mb-5">
-                            <span th:if="${post.price}!=0" th:text="|${post.price}원|">가격</span>
+                        <div class="mt-3">
+                            <!--판매여부-->
+                            <select id="selSellState" class="form-select-sm" th:if="${session.loginMember.memId}==${post.member.memId}" th:onchange="sellState([[${post.postId}]])">
+                                <!--thymeleaf이용해 Enum클래스 정보 바로 가져오기-->
+                                <option th:each = "sellStateEnum:${T(com.exercise.carrotproject.domain.enumList.SellState).values()}" th:value="${sellStateEnum.getSellStateName()}" th:text="${sellStateEnum.getSellStateName()}" th:selected="${sellStateEnum.getSellStateName()}==${post.sellState.getSellStateName()}"></option>
+                            </select>
+                            <!--게시글 관리: 삭제,숨김,수정-->
+                            <button th:if="${session.loginMember.memId}==${post.member.memId}" class="btn btn-outline-dark btn-sm float-end" onclick="viewModal()">게시글 관리</button>
                         </div>
-                        <p class="lead" th:utext="${post.content}">상품설명</p>
-                        <p class="lead">조회수 [[${post.hits}]]</p>
+                        <div class="mt-3">
+                            <!--제목-->
+                            <h1 class="fs-2 fw-bolder" th:text="${post.title}">제목</h1>
+                            <!--카테고리, 시간-->
+                            <div class="fs-6 fw-normal small text-secondary">
+                                [[${post.category.getCategory()}]] ∙ [[${post.createdTime}]]
+                            </div>
+                        </div>
 
-                        <div class="d-flex">
+                        <!--내용-->
+                        <div class="py-sm-5 mb-5">
+                            <p class="fs-5 fw-normal" th:utext="${post.content}">상품설명</p>
+                        </div>
 
+                        <!--거래희망장소-->
+                            <div id="mtPlaceSec" class="container px-0 my-sm-5" th:if="${mtPlace!=null}">
+                                <h2 class="fs-4 fw-bold mb-4">거래희망장소</h2>
+                                <div id="map" style="width:100%; height:350px; margin: 0 auto;"></div>
+                            </div>
+
+                        <!--조회수, 관심수, 채팅수-->
+                        <div class="my-sm-3">
+                            <span class="fs-6 fw-normal small text-secondary" th:text="'조회 '+${post.hits}"> </span>
+                            <span id="wishCount" class="fs-6 fw-normal small text-secondary" th:with="var=${countWish}" th:newCountWish="${var}" th:text="' ∙ 관심 '+ ${countWish}"> </span>
+                            <span class="fs-6 fw-normal small text-secondary" th:text="' ∙ 채팅 '+${countChatRoom}"> </span>
+                        </div>
+
+                        <div class="d-flex bd-top-bottom py-sm-3">
                             <!--찜-->
-                            <i id="emptyHeart" class="bi bi-heart" th:onclick="addWish([[${post.postId}]])" style="display:none; font-size: 2rem; margin-right: 5%" ></i>
-                            <i id="fillHeart" class="bi bi-heart-fill" th:onclick="rmvWish([[${post.postId}]])" style="display:none; font-size: 2rem; color: red; margin-right: 5%"></i>
+                            <div class="me-3">
+                                <i id="emptyHeart" class="bi bi-heart" th:onclick="addWish([[${post.postId}]])" style="display:none; font-size: 2rem; margin-right: 5%" ></i>
+                                <i id="fillHeart" class="bi bi-heart-fill" th:onclick="rmvWish([[${post.postId}]])" style="display:none; font-size: 2rem; color: red; margin-right: 5%"></i>
+                            </div>
+                            <div class="vr fs-1"></div>
+
+                            <!--가격-->
+                            <div class="fs-3 fw-bolder mx-sm-4">
+                                <span th:if="${post.price}!=0" th:text="|${post.price}원|">가격</span>
+                            </div>
                             <!--채팅하기-->
-                            <button th:if="${session.loginMember.memId}==${post.member.memId} and ${!post.sellState.getSellStateName().equals('판매완료')}" class="btn btn-outline-dark flex-shrink-0" type="button" th:onclick="|location.href='@{/chat/chatRoomListByPost/{postId}(postId=${postId})}'|">대화 중인 채팅방</button>
-                            <button th:if="${session.loginMember.memId}!=${post.member.memId} and ${!post.sellState.getSellStateName().equals('판매완료')}" class="btn btn-outline-dark flex-shrink-0" type="button" th:onclick="|location.href='@{/chat/post/{postId}/{sellerId}(postId=${postId}, sellerId=${post.member.memId})}'|">채팅하기</button>
-                            <button th:if="${post.sellState.getSellStateName().equals('판매완료')}" class="btn btn-secondary disabled">거래완료</button>
+                            <div class="me-0 ms-auto">
+                                <button class="btn-orange" type="button" th:if="${session.loginMember.memId}==${post.member.memId} and ${!post.sellState.getSellStateName().equals('판매완료')}" th:onclick="|location.href='@{/chat/chatRoomListByPost/{postId}(postId=${postId})}'|">대화 중인 채팅방</button>
+                                <button class="btn-orange" type="button" th:if="${session.loginMember.memId}!=${post.member.memId} and ${!post.sellState.getSellStateName().equals('판매완료')}" th:onclick="|location.href='@{/chat/post/{postId}/{sellerId}(postId=${postId}, sellerId=${post.member.memId})}'|">채팅하기</button>
+                                <button class="btn btn-secondary disabled" th:if="${post.sellState.getSellStateName().equals('판매완료')}"  >거래완료</button>
+                            </div>
                         </div>
 
 
-                        <!--판매여부-->
-                        <select id="selSellState" th:if="${session.loginMember.memId}==${post.member.memId}" th:onchange="sellState([[${post.postId}]])">
-                            <!--thymeleaf이용해 Enum클래스 정보 바로 가져오기-->
-                            <option th:each = "sellStateEnum:${T(com.exercise.carrotproject.domain.enumList.SellState).values()}" th:value="${sellStateEnum.getSellStateName()}" th:text="${sellStateEnum.getSellStateName()}" th:selected="${sellStateEnum.getSellStateName()}==${post.sellState.getSellStateName()}"></option>
 
-                        </select>
+
+
 
                     </div>
                 </div>
@@ -110,21 +151,13 @@
             </div>
         </div>
 
-    <!--거래희망장소-->
-    <section id="mtPlaceSec" class="py-5" th:if="${mtPlace!=null}">
-        <div class="container px-4 px-lg-5 mt-5">
-            <h2 class="fw-bolder mb-4">거래희망장소</h2>
 
-            <div id="map" style="width:100%; height:350px; margin: 0 auto;"></div>
-        </div>
-    </section>
 
 
 
         <!-- 판매자의 판매상품-->
-        <section class="py-5 bg-light">
-            <div class="container px-4 px-lg-5 mt-5">
-                <h2 class="fw-bolder mb-4" th:text="|${post.member.nickname}님의 판매상품|" style="display: inline-block;">Related products</h2>
+            <div class="container px-4 px-lg-5 mt-5 bg-light w-75 py-sm-3">
+                <h2 class="fs-4 fw-bold mb-4" th:text="|${post.member.nickname}님의 판매상품|" style="display: inline-block;">Related products</h2>
                 <a href="#" class="fw-normal mb-4" style="text-decoration: none; margin-left: 5px; color: black;"> &gt; 더보기 </a>
                 <div class="row gx-4 gx-lg-5 row-cols-2 row-cols-md-3 row-cols-xl-4 justify-content-center">
                     <div class="col mb-5" th:each = "post, index :${sellerProductList}" th:if="${index.index} < 4">
@@ -132,12 +165,12 @@
                             <!-- 제품사진-->
                             <img class="card-img-top" th:src="|/post/firstImg/${post.postId}|" alt="제품사진" />
                             <!-- Product details-->
-                            <div class="card-body p-4">
+                            <div class="card-body p-3">
                                 <div class="text-center">
                                     <!-- 제목-->
-                                    <h5 class="fw-bolder" th:text="${post.title}">제목</h5>
+                                    <h5 class="fw-bolder text-truncate" th:text="${post.title}">제목</h5>
                                     <!--지역, 시간-->
-                                    <p class="fw">[[${post.loc.locName}]] / [[${post.createdTime}]]</p>
+                                    <p class="fw-normal text-secondary">[[${post.loc.locName}]] ∙ [[${post.createdTime}]]</p>
                                     <!-- 가격-->
                                     <h6 class="fw-bolder" th:if="${post.price}!=0" th:text="|${post.price}원|">가격</h6>
                                 </div>
@@ -146,7 +179,6 @@
                     </div>
                 </div>
             </div>
-        </section>
 </div>
 
 
@@ -181,6 +213,10 @@
             let memId = [[${session.loginMember.getMemId()}]];
             let data = {"postId" : postId, "memId": memId};
 
+            let newCountWish = parseInt($('#wishCount').attr('newCountWish'))+1;
+            $('#wishCount').attr('newCountWish', newCountWish);
+            console.log("newCountWish:", newCountWish);
+
             $.ajax({
                 url: '/post/addWish',
                 type: 'POST',
@@ -188,10 +224,11 @@
                 success: function(result){
                     // console.log();
                     //화면 처리
-                    alert(result);
+                    // alert(result);
                     // location.reload();
                     $('#emptyHeart').hide();
                     $("#fillHeart").show();
+                    $('#wishCount').text(' ∙ 관심 '+ newCountWish);
                 },
                 error: function(jqXHR, textStatus, errorThrown){
                     console.log(jqXHR.responseText);
@@ -204,6 +241,11 @@
             let memId = [[${session.loginMember.getMemId()}]];
             let data = {"postId" : postId, "memId": memId};
 
+            let newCountWish = parseInt($('#wishCount').attr('newCountWish'))-1;
+            $('#wishCount').attr('newCountWish', newCountWish);
+            console.log("newCountWish:", newCountWish);
+
+
             $.ajax({
                 url: '/post/rmvWish',
                 type: 'POST',
@@ -211,10 +253,12 @@
                 success: function(result){
                     // console.log();
                     //화면 처리
-                    alert(result);
+                    // alert(result);
                     // location.reload();
                     $("#fillHeart").hide();
                     $("#emptyHeart").show();
+                    $('#wishCount').text(' ∙ 관심 '+newCountWish);
+
                 },
                 error: function(jqXHR, textStatus, errorThrown){
                     console.log(jqXHR.responseText);
@@ -296,7 +340,11 @@
                         let trueFalse = confirm("거래후기를 작성하시겠습니까?")
                         if(trueFalse==true){
                             location.href=`/post/buyers/${postId}`;
+                        } else{
+                            location.reload();
                         }
+                    } else {
+                        location.reload();
                     }
                 },
                 error: function(jqXHR, textStatus, errorThrown){

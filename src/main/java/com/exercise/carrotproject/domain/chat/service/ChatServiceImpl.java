@@ -13,7 +13,9 @@ import com.exercise.carrotproject.domain.member.MemberEntityDtoMapper;
 import com.exercise.carrotproject.domain.member.dto.MemberDto;
 import com.exercise.carrotproject.domain.member.entity.Member;
 import com.exercise.carrotproject.domain.member.repository.MemberRepository;
+import com.exercise.carrotproject.domain.post.dto.PostDto;
 import com.exercise.carrotproject.domain.post.entity.Post;
+import com.exercise.carrotproject.domain.post.entity.PostEntityDtoMapper;
 import com.exercise.carrotproject.domain.post.repository.PostRepository;
 import com.querydsl.core.group.GroupBy;
 import com.querydsl.core.types.ExpressionUtils;
@@ -364,5 +366,10 @@ public class ChatServiceImpl implements ChatService {
         }
         chat.setImgState(ImgState.ATTACH);
         return chatRepository.save(chat);
+    }
+
+    public Integer countChatRoomByPost(PostDto postDto){
+        Post post = PostEntityDtoMapper.dtoToEntity(postDto);
+        return chatRoomRepository.countByPost(post);
     }
 }

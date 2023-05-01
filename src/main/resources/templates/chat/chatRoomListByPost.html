@@ -7,11 +7,14 @@
 </head>
 
 <div class="container bootstrap snippets bootdey" layout:fragment="content">
+<section class="py-5">
+    <div class="container px-4 px-lg-5 my-5">
     <div class="row">
         <div class="col-md-15 bg-white ">
             <div class=" row border-bottom padding-sm" style="height: 40px;">
-                채팅목록
+                <h2>채팅목록</h2>
             </div>
+            <p>이 상품에 대해 대화중인 채팅방이 없습니다.</p>
             <!-- member list -->
             <ul class="friend-list">
                 <th:block th:each="chatRoom : ${chatRoomList}">
@@ -41,6 +44,8 @@
             </ul>
         </div>
     </div>
+    </div>
+</section>
 </div>
 
 <script layout:fragment="script" th:inline="javascript">
