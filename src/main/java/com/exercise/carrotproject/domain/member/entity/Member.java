@@ -15,6 +15,7 @@ import org.hibernate.annotations.ColumnDefault;
 import org.hibernate.annotations.DynamicInsert;
 
 import javax.persistence.*;
+import javax.validation.constraints.DecimalMax;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import java.util.ArrayList;
@@ -51,7 +52,8 @@ public class Member extends BaseEntity {
     private String profPath;
 
     @Column(nullable = false)
-    @ColumnDefault("365000")
+    @ColumnDefault("365000.0")
+    @DecimalMax("999000.0")
     private Double mannerScore;
 
     @NotNull
