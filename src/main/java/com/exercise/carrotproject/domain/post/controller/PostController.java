@@ -68,6 +68,7 @@ public class PostController {
 
         //페이징
         Page<PostDto> page = postService.paging(postList, pageable);
+        
         model.addAttribute("list", page);
 
         return "post/board";
