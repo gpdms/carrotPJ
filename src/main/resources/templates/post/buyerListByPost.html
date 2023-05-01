@@ -7,39 +7,44 @@
 </head>
 
 <div class="container bootstrap snippets bootdey" layout:fragment="content">
-    <div class="row">
-        <div class="col-md-15 bg-white ">
-            <div class=" row border-bottom padding-sm" style="height: 40px;">
-                채팅목록에서 구매자 선택
-            </div>
-            <!-- member list -->
-            <ul class="friend-list">
-                <th:block th:each="chatRoom : ${chatRoomList}">
-                <li th:id="'roomId'+${chatRoom.roomId}">
-                    <a th:href="@{/post/buyer/{postId}/{buyerId}(postId=${chatRoom.postId}, buyerId=${chatRoom.buyerId})}" class="clearfix">
-                        <div class="profile_img">
-                            <img th:if="${chatRoom.buyerId == session.loginMember.memId}" th:src="|/members/${chatRoom.sellerId}/profileImg|" alt="프로필이미지(판매자)">
-                            <img th:unless="${chatRoom.buyerId == session.loginMember.memId}" th:src="|/members/${chatRoom.buyerId}/profileImg|" alt="프로필이미지(구매자)">
-                        </div>
-                        <div class="name_message">
-                            <div class="friend-name">
-                                <strong th:if="${chatRoom.buyerId == session.loginMember.memId}">[[${chatRoom.sellerId}]]</strong>
-                                <strong th:unless="${chatRoom.buyerId == session.loginMember.memId}">[[${chatRoom.buyerId}]]</strong>
-                            </div>
-                            <div class="last-message text-muted">[[${chatRoom.message}]]</div>
-                        </div>
-                        <div>
-                            <small class="time text-muted">[[${chatRoom.createdTime}]]</small>
-<!--                            <small class="chat-alert label label-danger">[[${chatRoom.unacknowledgedMessageCount}]]</small>-->
-                        </div>
+<section class="py-5">
+    <div class="container px-4 px-lg-5 my-5">
+        <div class="row">
+            <div class="col-md-15 bg-white ">
+                <div class=" row border-bottom padding-sm" style="height: 40px;">
+                    <h3>채팅목록에서 구매자 선택</h3>
+                </div>
+                <p>이 상품에 대해 대화중인 채팅방이 없습니다.</p>
 
-                    </a>
-                </li>
-                </th:block>
-            </ul>
+                <!-- member list -->
+                <ul class="friend-list">
+                    <th:block th:each="chatRoom : ${chatRoomList}">
+                    <li th:id="'roomId'+${chatRoom.roomId}">
+                        <a th:href="@{/post/buyer/{postId}/{buyerId}(postId=${chatRoom.postId}, buyerId=${chatRoom.buyerId})}" class="clearfix">
+                            <div class="profile_img">
+                                <img th:if="${chatRoom.buyerId == session.loginMember.memId}" th:src="|/members/${chatRoom.sellerId}/profileImg|" alt="프로필이미지(판매자)">
+                                <img th:unless="${chatRoom.buyerId == session.loginMember.memId}" th:src="|/members/${chatRoom.buyerId}/profileImg|" alt="프로필이미지(구매자)">
+                            </div>
+                            <div class="name_message">
+                                <div class="friend-name">
+                                    <strong th:if="${chatRoom.buyerId == session.loginMember.memId}">[[${chatRoom.sellerId}]]</strong>
+                                    <strong th:unless="${chatRoom.buyerId == session.loginMember.memId}">[[${chatRoom.buyerId}]]</strong>
+                                </div>
+                                <div class="last-message text-muted">[[${chatRoom.message}]]</div>
+                            </div>
+                            <div>
+                                <small class="time text-muted">[[${chatRoom.createdTime}]]</small>
+    <!--                            <small class="chat-alert label label-danger">[[${chatRoom.unacknowledgedMessageCount}]]</small>-->
+                            </div>
+
+                        </a>
+                    </li>
+                    </th:block>
+                </ul>
+            </div>
         </div>
     </div>
-</div>
+</section>
 
 <script layout:fragment="script" th:inline="javascript">
 

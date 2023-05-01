@@ -1,6 +1,7 @@
 package com.exercise.carrotproject.domain.post.controller;
 
 import com.exercise.carrotproject.domain.chat.dto.ChatRoomDto;
+import com.exercise.carrotproject.domain.chat.service.ChatServiceImpl;
 import com.exercise.carrotproject.domain.enumList.Category;
 import com.exercise.carrotproject.domain.enumList.Loc;
 import com.exercise.carrotproject.domain.member.entity.Member;
@@ -51,6 +52,7 @@ import java.util.stream.Collectors;
 public class PostController {
     private final PostServiceImpl postService;
     private final TradeServiceImpl tradeService;
+    private final ChatServiceImpl chatService;
 
     @Value("${default.postImg}")
     private String defaultPostImg;
@@ -94,7 +96,7 @@ public class PostController {
     //게시글 상세정보 detail
     @GetMapping("/post/detail/{postId}")
     public String postDetail(@PathVariable Long postId, Model model, HttpSession session, HttpServletRequest request, HttpServletResponse response){
-        String sessionId = ((MemberDto) session.getAttribute(SessionConst.LOGIN_MEMBER)).getMemId();
+        String memId = ((MemberDto) session.getAttribute(SessionConst.LOGIN_MEMBER)).getMemId();
 
         /* 조회수 로직 */
         Cookie oldCookie = null;
@@ -117,16 +119,16 @@ public class PostController {
         }
 
         if (oldCookie != null) {
-            if (!oldCookie.getValue().contains("["+ sessionId.toString()+"_"+ postId.toString() +"]")) {
+            if (!oldCookie.getValue().contains("["+ memId.toString()+"_"+ postId.toString() +"]")) {
                 postService.updateHits(postId);
-                oldCookie.setValue(oldCookie.getValue() + "_[" + sessionId+"_"+ postId + "]");
+                oldCookie.setValue(oldCookie.getValue() + "_[" + memId+"_"+ postId + "]");
                 oldCookie.setPath("/");  //모든 경로에서 접근 가능
                 oldCookie.setMaxAge(cookieTime); // 쿠키 시간
                 response.addCookie(oldCookie);
             }
         } else {
             postService.updateHits(postId);
-            Cookie newCookie = new Cookie("postView", "[" + sessionId+"_"+ postId + "]");
+            Cookie newCookie = new Cookie("postView", "[" + memId+"_"+ postId + "]");
             newCookie.setPath("/");
             newCookie.setMaxAge(cookieTime); 	// 쿠키 시간
             response.addCookie(newCookie);
@@ -149,12 +151,16 @@ public class PostController {
         //거래희망장소 지도 정보
         MtPlaceDto mtPlaceDto = postService.selectMtPlace(postId);
 
-        //찜 여부
-        String memId = ((MemberDto) session.getAttribute(SessionConst.LOGIN_MEMBER)).getMemId();
+        //찜 여부, 찜 개수
         String isWishExist = postService.isWishExist(postId, memId);
+        Integer countWish = postService.countWish(postId);
 
-        //판매중인 상품 리스트
-        Map map = postService.selectPostBySellState(memId);
+        //채팅 개수
+        Integer countChatRoom = chatService.countChatRoomByPost(postDto);
+
+        //게시글 작성자가 판매중인 상품 리스트
+        String postMemId = postDto.getMember().getMemId();
+        Map map = postService.selectPostBySellState(postMemId);
         List<PostDto> onSaleAndRsvList = (List<PostDto>) map.get("onSaleAndRsvList");
 
 
@@ -162,6 +168,8 @@ public class PostController {
         model.addAttribute("imgIds", postImgIdList);
         model.addAttribute("mtPlace", mtPlaceDto);
         model.addAttribute("isWishExist", isWishExist);
+        model.addAttribute("countWish", countWish);
+        model.addAttribute("countChatRoom", countChatRoom);
         model.addAttribute("sellerProductList", onSaleAndRsvList);
 
 

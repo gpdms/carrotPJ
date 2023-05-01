@@ -8,97 +8,99 @@
 
 </head>
 <div layout:fragment="content">
-    <section class="py-5">
-        <div th:if="${category == null}">
-            <h1 class="text-center" th:if="${session.loginMember == null}">중고거래 상품</h1>
-            <h1 class="text-center" th:if="${session.loginMember != null}">[[${session.loginMember.loc.locName}]] 중고거래 상품</h1>
-        </div>
-        <div th:if="${category != null}">
-            <h1 class="text-center">[[${category.category}]]</h1>
-        </div>
-
-        <button class="btn-orange float-md-end" th:onclick="|location.href='@{/post/uploadPage}'|">상품 올리기</button>
-        <p class="text-center" th:if="${list.isEmpty()}">게시된 상품이 없습니다.</p>
-            <div class="container px-4 px-lg-5 mt-5">
-                <div class="row gx-4 gx-lg-5 row-cols-2 row-cols-md-3 row-cols-xl-4 justify-content-center">
-                    <div class="col mb-5" th:each = "post:${list}">
-                        <div class="card h-100" th:onclick="|location.href='@{|/post/detail/${post.postId}|}'|" style="cursor: pointer;">
-                            <!-- 제품사진-->
-                            <img class="card-img-top" th:src="|/post/firstImg/${post.postId}|" alt="제품사진" />
-                            <!-- Product details-->
-                            <div class="card-body p-3">
-                                <div class="text-center">
-                                    <!-- 제목-->
-                                    <h5 class="fw-bolder text-truncate" th:text="${post.title}">제목</h5>
-                                    <!--지역, 시간-->
-                                    <p class="fw-normal text-secondary">[[${post.loc.locName}]] ∙ [[${post.createdTime}]]</p>
-                                    <!-- 가격-->
-                                    <h6 class="fw-bolder" th:if="${post.price}!=0" th:text="|${post.price}원|">가격</h6>
-                                    <!--예약중,판매완료 배지-->
-                                    <span class="badge bg-success" th:if="${post.sellState.getSellStateName().equals('예약중')}">예약중</span>
-                                    <span class="badge bg-secondary" th:if="${post.sellState.getSellStateName().equals('판매완료')}">거래완료</span>
-
-
-                                </div>
-                            </div>
-
-                        </div>
-                    </div>
-
-                </div>
+<section class="py-5">
+    <div class="container px-4 px-lg-5 my-5">
+        <section class="py-5">
+            <div th:if="${category == null}">
+                <h1 class="text-center" th:if="${session.loginMember == null}">중고거래 상품</h1>
+                <h1 class="text-center" th:if="${session.loginMember != null}">[[${session.loginMember.loc.locName}]] 중고거래 상품</h1>
             </div>
+            <div th:if="${category != null}">
+                <h1 class="text-center">[[${category.category}]]</h1>
+            </div>
+            <button class="btn-orange float-md-end" th:onclick="|location.href='@{/post/uploadPage}'|">상품 올리기</button>
+            <p class="text-center" th:if="${list.isEmpty()}">게시된 상품이 없습니다.</p>
+            <br/><br/>
+                <div class="container px-4 px-lg-5 mt-5">
+                    <div class="row gx-4 gx-lg-5 row-cols-2 row-cols-md-3 row-cols-xl-4 justify-content-center">
+                        <div class="col mb-5" th:each = "post:${list}">
+                            <div class="card h-100" th:onclick="|location.href='@{|/post/detail/${post.postId}|}'|" style="cursor: pointer;">
+                                <!-- 제품사진-->
+                                <img class="card-img-top" th:src="|/post/firstImg/${post.postId}|" alt="제품사진" />
+                                <!-- Product details-->
+                                <div class="card-body p-3">
+                                    <div class="text-center">
+                                        <!-- 제목-->
+                                        <h5 class="fw-bolder text-truncate" th:text="${post.title}">제목</h5>
+                                        <!--지역, 시간-->
+                                        <p class="fw-normal text-secondary">[[${post.loc.locName}]] ∙ [[${post.createdTime}]]</p>
+                                        <!-- 가격-->
+                                        <h6 class="fw-bolder" th:if="${post.price}!=0" th:text="|${post.price}원|">가격</h6>
+                                        <!--예약중,판매완료 배지-->
+                                        <span class="badge bg-success" th:if="${post.sellState.getSellStateName().equals('예약중')}">예약중</span>
+                                        <span class="badge bg-secondary" th:if="${post.sellState.getSellStateName().equals('판매완료')}">거래완료</span>
+                                    </div>
+                                </div>
+
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
 
 
-        <!-- 페이징 -->
-            <div th:if="${!list.isEmpty()}">
+            <!-- 페이징 -->
+                <div th:if="${!list.isEmpty()}">
 
-                <!-- 전역 변수 선언 -->
-                <nav
-                        th:with="pageNumber = ${list.pageable.pageNumber}, pageSize = ${list.pageable.pageSize},
-                        totalPages = ${list.totalPages}, startPage = ${T(java.lang.Math).floor(pageNumber / 10) * 10 + 1},
-                        tempEndPage = ${startPage + 10 - 1}, endPage = (${tempEndPage < totalPages ? tempEndPage : totalPages})"
-                        aria-label="Page navigation">
-                    <ul class="pagination">
-                        <!-- 처음으로 이동 -->
-                        <li th:classappend="${pageNumber +1 == 1} ? 'disabled'" class="page-item">
-                            <a class="page-link" th:href="@{/post/board(page=0)}">
-                                <span>&laquo; </span>
-<!--                                <span class="sr-only">First</span>-->
-                            </a>
-                        </li>
+                    <!-- 전역 변수 선언 -->
+                    <nav
+                            th:with="pageNumber = ${list.pageable.pageNumber}, pageSize = ${list.pageable.pageSize},
+                            totalPages = ${list.totalPages}, startPage = ${T(java.lang.Math).floor(pageNumber / 10) * 10 + 1},
+                            tempEndPage = ${startPage + 10 - 1}, endPage = (${tempEndPage < totalPages ? tempEndPage : totalPages})"
+                            aria-label="Page navigation">
+                        <ul class="pagination">
+                            <!-- 처음으로 이동 -->
+                            <li th:classappend="${pageNumber +1 == 1} ? 'disabled'" class="page-item">
+                                <a class="page-link" th:href="@{/post/board(page=0)}">
+                                    <span>&laquo; </span>
+    <!--                                <span class="sr-only">First</span>-->
+                                </a>
+                            </li>
 
-                        <!-- 이전으로 이동 -->
-                        <li th:classappend="${list.first} ? 'disabled'" class="page-item">
-                            <a class="page-link" th:href="${list.first} ? '#' : @{/post/board(page=${pageNumber - 1})}" aria-label="Previous">
-                                <span aria-hidden="true">&lt;</span>
-<!--                                <span class="sr-only">Previous</span>-->
-                            </a>
-                        </li>
+                            <!-- 이전으로 이동 -->
+                            <li th:classappend="${list.first} ? 'disabled'" class="page-item">
+                                <a class="page-link" th:href="${list.first} ? '#' : @{/post/board(page=${pageNumber - 1})}" aria-label="Previous">
+                                    <span aria-hidden="true">&lt;</span>
+    <!--                                <span class="sr-only">Previous</span>-->
+                                </a>
+                            </li>
 
-                        <!-- 특정 페이지로 이동 -->
-                        <li th:each="page: ${#numbers.sequence(startPage, endPage)}" th:classappend="${page == pageNumber + 1} ? 'active'" class="page-item">
-                            <a th:text="${page}" class="page-link" th:href="@{/post/board(page=${page - 1})}"></a>
-                        </li>
+                            <!-- 특정 페이지로 이동 -->
+                            <li th:each="page: ${#numbers.sequence(startPage, endPage)}" th:classappend="${page == pageNumber + 1} ? 'active'" class="page-item">
+                                <a th:text="${page}" class="page-link" th:href="@{/post/board(page=${page - 1})}"></a>
+                            </li>
 
-                        <!-- 다음으로 이동 -->
-                        <li th:classappend="${list.last} ? 'disabled'" class="page-item">
-                            <a class="page-link" th:href="${list.last} ? '#' : @{/post/board(page=${pageNumber + 1})}" aria-label="Next">
-                                <span aria-hidden="true">&gt;</span>
-<!--                                <span class="sr-only">Next</span>-->
-                            </a>
-                        </li>
+                            <!-- 다음으로 이동 -->
+                            <li th:classappend="${list.last} ? 'disabled'" class="page-item">
+                                <a class="page-link" th:href="${list.last} ? '#' : @{/post/board(page=${pageNumber + 1})}" aria-label="Next">
+                                    <span aria-hidden="true">&gt;</span>
+    <!--                                <span class="sr-only">Next</span>-->
+                                </a>
+                            </li>
 
-                        <!-- 마지막으로 이동 -->
-                        <li th:classappend=" ${pageNumber +1 == totalPages} ? 'disabled'" class="page-item">
-                            <a class="page-link" th:href="@{/post/board(page=${totalPages - 1})}">
-                                <span>&raquo; </span>
-<!--                                <span class="sr-only">Last</span>-->
-                            </a>
-                        </li>
-                    </ul>
-                </nav>
-            </div> <!-- /페이징 -->
-        </section>
+                            <!-- 마지막으로 이동 -->
+                            <li th:classappend=" ${pageNumber +1 == totalPages} ? 'disabled'" class="page-item">
+                                <a class="page-link" th:href="@{/post/board(page=${totalPages - 1})}">
+                                    <span>&raquo; </span>
+    <!--                                <span class="sr-only">Last</span>-->
+                                </a>
+                            </li>
+                        </ul>
+                    </nav>
+                </div> <!-- /페이징 -->
+            </section>
+        </div>
+    </section>
 </div>
 
 

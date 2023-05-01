@@ -539,6 +539,13 @@ public class PostServiceImpl {
     }
 
 //    @Override
+    public Integer countWish(Long postId){
+        Post post = postRepository.findById(postId).orElseThrow();
+        Integer wishCount = wishRepository.countByPost(post);
+        return wishCount;
+    }
+
+//    @Override
     public List<PostDto> selectPostListFromWish(String memId){
 
         QWish qWish = QWish.wish;

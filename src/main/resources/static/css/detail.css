@@ -1,0 +1,38 @@
+.profile-img{
+    display: inline-block;
+    width: 60px;
+    height: 60px;
+    overflow: hidden;
+    border-radius: 50%;
+    /*margin: 0 auto;*/
+}
+.profile-img img{
+    width: 100%;
+    height: 100%;
+}
+
+.fx-in {
+    display: flex;
+    flex: 1 1 auto;
+    flex-direction: column;
+    align-self: stretch;
+    margin-left: 1rem;
+    margin-right: 0.5rem;
+}
+
+.bd-top-bottom {
+    border-top: 1px solid lightgray;
+    border-bottom: 1px solid lightgray;
+}
+
+.f-orange{
+    color: #ff9d0a;
+}
+
+.cursor {
+    cursor: pointer;
+}
+
+.height {
+
+}
