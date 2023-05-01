@@ -20,14 +20,14 @@
             <div class="container px-4 px-lg-5 my-5">
                 <div class="row gx-4 gx-lg-5 align-items-center">
                     <!--제품사진-->
-                    <div class="col-md-6">
+                    <div class="container w-75">
                         <div class="slider">
 <!--                        <li th:each="imgId:${imgIds}">-->
                             <img class="card-img-detail mb-5 mb-md-0" th:each="imgId:${imgIds}" th:src="|/post/img/${imgId}|" alt="..." style="object-fit: cover;"/>
                         </div>
                     </div>
 <!--                        </li>-->
-                    <div class="col-md-6">
+                    <div class="container w-75">
                        <!--프로필-->
                         <p>[[${post.member.nickname}]]</p>
                         <div class="profile-img">
@@ -56,15 +56,16 @@
                             <i id="emptyHeart" class="bi bi-heart" th:onclick="addWish([[${post.postId}]])" style="display:none; font-size: 2rem; margin-right: 5%" ></i>
                             <i id="fillHeart" class="bi bi-heart-fill" th:onclick="rmvWish([[${post.postId}]])" style="display:none; font-size: 2rem; color: red; margin-right: 5%"></i>
                             <!--채팅하기-->
-                            <button th:if="${session.loginMember.memId}==${post.member.memId}" class="btn btn-outline-dark flex-shrink-0" type="button" th:onclick="|location.href='@{/chat/chatRoomListByPost/{postId}(postId=${postId})}'|">대화 중인 채팅방</button>
-                            <button th:unless="${session.loginMember.memId}==${post.member.memId}" class="btn btn-outline-dark flex-shrink-0" type="button" th:onclick="|location.href='@{/chat/post/{postId}/{sellerId}(postId=${postId}, sellerId=${post.member.memId})}'|">채팅하기</button>
+                            <button th:if="${session.loginMember.memId}==${post.member.memId} and ${!post.sellState.getSellStateName().equals('판매완료')}" class="btn btn-outline-dark flex-shrink-0" type="button" th:onclick="|location.href='@{/chat/chatRoomListByPost/{postId}(postId=${postId})}'|">대화 중인 채팅방</button>
+                            <button th:if="${session.loginMember.memId}!=${post.member.memId} and ${!post.sellState.getSellStateName().equals('판매완료')}" class="btn btn-outline-dark flex-shrink-0" type="button" th:onclick="|location.href='@{/chat/post/{postId}/{sellerId}(postId=${postId}, sellerId=${post.member.memId})}'|">채팅하기</button>
+                            <button th:if="${post.sellState.getSellStateName().equals('판매완료')}" class="btn btn-secondary disabled">거래완료</button>
                         </div>
 
 
                         <!--판매여부-->
                         <select id="selSellState" th:if="${session.loginMember.memId}==${post.member.memId}" th:onchange="sellState([[${post.postId}]])">
                             <!--thymeleaf이용해 Enum클래스 정보 바로 가져오기-->
-                            <option th:each = "sellStateEnum:${T(com.exercise.carrotproject.domain.enumList.SellState).values()}" th:value="${sellStateEnum.getSellStateName()}" th:text="${sellStateEnum.getSellStateName()}" th:selected="${sellStateEnum}==${post.sellState}"></option>
+                            <option th:each = "sellStateEnum:${T(com.exercise.carrotproject.domain.enumList.SellState).values()}" th:value="${sellStateEnum.getSellStateName()}" th:text="${sellStateEnum.getSellStateName()}" th:selected="${sellStateEnum.getSellStateName()}==${post.sellState.getSellStateName()}"></option>
 
                         </select>
 

@@ -28,8 +28,10 @@
                                     <p class="fw-normal text-secondary">[[${post.loc.locName}]] ∙ [[${post.createdTime}]]</p>
                                     <!-- 가격-->
                                     <h6 class="fw-bolder" th:if="${post.price}!=0" th:text="|${post.price}원|">가격</h6>
-                                    <!--예약중 배지-->
+                                    <!--예약중,판매완료 배지-->
                                     <span class="badge bg-success" th:if="${post.sellState.getSellStateName().equals('예약중')}">예약중</span>
+                                    <span class="badge bg-secondary" th:if="${post.sellState.getSellStateName().equals('판매완료')}">거래완료</span>
+
 
                                 </div>
                             </div>
