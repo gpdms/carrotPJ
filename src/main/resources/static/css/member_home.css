@@ -1,0 +1,180 @@
+a {color: #fff; text-decoration: none; outline: none}
+a:hover, a:active {text-decoration: none; cursor: pointer; color: black}
+
+hr {
+    margin: 0;
+    padding: 0;
+    color: #adb5bd;
+}
+
+.form-container {
+    width: 800px;
+}
+.profile-container {
+    /*width: 300px;*/
+    height: auto;
+    padding: 20px 10px;
+    /*padding-left: 10px;*/
+    /*padding-top: 10px;*/
+}
+
+.profile-left{
+    width: 100px;
+    height: 100px;
+    overflow: hidden;
+    border-radius: 50%;
+    margin: 0 5px 0 5px;
+    border: 1px solid #e9ecef;
+}
+.profile-left img{
+    width: 100%;
+    height: 100%;
+}
+.profile-center {
+    width: 220px;
+    padding: 15px 0 0 10px;
+    margin-right: 100px;
+}
+
+.profile-right {
+    width: 300px;
+    position: relative;
+}
+.profile-right .manner-label {
+    text-align: right;
+    font-weight: 400;
+    color: #555;
+    margin-bottom: 15px;
+    padding-right: 15px;
+}
+.profile-right .mannerScore {
+    font-family: 'Noto Sans KR', sans-serif;
+    position: absolute;
+    top: 20px;
+    left: 210px;
+    font-size: 25px;
+    font-weight: 500;
+    color: #ff9d0a;
+    margin: 0;
+}
+.profile-right .manner-range {
+    width: 300px;
+}
+.profile-right .manner-range .manner-bar {
+    width: 290px;
+    height: 23px;
+    border-radius: 50px;
+    background-color: #dedede;
+    font-weight: 600;
+    font-size: .8rem;
+}
+.profile-right .manner-bar .manner {
+    /*나타내고자 하는 퍼센트 값을 넣기.*/
+    height: 100%;
+    padding: 0;
+    border-radius: 50px;
+    text-align: center;
+}
+.profile-right .manner-range .defaultScore{
+    width: 73%;
+    color: #555;
+    text-align: center;
+    margin: 0;
+}
+.profile-right .manner-range .defaultArrow {
+    width: 36.5%;
+    color: #555;
+    text-align: right;
+    margin: 0;
+    padding: 0;
+}
+
+
+.profile-center .nickname{
+    font-size: 25px;
+    font-weight: 400;
+    margin: 0;
+    display: inline;
+}
+.profile-center .loc{
+    font-weight: 300;
+    color: #555;
+    margin-bottom: 15px;
+    /*display: inline;*/
+}
+.profile-center .setting{
+}
+.profile-center .setting .pf-btn{
+    width: 120px;
+    height: 30px;
+    color: #999;
+    display: inline-block;
+    text-decoration: underline;
+}
+.profile-center .setting .pf-btn:hover, .pf-btn:active {
+    color: #777;
+}
+
+.home-btn{
+    width: 70px;
+    height: 30px;
+    display: inline-block;
+    font-weight: 500;
+    line-height: 1.5;
+    color: whitesmoke;
+    text-align: center;
+    text-decoration: none;
+    vertical-align: middle;
+    cursor: pointer;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+    background-color: #ff9d0a;
+    border: 1px solid rgba(255, 157, 10, 0.98);
+    padding: 0.375rem 0.75rem;
+    font-size: 0.75rem;
+    border-radius: 0.25rem;
+    transition: color 0.15s ease-in-out, background-color 0.15s ease-in-out, border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+}
+@media (prefers-reduced-motion: reduce) {
+    .home-btn {
+        transition: none;
+    }
+}
+.home-btn:hover {
+    color: #eeeeee;
+    background-color: #ee9209;
+}
+.home-btn:disabled, .home-btn.disabled, fieldset:disabled .home-btn{
+    pointer-events: none;
+    opacity: 0.65;
+}
+.font-orange {
+    color: #ffd09c;
+}
+.bg-light-orange{
+    background-color: #fff2eb;
+}
+
+.selling-container {
+    padding: 15px 10px;
+}
+.selling-container .selling-count {
+    font-family: 'Noto Sans KR', sans-serif;
+    display: inline;
+    font-weight: 500;
+    color: #ee9209;
+    margin-right: 10px;
+    font-size: 17px;
+}
+.selling-container .home-btn{
+
+}
+.selling-container .selling-zero {
+    font-size: 15px;
+    font-weight: 400;
+    color: #999;
+    margin: 80px 100px;
+    text-align: center;
+}

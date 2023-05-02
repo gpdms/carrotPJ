@@ -6,10 +6,14 @@ import com.exercise.carrotproject.domain.enumList.ReviewIndicator;
 import com.exercise.carrotproject.domain.enumList.Role;
 import com.exercise.carrotproject.domain.member.MemberEntityDtoMapper;
 import com.exercise.carrotproject.domain.member.dto.MemberDto;
+import com.exercise.carrotproject.domain.member.entity.Block;
 import com.exercise.carrotproject.domain.member.entity.Member;
 import com.exercise.carrotproject.domain.member.repository.MemberRepository;
 import com.exercise.carrotproject.domain.member.service.MemberServiceImpl;
+import com.exercise.carrotproject.domain.post.dto.PostDto;
 import com.exercise.carrotproject.domain.post.repository.PostRepository;
+import com.exercise.carrotproject.domain.post.repository.PostRepositoryImpl;
+import com.exercise.carrotproject.domain.post.service.PostServiceImpl;
 import com.exercise.carrotproject.domain.review.dto.ReviewMessageDto;
 import com.exercise.carrotproject.domain.review.repository.ReviewDetailCustomRepository;
 import com.exercise.carrotproject.domain.review.service.ReviewServiceImpl;
@@ -35,6 +39,7 @@ import java.util.*;
 public class HomeController {
     private final MemberRepository memberRepository;
     private final MemberServiceImpl memberService;
+    private final PostServiceImpl postService;
     private final SecurityUtils securityUtils;
     private final PostRepository postRepository;
     private final ReviewServiceImpl reviewService;
@@ -85,23 +90,25 @@ public class HomeController {
         }
         Member member = opMember.orElseThrow();
 
-        boolean blockState = false;
-        Object loginSession = session.getAttribute(SessionConst.LOGIN_MEMBER);
-        if(loginSession != null) {
-            MemberDto loginMember = (MemberDto)loginSession;
-            if (memberService.findOneBlockByMemIds(loginMember.getMemId(), member.getMemId()) != null) {
-                blockState = true;
-            }
+        boolean hasBlock = false;
+        MemberDto loginMember = (MemberDto) session.getAttribute(SessionConst.LOGIN_MEMBER);
+        if(loginMember != null) {
+            hasBlock = memberService.existBlockByMemIds(loginMember.getMemId(), member.getMemId());
         }
-        Long countPost = 0L;
+        System.out.println("hasBlock!!!!! = " + hasBlock);
         Long countReviewMessage = countReviewMessage = reviewService.countGoodReviewMessage(memId);
         Map<ReviewIndicator, Long> positiveMannerBrief = reviewService.getPositiveMannerDetailsBrief(memId, 3L);
         List<ReviewMessageDto> reviewMessageBrief =reviewService.goodReviewMessagesBrief(memId, 3L);
-        if(blockState == false) {
+
+        Long countPost = 0L;
+        List<PostDto> postListBrief = new ArrayList<>();
+        if(hasBlock == false) {
             countPost = postRepository.countByMember(member);
+            postListBrief =  postService.postListBrief(6, memId);
         }
         model.addAttribute("member", MemberEntityDtoMapper.toMemberDto(member));
-        model.addAttribute("blockState", blockState);
+        model.addAttribute("hasBlock", hasBlock);
+        model.addAttribute("postList", postListBrief);
         model.addAttribute("countPost", countPost);
         model.addAttribute("positiveMannerBrief", positiveMannerBrief);
         model.addAttribute("countReviewMessage", countReviewMessage);

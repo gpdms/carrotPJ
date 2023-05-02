@@ -6,9 +6,12 @@ import com.exercise.carrotproject.domain.member.MemberEntityDtoMapper;
 import com.exercise.carrotproject.domain.member.dto.MemberDto;
 import com.exercise.carrotproject.domain.member.entity.Block;
 import com.exercise.carrotproject.domain.member.entity.Member;
+import com.exercise.carrotproject.domain.member.repository.BlockCustomRepository;
 import com.exercise.carrotproject.domain.member.repository.BlockRepository;
 import com.exercise.carrotproject.domain.member.repository.MemberRepository;
 import com.exercise.carrotproject.web.member.util.SecurityUtils;
+import com.querydsl.core.types.dsl.BooleanExpression;
+import com.querydsl.jpa.JPAExpressions;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -25,12 +28,16 @@ import java.net.URL;
 import java.time.LocalDate;
 import java.util.*;
 
+import static com.exercise.carrotproject.domain.member.entity.QBlock.block;
+import static com.exercise.carrotproject.domain.post.entity.QPost.post;
+
 @Slf4j
 @Service
 @RequiredArgsConstructor
 public class MemberServiceImpl {
     private final MemberRepository memberRepository;
     private final BlockRepository blockRepository;
+    private final BlockCustomRepository blockCustomRepository;
     private final SecurityUtils securityUtils;
 
     @Value("${dir.img-profile}")
@@ -202,15 +209,18 @@ public class MemberServiceImpl {
     }
 
     //@Override
-    public Block findOneBlockByMemIds(String fromMemId, String toMemId){
+    public Block findOneBlockByFromMemToMem (String fromMemId, String toMemId){
         Member fromMem = memberRepository.findById(fromMemId).orElse(null);
         Member toMem = memberRepository.findById(toMemId).orElse(null);
         if(fromMem!=null && toMem!=null) {
-          return blockRepository.findByFromMemAndToMem(fromMem, toMem).orElse(null);
+            return blockRepository.findByFromMemAndToMem(fromMem, toMem).orElse(null);
         }
         return null;
     }
 
+    public boolean existBlockByMemIds (String memId1, String memId2) {
+        return blockCustomRepository.hasBlockByMemIds(memId1, memId2);
+    }
     //@Override
     public Map<String,String> insertBlock(String fromMemId, String toMemId) {
         Block block = Block.builder().fromMem(memberRepository.findById(fromMemId).orElse(null))
@@ -225,7 +235,7 @@ public class MemberServiceImpl {
 
     //@Override
     public void deleteBlock(String fromMemId, String toMemId) {
-        Block block = findOneBlockByMemIds(fromMemId, toMemId);
+        Block block = findOneBlockByFromMemToMem(fromMemId, toMemId);
         blockRepository.deleteById(block.getBlockId());
     }
 

@@ -584,4 +584,9 @@ public class PostServiceImpl {
                 .where(qPost.postId.eq(postId))
                 .execute();
     }
+
+    public List<PostDto> postListBrief(int limit, String memId) {
+        List<Post> posts = customPostRepository.postListByLimit(limit, memId);
+        return PostEntityDtoMapper.toDtoList(posts);
+    }
 }
