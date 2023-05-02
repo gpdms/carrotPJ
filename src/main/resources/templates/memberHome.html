@@ -41,62 +41,74 @@
                 </div>
             </div>
             <hr>
-            <div class="selling-container">
-                <p class="selling-count" th:text="|판매 물품 (${countPost}) |"></p>
-                <button class="home-btn" type="button"> >&nbsp;이동</button> <br/>
-                    <div class="px-4 px-lg-5 mt-5">
-                        <div th:if="${postList.isEmpty()}">
-                            <p class="selling-zero">게시중인 상품이 없습니다.</p>
-                        </div>
-                        <div th:unless="${postList.isEmpty()}"
-                             class="row gx-4 gx-lg-5 row-cols-2 row-cols-md-3 row-cols-xl-4 justify-content-center">
-                            <div class="col mb-5 w-30 h-50" th:each = "post:${postList}">
-                                <div class="card" th:onclick="|location.href='@{|/post/detail/${post.postId}|}'|" style="cursor: pointer;">
+            <div class="second-container">
+                <div class="title">
+                    <p class="selling-count-label" th:text="|판매 물품 (${countPost}) |"></p>
+                    <button class="home-btn" type="button"> >&nbsp;이동</button> <br/>
+                </div>
+                <div class="px-2 mt-5 content">
+                    <div th:if="${postList.isEmpty()}">
+                        <p class="no-selling">게시중인 상품이 없습니다.</p>
+                    </div>
+                    <div th:unless="${postList.isEmpty()}"
+                         class="row gx-4 gx-lg-5 row-cols-2 row-cols-md-3 row-cols-xl-3 justify-content-center">
+                            <div class="col mb-5" th:each = "post:${postList}">
+                                <div class="card h-100" th:onclick="|location.href='@{|/post/detail/${post.postId}|}'|" style="cursor: pointer;">
                                     <!-- 제품사진-->
                                     <img class="card-img-top" th:src="|/post/firstImg/${post.postId}|" alt="제품사진" />
                                     <!-- Product details-->
-                                    <div class="card-body p-4">
+                                    <div class="card-body p-3">
                                         <div class="text-center">
                                             <!-- 제목-->
-                                            <h5 class="fw-bolder" th:text="${post.title}">제목</h5>
+                                            <h5 class="fw-bolder text-truncate" th:text="${post.title}">제목</h5>
                                             <!--지역, 시간-->
-                                            <p class="fw">[[${post.loc.locName}]] / [[${post.createdTime}]]</p>
+                                            <h6 class="fs-7 fw-normal text-secondary">[[${post.loc.locName}]] ∙ [[${post.createdTime}]]</h6>
                                             <!-- 가격-->
                                             <h6 class="fw-bolder" th:if="${post.price}!=0" th:text="|${post.price}원|">가격</h6>
+                                            <h6 class="fw-bolder" th:if="${post.price} == 0">가격없음</h6>
+                                            <!--예약중,판매완료 배지-->
+                                            <span class="badge bg-success" th:if="${post.sellState.getSellStateName().equals('예약중')}">예약중</span>
+                                            <span class="badge bg-secondary" th:if="${post.sellState.getSellStateName().equals('판매완료')}">거래완료</span>
                                         </div>
                                     </div>
-                                </div> <!--one post-->
-                            </div> <!--each post -->
-                        </div> <!--post 존재-->
-                    </div> <!--post board-->
+                                </div> <!--post one-->
+                            </div> <!--each post-->
+                    </div> <!--post 존재-->
+                </div> <!--post board-->
             </div>
             <hr>
-            <div>
-                <div>
-                    <span th:text="|받은 매너 평가|"></span>
-                    <button th:unless="${hasBlock}"
+            <div class="third-container">
+                <div class="title">
+                    <p class="manner-detail-label" th:text="|받은 매너 평가|"></p>
+                    <button class="home-btn" type="button"
                             th:onclick="|location.href='@{/reviews/manner/{memId}(memId=${member.memId})}'|">
-                        >더보기</button>
+                        >&nbsp;이동</button> <br/>
                 </div>
-                <div th:if="${positiveMannerBrief.isEmpty()}">
+                <div class="no-manner-detail" th:if="${positiveMannerBrief.isEmpty()}">
                     아직 받은 매너 평가가 없습니다.
                 </div>
-                <p th:unless="${positiveMannerBrief.isEmpty()}" th:each="entry:${positiveMannerBrief}">
-                    <span th:text="${entry.key.description}"></span>
-                    <span th:text="${entry.value}"></span>
-                </p>
+                <div class="content">
+                    <div class="each-content"
+                        th:unless="${positiveMannerBrief.isEmpty()}"
+                        th:each="entry:${positiveMannerBrief}">
+                        <i class="bi bi-people"></i>
+                        <span th:text="${entry.key.description}"></span>
+                        <span th:text="${entry.value}"></span>
+                    </div>
+                </div>
             </div>
             <hr/>
-            <div>
-                <span th:text="|받은 거래 후기 : ${countReviewMessage}개|"></span>
-                <button th:unless="${hasBlock}"
-                        th:onclick="|location.href='@{/reviews/{memId}(memId=${member.memId})}'|">
-                    >이동</button>
-                <div style="height:10px;"></div>
-                <th:block th:if="${reviewMessageBrief.isEmpty()}">
+            <div class="fourth-container">
+                <div class="title">
+                    <p class="manner-message-label" th:text="|받은 거래 후기 : ${countReviewMessage}개|"></p>
+                    <button class="home-btn"
+                            th:onclick="|location.href='@{/reviews/{memId}(memId=${member.memId})}'|">
+                        >&nbsp;이동</button>
+                </div>
+                <div class="no-message" th:if="${reviewMessageBrief.isEmpty()}">
                    <div> 받은 거래 후기가 없습니다.</div>
-                </th:block>
-                <th:block th:unless="${reviewMessageBrief.isEmpty()}">
+                </div>
+                <div th:unless="${reviewMessageBrief.isEmpty()}" class="content">
                     <div class="row" th:each="review:${reviewMessageBrief}">
                         <div class="col-sm-1">
                             <div class="profile-img">
@@ -110,7 +122,7 @@
                                 </a>
                             </div>
                         </div>
-                        <div class="col-lg">
+                        <div class="col-lg message-nick">
                             <div th:if="${review.buyer != null}" >
                                 <p th:text="|${review.buyer.nickname}|"></p>
                                 <span th:text="|${review.buyer.loc.locName} - 구매자 - ${review.getCalculatedTimeForReview()}|"></span>
@@ -151,7 +163,7 @@
                             </a>
                         </div>
                     </div>
-                </th:block>
+                </div>
             </div>
         </div> <!--form_container-->
     </section>

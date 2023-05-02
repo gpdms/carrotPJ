@@ -8,7 +8,7 @@ hr {
 }
 
 .form-container {
-    width: 800px;
+    width: 900px;
 }
 .profile-container {
     /*width: 300px;*/
@@ -31,13 +31,13 @@ hr {
     height: 100%;
 }
 .profile-center {
-    width: 220px;
-    padding: 15px 0 0 10px;
-    margin-right: 100px;
+    width: 250px;
+    padding: 0 0 0 10px;
+    margin-right: 150px;
 }
 
 .profile-right {
-    width: 300px;
+    width: 350px;
     position: relative;
 }
 .profile-right .manner-label {
@@ -51,17 +51,17 @@ hr {
     font-family: 'Noto Sans KR', sans-serif;
     position: absolute;
     top: 20px;
-    left: 210px;
+    left: 270px;
     font-size: 25px;
     font-weight: 500;
     color: #ff9d0a;
     margin: 0;
 }
 .profile-right .manner-range {
-    width: 300px;
+    width: 100%;
 }
 .profile-right .manner-range .manner-bar {
-    width: 290px;
+    width: 100%;
     height: 23px;
     border-radius: 50px;
     background-color: #dedede;
@@ -116,9 +116,11 @@ hr {
 }
 
 .home-btn{
+    /*margin: auto 0;*/
+    margin-top: 12px;
     width: 70px;
-    height: 30px;
-    display: inline-block;
+    height: 27px;
+    display: inline;
     font-weight: 500;
     line-height: 1.5;
     color: whitesmoke;
@@ -132,7 +134,6 @@ hr {
     user-select: none;
     background-color: #ff9d0a;
     border: 1px solid rgba(255, 157, 10, 0.98);
-    padding: 0.375rem 0.75rem;
     font-size: 0.75rem;
     border-radius: 0.25rem;
     transition: color 0.15s ease-in-out, background-color 0.15s ease-in-out, border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
@@ -156,25 +157,91 @@ hr {
 .bg-light-orange{
     background-color: #fff2eb;
 }
+/*내용*/
 
-.selling-container {
-    padding: 15px 10px;
+.title {
+    height: 50px;
+    display: flex;
 }
-.selling-container .selling-count {
-    font-family: 'Noto Sans KR', sans-serif;
+.content {
+    padding: 10px;
+}
+.second-container, .third-container, .fourth-container {
+    padding: 20px 10px;
+    margin : 10px;
+}
+.second-container .selling-count-label {
+    /*font-family: 'Noto Sans KR', sans-serif;*/
     display: inline;
     font-weight: 500;
     color: #ee9209;
-    margin-right: 10px;
-    font-size: 17px;
+    /*margin-right: 10px;*/
+    margin: auto 10px;
+    font-size: 22px;
 }
-.selling-container .home-btn{
+.second-container .home-btn{
 
 }
-.selling-container .selling-zero {
+.second-container .no-selling {
     font-size: 15px;
     font-weight: 400;
     color: #999;
     margin: 80px 100px;
     text-align: center;
+}
+.second-container .article {
+
+}
+
+
+.third-container .manner-detail-label {
+    /*font-family: 'Noto Sans KR', sans-serif;*/
+    display: inline;
+    font-weight: 500;
+    color: #ee9209;
+    /*margin-right: 10px;*/
+    margin: auto 10px;
+    font-size: 20px;
+}
+
+.third-container .no-manner-detail {
+    font-size: 15px;
+    font-weight: 400;
+    color: #999;
+    margin: 80px 100px;
+    text-align: center;
+}
+.third-container .each-content {
+    font-size: 20px;
+    padding: 10px;
+}
+
+.fourth-container .manner-message-label {
+    /*font-family: 'Noto Sans KR', sans-serif;*/
+    display: inline;
+    font-weight: 500;
+    color: #ee9209;
+    /*margin-right: 10px;*/
+    /*margin-top: 10px;*/
+    margin: auto 10px;
+    font-size: 20px;
+}
+.fourth-container .no-message {
+    font-size: 15px;
+    font-weight: 400;
+    color: #999;
+    margin: 80px 100px;
+    text-align: center;
+}
+
+.fourth-container .profile-img{
+    width: 30px;
+    height: 30px;
+    overflow: hidden;
+    border-radius: 50%;
+    border: 1px solid #e9ecef;
+}
+.fourth-container .profile-img img{
+    width: 100%;
+    height: 100%;
 }
