@@ -2222,9 +2222,9 @@ progress {
 .form-control:focus {
   color: #212529;
   background-color: #fff;
-  border-color: #86b7fe;
+  border-color: #ffd09c;
   outline: 0;
-  box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.25);
+  box-shadow: 0 0 0 0.25rem rgba(255, 198, 153, 0.25);
 }
 .form-control::-webkit-date-and-time-value {
   height: 1.5em;
@@ -7649,6 +7649,10 @@ textarea.form-control-lg {
   font-size: 1rem !important;
 }
 
+.fs-7 {
+  font-size: 0.75rem !important;
+}
+
 .fst-italic {
   font-style: italic !important;
 }
@@ -11318,7 +11322,7 @@ textarea.form-control-lg {
 }
 
 
-/*  custom*/
+/*  custom----------------------------------------*/
 .btn-orange {
   display: inline-block;
   font-weight: 400;
@@ -11356,4 +11360,8 @@ textarea.form-control-lg {
 
 .bg-light-orange{
   background-color: #fff2eb;
+}
+
+.form-group {
+  margin-bottom: 1rem;
 }

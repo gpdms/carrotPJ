@@ -1,14 +1,20 @@
 .span {
     flex: 1 1 auto;
     text-align: center;
-    background-color: #fde69d;
-    border: 1px solid #ffffff;
+    /*background-color: #fde69d;*/
+    /*border: 1px solid #ffffff;*/
     height: 2.5rem;
     line-height: 2.5rem;
     font-size: 1rem;
     font-weight: normal;
     cursor: pointer;
 
+}
+
+.span-bottom {
+    border-bottom: 3px solid #ff9d0a;
+    color: #ff9d0a;
+    font-weight: bold;
 }
 
 .span:hover,

@@ -9,7 +9,7 @@
 </head>
 <div layout:fragment="content">
 <section class="py-5">
-    <div class="container px-4 px-lg-5 my-5">
+    <div class="container px-4 my-5">
         <section class="py-5">
             <div th:if="${category == null}">
                 <h1 class="text-center" th:if="${session.loginMember == null}">중고거래 상품</h1>
@@ -18,10 +18,10 @@
             <div th:if="${category != null}">
                 <h1 class="text-center">[[${category.category}]]</h1>
             </div>
-            <button class="btn-orange float-md-end" th:onclick="|location.href='@{/post/uploadPage}'|">상품 올리기</button>
+            <button class="btn-orange float-md-end" th:if="${session.loginMember != null}" th:onclick="|location.href='@{/post/uploadPage}'|">상품 올리기</button>
             <p class="text-center" th:if="${list.isEmpty()}">게시된 상품이 없습니다.</p>
             <br/><br/>
-                <div class="container px-4 px-lg-5 mt-5">
+                <div class="container px-4 mt-5">
                     <div class="row gx-4 gx-lg-5 row-cols-2 row-cols-md-3 row-cols-xl-4 justify-content-center">
                         <div class="col mb-5" th:each = "post:${list}">
                             <div class="card h-100" th:onclick="|location.href='@{|/post/detail/${post.postId}|}'|" style="cursor: pointer;">
@@ -33,9 +33,10 @@
                                         <!-- 제목-->
                                         <h5 class="fw-bolder text-truncate" th:text="${post.title}">제목</h5>
                                         <!--지역, 시간-->
-                                        <p class="fw-normal text-secondary">[[${post.loc.locName}]] ∙ [[${post.createdTime}]]</p>
+                                        <h6 class="fs-7 fw-normal text-secondary">[[${post.loc.locName}]] ∙ [[${post.createdTime}]]</h6>
                                         <!-- 가격-->
                                         <h6 class="fw-bolder" th:if="${post.price}!=0" th:text="|${post.price}원|">가격</h6>
+                                        <h6 class="fw-bolder" th:if="${post.price} == 0">가격없음</h6>
                                         <!--예약중,판매완료 배지-->
                                         <span class="badge bg-success" th:if="${post.sellState.getSellStateName().equals('예약중')}">예약중</span>
                                         <span class="badge bg-secondary" th:if="${post.sellState.getSellStateName().equals('판매완료')}">거래완료</span>

@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 
 <html xmlns:th="http://www.thymeleaf.org" th:fragment="fragment-nav">
-<nav class="navbar navbar-expand-xxl navbar-light bg-white fixed-top custom-navbar">
+<nav class="navbar navbar-expand-xl navbar-light bg-white fixed-top custom-navbar">
     <div class="container container-nav fixed-top">
         <a class="navbar-brand" href="/">
             <img class="img-icon" src="/css/images/main_icon.png"/>
@@ -43,7 +43,7 @@
             <form class="form-check-inline" th:if="${session.loginMember != null}"
                   th:action="@{/logout}" method="get">
                 <button class="custom-btn" th:if="${not #strings.isEmpty(session.loginMember)}" type="button"
-                        th:onclick="|location.href='@{/chat/chatRoomList}'|"> 알림 <span id="chat">0</span> </button>
+                        th:onclick="|location.href='@{/chat/chatRoomList}'|"> 채팅 <span id="chat">0</span> </button>
                 <button  class="custom-btn" type="button"
                          th:onclick="|location.href='@{/members/{memId}/edit(memId=${session.loginMember.memId})}'|">
                     회원정보 </button>
