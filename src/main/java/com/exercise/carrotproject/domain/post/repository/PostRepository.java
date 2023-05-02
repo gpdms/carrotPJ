@@ -24,5 +24,4 @@ public interface PostRepository extends JpaRepository<Post,Long>, CustomPostRepo
     List<Post> findByMemberAndHideStateOrderByPostIdDesc(Member member, HideState hideState);
 
 
-
 }

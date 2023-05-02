@@ -30,7 +30,6 @@ import java.util.stream.Stream;
 public class ReviewServiceImpl {
     private final ReviewSellerCustomRepository reviewSellerCustomRepository;
     private final ReviewBuyerCustomRepository reviewBuyerCustomRepository;
-
     private final ReviewDetailCustomRepository reviewDetailCustomRepository;
 
     public Map<ReviewIndicator, Long> getPositiveMannerDetailsBrief(String memId, long limitSize) {

@@ -62,8 +62,7 @@ public class ReviewDetailCustomRepository {
                 "       WHERE REVIEW_BUYER_INDICATOR LIKE :indicatorName AND buyer_id= :buyerId " +
                 "       GROUP BY REVIEW_BUYER_INDICATOR " +
                 "     ) AS T " +
-                "GROUP BY REVIEW_INDICATOR " +
-                "ORDER BY REVIEW_INDICATOR";
+                "GROUP BY REVIEW_INDICATOR ";
 
 
         Query query = em.createNativeQuery(sql);

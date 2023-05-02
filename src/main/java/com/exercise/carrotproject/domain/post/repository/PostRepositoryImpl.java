@@ -7,6 +7,7 @@ import com.exercise.carrotproject.domain.enumList.SellState;
 import com.exercise.carrotproject.domain.member.dto.MemberDto;
 import com.exercise.carrotproject.domain.member.entity.Member;
 import com.exercise.carrotproject.domain.member.entity.QBlock;
+import com.exercise.carrotproject.domain.member.repository.BlockCustomRepository;
 import com.exercise.carrotproject.domain.post.dto.PostDto;
 import com.exercise.carrotproject.domain.post.dto.QSoldPostDto;
 import com.exercise.carrotproject.domain.post.dto.SoldPostDto;
@@ -26,7 +27,7 @@ import javax.persistence.Query;
 import java.util.List;
 
 import static com.exercise.carrotproject.domain.member.entity.QBlock.block;
-import static com.exercise.carrotproject.domain.post.entity.QPost.post;
+ import static com.exercise.carrotproject.domain.post.entity.QPost.post;
 import static com.exercise.carrotproject.domain.review.entity.QReviewBuyer.reviewBuyer;
 import static org.springframework.util.StringUtils.hasText;
 
@@ -90,6 +91,15 @@ public class PostRepositoryImpl implements CustomPostRepository{
                 )
                 .fetch();
     }
+    public List<Post> postListByLimit(int limit, String memId) {
+        return jpaQueryFactory.select(post)
+                        .from(post)
+                        .where(post.hideState.eq(HideState.SHOW),
+                                memIdEq(memId))
+                        .limit(limit)
+                        .orderBy(post.postId.desc())
+                        .fetch();
+    }
     public BooleanExpression notExistsBlock(String loginMemId) {
         BooleanExpression booleanExpression = null;
         if(hasText(loginMemId)) {
@@ -105,6 +115,9 @@ public class PostRepositoryImpl implements CustomPostRepository{
     }
     public BooleanExpression locEq(Loc loc){
         return loc != null ? post.loc.eq(loc) : null;
+    }
+    public BooleanExpression memIdEq(String memId){
+        return hasText(memId) ? post.member.memId.eq(memId) : null;
     }
 
 }
