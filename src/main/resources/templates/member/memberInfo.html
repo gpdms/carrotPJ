@@ -5,100 +5,88 @@
 
 <head layout:fragment="head">
     <title>회원 정보 폼</title>
-<!--    <link th:href="@{/css/bootstrap.min.css}"-->
-<!--          href="/css/bootstrap.min.css" rel="stylesheet"/>-->
     <link href="/css/profile.css" rel="stylesheet" />
+    <link href="/css/member_info.css.css" rel="stylesheet" />
     <style>
-        .form_container {
-            max-width: 560px;
-            padding-left: 100px;
-        }
-        .field-error {
-            border-color: #dc3545;
-            color: #dc3545;
-        }
-        .field-error-border {
-            border-color: #dc3545;
-        }
     </style>
 </head>
 <div layout:fragment="content">
-    <div class="form_container">
+    <div class="form_container container">
         <div class="py-5 text-center">
             <h2>개인정보 수정</h2>
         </div>
-        <button class="w-50 btn btn-secondary btn-group-sm"
-                type="button"  th:onclick="|location.href='@{/members/{memId}/trade/buyList(memId=${session.loginMember.memId})}'|">구매내역 보기</button>
-        <div style="height: 10px"></div>
-
-        <h4 class="mb-3"> 프로필 수정 </h4>
-        <form id="profileEditForm">
-            <input type="hidden" name="memId" th:value="${profileForm.memId}" >
-            <div>
-                <label for="nickname">닉네임</label>
-                <input type="text" id="nickname" name="nickname"
-                       class="formcontrol" th:value="${profileForm.nickname}"
-                       th:onchange="pfEditBtnActive()">
-                <div id="nick-error"/>
-            </div>
-
-            <div>
-                <label for="profImg">프로필 이미지</label>
-                <div class="profile-img">
-                    <img th:src="|/members/${profileForm.memId}/profileImg|" alt="프로필이미지">
-                </div>
-                <input type="file" id="profImg"  name="profImg"
-                       class="formcontrol"
-                       th:onchange="pfEditBtnActive()">
-                <div id="image-error"/>
-            </div>
-
-            <div>
-                <label for="loc">내 동네</label>
-                <select id="loc" name="loc" th:onchange="pfEditBtnActive()">
-                    <th:block th:each="locValue:${T(com.exercise.carrotproject.domain.enumList.Loc).values()}">
-                        <option th:value="${locValue}" th:if="${!locValue.locCode.equals(profileForm.loc.locCode)}">
-                            [[${locValue.locName}]]</option>
-                        <option th:value="${locValue}" th:if="${locValue.locCode.equals(profileForm.loc.locCode)}" selected>
-                            [[${locValue.locName}]]</option>
-                    </th:block>
-                </select>
-                <!--<div class="field-error" th:errors="*{profileForm.loc}" />-->
-            </div>
-
+        <div class="content"> </div>
             <button class="w-50 btn btn-secondary btn-group-sm"
-                    id="pfEditBtn" disabled type="submit">프로필 수정</button>
-        </form>
+                    type="button"  th:onclick="|location.href='@{/members/{memId}/trade/buyList(memId=${session.loginMember.memId})}'|">구매내역 보기</button>
 
-        <hr class="my-4">
+            <h4 class="mb-3"> 프로필 수정 </h4>
+            <form id="profileEditForm">
+                <input type="hidden" name="memId" th:value="${profileForm.memId}" >
+                <div>
+                    <label for="nickname">닉네임</label>
+                    <input type="text" id="nickname" name="nickname"
+                           class="formcontrol" th:value="${profileForm.nickname}"
+                           th:onchange="pfEditBtnActive()">
+                    <div id="nick-error"/>
+                </div>
 
-        <h4 class="mb-3">비밀번호 수정</h4>
-        <form action="" th:action="@{/members/{memId}/edit/pwd(memId=${pwdUpdateForm.memId})}"
-              th:object="${pwdUpdateForm}" method="post">
-            <input type="hidden" name="memId" th:value="${pwdUpdateForm.memId}">
-            <div>
-                <label for="memPwd">비밀번호</label>
-                <input type="password" id="memPwd" th:field="*{pwd}"
-                       class="formcontrol">
-                <div class="field-error" th:errors="*{pwd}" />
-            </div>
-            <div>
-                <label for="pwdConfirm">비밀번호 재확인</label>
-                <input type="password" id="pwdConfirm" th:field="*{pwdConfirm}"
-                       class="formcontrol">
-                <div class="field-error" th:errors="*{pwdConfirm}" />
-            </div>
-            <button class="w-50 btn btn-secondary btn-sm" type="submit">비밀번호 수정</button>
-        </form>
-    </div> <!-- /form-container -->
+                <div>
+                    <label for="profImg">프로필 이미지</label>
+                    <div class="profile-img">
+                        <img th:src="|/members/${profileForm.memId}/profileImg|" alt="프로필이미지">
+                    </div>
+                    <input type="file" id="profImg"  name="profImg"
+                           class="formcontrol"
+                           th:onchange="pfEditBtnActive()">
+                    <div id="image-error"/>
+                </div>
 
-    <br/>
-    <br/>
-    <button class="w-50 btn btn-secondary btn-group-sm"
-            type="button" th:onclick="|location.href='@{/members/{memId}/wishes(memId=${session.loginMember.memId})}'|">관심목록</button>
+                <div>
+                    <label for="loc">내 동네</label>
+                    <select id="loc" name="loc" th:onchange="pfEditBtnActive()">
+                        <th:block th:each="locValue:${T(com.exercise.carrotproject.domain.enumList.Loc).values()}">
+                            <option th:value="${locValue}" th:if="${!locValue.locCode.equals(profileForm.loc.locCode)}">
+                                [[${locValue.locName}]]</option>
+                            <option th:value="${locValue}" th:if="${locValue.locCode.equals(profileForm.loc.locCode)}" selected>
+                                [[${locValue.locName}]]</option>
+                        </th:block>
+                    </select>
+                    <!--<div class="field-error" th:errors="*{profileForm.loc}" />-->
+                </div>
 
-    <button class="w-50 btn btn-secondary btn-group-sm"
-            type="button" th:onclick="|location.href='@{/members/{memId}/trade/sellList(memId=${session.loginMember.memId})}'|">판매내역</button>
+                <button class="w-50 btn btn-secondary btn-group-sm"
+                        id="pfEditBtn" disabled type="submit">프로필 수정</button>
+            </form>
+
+            <hr class="my-4">
+
+            <h4 class="mb-3">비밀번호 수정</h4>
+            <form action="" th:action="@{/members/{memId}/edit/pwd(memId=${pwdUpdateForm.memId})}"
+                  th:object="${pwdUpdateForm}" method="post">
+                <input type="hidden" name="memId" th:value="${pwdUpdateForm.memId}">
+                <div>
+                    <label for="memPwd">비밀번호</label>
+                    <input type="password" id="memPwd" th:field="*{pwd}"
+                           class="formcontrol">
+                    <div class="field-error" th:errors="*{pwd}" />
+                </div>
+                <div>
+                    <label for="pwdConfirm">비밀번호 재확인</label>
+                    <input type="password" id="pwdConfirm" th:field="*{pwdConfirm}"
+                           class="formcontrol">
+                    <div class="field-error" th:errors="*{pwdConfirm}" />
+                </div>
+                <button class="w-50 btn btn-secondary btn-sm" type="submit">비밀번호 수정</button>
+            </form>
+        </div> <!-- /form-container -->
+
+        <br/>
+        <br/>
+        <button class="w-50 btn btn-secondary btn-group-sm"
+                type="button" th:onclick="|location.href='@{/members/{memId}/wishes(memId=${session.loginMember.memId})}'|">관심목록</button>
+
+        <button class="w-50 btn btn-secondary btn-group-sm"
+                type="button" th:onclick="|location.href='@{/members/{memId}/trade/sellList(memId=${session.loginMember.memId})}'|">판매내역</button>
 
 </div>
 
