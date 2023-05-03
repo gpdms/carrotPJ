@@ -7678,6 +7678,9 @@ textarea.form-control-lg {
 .fw-normal {
   font-weight: 400 !important;
 }
+.fw-semi-bold{
+  font-weight: 500 !important;
+}
 
 .fw-bold {
   font-weight: 700 !important;
@@ -11366,6 +11369,10 @@ textarea.form-control-lg {
 
 .bg-light-orange{
   background-color: #fff2eb;
+}
+
+.bg-orange {
+  background-color: #ff9d0a;
 }
 
 .form-group {
