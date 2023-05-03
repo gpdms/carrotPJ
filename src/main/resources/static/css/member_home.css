@@ -13,7 +13,7 @@ hr {
 .profile-container {
     /*width: 300px;*/
     height: auto;
-    padding: 20px 10px;
+    padding: 30px 10px 30px 30px;
     /*padding-left: 10px;*/
     /*padding-top: 10px;*/
 }
@@ -31,8 +31,8 @@ hr {
     height: 100%;
 }
 .profile-center {
-    width: 250px;
-    padding: 0 0 0 10px;
+    width: 220px;
+    padding: 0 0 0 15px;
     margin-right: 150px;
 }
 
@@ -167,8 +167,9 @@ hr {
     padding: 10px;
 }
 .second-container, .third-container, .fourth-container {
+    width: 800px;
     padding: 20px 10px;
-    margin : 10px;
+    margin : 10px auto;
 }
 .second-container .selling-count-label {
     /*font-family: 'Noto Sans KR', sans-serif;*/
@@ -177,7 +178,7 @@ hr {
     color: #ee9209;
     /*margin-right: 10px;*/
     margin: auto 10px;
-    font-size: 22px;
+    font-size: 25px;
 }
 .second-container .home-btn{
 
@@ -201,7 +202,7 @@ hr {
     color: #ee9209;
     /*margin-right: 10px;*/
     margin: auto 10px;
-    font-size: 20px;
+    font-size: 25px;
 }
 
 .third-container .no-manner-detail {
@@ -212,8 +213,42 @@ hr {
     text-align: center;
 }
 .third-container .each-content {
+    padding: 0 10px;
+    height: 70px;
+    /*position: relative;*/
+    display: flex;
+}
+
+.third-container .each-content .col1 {
+    font-size: 22px;
+    display: inline-block;
+    /*position: absolute;*/
+    /*top: 10px;*/
+}
+.third-container .each-content .col2 {
     font-size: 20px;
+    display: inline-block;
+    position:relative;
+    margin: 10px 0 0 25px;
+    width:auto;
+    height:45px;
+    background: rgba(130, 130, 134, 0.82);
+    border-radius: 10px;
+    color: #e9ecef;
     padding: 10px;
+}
+.third-container .each-content .col2:after {
+    border-top:15px solid rgba(130, 130, 134, 0.82);
+    border-left: 15px solid transparent;
+    border-right: 0px solid transparent;
+    border-bottom: 0px solid transparent;
+    content:"";
+    position:absolute;
+    top:10px;
+    left:-15px;
+}
+.third-container .each-content .col2 p{
+    margin: auto 0;
 }
 
 .fourth-container .manner-message-label {
@@ -224,7 +259,7 @@ hr {
     /*margin-right: 10px;*/
     /*margin-top: 10px;*/
     margin: auto 10px;
-    font-size: 20px;
+    font-size: 25px;
 }
 .fourth-container .no-message {
     font-size: 15px;
@@ -234,14 +269,84 @@ hr {
     text-align: center;
 }
 
-.fourth-container .profile-img{
-    width: 30px;
-    height: 30px;
+.fourth-container .message-one {
+    display: flex;
+    position: relative;
+    flex-direction: column;
+    width: 100%;
+    height: 170px;
+    font-size: 20px;
+    padding: 20px 10px 10px 10px;
+    border-radius: 20px;
+    border-bottom: 1px solid #e9ecef;
+}
+.fourth-container .message-one:last-of-type {
+    border-bottom: none;
+}
+
+.fourth-container .message-one p{
+     display: inline-block;
+ }
+.fourth-container .message-one .profile-line{
+    display: flex;
+    flex: 1;
+    width: 700px;
+}
+.fourth-container .message-one .content-line, .time-line{
+     flex: 1;
+     width: 750px;
+ }
+.fourth-container .message-one .profile-line .message-profile-img{
+    width: 50px;
+    height: 50px;
     overflow: hidden;
     border-radius: 50%;
     border: 1px solid #e9ecef;
+    display: inline-block;
 }
-.fourth-container .profile-img img{
-    width: 100%;
-    height: 100%;
+.fourth-container .message-one .profile-line .message-profile-img img{
+    width: 50px;
+    height: 50px;
+}
+
+.fourth-container .message-one .profile-line .message-info{
+    display: flex;
+}
+.fourth-container .message-one .profile-line .message-info .nickname{
+    flex: 1;
+    width: auto;
+    margin: 5px 15px;
+    height: 40px;
+    font-size: 20px;
+}
+.fourth-container .message-one .profile-line .message-info .loc{
+    flex: 1;
+    width: auto;
+    margin: 0;
+    height: 50px;
+    font-size: 15px;
+    color: #777;
+    line-height: 1;
+    vertical-align: top;
+    padding-top: 12px;
+}
+.fourth-container .message-one .content-line {
+    padding: 0 0 0 65px;
+    width: 80%;
+    height: auto;
+}
+.fourth-container .message-one .time-line {
+    padding: 0 0 0 65px;
+    width: 80%;
+    height: auto;
+    font-size: 15px;
+    color: #999;
+    margin: 0;
+}
+.fourth-container .message-one .setting-bar .review_modal_btn{
+    position: absolute;
+    left: 650px;
+    top : 15px;
+    cursor: pointer;
+    color: #555;
 }
