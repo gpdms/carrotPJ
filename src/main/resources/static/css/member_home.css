@@ -1,4 +1,4 @@
-a {color: #fff; text-decoration: none; outline: none}
+a {color: black; text-decoration: none; outline: none}
 a:hover, a:active {text-decoration: none; cursor: pointer; color: black}
 
 hr {
@@ -319,6 +319,14 @@ hr {
     height: 40px;
     font-size: 20px;
 }
+.fourth-container .message-one .profile-line .message-info .nickname:hover, nickname:active{
+    flex: 1;
+    width: auto;
+    margin: 5px 15px;
+    height: 40px;
+    font-size: 20px;
+    text-decoration: underline;
+}
 .fourth-container .message-one .profile-line .message-info .loc{
     flex: 1;
     width: auto;
@@ -328,7 +336,7 @@ hr {
     color: #777;
     line-height: 1;
     vertical-align: top;
-    padding-top: 12px;
+    padding-top: 7px;
 }
 .fourth-container .message-one .content-line {
     padding: 0 0 0 65px;
