@@ -4,7 +4,9 @@ import com.exercise.carrotproject.domain.chat.dto.ChatRoomDto;
 import com.exercise.carrotproject.domain.chat.service.ChatServiceImpl;
 import com.exercise.carrotproject.domain.enumList.Category;
 import com.exercise.carrotproject.domain.enumList.Loc;
+import com.exercise.carrotproject.domain.member.MemberEntityDtoMapper;
 import com.exercise.carrotproject.domain.member.entity.Member;
+import com.exercise.carrotproject.domain.member.service.MemberServiceImpl;
 import com.exercise.carrotproject.domain.post.dto.MtPlaceDto;
 import com.exercise.carrotproject.domain.post.dto.SoldPostDto;
 import com.exercise.carrotproject.domain.post.entity.Post;
@@ -53,6 +55,7 @@ public class PostController {
     private final PostServiceImpl postService;
     private final TradeServiceImpl tradeService;
     private final ChatServiceImpl chatService;
+    private final MemberServiceImpl memberService;
 
     @Value("${default.postImg}")
     private String defaultPostImg;
@@ -90,7 +93,7 @@ public class PostController {
         List<PostDto> postList = postService.selectPostListByCategory(loginMember, selectedCategory);
         model.addAttribute("list", postService.paging(postList, pageable));
         model.addAttribute("category", selectedCategory);
-        return "post/board";
+        return "post/categoryList";
     }
 
     //게시글 상세정보 detail
@@ -416,16 +419,24 @@ public class PostController {
     }
 
 
-    //판매중인 상품
+    //한 판매자가 판매중인 상품
     @GetMapping("/post/onSale/{memId}")
-    public void onSalePost(@PathVariable String memId, Model model){
-
+    public String onSalePost(@PathVariable String memId, Model model, @PageableDefault(page = 0, size = 20)Pageable pageable){
+        //판매자 정보
+        Member member = memberService.findOneMember(memId);
+        MemberDto seller = MemberEntityDtoMapper.toMemberDto(member);
         //판매중,예약중 게시글
         Map map = postService.selectPostBySellState(memId);
         List<PostDto> onSaleAndRsvList = (List) map.get("onSaleAndRsvList");
-        model.addAttribute("postList", onSaleAndRsvList);
+        //페이징
+        Page<PostDto> page = postService.paging(onSaleAndRsvList, pageable);
+
+        model.addAttribute("seller", seller);
+        model.addAttribute("list", page);
+        return "post/sellerSellList";
     }
 
+    //검색
     @GetMapping("/post/search")
     public String searchPost(@RequestParam String word,
                            HttpSession session,

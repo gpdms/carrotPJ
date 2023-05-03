@@ -45,7 +45,7 @@
             <div class="second-container">
                 <div class="title">
                     <p class="selling-count-label" th:text="|판매 물품 (${countPost}) |"></p>
-                    <button class="home-btn" type="button"> >&nbsp;더보기</button> <br/>
+                    <button class="home-btn" type="button" th:onclick="|location.href = '@{|/post/onSale/${member.memId}|}'|"> >&nbsp;이동</button> <br/>
                 </div>
                 <div class="px-2 mt-3 content">
                     <div th:if="${postList.isEmpty()}">

@@ -121,29 +121,30 @@
             <div class="modal-dialog">
                 <div class="modal-content">
                     <div class="modal-header">
-                        <h5 class="modal-title">게시글 관리</h5>
+                        <h5 class="modal-title fs-5 fw-bold">게시글 관리</h5>
                         <button type="button" class="btn-close"
                                 data-bs-dismiss="modal"></button>
                     </div>
                     <div class="modal-body">
                         <!--수정-->
-                        <div>
-                            <a th:href="|/post/updatePost/${post.postId}|"> 게시글수정</a>
+                        <div class="fs-6 fw-normal cursor">
+                            <a class="a-deco-none" th:href="|/post/updatePost/${post.postId}|"> 게시글수정</a>
                         </div>
-
+                        <hr/>
                         <!--숨김-->
-                        <div th:onclick="hideState([[${post.postId}]], [[${post.hideState.getHideStateName()}]])">
+                        <div class="fs-6 fw-normal cursor" th:onclick="hideState([[${post.postId}]], [[${post.hideState.getHideStateName()}]])">
                             <a th:if="${post.hideState.getHideStateName()} == '보임'" > 게시글 숨기기</a>
                             <a th:if="${post.hideState.getHideStateName()} == '숨김'" > 게시글 보이기</a>
                         </div>
+                        <hr/>
                         <!--삭제-->
-                        <div th:onclick="deletePost([[${post.postId}]])">
+                        <div class="fs-6 fw-normal cursor" th:onclick="deletePost([[${post.postId}]])">
                             <a > 게시글삭제</a>
                         </div>
                     </div>
 
                     <div class="modal-footer">
-                        <button type="button" class="btn-secondary"
+                        <button type="button" class="btn-orange"
                                 data-bs-dismiss="modal">Close</button>
 
                     </div>
@@ -158,7 +159,7 @@
         <!-- 판매자의 판매상품-->
             <div class="container px-4 px-lg-5 mt-5 bg-light w-75 py-sm-3">
                 <h2 class="fs-4 fw-bold mb-4" th:text="|${post.member.nickname}님의 판매상품|" style="display: inline-block;">Related products</h2>
-                <a href="#" class="fw-normal mb-4" style="text-decoration: none; margin-left: 5px; color: black;"> &gt; 더보기 </a>
+                <a th:href="@{/post/onSale/{memId}(memId=${post.member.memId})}" class="fw-normal mb-4 a-deco-none" style="margin-left: 5px;"> &gt; 더보기 </a>
                 <div class="row gx-4 gx-lg-5 row-cols-2 row-cols-md-3 row-cols-xl-4 justify-content-center">
                     <div class="col mb-5" th:each = "post, index :${sellerProductList}" th:if="${index.index} < 4">
                         <div class="card h-100" th:onclick="|location.href='@{|/post/detail/${post.postId}|}'|" style="cursor: pointer;">
