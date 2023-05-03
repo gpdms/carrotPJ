@@ -6,3 +6,10 @@
     border-color: #dc3545;
     color: #dc3545;
 }
+
+.rv-box{
+    background-color: #fceac7;
+    border-radius: 0.3rem;
+    padding: 1rem;
+}
+
