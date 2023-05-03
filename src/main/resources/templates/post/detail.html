@@ -22,12 +22,21 @@
                     <!--제품사진-->
                     <div class="container w-75">
                         <div class="slider">
-<!--                        <li th:each="imgId:${imgIds}">-->
                             <img class="card-img-detail mb-5 mb-md-0" th:each="imgId:${imgIds}" th:src="|/post/img/${imgId}|" alt="..." style="object-fit: cover;"/>
                         </div>
                     </div>
-<!--                        </li>-->
                     <div class="container w-75">
+                        <!--판매여부선택/게시글관리버튼-->
+                        <div class="mb-3">
+                            <!--판매여부-->
+                            <select id="selSellState" class="form-select-sm" th:if="${session.loginMember.memId}==${post.member.memId}" th:onchange="sellState([[${post.postId}]])">
+                                <!--thymeleaf이용해 Enum클래스 정보 바로 가져오기-->
+                                <option th:each = "sellStateEnum:${T(com.exercise.carrotproject.domain.enumList.SellState).values()}" th:value="${sellStateEnum.getSellStateName()}" th:text="${sellStateEnum.getSellStateName()}" th:selected="${sellStateEnum.getSellStateName()}==${post.sellState.getSellStateName()}"></option>
+                            </select>
+                            <!--게시글 관리: 삭제,숨김,수정-->
+                            <button th:if="${session.loginMember.memId}==${post.member.memId}" class="btn btn-outline-dark btn-sm float-end" onclick="viewModal()">게시글 관리</button>
+                        </div>
+
                        <!--프로필-->
                         <div class="d-flex py-sm-3 bd-top-bottom cursor" th:onclick="|location.href='@{/home/{memId}(memId=${post.member.memId})}'|">
                             <div class="profile-img">
@@ -49,15 +58,7 @@
                             <i th:if="${post.member.mannerScore} > 36.5" class="bi bi-thermometer-high fs-2 text-danger"></i>
                         </div>
 
-                        <div class="mt-3">
-                            <!--판매여부-->
-                            <select id="selSellState" class="form-select-sm" th:if="${session.loginMember.memId}==${post.member.memId}" th:onchange="sellState([[${post.postId}]])">
-                                <!--thymeleaf이용해 Enum클래스 정보 바로 가져오기-->
-                                <option th:each = "sellStateEnum:${T(com.exercise.carrotproject.domain.enumList.SellState).values()}" th:value="${sellStateEnum.getSellStateName()}" th:text="${sellStateEnum.getSellStateName()}" th:selected="${sellStateEnum.getSellStateName()}==${post.sellState.getSellStateName()}"></option>
-                            </select>
-                            <!--게시글 관리: 삭제,숨김,수정-->
-                            <button th:if="${session.loginMember.memId}==${post.member.memId}" class="btn btn-outline-dark btn-sm float-end" onclick="viewModal()">게시글 관리</button>
-                        </div>
+
                         <div class="mt-3">
                             <!--제목-->
                             <h1 class="fs-2 fw-bolder" th:text="${post.title}">제목</h1>
