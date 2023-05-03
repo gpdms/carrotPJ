@@ -5,113 +5,108 @@
 
 <head layout:fragment="head">
     <title>리뷰 보기</title>
-    <style>
-        .form-container {
-            max-width: 560px;
-            padding-left: 100px;
-        }
-        .field-error {
-            border-color: #dc3545;
-            color: #dc3545;
-        }
-    </style>
+    <link href="/css/reviewDetail.css" rel="stylesheet" />
 </head>
 
 <div layout:fragment="content">
-    <div class="form-container">
-        <div class="py-5 text-center">
-            <h2>리뷰</h2>
-        </div>
-        <hr class="my-4">
-
-        <div th:if="${reviewDetailForm.buyerIndicatorList != null}">
-            <div th:if="${reviewDetailForm.reviewState.stateCode == '0' && isReviewer}">
-                <h4 th:text="|${reviewDetailForm.buyerId}님에게 아쉬운 후기를 남겼어요|"></h4>
-                <h6 th:text="|${reviewDetailForm.buyerId}님과 ${reviewDetailForm.postTitle}을 거래했어요|"> </h6>
-                <hr class="my-4">
-                <p>메시지는 운영 팀에게만 전달돼요</p>
-                <p th:text="${reviewDetailForm.message}"> </p>
-                <ul>
-                    <th:block th:each="buyerIndicator : ${reviewDetailForm.buyerIndicatorList}">
-                        <li th:text="${buyerIndicator.description}"></li>
-                    </th:block>
-                </ul>
+<section class="py-5">
+    <div class="container px-4 my-5">
+        <div class="form-container">
+            <div class="py-5 text-center">
+                <h2>리뷰</h2>
             </div>
-            <div th:if="${reviewDetailForm.reviewState.stateCode != '0'}">
-                <div th:if="${isReviewer}">
-                    <h4 th:text="|${reviewDetailForm.buyerId}님에게 따뜻한 거래후기를 보냈어요|"></h4>
+            <hr class="my-4">
+
+            <div th:if="${reviewDetailForm.buyerIndicatorList != null}">
+                <div th:if="${reviewDetailForm.reviewState.stateCode == '0' && isReviewer}">
+                    <h4 th:text="|${reviewDetailForm.buyerId}님에게 아쉬운 후기를 남겼어요|"></h4>
                     <h6 th:text="|${reviewDetailForm.buyerId}님과 ${reviewDetailForm.postTitle}을 거래했어요|"> </h6>
-                    <p th:text="${reviewDetailForm.message}"> </p>
                     <hr class="my-4">
+                    <p>메시지는 운영 팀에게만 전달돼요</p>
+                    <p th:text="${reviewDetailForm.message}"> </p>
                     <ul>
                         <th:block th:each="buyerIndicator : ${reviewDetailForm.buyerIndicatorList}">
                             <li th:text="${buyerIndicator.description}"></li>
                         </th:block>
                     </ul>
                 </div>
-                <div th:unless="${isReviewer}">
-                    <h4 th:text="|${reviewDetailForm.sellerId}님이 보낸 따뜻한 후기가 도착했어요|"></h4>
-                    <h6 th:text="|${reviewDetailForm.sellerId}님과 ${reviewDetailForm.postTitle}을 거래했어요|"> </h6>
-                    <p th:text="${reviewDetailForm.message}"> </p>
-                    <hr class="my-4">
-                    <ul>
-                        <th:block th:each="sellerIndicator : ${reviewDetailForm.sellerIndicatorList}">
-                            <li th:text="${sellerIndicator.description}"></li>
-                        </th:block>
-                    </ul>
+                <div th:if="${reviewDetailForm.reviewState.stateCode != '0'}">
+                    <div th:if="${isReviewer}">
+                        <h4 th:text="|${reviewDetailForm.buyerId}님에게 따뜻한 거래후기를 보냈어요|"></h4>
+                        <h6 th:text="|${reviewDetailForm.buyerId}님과 ${reviewDetailForm.postTitle}을 거래했어요|"> </h6>
+                        <p th:text="${reviewDetailForm.message}"> </p>
+                        <hr class="my-4">
+                        <ul>
+                            <th:block th:each="buyerIndicator : ${reviewDetailForm.buyerIndicatorList}">
+                                <li th:text="${buyerIndicator.description}"></li>
+                            </th:block>
+                        </ul>
+                    </div>
+                    <div th:unless="${isReviewer}">
+                        <h4 th:text="|${reviewDetailForm.sellerId}님이 보낸 따뜻한 후기가 도착했어요|"></h4>
+                        <h6 th:text="|${reviewDetailForm.sellerId}님과 ${reviewDetailForm.postTitle}을 거래했어요|"> </h6>
+                        <p th:text="${reviewDetailForm.message}"> </p>
+                        <hr class="my-4">
+                        <ul>
+                            <th:block th:each="sellerIndicator : ${reviewDetailForm.sellerIndicatorList}">
+                                <li th:text="${sellerIndicator.description}"></li>
+                            </th:block>
+                        </ul>
+                    </div>
                 </div>
+                <button th:if="${isReviewer}"
+                        class="w-100 btn btn-secondary btn-lg"
+                        id="buyerDelBtn"> 삭제하기 </button>
             </div>
-            <button th:if="${isReviewer}"
-                    class="w-100 btn btn-secondary btn-lg"
-                    id="buyerDelBtn"> 삭제하기 </button>
-        </div>
 
-        <div th:if="${reviewDetailForm.sellerIndicatorList != null}">
-            <div th:if="${reviewDetailForm.reviewState.stateCode == '0' && isReviewer}">
-                <h4 th:text="|${reviewDetailForm.sellerId}님에게 아쉬운 후기를 남겼어요|"></h4>
-                <h6 th:text="|${reviewDetailForm.sellerId}님과 ${reviewDetailForm.postTitle}을 거래했어요|"> </h6>
-                <hr class="my-4">
-                <p>메시지는 운영 팀에게만 전달돼요</p>
-                <p th:text="${reviewDetailForm.message}"> </p>
-                <ul>
-                    <th:block th:each="sellerIndicator : ${reviewDetailForm.sellerIndicatorList}">
-                        <li th:text="${sellerIndicator.description}"></li>
-                    </th:block>
-                </ul>
-            </div>
-            <div th:if="${reviewDetailForm.reviewState.stateCode != '0'}">
-                <div th:if="${isReviewer}">
-                    <h4 th:text="|${reviewDetailForm.sellerId}님에게 따뜻한 거래후기를 보냈어요|"></h4>
+            <div th:if="${reviewDetailForm.sellerIndicatorList != null}">
+                <div th:if="${reviewDetailForm.reviewState.stateCode == '0' && isReviewer}">
+                    <h4 th:text="|${reviewDetailForm.sellerId}님에게 아쉬운 후기를 남겼어요|"></h4>
                     <h6 th:text="|${reviewDetailForm.sellerId}님과 ${reviewDetailForm.postTitle}을 거래했어요|"> </h6>
-                    <p th:text="${reviewDetailForm.message}"> </p>
                     <hr class="my-4">
+                    <p>메시지는 운영 팀에게만 전달돼요</p>
+                    <p th:text="${reviewDetailForm.message}"> </p>
                     <ul>
                         <th:block th:each="sellerIndicator : ${reviewDetailForm.sellerIndicatorList}">
                             <li th:text="${sellerIndicator.description}"></li>
                         </th:block>
                     </ul>
                 </div>
-                <div th:unless="${isReviewer}">
-                    <h4 th:text="|${reviewDetailForm.buyerId}님이 보낸 따뜻한 후기가 도착했어요|"></h4>
-                    <h6 th:text="|${reviewDetailForm.buyerId}님과 ${reviewDetailForm.postTitle}을 거래했어요|"> </h6>
-                    <p th:text="${reviewDetailForm.message}"> </p>
-                    <hr class="my-4">
-                    <ul>
-                        <th:block th:each="sellerIndicator : ${reviewDetailForm.sellerIndicatorList}">
-                            <li th:text="${sellerIndicator.description}"></li>
-                        </th:block>
-                    </ul>
+                <div th:if="${reviewDetailForm.reviewState.stateCode != '0'}">
+                    <div th:if="${isReviewer}">
+                        <h4 th:text="|${reviewDetailForm.sellerId}님에게 따뜻한 거래후기를 보냈어요|"></h4>
+                        <h6 th:text="|${reviewDetailForm.sellerId}님과 ${reviewDetailForm.postTitle}을 거래했어요|"> </h6>
+                        <p th:text="${reviewDetailForm.message}"> </p>
+                        <hr class="my-4">
+                        <ul>
+                            <th:block th:each="sellerIndicator : ${reviewDetailForm.sellerIndicatorList}">
+                                <li th:text="${sellerIndicator.description}"></li>
+                            </th:block>
+                        </ul>
+                    </div>
+                    <div th:unless="${isReviewer}">
+                        <h4 th:text="|${reviewDetailForm.buyerId}님이 보낸 따뜻한 후기가 도착했어요|"></h4>
+                        <h6 th:text="|${reviewDetailForm.buyerId}님과 ${reviewDetailForm.postTitle}을 거래했어요|"> </h6>
+                        <p th:text="${reviewDetailForm.message}"> </p>
+                        <hr class="my-4">
+                        <ul>
+                            <th:block th:each="sellerIndicator : ${reviewDetailForm.sellerIndicatorList}">
+                                <li th:text="${sellerIndicator.description}"></li>
+                            </th:block>
+                        </ul>
+                    </div>
                 </div>
+                <button th:if="${isReviewer}"
+                        class="w-100 btn btn-secondary btn-lg"
+                        id="sellerDelBtn"> 삭제하기 </button>
             </div>
-            <button th:if="${isReviewer}"
-                    class="w-100 btn btn-secondary btn-lg"
-                    id="sellerDelBtn"> 삭제하기 </button>
-        </div>
 
-        <button class="w-100 btn btn-secondary btn-lg"
-                onclick="history.go(-1); return false;"
-                type="button">이전으로</button>
-    </div> <!-- form-continer-->
+            <button class="w-100 btn btn-secondary btn-lg"
+                    onclick="history.go(-1); return false;"
+                    type="button">이전으로</button>
+        </div> <!-- form-continer-->
+    </div>
+</section>
 </div>
 
 <div layout:fragment="script" th:inline="javascript">

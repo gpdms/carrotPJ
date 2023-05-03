@@ -1,0 +1,8 @@
+.form-container {
+    max-width: 560px;
+    margin: 0 auto;
+}
+.field-error {
+    border-color: #dc3545;
+    color: #dc3545;
+}

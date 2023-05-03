@@ -9,31 +9,37 @@
 </head>
 
 <div layout:fragment="content">
-<section class="py-5" >
-    <h1>관심목록</h1>
-    <div class="container px-4 px-lg-5 mt-5">
-        <div th:if="${postList.isEmpty()}"><p>찜한 게시글이 없습니다.</p></div>
+<section class="py-5">
+    <div class="container px-4 my-5">
+        <section class="py-5" >
+            <h1 class="text-center">관심목록</h1>
+            <div class="container px-4 px-lg-5 mt-5">
+                <div class="fs-6 fw-normal text-secondary text-center" th:if="${postList.isEmpty()}">
+                    <p>찜한 게시글이 없습니다.</p>
+                </div>
 
-        <div class="row gx-4 gx-lg-5 row-cols-2 row-cols-md-3 row-cols-xl-4 justify-content-center">
-        <div class="col mb-5" th:each = "post:${postList}">
-            <div class="card h-100" th:onclick="|location.href='@{|/post/detail/${post.postId}|}'|" style="cursor: pointer;">
-                <!-- 제품사진-->
-                <img class="card-img-top" th:src="|/post/firstImg/${post.postId}|" alt="제품사진" />
-                <!-- Product details-->
-                <div class="card-body p-4">
-                    <div class="text-center">
-                        <!-- 제목-->
-                        <h5 class="fw-bolder" th:text="${post.title}">제목</h5>
-                        <!--지역, 시간-->
-                        <p class="fw">[[${post.loc.locName}]] / [[${post.createdTime}]]</p>
-                        <!-- 가격-->
-                        <h6 class="fw-bolder" th:if="${post.price}!=0" th:text="|${post.price}원|">가격</h6>
+                <div class="row gx-4 gx-lg-5 row-cols-2 row-cols-md-3 row-cols-xl-4 justify-content-center">
+                <div class="col mb-5" th:each = "post:${postList}">
+                    <div class="card h-100" th:onclick="|location.href='@{|/post/detail/${post.postId}|}'|" style="cursor: pointer;">
+                        <!-- 제품사진-->
+                        <img class="card-img-top" th:src="|/post/firstImg/${post.postId}|" alt="제품사진" />
+                        <!-- Product details-->
+                        <div class="card-body p-4">
+                            <div class="text-center">
+                                <!-- 제목-->
+                                <h5 class="fw-bolder" th:text="${post.title}">제목</h5>
+                                <!--지역, 시간-->
+                                <p class="fw">[[${post.loc.locName}]] / [[${post.createdTime}]]</p>
+                                <!-- 가격-->
+                                <h6 class="fw-bolder" th:if="${post.price}!=0" th:text="|${post.price}원|">가격</h6>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
+        </section>
     </div>
-</div>
 </section>
 
 

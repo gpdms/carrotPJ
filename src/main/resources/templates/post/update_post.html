@@ -56,9 +56,10 @@
             </div>
 
 
-            <!--숨김여부, 판매여부 hidden-->
+            <!--숨김여부, 판매여부 hidden, 조회수-->
             <input type="hidden" name="hideState" th:value="${post.hideState}" />
             <input type="hidden" name="sellState" th:value="${post.sellState}" />
+            <input type="hidden" name="hits" th:value="${post.hits}"/>
 
         </form>
 
