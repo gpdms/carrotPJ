@@ -1,0 +1,12 @@
+.form_container {
+    min-width: 560px;
+    padding-top: 30px;
+}
+.field-error {
+    border-color: #dc3545;
+    color: #dc3545;
+}
+.field-error-border {
+    border-color: #dc3545;
+}
+
