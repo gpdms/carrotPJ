@@ -20,7 +20,7 @@
         <section id="sec_onSale" class="py-5" >
             <h2>판매중</h2>
             <div class="container px-4 mt-5">
-                <div th:if="${onSaleAndRsv.isEmpty()}"><p class="fs-5 fw-normal text-secondary">판매중인 상품이 없습니다.</p></div>
+                <div th:if="${onSaleAndRsv.isEmpty()}"><p class="fs-6 fw-normal text-secondary">판매중인 상품이 없습니다.</p></div>
             <div class="row gx-4 gx-lg-5 row-cols-2 row-cols-md-3 row-cols-xl-4 justify-content-center">
                 <div class="col mb-6" th:unless="${onSaleAndRsv.isEmpty()}" th:each = "post:${onSaleAndRsv}">
                     <div class="card h-100" th:onclick="|location.href='@{|/post/detail/${post.postId}|}'|" style="cursor: pointer;">
@@ -60,7 +60,7 @@
 <section id="sec_sold" class="py-5">
     <h2>판매완료</h2>
     <div class="container px-4 mt-5">
-        <div th:if="${soldList.isEmpty()}"><p class="fs-5 fw-normal text-secondary">판매완료한 상품이 없습니다.</p></div>
+        <div th:if="${soldList.isEmpty()}"><p class="fs-6 fw-normal text-secondary">판매완료한 상품이 없습니다.</p></div>
         <div class="row gx-4 gx-lg-5 row-cols-2 row-cols-md-3 row-cols-xl-4 justify-content-center">
             <div class="col mb-6" th:unless="${soldList.isEmpty()}"  th:each = "soldPost:${soldList}">
                 <div class="card h-100" th:onclick="|location.href='@{|/post/detail/${soldPost.postDto.postId}|}'|" style="cursor: pointer;">
@@ -97,7 +97,7 @@
 <section id="sec_hidden" class="py-5">
     <h2>숨김</h2>
     <div class="container px-4 mt-5">
-        <div th:if="${hidePostList.isEmpty()}"><p class="fs-5 fw-normal text-secondary">숨긴 게시글이 없습니다.</p></div>
+        <div th:if="${hidePostList.isEmpty()}"><p class="fs-6 fw-normal text-secondary">숨긴 게시글이 없습니다.</p></div>
         <div class="row gx-4 gx-lg-5 row-cols-2 row-cols-md-3 row-cols-xl-4 justify-content-center">
             <div class="col mb-6" th:unless="${hidePostList.isEmpty()}" th:each = "hidePost:${hidePostList}">
             <div class="card h-100" th:onclick="|location.href='@{|/post/detail/${hidePost.postId}|}'|" style="cursor: pointer;">

@@ -4,7 +4,7 @@
       layout:decorate="~{layout/basic.html}">
 
 <head layout:fragment="head">
-    <title>중고거래 상품</title>
+    <title>판매상품</title>
 
 </head>
 <div layout:fragment="content">
@@ -12,14 +12,11 @@
     <div class="container px-4 my-5">
         <section class="py-5">
             <div>
-                <h1 class="text-center" th:if="${session.loginMember == null}">중고거래 상품</h1>
-                <h1 class="text-center" th:if="${session.loginMember != null}">[[${session.loginMember.loc.locName}]] 중고거래 상품</h1>
+                <h1 class="text-center">[[${seller.nickname}]]님의 판매상품</h1>
             </div>
-            <br/><br/>
-            <button class="btn-orange float-md-end" th:if="${session.loginMember != null}" th:onclick="|location.href='@{/post/uploadPage}'|">상품 올리기</button>
-            <p class="fs-6 fw-normal text-secondary text-center" th:if="${list.isEmpty()}">게시된 상품이 없습니다.</p>
-            <br/><br/>
                 <div class="container px-4 mt-5">
+                    <div class="fs-6 fw-normal text-secondary" th:if="${list.isEmpty()}"><p>게시된 상품이 없습니다.</p></div>
+
                     <div class="row gx-4 gx-lg-5 row-cols-2 row-cols-md-3 row-cols-xl-4 justify-content-center">
                         <div class="col mb-5" th:each = "post:${list}">
                             <div class="card h-100" th:onclick="|location.href='@{|/post/detail/${post.postId}|}'|" style="cursor: pointer;">
@@ -53,14 +50,15 @@
 
                     <!-- 전역 변수 선언 -->
                     <nav
-                            th:with="pageNumber = ${list.pageable.pageNumber}, pageSize = ${list.pageable.pageSize},
+                            th:with="sellerId = ${seller.memId},
+                            pageNumber = ${list.pageable.pageNumber}, pageSize = ${list.pageable.pageSize},
                             totalPages = ${list.totalPages}, startPage = ${T(java.lang.Math).floor(pageNumber / 10) * 10 + 1},
                             tempEndPage = ${startPage + 10 - 1}, endPage = (${tempEndPage < totalPages ? tempEndPage : totalPages})"
                             aria-label="Page navigation">
                         <ul class="pagination">
                             <!-- 처음으로 이동 -->
                             <li th:classappend="${pageNumber +1 == 1} ? 'disabled'" class="page-item">
-                                <a class="page-link" th:href="@{/post/board(page=0)}">
+                                <a class="page-link" th:href="@{/post/onSale/{memId}(memId=${sellerId},page=0)}">
                                     <span>&laquo; </span>
     <!--                                <span class="sr-only">First</span>-->
                                 </a>
@@ -68,7 +66,7 @@
 
                             <!-- 이전으로 이동 -->
                             <li th:classappend="${list.first} ? 'disabled'" class="page-item">
-                                <a class="page-link" th:href="${list.first} ? '#' : @{/post/board(page=${pageNumber - 1})}" aria-label="Previous">
+                                <a class="page-link" th:href="${list.first} ? '#' : @{/post/onSale/{memId}(memId=${sellerId}, page=${pageNumber - 1})}" aria-label="Previous">
                                     <span aria-hidden="true">&lt;</span>
     <!--                                <span class="sr-only">Previous</span>-->
                                 </a>
@@ -76,12 +74,12 @@
 
                             <!-- 특정 페이지로 이동 -->
                             <li th:each="page: ${#numbers.sequence(startPage, endPage)}" th:classappend="${page == pageNumber + 1} ? 'active'" class="page-item">
-                                <a th:text="${page}" class="page-link" th:href="@{/post/board(page=${page - 1})}"></a>
+                                <a th:text="${page}" class="page-link" th:href="@{/post/onSale/{memId}(memId=${sellerId}, page=${page - 1})}"></a>
                             </li>
 
                             <!-- 다음으로 이동 -->
                             <li th:classappend="${list.last} ? 'disabled'" class="page-item">
-                                <a class="page-link" th:href="${list.last} ? '#' : @{/post/board(page=${pageNumber + 1})}" aria-label="Next">
+                                <a class="page-link" th:href="${list.last} ? '#' : @{/post/onSale/{memId}(memId=${sellerId}, page=${pageNumber + 1})}" aria-label="Next">
                                     <span aria-hidden="true">&gt;</span>
     <!--                                <span class="sr-only">Next</span>-->
                                 </a>
@@ -89,7 +87,7 @@
 
                             <!-- 마지막으로 이동 -->
                             <li th:classappend=" ${pageNumber +1 == totalPages} ? 'disabled'" class="page-item">
-                                <a class="page-link" th:href="@{/post/board(page=${totalPages - 1})}">
+                                <a class="page-link" th:href="@{/post/onSale/{memId}(memId=${sellerId}, page=${totalPages - 1})}">
                                     <span>&raquo; </span>
     <!--                                <span class="sr-only">Last</span>-->
                                 </a>
