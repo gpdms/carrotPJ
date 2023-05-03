@@ -4,12 +4,32 @@
       layout:decorate="~{layout/basic.html}">
 <head layout:fragment="head">
     <title>망고마켓</title>
+    <style>
+        .main-text{
+            width: 550px;
+            object-fit: contain;
+        }
+        .main-img{
+            width: 550px;
+            object-fit: contain;
+        }
+        .main-container{
+            margin: 0 auto;
+            display: flex;
+        }
+    </style>
 </head>
 
 <div layout:fragment="content">
-    <div class="bg-light-orange">
-        <img src="/css/images/main_home.png">
-    </div>
+    <section class="py-5">
+        <div class="container px-4 bg-light-orange">
+            <div class="main-container py-5 px-5">
+                <img class="main-text" src="/css/images/main_home_text.png">
+                <img class="main-img" src="/css/images/main_home_img.png">
+
+            </div>
+        </div>
+    </section>
 </div>
 
 <script layout:fragment="script" th:inline="javascript">
