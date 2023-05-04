@@ -4,7 +4,6 @@
       layout:decorate="~{layout/basic.html}">
 <head layout:fragment="head">
     <title>홈 화면</title>
-<!--    <link href="/css/profile.css" rel="stylesheet" />-->
     <link href="/css/review_modal.css" rel="stylesheet" />
     <link href="/css/member_home.css" rel="stylesheet" />
     <script src="https://kit.fontawesome.com/b5ffac9792.js" crossorigin="anonymous"></script>
@@ -135,8 +134,7 @@
                             </div>
                             <div class="message-info">
                                 <div th:if="${review.buyer != null}">
-                                    <a th:if="${review.buyer != null}"
-                                       th:href="@{/home/{memId}(memId=${review.buyer?.memId})}"
+                                    <a th:href="@{/home/{memId}(memId=${review.buyer?.memId})}"
                                        class="nickname" th:text="|${review.buyer.nickname}|"> </a>
                                     <p class="loc" th:text="|${review.buyer.loc.locName} &#183; 구매자|"></p>
                                 </div>

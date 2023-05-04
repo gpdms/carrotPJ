@@ -7,7 +7,6 @@ import com.exercise.carrotproject.domain.enumList.SellState;
 import com.exercise.carrotproject.domain.member.dto.MemberDto;
 import com.exercise.carrotproject.domain.member.entity.Member;
 import com.exercise.carrotproject.domain.member.entity.QBlock;
-import com.exercise.carrotproject.domain.member.repository.BlockCustomRepository;
 import com.exercise.carrotproject.domain.post.dto.PostDto;
 import com.exercise.carrotproject.domain.post.dto.QSoldPostDto;
 import com.exercise.carrotproject.domain.post.dto.SoldPostDto;
