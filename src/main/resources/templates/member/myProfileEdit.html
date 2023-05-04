@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout/basic.html}">
+<head layout:fragment="head">
+    <title>회원 정보</title>
+<!--    <link href="/css/profile.css" rel="stylesheet" />-->
+    <link href="/css/member_info.css" rel="stylesheet" />
+    <style>
+        /*.form_container {
+            !*min-width: 560px;*!
+            padding-top: 100px;
+        }*/
+
+    </style>
+</head>
+<div layout:fragment="content">
+    <div class="container info-container my-5">
+        <!--메뉴 바 (왼쪽)-->
+        <div th:replace="~{/fragments/myPage_nav.html :: fragment-info-nav}"></div>
+        <!--내용 (오른쪽)-->
+        <div class="info-content">
+            <div class="py-3 text-center">
+                <h2 style="color: #555;">개인정보 수정</h2>
+            </div>
+            <div class="edit-form">
+                <h4 class="edit-title"> 프로필 수정 </h4>
+                <form id="profileEditForm" style="width:300px">
+                    <input type="hidden" name="memId" th:value="${profileForm.memId}" >
+                    <div class="pf-input img-form">
+                        <div class="profile-img" id="profile-img">
+                            <img th:src="@{|/members/${profileForm.memId}/profileImg|}" alt="프로필이미지">
+                        </div>
+                        <label class="input-file-btn" for="inputImg">
+                            이미지 선택
+                        </label>
+                        <input type="file" id="inputImg"  name="profImg"
+                               style="display: none"
+                               th:onchange="pfEditBtnActive()">
+                        <div id="image-error"></div>
+                    </div>
+                    <div class="pf-input">
+                        <label for="nickname">닉네임</label>
+                        <input type="text" id="nickname" name="nickname"
+                               class="form-control" th:value="${profileForm.nickname}"
+                               th:oninput="pfEditBtnActive()">
+                        <div id="nick-error"></div>
+                    </div>
+                    <div class="pf-input">
+                        <label for="loc">내 동네</label>
+                        <select id="loc" name="loc" class="form-select" th:onchange="pfEditBtnActive()">
+                            <th:block th:each="locValue:${T(com.exercise.carrotproject.domain.enumList.Loc).values()}">
+                                <option th:value="${locValue}" th:if="${!locValue.locCode.equals(profileForm.loc.locCode)}">
+                                    [[${locValue.locName}]]</option>
+                                <option th:value="${locValue}" th:if="${locValue.locCode.equals(profileForm.loc.locCode)}" selected>
+                                    [[${locValue.locName}]]</option>
+                            </th:block>
+                        </select>
+                        <!--<div class="field-error" th:errors="*{profileForm.loc}" />-->
+                    </div>
+                    <button class="edit-btn w-50 btn-orange btn-group-sm"
+                            id="pfEditBtn" disabled type="submit">프로필 수정</button>
+                </form>
+            </div>
+        </div> <!-- /form-container -->
+    </div>
+</div>
+
+<div layout:fragment="script">
+<script th:inline="javascript">
+    function pfEditBtnActive() {
+        const target = document.getElementById('pfEditBtn');
+        target.disabled = false;
+    }
+    $("#inputImg").change(function(e){
+        let file = e.target.files[0]; //선택한 파일을 가져옴.
+        //업로드 가능 파일인지 체크
+        if(!checkSize(file.size)){
+            return false;
+        }
+        preview(file);
+    });
+    function checkSize(fileSize){
+        var maxSize = 20971520;  //20MB
+        if(fileSize >= maxSize){
+            alert('이미지 크기가 초과되었습니다.');
+            $("#inputImage").val("");  //파일 초기화
+            return false;
+        }
+        return true;
+    }
+    function preview(f){
+        //파일을 읽기 위한 FileReader객체 생성
+        const reader = new FileReader();
+        reader.onload = function (e) {
+            //파일 읽어들이기를 성공했을때 호출되는 이벤트 핸들러
+            //div에 이미지 추가
+            $('#profile-img').empty();
+            let str = `<img id="${f.lastModified}" src="${e.target.result}" title="${f.name}">`;
+            $(str).appendTo('#profile-img');
+        }
+        reader.readAsDataURL(f); //reader에게 e.target.files[0](업로드된 파일)를 URL로 읽으라고 명령
+    }
+
+    $('#profileEditForm').on('submit', function(e) {
+        e.preventDefault();
+        let memId = [[${profileForm.memId}]];
+        let url = `/members/${memId}/edit/profile`;
+        const formData = new FormData($('#profileEditForm')[0]);
+        $.ajax({
+            url: url,
+            type: "PATCH",
+            data: formData,
+            contentType: false,
+            processData: false,
+            enctype: 'multipart/form-data',
+            headers: {
+                "Accept": "application/json"
+            }
+        })
+            .done(function (data) {
+                console.log(data.member);
+                alert('프로필 변경에 성공했습니다');
+                // location.reload()
+                // console.log("수정!")
+                location.reload($('#nav-pf-img'));
+                $('#nav-pf-nick').replaceWith(`<p id="nav-pf-nick"> ${data.member.nickname}</p>`);
+            })
+            .fail(function (err) {
+                alert('프로필 변경에 실패했습니다');
+                const message = err.responseJSON;
+                console.log(message);
+                if (message.nickname) {
+                    $('#nick-error').replaceWith(`<div id="nick-error" class="field-error">${message.nickname}</div>`)
+                    $("#nickname").addClass("field-error-border");
+                }
+                if ('fail-nickname' in message) {
+                    $('#nick-error').replaceWith(`<div id="nick-error" class="field-error">중복된 닉네임입니다.</div>`)
+                    $("#nickname").addClass("field-error-border");
+                }
+                if ('fail-image' in message) {
+                    $('#image-error').replaceWith(`<div id="image-error" class="field-error">
+                                    프로필 사진이 이미지 파일이 아닙니다. .jpg, .png, .gif의 이미지 파일만 업로드 가능합니다.
+                                    </div>`)
+                }
+                if (!message.nickname && !'fail-nickname' in message && !'fail-image' in message)
+                    alert('프로필 변경에 실패했습니다');
+            });
+    })
+
+/*    function pfImgRefresh (memId) {
+        $.ajax({
+            url: `/members/${memId}/profileImg`,
+            type: "get",
+        }).done(function(data) {
+            console.log(data);
+            $('#nav-pf-img').replaceWith(`<div class="profile-img" id="nav-pf-img">
+                <img src="/members/${memId}/profileImg" alt="프로필이미지">
+            </div>`)
+        })
+    }*/
+
+
+    /*
+    const profileEditForm = document.getElementById('profileEditForm');
+    profileEditForm.addEventListener('submit', (e) => {
+        e.preventDefault();
+        let memId = [[${profileForm.memId}]];
+        let url = `/members/${memId}/edit/profile`;
+        console.log(url);
+        const formData= new FormData(profileEditForm);
+        fetch(url, {
+            method: "PATCH",
+            body: formData,
+            headers: {
+                "Accept": "application/json"
+            }
+        })
+        .then((response) => {
+            if (!response.ok){
+                return response.text().then(text => { throw new Error(text) })
+            } else {
+                return response.json()
+            };
+        })
+        .then((data) => {
+            console.log(data.member);
+            alert('프로필 변경에 성공했습니다');
+        })
+        .catch((error) => {
+            const failUpdate = JSON.parse(error.message).fail_update;
+            if(failUpdate == 'imageType') {
+                alert('프로필 사진이 이미지 파일이 아닙니다. .jpg, .png, .gif의 이미지 파일만 업로드 가능합니다.');
+            } else{
+                alert('프로필 변경에 실패했습니다');
+            }
+        });
+    });*/
+
+/*function buyListView() {
+    let memId = [[${session.loginMember.memId}]];
+    let url = '/members/buyList'+memId
+    $.ajax({
+        type: 'get',
+        url: url,
+        success: function (data) {
+            $("#buyList").replaceWith(`
+                                    `);
+
+        },
+        error: function (err) {
+        }
+    })
+}
+
+    function sellListView() {
+        let memId = [[${session.loginMember.memId}]];
+        let url = '/members/sellList'+memId
+        $.ajax({
+            type: 'get',
+            url: url,
+            success: function (data) {
+                $("#buyList").replaceWith(`<div class="user_name" id="user_nick"> ${nickname} </div>`
+                );
+
+                $("#sellList").replaceWith(`<div id="modal_nick"> ${nickname}님의 프로필 </div>`);
+            },
+            error: function (err) {
+            }
+        })
+    }*/
+</script>
+</div>

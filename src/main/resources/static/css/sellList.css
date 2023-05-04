@@ -41,3 +41,7 @@
 .card-body {
     height: 7rem;
 }
+
+#sec_onSale, #sec_sold, #sec_hidden {
+    padding-left: 20px;
+}

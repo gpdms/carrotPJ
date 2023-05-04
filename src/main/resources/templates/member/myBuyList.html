@@ -6,50 +6,50 @@
 <head layout:fragment="head">
     <title>구매 내역</title>
     <link href="/css/sellList.css" rel="stylesheet" />
+    <link href="/css/member_info.css" rel="stylesheet" />
 </head>
 
 
 <div layout:fragment="content">
-<section class="py-5">
-    <div class="container px-4 my-5">
-        <section class="py-5">
-            <h2 class="text-center">[[${memId}]]님의 구매 내역</h2>
-            <div class="container px-4 px-lg-5 mt-5">
-                <th:block th:if="${buyList.isEmpty()}">
-                    <h4 class="fs-6 fw-normal text-secondary text-center">구매한 내역이 없습니다.</h4>
-                </th:block>
-                <div class="row gx-4 gx-lg-5 row-cols-2 row-cols-md-3 row-cols-xl-4 justify-content-center">
-                    <th:block th:unless="${buyList.isEmpty()}" th:each="buyOne : ${buyList}">
-                        <div class="col mb-5">
-                            <div class="card h-100" th:onclick="|location.href='@{|/post/detail/${buyOne.postDto.postId}|}'|" style="cursor: pointer;">
-                                <!-- 제품사진-->
-                                <img class="card-img-top" th:src="|/post/firstImg/${buyOne.postDto.postId}|" alt="제품사진" />
-                                <div class="card-body p-3">
-                                    <div class="text-center">
-                                        <!-- 제목-->
-                                        <h5 class="fw-bolder text-truncate" th:text="${buyOne.postDto.title}">제목</h5>
-                                        <!--지역, 시간-->
-                                        <p class="fs-7 fw-normal text-secondary">[[${buyOne.postDto.loc.locName}]] / [[${buyOne.postDto.createdTime}]]</p>
-                                        <!-- 가격-->
-                                        <h6 class="fw-bolder" th:if="${buyOne.postDto.price}!=0" th:text="|${buyOne.postDto.price}원|">가격</h6>
+    <div class="container info-container my-5">
+        <div th:replace="~{/fragments/myPage_nav.html :: fragment-info-nav}"></div>
+        <div class="info-content">
+                <h2 class="text-center mb-4">구매 내역</h2>
+                <div class="container px-4 px-lg-5 mt-5">
+                    <th:block th:if="${buyList.isEmpty()}">
+                        <h4 class="fs-6 fw-normal text-secondary text-center">구매한 내역이 없습니다.</h4>
+                    </th:block>
+                    <div class="row gx-4 gx-lg-5 row-cols-2 row-cols-md-3 row-cols-xl-3 justify-content-center">
+                        <th:block th:unless="${buyList.isEmpty()}" th:each="buyOne : ${buyList}">
+                            <div class="col mb-5">
+                                <div class="card h-100" th:onclick="|location.href='@{|/post/detail/${buyOne.postDto.postId}|}'|" style="cursor: pointer;">
+                                    <!-- 제품사진-->
+                                    <img class="card-img-top" th:src="|/post/firstImg/${buyOne.postDto.postId}|" alt="제품사진" />
+                                    <div class="card-body p-3">
+                                        <div class="text-center">
+                                            <!-- 제목-->
+                                            <h5 class="fw-bolder text-truncate" th:text="${buyOne.postDto.title}">제목</h5>
+                                            <!--지역, 시간-->
+                                            <p class="fs-7 fw-normal text-secondary">[[${buyOne.postDto.loc.locName}]] / [[${buyOne.postDto.createdTime}]]</p>
+                                            <!-- 가격-->
+                                            <h6 class="fw-bolder" th:if="${buyOne.postDto.price}!=0" th:text="|${buyOne.postDto.price}원|">가격</h6>
+                                        </div>
                                     </div>
                                 </div>
+                                <div class="d-flex">
+                                    <span class="span-inner font-orange fw-bold" th:if="${buyOne.reviewSellerId == 0}"
+                                          th:onclick="|location.href='@{/reviews/seller(postId=${buyOne.postDto.postId})}'|">
+                                        리뷰 남기기</span>
+                                    <span class="span-inner" th:if="${buyOne.reviewSellerId != 0}"
+                                          th:onclick="|location.href='@{/reviews/seller/{reviewSellerId}(reviewSellerId=${buyOne.reviewSellerId})}'|">
+                                        리뷰 보기</span>
+                                </div>
                             </div>
-                            <div class="d-flex">
-                                <span class="span-inner font-orange fw-bold" th:if="${buyOne.reviewSellerId == 0}"
-                                      th:onclick="|location.href='@{/reviews/seller(postId=${buyOne.postDto.postId})}'|">
-                                    리뷰 남기기</span>
-                                <span class="span-inner" th:if="${buyOne.reviewSellerId != 0}"
-                                      th:onclick="|location.href='@{/reviews/seller/{reviewSellerId}(reviewSellerId=${buyOne.reviewSellerId})}'|">
-                                    리뷰 보기</span>
-                            </div>
-                        </div>
-                    </th:block>
+                        </th:block>
+                    </div>
                 </div>
-            </div>
-        </section>
+        </div>
     </div>
-</section>
 </div>
 
 <div layout:fragment="script" th:inline="javascript">
