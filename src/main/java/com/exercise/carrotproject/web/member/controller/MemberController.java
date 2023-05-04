@@ -4,15 +4,11 @@ package com.exercise.carrotproject.web.member.controller;
 import com.exercise.carrotproject.domain.enumList.Role;
 import com.exercise.carrotproject.domain.member.dto.MemberDto;
 import com.exercise.carrotproject.domain.member.entity.Member;
-import com.exercise.carrotproject.domain.member.repository.MemberRepository;
 import com.exercise.carrotproject.domain.member.service.MemberServiceImpl;
 import com.exercise.carrotproject.domain.post.dto.PostDto;
 import com.exercise.carrotproject.domain.post.dto.SoldPostDto;
-import com.exercise.carrotproject.domain.post.dto.WishDto;
 import com.exercise.carrotproject.domain.post.entity.Trade;
-import com.exercise.carrotproject.domain.post.repository.PostRepository;
 import com.exercise.carrotproject.domain.post.repository.TradeCustomRepository;
-import com.exercise.carrotproject.domain.post.repository.TradeRepository;
 import com.exercise.carrotproject.domain.post.service.PostServiceImpl;
 import com.exercise.carrotproject.domain.review.service.ReviewBuyerServiceImpl;
 import com.exercise.carrotproject.domain.review.service.ReviewSellerServiceImpl;
@@ -25,9 +21,10 @@ import com.exercise.carrotproject.web.member.util.SecurityUtils;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.io.InputStreamResource;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.UrlResource;
-import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -35,6 +32,7 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.servlet.http.HttpSession;
 import javax.validation.Valid;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -96,14 +94,18 @@ public class MemberController {
         return "redirect:/login";
     }
 
-    @GetMapping("/{memId}/edit")
-    public String memberInfoForm(@PathVariable String memId,
-                                 @ModelAttribute("pwdUpdateForm") PwdUpdateForm pwdUpdateForm,
+    @GetMapping("/{memId}/edit/pf")
+    public String profileEditForm(@PathVariable String memId,
                                  @ModelAttribute("profileForm") ProfileForm profileForm) {
         Member member = memberService.findMemberForProfileEdit(memId);
         profileForm.setNickname(member.getNickname());
         profileForm.setLoc(member.getLoc());
-        return "/member/memberInfo";
+        return "/member/myProfileEdit";
+    }
+    @GetMapping("/{memId}/edit/pwd")
+    public String pwdEditForm(@PathVariable String memId,
+                                 @ModelAttribute("pwdUpdateForm") PwdUpdateForm pwdUpdateForm) {
+        return "/member/myPwdEdit";
     }
     @PostMapping("/{memId}/edit/pwd")
     public String pwdUpdate(@PathVariable String memId,
@@ -115,28 +117,31 @@ public class MemberController {
         profileForm.setNickname(member.getNickname());
         profileForm.setLoc(member.getLoc());
         if(bindingResult.hasErrors()) {;
-            return  "/member/memberInfo";
+            return "/member/myProfileEdit";
         }
         if (!pwdUpdateForm.getPwd().equals(pwdUpdateForm.getPwdConfirm())) {
             bindingResult.rejectValue("pwdConfirm", "pwdConfirmIncorrect", "암호가 일치하지 않습니다.");
-            return  "/member/memberInfo";
+            return "/member/myProfileEdit";
         }
         //db에 업데이트 실패 -> 검증오류(PwdUpdateForm에 관한 문제) 아니고, 서버 오류일 것이다
         //bindingResult에 담아서 보내지 말아야하지 않을까?
         String hashedPwd = securityUtils.getHashedPwd(pwdUpdateForm.getPwd());
         boolean isPwdUpdated = memberService.isPwdUpdated(memId, hashedPwd);
         if (!isPwdUpdated) {
-            return  "/member/memberInfo";
+            return "/member/myProfileEdit";
         }
-        return  "/member/memberInfo";
+        return "/member/myProfileEdit";
     }
+
     @ResponseBody
     @PatchMapping("/{memId}/edit/profile")
     public ResponseEntity<Map<String, Object>> profileUpdate(@PathVariable String memId,
                                 @Valid @ModelAttribute("profileForm") ProfileForm profileForm,
                                 @RequestParam("profImg") MultipartFile profImg,
-                                                        BindingResult bindingResult) {
+                                                        BindingResult bindingResult,
+                                                             HttpSession session) {
         Map<String, Object> resultMap = new HashMap<>();
+        MemberDto loginMember = (MemberDto)session.getAttribute(SessionConst.LOGIN_MEMBER);
         if(bindingResult.hasErrors()) {
             resultMap.put("nickname", bindingResult.getFieldError("nickname").getDefaultMessage());
             return ResponseEntity.badRequest().body(resultMap);
@@ -149,6 +154,10 @@ public class MemberController {
         if(!resultMap.containsKey("success")){
             return ResponseEntity.badRequest().body(resultMap);
         } else {
+            Member after = (Member) resultMap.get("success");
+            loginMember.setNickname(after.getNickname());
+            loginMember.setLoc(after.getLoc());
+            session.setAttribute(SessionConst.LOGIN_MEMBER, loginMember);
             Member member = (Member) resultMap.get("success");
             resultMap.clear();
             resultMap.put("member",
@@ -160,8 +169,9 @@ public class MemberController {
     //프로필 이미지 출력
     @ResponseBody
     @GetMapping("/{memId}/profileImg")
-    public Resource viewProfileImg(@PathVariable("memId") String memId) throws IOException {
+    public UrlResource viewProfileImg(@PathVariable("memId") String memId) throws IOException {
         String profPath = memberService.getProfPath(memId);
+        System.out.println("profPath?????? = " + profPath);
         if(profPath == null || profPath.isEmpty()) {
             profPath = rootProfileImgDir+"profile_img.png";
         }

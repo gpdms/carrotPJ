@@ -1,26 +1,31 @@
 .custom-navbar {
-    height: 50px;
+    height: 70px;
     box-shadow: 0px 2px 3px 0px #efece9;
 }
 .container-nav {
-    height: 50px;
+    height: 70px;
     width: 100%;
     padding: 0;
 }
 .navbar-brand {
     height: 50px;
-    padding-top: 8px;
+    position: relative;
 }
 .img-icon{
-    height: 25px;
+    width: 35px;
+    height: 30px;
     display: inline;
+    position: absolute;
+    top: 10px;
 }
 .img-logo{
     font-family: 'Noto Sans KR', sans-serif;
     display: inline;
-    font-size: 17px;
+    font-size: 25px;
     font-weight: 600;
     color: #F2A33A;
+    padding-left: 40px;
+    vertical-align: center;
 }
 
 .navbar-brand {
@@ -30,18 +35,20 @@
     display: inline;
 }
 .navbar-collapse {
+    font-size: 17px;
 }
 .nav-name {
     font-size: 14px;
 }
 
 .search-bar {
-    padding-top: 5px;
+    /*padding-top: 5px;*/
 }
 .search-input {
-     width: 200px;
-     height: 30px;
-     font-size: 13px;
+     width: 250px;
+     height: 35px;
+     margin: auto 0;
+     font-size: 15px;
      border: 0;
      border-radius: 10px;
      outline: none;
@@ -52,8 +59,11 @@
 .search-btn {
     border: 0;
     background-color: transparent;
-    font-size: 20px;
+    /*font-size: 20px;*/
     padding: 3px 3px 0px 3px;
+}
+.search-btn .material-symbols-outlined {
+    font-size: 30px;
 }
 .search-icon {
     color: #dee2e6;
@@ -77,6 +87,7 @@
     /*padding-right: 200px;*/
 }
 .custom-btn {
+    height: 35px;
     display: inline-block;
     font-weight: 500;
     line-height: 1.5;
@@ -92,7 +103,7 @@
     background-color: white;
     border: 1px solid #dee2e6;
     padding: 0.375rem 0.75rem;
-    font-size: 0.75rem;
+    font-size: 1rem;
     border-radius: 0.25rem;
     transition: color 0.15s ease-in-out, background-color 0.15s ease-in-out, border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
 }
