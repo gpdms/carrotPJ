@@ -5,48 +5,56 @@
 
 <head layout:fragment="head">
     <title>받은 매너평가</title>
-    <style>
-        .form-container {
-            max-width: 560px;
-            padding-left: 100px;
-        }
-    </style>
+    <link href="/css/manner_detail.css" rel="stylesheet">
 </head>
 
 <div layout:fragment="content">
-<div class="form-container">
-    <div class="py-5 text-center">
-        <h2>매너 상세</h2>
-    </div>
-    <div>
-        <h4 class="mb-3">받은 매너 칭찬</h4>
-        <th:block th:if="${positiveMannerMap.isEmpty()}">
-            받은 매너 칭찬이 없습니다
-        </th:block>
-        <th:block th:unless="${positiveMannerMap.isEmpty()}">
-            <p th:each="entry : ${positiveMannerMap}">
-                <span th:text="${entry.key.description}"></span>
-                <span th:text="${entry.value}"></span>
-            </p>
-        </th:block>
-    </div>
-    <hr>
-    <div>
-        <h4 class="mb-3">받은 비매너</h4>
-        <th:block th:unless="${memId.equals(session.loginMember?.memId) && !negativeMannerMap.isEmpty()}">
-            받은 비매너가 없습니다
-        </th:block>
-        <th:block th:if="${memId.equals(session.loginMember?.memId) && !negativeMannerMap.isEmpty()}">
-            <p th:each="entry : ${negativeMannerMap}">
-                <span th:text="${entry.key.description}"></span>
-                <span th:text="${entry.value}"></span>
-            </p>
-        </th:block>
-    </div>
-    <hr>
-    <p> 참고 사항 </p>
-    <span>-받은 비매너 내역은 나에게만 보입니다.</span>
-</div> <!-- /form-container -->
+<section class="mt-5 my-auto d-flex justify-content-center">
+    <div class="manner-container">
+        <div class="pb-3 pt-5 text-center">
+            <h2 th:text="|${nickname}님의 매너 상세|"></h2>
+        </div>
+        <div>
+            <h4 class="px-3 mb-3">&#128512;&nbsp;받은 매너 칭찬</h4>
+            <div th:if="${positiveMannerMap.isEmpty()}">
+                받은 매너 칭찬이 없습니다
+            </div>
+            <div class="contents" th:unless="${positiveMannerMap.isEmpty()}">
+                <div class="each-content" th:each="entry : ${positiveMannerMap}">
+                    <div class="col1">
+                        <span th:text="${entry.key.description}"></span>
+                    </div>
+                    <div class="col2">
+                        <i class="bi bi-people"></i>
+                        <span th:text="${entry.value}"></span>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div>
+            <h4 class="px-3 mb-3">&#128532;&nbsp;받은 비매너</h4>
+            <div th:unless="${memId.equals(session.loginMember?.memId) && !negativeMannerMap.isEmpty()}">
+                받은 비매너가 없습니다
+            </div>
+            <div class="contents" th:if="${memId.equals(session.loginMember?.memId) && !negativeMannerMap.isEmpty()}">
+                <div class="each-content" th:each="entry : ${negativeMannerMap}">
+                    <div class="col1">
+                        <span th:text="${entry.key.description}"></span>
+                    </div>
+                    <div class="col2">
+                        <i class="bi bi-people"></i>
+                        <span th:text="${entry.value}"></span>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <hr>
+        <div class="manner-note">
+            <p> 참고 사항 </p>
+            <span>- 받은 비매너 내역은 나에게만 보입니다.</span>
+        </div>
+    </div> <!-- /form-container -->
+</section>
 </div>
 <div layout:fragment="script" th:inline="javascript">
 <script th:inline="javascript"></script>

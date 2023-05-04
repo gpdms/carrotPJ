@@ -6,8 +6,8 @@ import com.exercise.carrotproject.domain.member.MemberEntityDtoMapper;
 import com.exercise.carrotproject.domain.member.dto.MemberDto;
 import com.exercise.carrotproject.domain.member.entity.Block;
 import com.exercise.carrotproject.domain.member.entity.Member;
-import com.exercise.carrotproject.domain.member.repository.BlockCustomRepository;
 import com.exercise.carrotproject.domain.member.repository.BlockRepository;
+import com.exercise.carrotproject.domain.member.repository.MemberCustomRepository;
 import com.exercise.carrotproject.domain.member.repository.MemberRepository;
 import com.exercise.carrotproject.web.member.util.SecurityUtils;
 import com.querydsl.core.types.dsl.BooleanExpression;
@@ -37,8 +37,7 @@ import static com.exercise.carrotproject.domain.post.entity.QPost.post;
 public class MemberServiceImpl {
     private final MemberRepository memberRepository;
     private final BlockRepository blockRepository;
-    private final BlockCustomRepository blockCustomRepository;
-    private final SecurityUtils securityUtils;
+    private final MemberCustomRepository memberCustomRepository;
 
     @Value("${dir.img-profile}")
     private String rootProfileImgDir;
@@ -219,7 +218,7 @@ public class MemberServiceImpl {
     }
 
     public boolean existBlockByMemIds (String memId1, String memId2) {
-        return blockCustomRepository.hasBlockByMemIds(memId1, memId2);
+        return memberCustomRepository.hasBlockByMemIds(memId1, memId2);
     }
     //@Override
     public Map<String,String> insertBlock(String fromMemId, String toMemId) {
@@ -247,5 +246,8 @@ public class MemberServiceImpl {
         return  MemberEntityDtoMapper.toMemberDto(member);
     }
 
+    public String getNicknameByMemId(String memId) {
+        return memberCustomRepository.selectNicknameByMemId(memId);
+    }
 
 }

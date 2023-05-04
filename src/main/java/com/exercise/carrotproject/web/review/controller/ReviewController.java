@@ -2,6 +2,7 @@ package com.exercise.carrotproject.web.review.controller;
 
 import com.exercise.carrotproject.domain.enumList.*;
 import com.exercise.carrotproject.domain.member.dto.MemberDto;
+import com.exercise.carrotproject.domain.member.entity.Member;
 import com.exercise.carrotproject.domain.member.service.MemberServiceImpl;
 import com.exercise.carrotproject.domain.post.entity.Post;
 import com.exercise.carrotproject.domain.post.entity.Trade;
@@ -45,6 +46,7 @@ public class ReviewController {
     @GetMapping("/{memId}")
     public String toPublicReviewMessagesDetail(@PathVariable String memId, Model model) {
         model.addAttribute("messageMap",reviewService.goodReviewMessagesDetail(memId));
+        model.addAttribute("nickname", memberService.getNicknameByMemId(memId));
         return "/review/publicReviews";
     }
 
@@ -177,6 +179,7 @@ public class ReviewController {
     public String toMannerDetail(@PathVariable String memId, Model model) {
         model.addAttribute("positiveMannerMap", reviewService.getPositiveMannerDetails(memId));
         model.addAttribute("negativeMannerMap", reviewService.getNegativeMannerDetails(memId));
+        model.addAttribute("nickname", memberService.getNicknameByMemId(memId));
         return  "review/mannerDetail";
     }
 

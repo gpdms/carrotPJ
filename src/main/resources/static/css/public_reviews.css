@@ -1,0 +1,271 @@
+a {color: black; text-decoration: none; outline: none}
+a:hover, a:active {text-decoration: none; cursor: pointer; color: black}
+hr {
+    margin: 0;
+    padding: 0;
+    color: #adb5bd;
+}
+
+#sellerReviews, #buyerReviews {
+    display: none;
+}
+#allReviews, #sellerReviews, #buyerReviews {
+    margin: 10px 0;
+}
+.review-container {
+     width: 700px;
+     padding-top: 20px;
+ }
+.no_review {
+    padding: 100px 0 0 10px;
+    font-size: 20px;
+    text-align: center;
+    color: #555;
+}
+.review-bar {
+    display: inline-block;
+    font-size: 20px;
+    cursor: pointer;
+}
+.is-current {
+    color: #ff9d0a;
+}
+
+:root {
+    --bar-length: 3;
+    --bar-width: calc(100% / var(--bar-length));
+}
+.review-bars {
+    position: relative;
+    display: flex;
+}
+.review-bars .review-bar {
+    display: block;
+    width: var(--bar-width);
+    text-align: center;
+    cursor: pointer;
+}
+.review-underline {
+    position: absolute;
+    left: 0;
+    bottom: -10px;
+    width: var(--bar-width);
+    height: 2px;
+    background: #ff9d0a;
+    transition: all .4s ease-in-out;
+}
+
+.review-count {
+    margin: 30px 10px;
+    font-size: 25px;
+}
+
+.message-one:last-of-type {
+    border-bottom: none;
+}
+.message-one {
+     display: flex;
+     position: relative;
+     flex-direction: column;
+     width: 100%;
+     height: 170px;
+     font-size: 20px;
+     padding: 20px 10px 10px 10px;
+     border-bottom: 1px solid #e9ecef;
+ }
+.fourth-container .message-one:last-of-type {
+    border-bottom: none;
+}
+
+.fourth-container .message-one p{
+    display: inline-block;
+}
+.fourth-container .message-one .profile-line{
+    display: flex;
+    flex: 1;
+    width: 700px;
+}
+.fourth-container .message-one .content-line, .time-line{
+    flex: 1;
+    width: 750px;
+}
+.fourth-container .message-one .profile-line .message-profile-img{
+    width: 50px;
+    height: 50px;
+    overflow: hidden;
+    border-radius: 50%;
+    border: 1px solid #e9ecef;
+    display: inline-block;
+}
+.fourth-container .message-one .profile-line .message-profile-img img{
+    width: 50px;
+    height: 50px;
+}
+
+.fourth-container .message-one .profile-line .message-info{
+    display: flex;
+}
+.fourth-container .message-one .profile-line .message-info .nickname{
+    flex: 1;
+    width: auto;
+    margin: 5px 15px;
+    height: 40px;
+    font-size: 20px;
+}
+.fourth-container .message-one .profile-line .message-info .nickname:hover, nickname:active{
+    flex: 1;
+    width: auto;
+    margin: 5px 15px;
+    height: 40px;
+    font-size: 20px;
+    text-decoration: underline;
+}
+.fourth-container .message-one .profile-line .message-info .loc{
+    flex: 1;
+    width: auto;
+    margin: 0;
+    height: 50px;
+    font-size: 15px;
+    color: #777;
+    line-height: 1;
+    vertical-align: top;
+    padding-top: 7px;
+}
+.fourth-container .message-one .content-line {
+    padding: 0 0 0 65px;
+    width: 80%;
+    height: auto;
+}
+.fourth-container .message-one .time-line {
+    padding: 0 0 0 65px;
+    width: 80%;
+    height: auto;
+    font-size: 15px;
+    color: #999;
+    margin: 0;
+}
+.fourth-container .message-one .setting-bar .review_modal_btn{
+    position: absolute;
+    left: 650px;
+    top : 20px;
+    cursor: pointer;
+    color: #555;
+}
+
+.review-container .message-one p{
+    display: inline-block;
+}
+.review-container .message-one .profile-line{
+    display: flex;
+    flex: 1;
+    width: 700px;
+}
+.review-container .message-one .content-line, .time-line{
+    flex: 1;
+    width: 750px;
+}
+.review-container .message-one .profile-line .message-profile-img{
+    width: 50px;
+    height: 50px;
+    overflow: hidden;
+    border-radius: 50%;
+    border: 1px solid #e9ecef;
+    display: inline-block;
+}
+.review-container .message-one .profile-line .message-profile-img img{
+    width: 50px;
+    height: 50px;
+}
+
+.review-container .message-one .profile-line .message-info{
+    display: flex;
+}
+.review-container .message-one .profile-line .message-info .nickname{
+    flex: 1;
+    width: auto;
+    margin: 5px 15px;
+    height: 40px;
+    font-size: 20px;
+}
+.review-container .message-one .profile-line .message-info .nickname:hover, nickname:active{
+    flex: 1;
+    width: auto;
+    margin: 5px 15px;
+    height: 40px;
+    font-size: 20px;
+    text-decoration: underline;
+}
+.review-container .message-one .profile-line .message-info .loc{
+    flex: 1;
+    width: auto;
+    margin: 0;
+    height: 50px;
+    font-size: 15px;
+    color: #777;
+    line-height: 1;
+    vertical-align: top;
+    padding-top: 7px;
+}
+.review-container .message-one .content-line {
+    padding: 0 0 0 65px;
+    width: 80%;
+    height: auto;
+}
+.review-container .message-one .time-line {
+    padding: 0 0 0 65px;
+    width: 80%;
+    height: auto;
+    font-size: 15px;
+    color: #999;
+    margin: 0;
+}
+.review-container .message-one .setting-bar .review_modal_btn{
+    position: absolute;
+    left: 650px;
+    top : 20px;
+    cursor: pointer;
+    color: #555;
+}
+
+
+/*
+.review-btn {
+    height: 35px;
+    display: inline-block;
+    font-weight: 500;
+    line-height: 1.5;
+    color: black;
+    text-align: center;
+    text-decoration: none;
+    vertical-align: middle;
+    cursor: pointer;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+    background-color: white;
+    border: 1px solid #dee2e6;
+    padding: 0.375rem 0.75rem;
+    font-size: 1rem;
+    border-radius: 0.25rem;
+    transition: color 0.15s ease-in-out, background-color 0.15s ease-in-out, border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+}
+@media (prefers-reduced-motion: reduce) {
+    .review-btn {
+        transition: none;
+    }
+}
+.review-btn:hover {
+    color: #212529;
+    background-color: #f1f3f5;
+    !*border-color: #212529;*!
+
+}
+!*.review-btn-check:focus + .review-btn, .review-btn:focus {
+    outline: 0;
+    box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.25);
+}*!
+.review-btn:disabled, .review-btn.disabled, fieldset:disabled .btn {
+    pointer-events: none;
+    opacity: 0.65;
+}*/
