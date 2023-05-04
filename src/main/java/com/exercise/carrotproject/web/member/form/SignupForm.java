@@ -12,9 +12,6 @@ import javax.validation.constraints.*;
 @Setter
 @ToString
 public class SignupForm {
-    @NotBlank
-    //@Size(min = 6, message = "6자 이상이어야 합니다.")
-    //@Size(max = 12, message = "12자 이하여야 합니다.")
     @Pattern(regexp = "^[a-zA-Z0-9]{6,12}$", message = "아이디는 영문 대/소문자이나 숫자로 6~12자로 구성되어야합니다")
     private String memId;
 

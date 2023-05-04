@@ -23,7 +23,7 @@
                 <h2 style="color: #555;">개인정보 수정</h2>
             </div>
             <div class="edit-form">
-                <h4 class="mb-3 edit-title">비밀번호 수정</h4>
+                <h4 class="mb-3 edit-title">비밀번호 변경</h4>
                 <form action="" th:action="@{/members/{memId}/edit/pwd(memId=${pwdUpdateForm.memId})}"
                       style="width:300px"
                       th:object="${pwdUpdateForm}" method="post">
@@ -40,7 +40,7 @@
                                class="form-control">
                         <div class="field-error" th:errors="*{pwdConfirm}"></div>
                     </div>
-                    <button class="edit-btn w-50 btn-orange btn-group-sm" type="submit">비밀번호 수정</button>
+                    <button class="edit-btn w-50 btn-orange btn-group-sm" type="submit">비밀번호 변경</button>
                 </form>
             </div>
         </div> <!-- /form-container -->

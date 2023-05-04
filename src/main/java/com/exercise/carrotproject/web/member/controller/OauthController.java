@@ -38,17 +38,18 @@ public class OauthController {
     private final MemberServiceImpl memberService;
 
     @GetMapping("/login/getKakaoLoginURL")
-    @ResponseBody
     public String toKakaoLoginForm() {
         String kakaoUrl = kaKaoOauth.getKakaoLoginUrl()
                 + "/oauth/authorize?client_id=" + kaKaoOauth.getKakaoClientId()
                 + "&redirect_uri=" + kaKaoOauth.getKakaoLoginRedirectUri() + "&response_type=code";
-        return kakaoUrl;
+        return "redirect:"+kakaoUrl;
     }
 
     @GetMapping("/login/kakao")
     public String kakaoLogin(@RequestParam String code, Model model, HttpServletRequest request) throws Throwable {
         System.out.println("code = " + code);
+        HttpSession session = request.getSession();
+        session.setAttribute(SessionConst.KAKAO_REVOKED_CODE, code);
         //access토큰얻기
         String accessToken = kakaoService.getAccessToken(code);
         System.out.println("###access_Token#### : " + accessToken);
@@ -59,7 +60,6 @@ public class OauthController {
         System.out.println("userInfo 프로필 이미지 = " + userInfo.get("email").toString());
         String email = userInfo.get("email").toString();
         boolean hasKakaoMember = memberService.hasSocialMember(email, Role.SOCIAL_KAKAO);
-        HttpSession session = request.getSession();
         if(!hasKakaoMember) {
             session.setAttribute(SessionConst.KAKAO_ACCESS_TOKEN, accessToken);
             model.addAttribute("userInfo",userInfo);
@@ -68,6 +68,7 @@ public class OauthController {
             return "member/signupForm";
         }
         session.setAttribute(SessionConst.LOGIN_MEMBER, memberService.findOneSocialMemberDto(email, Role.SOCIAL_KAKAO));
+        session.removeAttribute(SessionConst.KAKAO_REVOKED_CODE);
         return "redirect:/";
     }
     @GetMapping("/unlink/kakao")
@@ -75,6 +76,7 @@ public class OauthController {
     public String unlink(HttpSession session) throws Throwable {
         String accessToken = (String) session.getAttribute(SessionConst.KAKAO_ACCESS_TOKEN);
         kakaoService.kakaoUnlink(accessToken);
+        session.removeAttribute(SessionConst.KAKAO_REVOKED_CODE);
         return "성공";
     }
     @PostMapping("/signup/kakao")
@@ -98,8 +100,8 @@ public class OauthController {
             errorMap.put("nickname", "중복된 닉네임입니다.");
             return ResponseEntity.badRequest().body(errorMap);
         }
-        //session.removeAttribute(SessionConst.KAKAO_ACCESS_TOKEN);
         session.setAttribute(SessionConst.LOGIN_MEMBER, saveResult.get("memberDto"));
+        session.removeAttribute(SessionConst.KAKAO_REVOKED_CODE);
         return ResponseEntity.ok().build();
     }
 

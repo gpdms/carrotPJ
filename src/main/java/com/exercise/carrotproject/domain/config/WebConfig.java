@@ -1,5 +1,6 @@
 package com.exercise.carrotproject.domain.config;
 
+import com.exercise.carrotproject.domain.config.interceptor.KaKaoCodeInterceptor;
 import com.exercise.carrotproject.domain.config.interceptor.MemberInfoCheckInterceptor;
 import com.exercise.carrotproject.web.argumentresolver.LoginMemberArgumentResolver;
 import com.exercise.carrotproject.domain.config.interceptor.LoginCheckInterceptor;
@@ -43,6 +44,7 @@ public class WebConfig implements WebMvcConfigurer {
                         "/members/css/**","/members/js/**","/members/assets/**",
                         "/members/error");
 
+        registry.addInterceptor(new KaKaoCodeInterceptor()).addPathPatterns("/login/kakao");
     }
 
     @Bean
