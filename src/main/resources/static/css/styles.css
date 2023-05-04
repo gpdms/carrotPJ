@@ -7796,7 +7796,9 @@ textarea.form-control-lg {
   --bs-text-opacity: 1;
   color: rgba(var(--bs-dark-rgb), var(--bs-text-opacity)) !important;
 }
-
+.text-grey {
+  color: grey;
+}
 .text-black {
   --bs-text-opacity: 1;
   color: rgba(var(--bs-black-rgb), var(--bs-text-opacity)) !important;
@@ -11386,4 +11388,27 @@ textarea.form-control-lg {
 
 .cursor {
   cursor: pointer;
+}
+
+.bd-top-grey{
+  border-top: 1px solid grey;
+}
+
+
+.ft-text{
+  color: grey;
+}
+
+.ft-section{
+  padding-left: 10rem;
+  padding-right: 10rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+}
+.ft-a{
+  text-decoration: none;
+  color: grey;
+  font-weight: bold;
+  margin-right: 1.6rem;
 }

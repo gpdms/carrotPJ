@@ -4,12 +4,43 @@
       layout:decorate="~{layout/basic.html}">
 <head layout:fragment="head">
     <title>망고마켓</title>
+    <style>
+        .main-text{
+            width: 500px;
+            object-fit: contain;
+        }
+        .main-img{
+            width: 500px;
+            object-fit: contain;
+        }
+        .main-container{
+            margin: 0 auto;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        .sec-height{
+            height: 620px;
+        }
+        .sec-bg {
+            background-color: #E6F3E6;
+        }
+    </style>
 </head>
 
 <div layout:fragment="content">
-    <div class="bg-light-orange">
-        <img src="/css/images/main_home.png">
-    </div>
+    <section class="py-5 bg-light-orange">
+            <div class="main-container sec-height py-5 px-5">
+                <img class="main-text" src="/css/images/main_home_text.png">
+                <img class="main-img" src="/css/images/main_home_img.png">
+
+            </div>
+    </section>
+    <section class="py-5 sec-bg">
+        <div class="main-container sec-height py-5 px-5">
+        </div>
+
+    </section>
 </div>
 
 <script layout:fragment="script" th:inline="javascript">
