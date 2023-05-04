@@ -6,131 +6,131 @@
 <head layout:fragment="head">
     <title>판매내역</title>
     <link href="/css/sellList.css" rel="stylesheet" />
+    <link href="/css/member_info.css" rel="stylesheet" />
 </head>
 
 <div layout:fragment="content">
-<section class="py-5">
-    <div class="container px-4 my-5">
-        <div class="d-flex">
-            <span id="sp_onSale" class="span" onclick="onSaleFunc()">판매중</span>
-            <span id="sp_sold" class="span" onclick="soldFunc()">판매완료</span>
-            <span id="sp_hidden" class="span" onclick="hiddenFunc()">숨김</span>
-        </div>
+    <div class="container info-container my-5">
+        <!--메뉴 바 (왼쪽)-->
+        <div th:replace="~{/fragments/myPage_nav.html :: fragment-info-nav}"></div>
+        <!--내용 (오른쪽)-->
+        <div class="info-content">
+            <h2 class="text-center mb-4">판매 내역</h2>
+            <div class="d-flex">
+                <span id="sp_onSale" class="span" onclick="onSaleFunc()">판매중</span>
+                <span id="sp_sold" class="span" onclick="soldFunc()">판매완료</span>
+                <span id="sp_hidden" class="span" onclick="hiddenFunc()">숨김</span>
+            </div>
+            <section id="sec_onSale" class="py-5" >
+                <h4>판매중</h4>
+                <div class="container px-3 mt-5">
+                    <div th:if="${onSaleAndRsv.isEmpty()}"><p class="fs-6 fw-normal text-secondary">판매중인 상품이 없습니다.</p></div>
+                <div class="row gx-4 gx-lg-5 row-cols-2 row-cols-md-3 row-cols-xl-3 justify-content-center">
+                    <div class="col mb-6" th:unless="${onSaleAndRsv.isEmpty()}" th:each = "post:${onSaleAndRsv}">
+                        <div class="card h-100" th:onclick="|location.href='@{|/post/detail/${post.postId}|}'|" style="cursor: pointer;">
+                            <!-- 제품사진-->
+                            <img class="card-img-top" th:src="|/post/firstImg/${post.postId}|" alt="제품사진" />
+                            <!-- Product details-->
+                            <div class="card-body p-3">
+                                <div class="text-center">
+                                    <!-- 제목-->
+                                    <h5 class="fw-bolder text-truncate" th:text="${post.title}">제목</h5>
+                                    <!--지역, 시간-->
+                                    <h6 class="fs-7 fw-normal text-secondary">[[${post.loc.locName}]] ∙ [[${post.createdTime}]]</h6>
+                                    <!-- 가격-->
+                                    <h6 class="fw-bolder" th:if="${post.price}!=0" th:text="|${post.price}원|">가격</h6>
+                                    <h6 class="fw-bolder" th:if="${post.price} == 0">가격없음</h6>
 
-        <section id="sec_onSale" class="py-5" >
-            <h2>판매중</h2>
-            <div class="container px-4 mt-5">
-                <div th:if="${onSaleAndRsv.isEmpty()}"><p class="fs-6 fw-normal text-secondary">판매중인 상품이 없습니다.</p></div>
-            <div class="row gx-4 gx-lg-5 row-cols-2 row-cols-md-3 row-cols-xl-4 justify-content-center">
-                <div class="col mb-6" th:unless="${onSaleAndRsv.isEmpty()}" th:each = "post:${onSaleAndRsv}">
-                    <div class="card h-100" th:onclick="|location.href='@{|/post/detail/${post.postId}|}'|" style="cursor: pointer;">
-                        <!-- 제품사진-->
-                        <img class="card-img-top" th:src="|/post/firstImg/${post.postId}|" alt="제품사진" />
-                        <!-- Product details-->
-                        <div class="card-body p-3">
-                            <div class="text-center">
-                                <!-- 제목-->
-                                <h5 class="fw-bolder text-truncate" th:text="${post.title}">제목</h5>
-                                <!--지역, 시간-->
-                                <h6 class="fs-7 fw-normal text-secondary">[[${post.loc.locName}]] ∙ [[${post.createdTime}]]</h6>
-                                <!-- 가격-->
-                                <h6 class="fw-bolder" th:if="${post.price}!=0" th:text="|${post.price}원|">가격</h6>
-                                <h6 class="fw-bolder" th:if="${post.price} == 0">가격없음</h6>
+                                    <!--예약중 배지-->
+                                    <span class="badge bg-success" th:if="${post.sellState.getSellStateName().equals('예약중')}">예약중</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="d-flex">
+                            <span class="span-inner" th:if="${post.sellState.getSellStateName().equals('판매중')}" th:onclick="sellState([[${post.postId}]],'예약중')">예약중으로 변경</span>
+                            <span class="span-inner" th:if="${post.sellState.getSellStateName().equals('판매중')}" th:onclick="sellState([[${post.postId}]],'판매완료')">판매완료</span>
 
-                                <!--예약중 배지-->
-                                <span class="badge bg-success" th:if="${post.sellState.getSellStateName().equals('예약중')}">예약중</span>
+                            <span class="span-inner" th:if="${post.sellState.getSellStateName().equals('예약중')}" th:onclick="sellState([[${post.postId}]],'판매중')">판매중으로 변경</span>
+                            <span class="span-inner" th:if="${post.sellState.getSellStateName().equals('예약중')}" th:onclick="sellState([[${post.postId}]],'판매완료')">판매완료</span>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+            </section>
+
+            <section id="sec_sold" class="py-5">
+                <h4>판매완료</h4>
+                <div class="container px-3 mt-5">
+                    <div th:if="${soldList.isEmpty()}"><p class="fs-6 fw-normal text-secondary">판매완료한 상품이 없습니다.</p></div>
+                    <div class="row gx-4 gx-lg-5 row-cols-2 row-cols-md-3 row-cols-xl-3 justify-content-center">
+                        <div class="col mb-6" th:unless="${soldList.isEmpty()}"  th:each = "soldPost:${soldList}">
+                            <div class="card h-100" th:onclick="|location.href='@{|/post/detail/${soldPost.postDto.postId}|}'|" style="cursor: pointer;">
+                            <!-- 제품사진-->
+                            <img class="card-img-top" th:src="|/post/firstImg/${soldPost.postDto.postId}|" alt="제품사진" />
+                            <!-- Product details-->
+                            <div class="card-body p-3">
+                                <div class="text-center">
+                                    <!-- 제목-->
+                                    <h5 class="fw-bolder text-truncate" th:text="${soldPost.postDto.title}">제목</h5>
+                                    <!--지역, 시간-->
+                                    <h6 class="fs-7 fw-normal text-secondary">[[${soldPost.postDto.loc.locName}]] ∙ [[${soldPost.postDto.createdTime}]]</h6>
+                                    <!-- 가격-->
+                                    <h6 class="fw-bolder" th:if="${soldPost.postDto.price}!=0" th:text="|${soldPost.postDto.price}원|">가격</h6>
+                                    <h6 class="fw-bolder" th:if="${soldPost.postDto.price} == 0">가격없음</h6>
+
+                                </div>
+                            </div>
+                            </div>
+                            <div class="d-flex">
+                                <span class="span-inner" th:if="${soldPost.reviewBuyerId == null}"
+                                      th:onclick="|location.href='@{/post/buyers/{postId}(postId=${soldPost.postDto.postId})}'|">
+                                                거래후기 보내기</span>
+                                <span class="span-inner" th:if="${soldPost.reviewBuyerId != null}"
+                                      th:onclick="|location.href='@{/reviews/buyer/{reviewBuyerId}(reviewBuyerId=${soldPost.reviewBuyerId})}'|">
+                                                거래후기 보기</span>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <section id="sec_hidden" class="py-5">
+                <h4>숨김</h4>
+                <div class="container px-3 mt-5">
+                    <div th:if="${hidePostList.isEmpty()}"><p class="fs-6 fw-normal text-secondary">숨긴 게시글이 없습니다.</p></div>
+                    <div class="row gx-4 gx-lg-5 row-cols-2 row-cols-md-3 row-cols-xl-3 justify-content-center">
+                        <div class="col mb-6" th:unless="${hidePostList.isEmpty()}" th:each = "hidePost:${hidePostList}">
+                        <div class="card h-100" th:onclick="|location.href='@{|/post/detail/${hidePost.postId}|}'|" style="cursor: pointer;">
+                            <!-- 제품사진-->
+                            <img class="card-img-top" th:src="|/post/firstImg/${hidePost.postId}|" alt="제품사진" />
+                            <!-- Product details-->
+                            <div class="card-body p-3">
+                                <div class="text-center">
+                                    <!-- 제목-->
+                                    <h5 class="fw-bolder text-truncate" th:text="${hidePost.title}">제목</h5>
+                                    <!--지역, 시간-->
+                                    <h6 class="fs-7 fw-normal text-secondary">[[${hidePost.loc.locName}]]∙ [[${hidePost.createdTime}]]</h6>
+                                    <!-- 가격-->
+                                    <h6 class="fw-bolder" th:if="${hidePost.price}!=0" th:text="|${hidePost.price}원|">가격</h6>
+                                    <h6 class="fw-bolder" th:if="${hidePost.price} == 0">가격없음</h6>
+                                    <!--예약중,판매완료 배지-->
+                                    <span class="badge bg-success" th:if="${hidePost.sellState.getSellStateName().equals('예약중')}">예약중</span>
+                                    <span class="badge bg-secondary" th:if="${hidePost.sellState.getSellStateName().equals('판매완료')}">거래완료</span>
+                                </div>
+                            </div>
+                            </div>
+                            <div class="d-flex">
+                                <span class="span-inner" th:onclick="hideState([[${hidePost.postId}]], [[${hidePost.hideState.getHideStateName()}]])">숨기기 해제</span>
                             </div>
                         </div>
                     </div>
-                    <div class="d-flex">
-                        <span class="span-inner" th:if="${post.sellState.getSellStateName().equals('판매중')}" th:onclick="sellState([[${post.postId}]],'예약중')">예약중으로 변경</span>
-                        <span class="span-inner" th:if="${post.sellState.getSellStateName().equals('판매중')}" th:onclick="sellState([[${post.postId}]],'판매완료')">판매완료</span>
-
-                        <span class="span-inner" th:if="${post.sellState.getSellStateName().equals('예약중')}" th:onclick="sellState([[${post.postId}]],'판매중')">판매중으로 변경</span>
-                        <span class="span-inner" th:if="${post.sellState.getSellStateName().equals('예약중')}" th:onclick="sellState([[${post.postId}]],'판매완료')">판매완료</span>
-                    </div>
-
                 </div>
-            </div>
-        </div>
-        </section>
-
-
-
-<section id="sec_sold" class="py-5">
-    <h2>판매완료</h2>
-    <div class="container px-4 mt-5">
-        <div th:if="${soldList.isEmpty()}"><p class="fs-6 fw-normal text-secondary">판매완료한 상품이 없습니다.</p></div>
-        <div class="row gx-4 gx-lg-5 row-cols-2 row-cols-md-3 row-cols-xl-4 justify-content-center">
-            <div class="col mb-6" th:unless="${soldList.isEmpty()}"  th:each = "soldPost:${soldList}">
-                <div class="card h-100" th:onclick="|location.href='@{|/post/detail/${soldPost.postDto.postId}|}'|" style="cursor: pointer;">
-                    <!-- 제품사진-->
-                    <img class="card-img-top" th:src="|/post/firstImg/${soldPost.postDto.postId}|" alt="제품사진" />
-                    <!-- Product details-->
-                    <div class="card-body p-3">
-                        <div class="text-center">
-                            <!-- 제목-->
-                            <h5 class="fw-bolder text-truncate" th:text="${soldPost.postDto.title}">제목</h5>
-                            <!--지역, 시간-->
-                            <h6 class="fs-7 fw-normal text-secondary">[[${soldPost.postDto.loc.locName}]] ∙ [[${soldPost.postDto.createdTime}]]</h6>
-                            <!-- 가격-->
-                            <h6 class="fw-bolder" th:if="${soldPost.postDto.price}!=0" th:text="|${soldPost.postDto.price}원|">가격</h6>
-                            <h6 class="fw-bolder" th:if="${soldPost.postDto.price} == 0">가격없음</h6>
-
-                        </div>
-                    </div>
-                </div>
-                <div class="d-flex">
-                    <span class="span-inner font-orange fw-bold" th:if="${soldPost.reviewBuyerId == null}"
-                          th:onclick="|location.href='@{/post/buyers/{postId}(postId=${soldPost.postDto.postId})}'|">
-                                    거래후기 보내기</span>
-                    <span class="span-inner" th:if="${soldPost.reviewBuyerId != null}"
-                          th:onclick="|location.href='@{/reviews/buyer/{reviewBuyerId}(reviewBuyerId=${soldPost.reviewBuyerId})}'|">
-                                    거래후기 보기</span>
-                </div>
-
-            </div>
-        </div>
-    </div>
-</section>
-
-<section id="sec_hidden" class="py-5">
-    <h2>숨김</h2>
-    <div class="container px-4 mt-5">
-        <div th:if="${hidePostList.isEmpty()}"><p class="fs-6 fw-normal text-secondary">숨긴 게시글이 없습니다.</p></div>
-        <div class="row gx-4 gx-lg-5 row-cols-2 row-cols-md-3 row-cols-xl-4 justify-content-center">
-            <div class="col mb-6" th:unless="${hidePostList.isEmpty()}" th:each = "hidePost:${hidePostList}">
-            <div class="card h-100" th:onclick="|location.href='@{|/post/detail/${hidePost.postId}|}'|" style="cursor: pointer;">
-                <!-- 제품사진-->
-                <img class="card-img-top" th:src="|/post/firstImg/${hidePost.postId}|" alt="제품사진" />
-                <!-- Product details-->
-                <div class="card-body p-3">
-                    <div class="text-center">
-                        <!-- 제목-->
-                        <h5 class="fw-bolder text-truncate" th:text="${hidePost.title}">제목</h5>
-                        <!--지역, 시간-->
-                        <h6 class="fs-7 fw-normal text-secondary">[[${hidePost.loc.locName}]]∙ [[${hidePost.createdTime}]]</h6>
-                        <!-- 가격-->
-                        <h6 class="fw-bolder" th:if="${hidePost.price}!=0" th:text="|${hidePost.price}원|">가격</h6>
-                        <h6 class="fw-bolder" th:if="${hidePost.price} == 0">가격없음</h6>
-                        <!--예약중,판매완료 배지-->
-                        <span class="badge bg-success" th:if="${hidePost.sellState.getSellStateName().equals('예약중')}">예약중</span>
-                        <span class="badge bg-secondary" th:if="${hidePost.sellState.getSellStateName().equals('판매완료')}">거래완료</span>
-                    </div>
-                </div>
-                </div>
-                <div class="d-flex">
-                    <span class="span-inner" th:onclick="hideState([[${hidePost.postId}]], [[${hidePost.hideState.getHideStateName()}]])">숨기기 해제</span>
-                </div>
-            </div>
-        </div>
-    </div>
-</section>
-
-    </div>
-</section>
+            </section>
+        </div> <!--info content end-->
+    </div> <!--container end-->
 </div>
-
 
 
 <div layout:fragment="script" th:inline="javascript">
