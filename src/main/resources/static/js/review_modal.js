@@ -9,8 +9,6 @@
   function modalOpen() {
     reviewedWho = this.getAttribute('data-reviewedWho');
     reviewId = this.getAttribute('data-reviewId');
-    console.log(reviewedWho);
-    console.log(reviewId);
     reviewModal.style.display = "block";
     body.style.overflow = "hidden";
   }

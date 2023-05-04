@@ -21,10 +21,7 @@ import com.exercise.carrotproject.web.member.util.SecurityUtils;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.core.io.InputStreamResource;
-import org.springframework.core.io.Resource;
 import org.springframework.core.io.UrlResource;
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -110,8 +107,7 @@ public class MemberController {
     @PostMapping("/{memId}/edit/pwd")
     public String pwdUpdate(@PathVariable String memId,
                             @ModelAttribute("profileForm") ProfileForm profileForm,
-                            @Valid @ModelAttribute("pwdUpdateForm") PwdUpdateForm pwdUpdateForm,
-                            BindingResult bindingResult) {
+                            @Valid @ModelAttribute("pwdUpdateForm") PwdUpdateForm pwdUpdateForm, BindingResult bindingResult) {
                             //BindingResult나 Errors는 바인딩 받는 객체 바로 다음에 선언해야 한다
         Member member = memberService.findMemberForProfileEdit(memId);
         profileForm.setNickname(member.getNickname());
@@ -136,13 +132,14 @@ public class MemberController {
     @ResponseBody
     @PatchMapping("/{memId}/edit/profile")
     public ResponseEntity<Map<String, Object>> profileUpdate(@PathVariable String memId,
-                                @Valid @ModelAttribute("profileForm") ProfileForm profileForm,
+                                @Valid @ModelAttribute("profileForm") ProfileForm profileForm, BindingResult bindingResult,
                                 @RequestParam("profImg") MultipartFile profImg,
-                                                        BindingResult bindingResult,
                                                              HttpSession session) {
         Map<String, Object> resultMap = new HashMap<>();
         MemberDto loginMember = (MemberDto)session.getAttribute(SessionConst.LOGIN_MEMBER);
         if(bindingResult.hasErrors()) {
+            String error = bindingResult.getFieldError("nickname").getDefaultMessage();
+            System.out.println("수정수정수정"+ error);
             resultMap.put("nickname", bindingResult.getFieldError("nickname").getDefaultMessage());
             return ResponseEntity.badRequest().body(resultMap);
         }
@@ -171,7 +168,6 @@ public class MemberController {
     @GetMapping("/{memId}/profileImg")
     public UrlResource viewProfileImg(@PathVariable("memId") String memId) throws IOException {
         String profPath = memberService.getProfPath(memId);
-        System.out.println("profPath?????? = " + profPath);
         if(profPath == null || profPath.isEmpty()) {
             profPath = rootProfileImgDir+"profile_img.png";
         }

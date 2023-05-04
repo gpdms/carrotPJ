@@ -2436,10 +2436,16 @@ textarea.form-control-lg {
     transition: none;
   }
 }
+/*custom*/
 .form-select:focus {
-  border-color: #86b7fe;
+  color: #212529;
+  background-color: #fff;
+  border-color: #ffd09c;
   outline: 0;
-  box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.25);
+  box-shadow: 0 0 0 0.25rem rgba(255, 198, 153, 0.25);
+  /*border-color: #86b7fe;
+  outline: 0;
+  box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.25);*/
 }
 .form-select[multiple], .form-select[size]:not([size="1"]) {
   padding-right: 0.75rem;

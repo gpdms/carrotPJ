@@ -39,7 +39,6 @@
                         onclick="location.href='/member/loginForm'"
                         th:onclick="|location.href='@{/login}'|"> 회원가입/로그인 </button>
             </form>
-
             <form class="form-check-inline" th:if="${session.loginMember != null}"
                   th:action="@{/logout}" method="get">
                 <button class="custom-btn" th:if="${not #strings.isEmpty(session.loginMember)}" type="button"

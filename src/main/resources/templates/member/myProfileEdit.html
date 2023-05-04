@@ -24,7 +24,7 @@
                 <h2 style="color: #555;">개인정보 수정</h2>
             </div>
             <div class="edit-form">
-                <h4 class="edit-title"> 프로필 수정 </h4>
+                <h4 class="edit-title"> 프로필 변경 </h4>
                 <form id="profileEditForm" style="width:300px">
                     <input type="hidden" name="memId" th:value="${profileForm.memId}" >
                     <div class="pf-input img-form">
@@ -81,9 +81,9 @@
         preview(file);
     });
     function checkSize(fileSize){
-        var maxSize = 20971520;  //20MB
+        var maxSize = 1 * 1024 * 1024; // 1MB
         if(fileSize >= maxSize){
-            alert('이미지 크기가 초과되었습니다.');
+            alert('파일 크기가 초과되었습니다. 1MB 이하 크기의 이미지만 가능합니다.');
             $("#inputImage").val("");  //파일 초기화
             return false;
         }
@@ -130,9 +130,10 @@
                 alert('프로필 변경에 실패했습니다');
                 const message = err.responseJSON;
                 console.log(message);
+                console.log(message.nickname);
                 if (message.nickname) {
                     $('#nick-error').replaceWith(`<div id="nick-error" class="field-error">${message.nickname}</div>`)
-                    $("#nickname").addClass("field-error-border");
+                    $('#nickname').addClass("field-error-border");
                 }
                 if ('fail-nickname' in message) {
                     $('#nick-error').replaceWith(`<div id="nick-error" class="field-error">중복된 닉네임입니다.</div>`)
