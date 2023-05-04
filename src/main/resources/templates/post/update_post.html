@@ -12,79 +12,83 @@
 
 
 <div layout:fragment="content">
-    <div class="container container-sm container-item-create">
-        <h5 class="container-headline">게시글 수정</h5>
-        <form id="upload_form" class="form-item-create">
-            <div class="form-group form-picture">
-                <div class="file-box">
-                    <!--이미지-->
-                    <div class="inputFile">
-                        <label for='inputImage' class="addImgBtn">사진추가</label>
-                        <input type="file" multiple="multiple" name="uploadFiles" id='inputImage' accept="image/*" style="display: none;">
-                    </div>
-                    <!--이미지 미리보기-->
-                    <ul id="prePreview" class="sortable" >
-                        <li class="ui-state-default" th:each="img:${postImgs}" >
-                            <img th:src="|/post/img/${img.imgId}|" width=80 height=80>
-                            <span th:id="${img.imgId}" class="delBtn" onclick="delPreImg(this)">x</span>
-                        </li>
-                    </ul>
-                    <ul id="Preview" class="sortable"></ul>
+    <section class="py-5">
+        <div class="container px-4 my-5">
+            <div class="container container-sm container-item-create">
+                <h5 class="container-headline text-center">게시글 수정</h5>
+                <form id="upload_form" class="form-item-create">
+                    <div class="form-group form-picture">
+                        <div class="file-box">
+                            <!--이미지-->
+                            <div class="inputFile">
+                                <label for='inputImage' class="addImgBtn">사진추가</label>
+                                <input type="file" multiple="multiple" name="uploadFiles" id='inputImage' accept="image/*" style="display: none;">
+                            </div>
+                            <!--이미지 미리보기-->
+                            <ul id="prePreview" class="sortable" >
+                                <li class="ui-state-default" th:each="img:${postImgs}" >
+                                    <img th:src="|/post/img/${img.imgId}|" width=80 height=80>
+                                    <span th:id="${img.imgId}" class="delBtn" onclick="delPreImg(this)">x</span>
+                                </li>
+                            </ul>
+                            <ul id="Preview" class="sortable"></ul>
 
+                        </div>
+
+                        <div class="uploadResult"></div>
+
+
+                    </div>
+
+                    <div class="form-group form-title">
+                        <input type="text" class="form-control" id="productsTitle" name="title" placeholder="제목" th:value="${post.title}">
+                    </div>
+                    <div class="form-group form-category">
+                        <select id="productsCategory" class="form-control" name="category">
+                            <!--카테고리-->
+                            <option th:each = "categoryList:${T(com.exercise.carrotproject.domain.enumList.Category).values()}" th:value="${categoryList.name}" th:text="${categoryList.category}" th:selected="${categoryList}==${post.category}"></option>
+
+                        </select>
+                    </div>
+                    <div class="form-group form-price">
+                        <input type="number" class="form-control" id="productsPrice" name="price" min="0" step="1000" th:value="${post.price}">
+                    </div>
+                    <div class="form-group form-description">
+                        <textarea class="form-control" id="productsDescription" name="content" rows="10" th:utext="${post.content}"></textarea>
+                    </div>
+
+
+                    <!--숨김여부, 판매여부 hidden, 조회수-->
+                    <input type="hidden" name="hideState" th:value="${post.hideState}" />
+                    <input type="hidden" name="sellState" th:value="${post.sellState}" />
+                    <input type="hidden" name="hits" th:value="${post.hits}"/>
+
+                </form>
+
+
+                <!--거래희망장소-->
+                <button id="regPlace" class="btn btn-outline-secondary" type="button">거래희망장소 선택하기</button>
+                <!--카카오맵 지도-->
+                <div id="mapArea">
+                    <br/>
+                    <p class="fw-bold fs-6">거래 희망하는 장소를 지도에서 클릭해주세요!</p>
+
+                    <div id="map" style="width:100%;height:350px; margin: 20px;"></div>
+
+                    <div id="inputPlace" class="form-group form-car-mileage">
+                        <input type="text" class="form-control" id="placeInfo" name="placeInfo" th:value="${mtPlace?.placeInfo}" placeholder="장소명을 입력해주세요. 예)강남역 1번 출구">
+                    </div>
+                    <button id="cfmPlace" class="btn btn-outline-secondary" type="button" style="display: none;">장소선택하기</button>
+
+                    <button id="noPlace" class="btn btn-outline-secondary" type="button" >장소선택 안함</button>
                 </div>
 
-                <div class="uploadResult"></div>
-
+                <br/><br/>
+                <button type="button" id="uploadBtn" class="btn-orange">상품 등록하기</button>
 
             </div>
-
-            <div class="form-group form-title">
-                <input type="text" class="form-control" id="productsTitle" name="title" placeholder="제목" th:value="${post.title}">
-            </div>
-            <div class="form-group form-category">
-                <select id="productsCategory" class="form-control" name="category">
-                    <!--카테고리-->
-                    <option th:each = "categoryList:${T(com.exercise.carrotproject.domain.enumList.Category).values()}" th:value="${categoryList.name}" th:text="${categoryList.category}" th:selected="${categoryList}==${post.category}"></option>
-
-                </select>
-            </div>
-            <div class="form-group form-price">
-                <input type="number" class="form-control" id="productsPrice" name="price" min="0" step="1000" th:value="${post.price}">
-            </div>
-            <div class="form-group form-description">
-                <textarea class="form-control" id="productsDescription" name="content" rows="10" th:utext="${post.content}"></textarea>
-            </div>
-
-
-            <!--숨김여부, 판매여부 hidden, 조회수-->
-            <input type="hidden" name="hideState" th:value="${post.hideState}" />
-            <input type="hidden" name="sellState" th:value="${post.sellState}" />
-            <input type="hidden" name="hits" th:value="${post.hits}"/>
-
-        </form>
-
-
-        <!--거래희망장소-->
-        <button id="regPlace" class="btn btn-outline-secondary" type="button">거래희망장소 선택하기</button>
-        <!--카카오맵 지도-->
-        <div id="mapArea">
-            <br/>
-            <p class="fw-bold fs-6">거래 희망하는 장소를 지도에서 클릭해주세요!</p>
-
-            <div id="map" style="width:100%;height:350px; margin: 20px;"></div>
-
-            <div id="inputPlace" class="form-group form-car-mileage">
-                <input type="text" class="form-control" id="placeInfo" name="placeInfo" th:value="${mtPlace?.placeInfo}" placeholder="장소명을 입력해주세요. 예)강남역 1번 출구">
-            </div>
-            <button id="cfmPlace" class="btn btn-outline-secondary" type="button" style="display: none;">장소선택하기</button>
-
-            <button id="noPlace" class="btn btn-outline-secondary" type="button" >장소선택 안함</button>
         </div>
-
-        <br/><br/>
-        <button type="button" id="uploadBtn" class="btn-orange">상품 등록하기</button>
-
-    </div>
+    </section>
 </div>
 
 
