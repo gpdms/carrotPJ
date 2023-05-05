@@ -7,15 +7,12 @@ import com.exercise.carrotproject.domain.enumList.*;
 import com.exercise.carrotproject.domain.member.MemberEntityDtoMapper;
 import com.exercise.carrotproject.domain.member.dto.MemberDto;
 import com.exercise.carrotproject.domain.member.entity.Member;
-import com.exercise.carrotproject.domain.member.entity.QMember;
 import com.exercise.carrotproject.domain.member.repository.MemberRepository;
 import com.exercise.carrotproject.domain.post.dto.MtPlaceDto;
 import com.exercise.carrotproject.domain.post.dto.PostDto;
 import com.exercise.carrotproject.domain.post.dto.PostImgDto;
-import com.exercise.carrotproject.domain.post.dto.WishDto;
 import com.exercise.carrotproject.domain.post.entity.*;
 import com.exercise.carrotproject.domain.post.repository.*;
-import com.exercise.carrotproject.web.common.SessionConst;
 import com.querydsl.core.types.ExpressionUtils;
 import com.querydsl.core.types.Projections;
 import com.querydsl.jpa.JPAExpressions;
@@ -44,7 +41,7 @@ import java.util.*;
 @RequiredArgsConstructor
 @Service
 @Slf4j
-public class PostServiceImpl {
+public class PostServiceImpl implements PostService{
 
     @PersistenceContext
     EntityManager em;
@@ -53,21 +50,17 @@ public class PostServiceImpl {
     private final PostImgRepository postImgRepository;
     private final MemberRepository memberRepository;
     private final MtPlaceRepository mtPlaceRepository;
-    private final TradeRepository tradeRepository;
     private final WishRepository wishRepository;
     private final JPAQueryFactory jpaQueryFactory; //QuerydslConfig파일에 bean등록함
-    private final PostRepositoryImpl customPostRepository;
-//    private final PostRepositoryImpl customPostRepository; //후에 CustomPostRepository로 바꿔주기
+//    private final CustomPostRepositoryImpl customPostRepository;
 
     @Value("${file.postImg}")
     private String uploadPath;
 
 
-//    @Override
+    @Override
     @Transactional
     public String insertPost(PostDto postDto, MultipartFile[] uploadFiles, MtPlaceDto mtPlaceDto) throws IOException {
-//        log.info("uploadfiles-length {}", uploadFiles.length);
-        log.info("서비스단 mtPlaceDto:{}",mtPlaceDto);
         //Dto->Entity 변환
         Post postEntity = PostEntityDtoMapper.dtoToEntity(postDto);
 
@@ -95,36 +88,28 @@ public class PostServiceImpl {
         //이미지 테이블에 insert
         insertPostImg(postEntity, uploadFiles);
 
-
-        
         return "성공";
-
     }
 
 
-//    @Override
+    @Override
     @Transactional
     public void insertPostImg(Post postEntity, MultipartFile[] uploadFiles) throws IOException {
 
-        
         //사진 업로드
         List<PostImgDto> resultDTOList = new ArrayList<>();
 
-        
         for(MultipartFile uploadFile: uploadFiles){
 
             //파일의 MIME 타입을 체크하여, 이미지 파일인지 여부를 확인하는 코드
             if(uploadFile.getContentType().startsWith("image")==false) {
                 log.warn("this file is not image type");
             }
-           
 
             //원본파일명
             String originalName = uploadFile.getOriginalFilename();
-            log.info("originalName:"+originalName);
             //파일 이름과 확장자 추출. (마지막 디렉토리 구분자 다음에 오는 문자열 부분을 반환)
             String fileName = originalName.substring(originalName.lastIndexOf("\\")+1);
-            log.info("fileName:"+fileName);
 
             //날짜 폴더 생성
             String folderPath = makeFolder();
@@ -139,7 +124,6 @@ public class PostServiceImpl {
             //로컬에 사진저장
             uploadFile.transferTo(savePath);
 
-
             //데이터베이스에 사진정보 저장
             PostImg postImg = PostImg.builder()
                     .post(postEntity)
@@ -148,14 +132,6 @@ public class PostServiceImpl {
                     .savedPath(String.valueOf(savePath)).build();
 
             em.persist(postImg);
-
-//            //썸네일 생성
-//            String thumbnailName = uploadPath+File.separator+"s_"+uuid+"_"+fileName;
-//            File thumbnailFile = new File(thumbnailName);
-//            //썸네일 생성 라이브러리인 "Thumbnailator"를 사용하여 이미지 파일의 썸네일을 생성하는 메서드
-//            Thumbnailator.createThumbnail(savePath.toFile(), thumbnailFile, 100, 100); //100*100썸네일 만듦.
-//            resultDTOList.add(new UploadResultDTO(fileName, uuid));
-//            log.info(resultDTOList.toString());
             }
         }
 
@@ -177,7 +153,7 @@ public class PostServiceImpl {
     }
 
     //거래희망장소 insert
-//    @Override
+    @Override
     @Transactional
     public void insertMtPlace(Post postEntity, MtPlaceDto mtPlaceDto){
         MtPlace mtPlaceEntity = MtPlace.builder()
@@ -190,7 +166,7 @@ public class PostServiceImpl {
     }
 
     //거래희망장소 update
-//    @Override
+    @Override
     @Transactional
     public void updateMtPlace(PostDto postDto, MtPlaceDto mtPlaceDto){
         Post post = PostEntityDtoMapper.dtoToEntity(postDto);
@@ -212,14 +188,14 @@ public class PostServiceImpl {
     }
 
     //거래희망장소 delete
-    //    @Override
+    @Override
     @Transactional
     public void deleteMtPlace(Post post){
         mtPlaceRepository.deleteByPost(post);
     }
 
 
-//    @Override
+    @Override
     public List<PostDto> selectAllPost(MemberDto memberDto){
         String loginMemId = null;
         Loc loginMemLoc = null;
@@ -227,10 +203,8 @@ public class PostServiceImpl {
             loginMemId = memberDto.getMemId();
             loginMemLoc = memberDto.getLoc();
         }
-//        Member member = MemberEntityDtoMapper.toMemberEntity(memberDto);
-//        Loc loc = member.getLoc();
-//        HideState hideState = HideState.SHOW;
-        List<Post> postEntityList = customPostRepository.selectBoardPost(loginMemId, loginMemLoc);
+
+        List<Post> postEntityList = postRepository.selectBoardPost(loginMemId, loginMemLoc);
 
         //Entity리스트 -> Dto 리스트
         List<PostDto> postDtoList = PostEntityDtoMapper.toDtoList(postEntityList);
@@ -239,22 +213,19 @@ public class PostServiceImpl {
     }
 
 
-//    @Override
+    @Override
     public Page<PostDto> paging(List<PostDto> postList, Pageable pageable){
 
         //페이징
         final int start = (int) pageable.getOffset();
         final int end = Math.min((start + pageable.getPageSize()), postList.size());
         final Page<PostDto> page = new PageImpl<>(postList.subList(start, end), pageable, postList.size());
-//        log.info("Page---------start:{}, end:{}, page:{}", start, end, page);
-        log.info("pageable.getPageNumber():{}", pageable.getPageNumber());
-        log.info("pageable.getPageSize():{}", pageable.getPageSize());
 
         return page;
     }
 
 
-//    @Override
+    @Override
     public PostDto selectOnePost(Long postId){
         Post postEntity = em.find(Post.class, postId);
 
@@ -265,7 +236,7 @@ public class PostServiceImpl {
     }
 
     //게시글의 모든 이미지 반환
-//    @Override
+    @Override
     public List<PostImgDto> selectPostImgs(Long postId){
 
         String jpql = "select i from PostImg i where i.post.postId = :postId";
@@ -280,7 +251,7 @@ public class PostServiceImpl {
     }
     
     //게시글의 첫번째 이미지 반환
-//    @Override
+    @Override
     public PostImgDto selectOnePostImg(Long imgId){
         PostImg imgEntity = postImgRepository.findById(imgId).orElse(null);
         //entity->dto
@@ -290,7 +261,7 @@ public class PostServiceImpl {
     }
 
 
-//    @Override
+    @Override
     public MtPlaceDto selectMtPlace(Long postId){
         Post post = postRepository.findById(postId).orElseThrow();
         MtPlace mtPlace = mtPlaceRepository.findByPost(post);
@@ -304,7 +275,7 @@ public class PostServiceImpl {
     }
 
     //게시글 이미지 아이디로 삭제
-//    @Override
+    @Override
     @Transactional
     public void deleteOnePostImg(Long imgId){
         postImgRepository.deleteById(imgId);
@@ -313,14 +284,13 @@ public class PostServiceImpl {
     
 
     //게시글 업데이트
-//    @Override
+    @Override
     @Transactional
     public void updatePost(PostDto postDto, MultipartFile[] uploadFiles) throws IOException {
         //Dto -> Enity
         Post post = PostEntityDtoMapper.dtoToEntity(postDto);
 
         Post rs = postRepository.save(post);
-//        log.info("게시글 업데이트 성공?:{}",rs);
 
         //파일이 비어있을 경우
         for(MultipartFile file : uploadFiles) {
@@ -332,33 +302,21 @@ public class PostServiceImpl {
 
         //새이미지 추가
         insertPostImg(post, uploadFiles);
-
-
     }
 
 
 
     //게시글 삭제
-//    @Override
+    @Override
     @Transactional
     public void deletePost(Long postId){
-        //postId로 post엔티티 조회
-//        Post post = postRepository.findById(postId).orElse(null);
-        //게시글 이미지 삭제
-//        postImgRepository.deleteByPost(post);
-        //거래희망장소 삭제
-//        mtPlaceRepository.deleteByPost(post);
-
-
-
-        //게시글 삭제
         postRepository.deleteById(postId);
 
     }
 
     
     //hideState 변경
-//    @Override
+    @Override
     @Transactional
     public String updateHideState(Long postId, String hideStateName){
 
@@ -390,7 +348,7 @@ public class PostServiceImpl {
 
 
     //sellState변경
-//    @Override
+    @Override
     @Transactional
     public String updateSellState(Long postId, String sellStateName){
 
@@ -423,7 +381,7 @@ public class PostServiceImpl {
     }
 
     //판매여부로 게시글들 반환
-    //    @Override
+    @Override
     public Map selectPostBySellState(String memId){
         Member member = memberRepository.findById(memId).orElseThrow();
 
@@ -432,20 +390,15 @@ public class PostServiceImpl {
         //entity리스트->dto리스트
         List<PostDto> postDtoOnSaleList = PostEntityDtoMapper.toDtoList(onSalePostList);
 
-
-        //판매완료
-        //List<Post> soldPostList = postRepository.findByMemberAndSellStateAndHideStateOrderByPostIdDesc(member, SellState.SOLD, HideState.SHOW);
-        //entity리스트->dto리스트
-        //List<PostDto> postDtoSoldList = PostEntityDtoMapper.toDtoList(soldPostList);
         Map map = new HashMap();
         map.put("onSaleAndRsvList", postDtoOnSaleList);
-        map.put("soldList", customPostRepository.getSoldList(memId));
+        map.put("soldList", postRepository.getSoldList(memId));
 
         return map;
     }
 
     //숨김 게시글들 반환
-    //    @Override
+    @Override
     public List<PostDto> selectHidePost(String memId){
         Member member = memberRepository.findById(memId).orElseThrow();
 
@@ -456,7 +409,7 @@ public class PostServiceImpl {
         return postDtoList;
     }
 
-//    @Override
+    @Override
     public List<ChatRoomDto> selectBuyersByPost(MemberDto memberDto, Long postId){
         Member memberEntity = MemberEntityDtoMapper.toMemberEntity(memberDto);
 
@@ -501,7 +454,7 @@ public class PostServiceImpl {
         return chatRoomList;
     }
 
-//    @Override
+    @Override
     @Transactional
     public void insertWish(Long postId, String memId){
         Post post = postRepository.findById(postId).orElseThrow();
@@ -514,7 +467,7 @@ public class PostServiceImpl {
         wishRepository.save(wishEntity);
     }
 
-    //    @Override
+    @Override
     @Transactional
     public void deleteWish(Long postId, String memId){
         Post post = postRepository.findById(postId).orElseThrow();
@@ -524,7 +477,7 @@ public class PostServiceImpl {
 
     }
 
-//    @Override
+    @Override
     public String isWishExist(Long postId, String memId){
         Post post = postRepository.findById(postId).orElseThrow();
         Member member = memberRepository.findById(memId).orElseThrow();
@@ -538,14 +491,14 @@ public class PostServiceImpl {
         }
     }
 
-//    @Override
+    @Override
     public Integer countWish(Long postId){
         Post post = postRepository.findById(postId).orElseThrow();
         Integer wishCount = wishRepository.countByPost(post);
         return wishCount;
     }
 
-//    @Override
+    @Override
     public List<PostDto> selectPostListFromWish(String memId){
 
         QWish qWish = QWish.wish;
@@ -558,12 +511,12 @@ public class PostServiceImpl {
         return postDtoList;
     }
 
-//    @Override
+    @Override
     public List<PostDto> searchPost(String loginMemId, String searchWord) {
-        List<Post> postList = customPostRepository.searchPost(loginMemId, searchWord);
+        List<Post> postList = postRepository.searchPost(loginMemId, searchWord);
         return PostEntityDtoMapper.toDtoList(postList);
     }
-    //    @Override
+    @Override
     public List<PostDto> selectPostListByCategory(MemberDto memberDto, Category category) {
         String loginMemId = null;
         Loc loginMemLoc = null;
@@ -571,11 +524,11 @@ public class PostServiceImpl {
             loginMemId = memberDto.getMemId();
             loginMemLoc = memberDto.getLoc();
         }
-        List<Post> postList = customPostRepository.selectBoardPostByCategory(loginMemId, loginMemLoc, category);
+        List<Post> postList = postRepository.selectBoardPostByCategory(loginMemId, loginMemLoc, category);
         return PostEntityDtoMapper.toDtoList(postList);
     }
 
-//    @Override
+    @Override
     @Transactional
     public void updateHits(Long postId){
         QPost qPost = QPost.post;
@@ -586,7 +539,7 @@ public class PostServiceImpl {
     }
 
     public List<PostDto> postListBrief(int limit, String memId) {
-        List<Post> posts = customPostRepository.postListByLimit(limit, memId);
+        List<Post> posts = postRepository.postListByLimit(limit, memId);
         return PostEntityDtoMapper.toDtoList(posts);
     }
 }
