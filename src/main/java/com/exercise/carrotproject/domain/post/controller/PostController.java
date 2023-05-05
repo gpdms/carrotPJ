@@ -364,14 +364,6 @@ public class PostController {
         List<ChatRoomDto> chatRoomList = postService.selectBuyersByPost(memberDto, postId);
         model.addAttribute("chatRoomList", chatRoomList);
 
-//        Trade selectedBuyer = postService.selectTradeByPost(postId);
-//        if(selectedBuyer == null){
-//            model.addAttribute("selectedBuyerId", null);
-//        } else {
-//            String selectedBuyerId = selectedBuyer.getBuyer().getMemId();
-//            model.addAttribute("selectedBuyerId", selectedBuyerId);
-//        }
-
         return "post/buyerListByPost";
     }
     //구매자 선택시
