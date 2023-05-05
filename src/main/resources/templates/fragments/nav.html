@@ -25,7 +25,10 @@
                         </li>
                     </ul>
                 </li>
-                <li class="nav-item"><a class="nav-link" href="#!">고객센터</a></li>
+                <li th:if="${session.loginMember == null}" class="nav-item">
+                    <a class="nav-link" href="#!">고객센터</a></li>
+                <li th:if="${session.loginMember != null}" class="nav-item">
+                    <a class="nav-link" th:href="@{/home/{memId}(memId=${session.loginMember.memId})}">마이홈</a></li>
             </ul>
             <form class="d-flex search-bar" id="search-form" th:action="@{/post/search}" method="get">
                 <input type="text" class="search-input" name="word" placeholder="물품을 검색해주세요">

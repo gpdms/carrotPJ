@@ -34,7 +34,7 @@
                                 <option th:each = "sellStateEnum:${T(com.exercise.carrotproject.domain.enumList.SellState).values()}" th:value="${sellStateEnum.getSellStateName()}" th:text="${sellStateEnum.getSellStateName()}" th:selected="${sellStateEnum.getSellStateName()}==${post.sellState.getSellStateName()}"></option>
                             </select>
                             <!--게시글 관리: 삭제,숨김,수정-->
-                            <button class="btn btn-outline-dark btn-sm float-end" onclick="viewModal()">게시글 관리</button>
+                            <button th:if="${session.loginMember.memId}==${post.member.memId}" class="btn btn-outline-dark btn-sm float-end" onclick="viewModal()">게시글 관리</button>
                         </div>
 
                        <!--프로필-->
