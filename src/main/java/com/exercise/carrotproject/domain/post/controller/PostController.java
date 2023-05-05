@@ -374,7 +374,6 @@ public class PostController {
 
         return "post/buyerListByPost";
     }
-
     //구매자 선택시
     @GetMapping("/post/buyer/{postId}/{buyerId}")
     public String chooseBuyer(@PathVariable Long postId, @PathVariable String buyerId){

@@ -67,16 +67,9 @@ public class HomeController {
     @GetMapping("/")
     public String home(@Login MemberDto loginMember, Model model,
                        RedirectAttributes redirectAttributes ) {
-
-            //게시물 불러오기
-            List<PostDto> postList = postService.selectAllPost(loginMember);
-            model.addAttribute("list", postList);
-            return "home";
-        //세션이 유지되면 로그인된 홈으로 이동
-      /*  redirectAttributes.addAttribute("memId", loginMember.getMemId());
-        model.addAttribute("member", loginMember);
-        return "redirect:/home/{memId}";*/
-
+        List<PostDto> postList = postService.selectAllPost(loginMember);
+        model.addAttribute("list", postList);
+        return "home";
     }
 
     @GetMapping("/home/{memId}")
