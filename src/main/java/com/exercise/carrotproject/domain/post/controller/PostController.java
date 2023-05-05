@@ -3,29 +3,25 @@ package com.exercise.carrotproject.domain.post.controller;
 import com.exercise.carrotproject.domain.chat.dto.ChatRoomDto;
 import com.exercise.carrotproject.domain.chat.service.ChatServiceImpl;
 import com.exercise.carrotproject.domain.enumList.Category;
-import com.exercise.carrotproject.domain.enumList.Loc;
 import com.exercise.carrotproject.domain.member.MemberEntityDtoMapper;
 import com.exercise.carrotproject.domain.member.entity.Member;
 import com.exercise.carrotproject.domain.member.service.MemberServiceImpl;
 import com.exercise.carrotproject.domain.post.dto.MtPlaceDto;
-import com.exercise.carrotproject.domain.post.dto.SoldPostDto;
-import com.exercise.carrotproject.domain.post.entity.Post;
+
 import com.exercise.carrotproject.domain.post.entity.Trade;
-import com.exercise.carrotproject.domain.post.service.TradeServiceImpl;
+import com.exercise.carrotproject.domain.post.service.PostService;
+import com.exercise.carrotproject.domain.post.service.TradeService;
 import com.exercise.carrotproject.web.common.SessionConst;
 import com.exercise.carrotproject.domain.member.dto.MemberDto;
 import com.exercise.carrotproject.domain.post.dto.PostDto;
 import com.exercise.carrotproject.domain.post.dto.PostImgDto;
-import com.exercise.carrotproject.domain.post.service.PostServiceImpl;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.coyote.Response;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.UrlResource;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
-import org.springframework.http.HttpRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
@@ -52,8 +48,8 @@ import java.util.stream.Collectors;
 @Slf4j
 @RequiredArgsConstructor
 public class PostController {
-    private final PostServiceImpl postService;
-    private final TradeServiceImpl tradeService;
+    private final PostService postService;
+    private final TradeService tradeService;
     private final ChatServiceImpl chatService;
     private final MemberServiceImpl memberService;
 

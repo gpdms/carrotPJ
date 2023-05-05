@@ -4,27 +4,19 @@ import com.exercise.carrotproject.domain.enumList.Category;
 import com.exercise.carrotproject.domain.enumList.HideState;
 import com.exercise.carrotproject.domain.enumList.Loc;
 import com.exercise.carrotproject.domain.enumList.SellState;
-import com.exercise.carrotproject.domain.member.dto.MemberDto;
-import com.exercise.carrotproject.domain.member.entity.Member;
-import com.exercise.carrotproject.domain.member.entity.QBlock;
-import com.exercise.carrotproject.domain.post.dto.PostDto;
+
 import com.exercise.carrotproject.domain.post.dto.QSoldPostDto;
 import com.exercise.carrotproject.domain.post.dto.SoldPostDto;
 import com.exercise.carrotproject.domain.post.entity.Post;
-import com.exercise.carrotproject.domain.review.entity.QReviewBuyer;
-import com.querydsl.core.types.Projections;
+
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.jpa.JPAExpressions;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 
-//QPost를 static import함으로써, QPost에 미리 정의된 Q 타입 인스턴스 상수를 사용
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
-import javax.persistence.Query;
 import java.util.List;
-
+//QPost를 static import함으로써, QPost에 미리 정의된 Q 타입 인스턴스 상수를 사용
 import static com.exercise.carrotproject.domain.member.entity.QBlock.block;
  import static com.exercise.carrotproject.domain.post.entity.QPost.post;
 import static com.exercise.carrotproject.domain.review.entity.QReviewBuyer.reviewBuyer;
@@ -32,12 +24,11 @@ import static org.springframework.util.StringUtils.hasText;
 
 @Repository
 @RequiredArgsConstructor
-public class PostRepositoryImpl implements CustomPostRepository{
-    @PersistenceContext
-    EntityManager em;
+public class CustomPostRepositoryImpl implements CustomPostRepository{
+
     private final JPAQueryFactory jpaQueryFactory;
 
-//    @Override
+    @Override
     public long updateHideState(Long postId){
         return jpaQueryFactory
                 .update(post)
@@ -46,6 +37,7 @@ public class PostRepositoryImpl implements CustomPostRepository{
                 .execute();
     }
 //findByMemberAndSellStateAndHideStateOrderByPostIdDesc
+    @Override
     public List<SoldPostDto> getSoldList(String memId) {
          return jpaQueryFactory
                 .select(new QSoldPostDto(post, reviewBuyer.reviewBuyerId))
@@ -58,6 +50,7 @@ public class PostRepositoryImpl implements CustomPostRepository{
                 .fetch();
     }
 
+    @Override
     public List<Post> selectBoardPost(String loginMemId, Loc loginMemLoc){
         return jpaQueryFactory.select(post)
                 .from(post)
@@ -68,6 +61,7 @@ public class PostRepositoryImpl implements CustomPostRepository{
                 .orderBy(post.postId.desc())
                 .fetch();
     }
+    @Override
     public List<Post> selectBoardPostByCategory(String loginMemId, Loc loginMemLoc, Category category){
         return jpaQueryFactory.select(post)
                 .from(post)
@@ -79,6 +73,7 @@ public class PostRepositoryImpl implements CustomPostRepository{
                 .orderBy(post.postId.desc())
                 .fetch();
     }
+    @Override
     public List<Post> searchPost(String loginMemId, String searchWord){
         return jpaQueryFactory.select(post)
                 .from(post)
@@ -90,6 +85,7 @@ public class PostRepositoryImpl implements CustomPostRepository{
                 )
                 .fetch();
     }
+    @Override
     public List<Post> postListByLimit(int limit, String memId) {
         return jpaQueryFactory.select(post)
                         .from(post)
@@ -99,6 +95,7 @@ public class PostRepositoryImpl implements CustomPostRepository{
                         .orderBy(post.postId.desc())
                         .fetch();
     }
+    @Override
     public BooleanExpression notExistsBlock(String loginMemId) {
         BooleanExpression booleanExpression = null;
         if(hasText(loginMemId)) {
@@ -112,9 +109,11 @@ public class PostRepositoryImpl implements CustomPostRepository{
         }
         return booleanExpression;
     }
+    @Override
     public BooleanExpression locEq(Loc loc){
         return loc != null ? post.loc.eq(loc) : null;
     }
+    @Override
     public BooleanExpression memIdEq(String memId){
         return hasText(memId) ? post.member.memId.eq(memId) : null;
     }
