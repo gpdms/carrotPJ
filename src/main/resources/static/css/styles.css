@@ -2520,6 +2520,7 @@ textarea.form-control-lg {
   background-color: #0d6efd;
   border-color: #0d6efd;
 }
+
 .form-check-input:checked[type=checkbox] {
   background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20'%3e%3cpath fill='none' stroke='%23fff' stroke-linecap='round' stroke-linejoin='round' stroke-width='3' d='M6 10l3 3l6-6'/%3e%3c/svg%3e");
 }
@@ -2568,6 +2569,15 @@ textarea.form-control-lg {
   display: inline-block;
   /*margin-left: 1rem;*/
 }
+/*custom*/
+/*.form-check-inline:checked {
+  background-color: #fd7e14;
+  border-color: #fd7e14;}
+.form-check-inline[type=checkbox]:indeterminate {
+  background-color: #fd7e14;
+  border-color: #fd7e14;
+  background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20'%3e%3cpath fill='none' stroke='%23fff' stroke-linecap='round' stroke-linejoin='round' stroke-width='3' d='M6 10h8'/%3e%3c/svg%3e");
+}*/
 
 .btn-check {
   position: absolute;
@@ -11402,7 +11412,9 @@ textarea.form-control-lg {
 .bd-top-grey{
   border-top: 1px solid grey;
 }
-
+.bd-top-grey-custom{
+  border-top: 1px solid #ccc;
+}
 
 .ft-text{
   color: grey;

@@ -16,8 +16,10 @@ import java.util.List;
 public class ReviewForm {
     @NotNull
     private String buyerId;
+    private String buyerNick;
     @NotNull
     private String sellerId;
+    private String sellerNick;
     @NotNull
     private Long postId;
     @NotNull

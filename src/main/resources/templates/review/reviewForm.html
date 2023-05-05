@@ -5,152 +5,126 @@
 
 <head layout:fragment="head">
     <title>리뷰 폼</title>
-    <style>
-        .form-container {
-            max-width: 560px;
-            padding-left: 100px;
-        }
-        .field-error {
-            border-color: #dc3545;
-            color: #dc3545;
-        }
-        #positiveBuyerIndicator,
-        #negativeBuyerIndicator,
-        #positiveSellerIndicator,
-        #negativeSellerIndicator {
-            display: none;
-        }
-        #reviewSellerMessage textarea, #reviewBuyerMessage textarea {
-            height: 200px;
-            width: 300px;
-        }
-
-    </style>
+    <link href="/css/review_form.css" rel="stylesheet">
 </head>
 
 <div layout:fragment="content">
+<section class="mt-5 my-auto d-flex justify-content-center">
     <div class="form-container">
-        <div class="py-5 text-center">
-            <h2>리뷰</h2>
-        </div>
-        <h4 class="mb-3">리뷰 작성</h4>
-
-        <div th:if="${#httpServletRequest.servletPath =='/reviews/seller'}">
+        <!--<div class="py-5 text-center">
+            <h2>리뷰 작성</h2>
+        </div>-->
+        <h2 class="pt-5 mt-3 pb-3 text-center">리뷰 작성</h2>
+        <h4>구매 후기 남기기</h4>
+        <hr/>
+        <div class="review-form" th:if="${#httpServletRequest.servletPath =='/reviews/seller'}">
             <form id="reviewSellerForm">
                 <input type="hidden" th:name="postId" th:value="${reviewForm.postId}"/>
                 <input type="hidden" th:name="sellerId" th:value="${reviewForm.sellerId}"/>
                 <input type="hidden" th:name="buyerId" th:value="${reviewForm.buyerId}"/>
-                <div>
-                    <p>구매 후기 남기기</p>
-                    <p th:text="|${reviewForm.buyerId}님, |"></p>
-                    <p th:text="|${reviewForm.sellerId}님과의 거래가 어땠나요?|"></p>
+                <div class="question">
+                    <p th:text="|${reviewForm.buyerNick}님, ${reviewForm.sellerNick}님과의 거래가 어땠나요?|"></p>
                 </div>
 
-                <label for="sellerReviewState">평가</label>
                 <div id="sellerReviewState">
-                    <th:block th:each="RSValue:${T(com.exercise.carrotproject.domain.enumList.ReviewState).values()}"  >
-                        <button type="button" th:text="${RSValue.description}" th:onclick="viewSellerForm([[${RSValue.stateCode}]])"></button>
-                    </th:block>
-                </div>
-
-                <div id="sellerIndicators">
-                    <div id="positiveSellerIndicator">
-                        <hr class="my-4">
-                        <h5>어떤 점이 좋았나요?</h5>
-                        <th:block th:each="RS:${T(com.exercise.carrotproject.domain.enumList.ReviewSellerIndicator).values()}">
-                            <label th:if="${RS.name().contains('P')}">
-                                <input type="checkbox" th:name="indicator" th:value="${RS}">
-                                [[${RS.description}]]
-                            </label>
-                        </th:block>
-                    </div>
-                    <div id="negativeSellerIndicator">
-                        <hr class="my-4">
-                        <h5>어떤 점이 별로였나요?</h5>
-                        <th:block th:each="RS:${T(com.exercise.carrotproject.domain.enumList.ReviewSellerIndicator).values()}">
-                            <label th:if="${RS.name().contains('N')}">
-                                <input type="checkbox" th:name="indicator" th:value="${RS}">
-                                [[${RS.description}]]
-                            </label>
-                        </th:block>
+                    <div class="btn-wrap" th:each="RSValue:${T(com.exercise.carrotproject.domain.enumList.ReviewState).values()}"  >
+                        <button class="reviewState-btn" type="button" th:text="${RSValue.description}"
+                                th:onclick="viewSellerForm([[${RSValue.stateCode}]])"></button>
                     </div>
                 </div>
 
+                <div class="form-content">
+                    <div id="sellerIndicators">
+                        <div id="positiveSellerIndicator">
+                            <p class="dot">&#183;&nbsp;&nbsp;</p><p class="form-title">어떤 점이 좋았나요? &#128155;</p>
+                            <div class="checkbox" th:each="RS:${T(com.exercise.carrotproject.domain.enumList.ReviewSellerIndicator).values()}">
+                                <label th:if="${RS.name().contains('P')}">
+                                    <input class="form-check-inline" type="checkbox" th:name="indicator" th:value="${RS}">
+                                    [[${RS.description}]]
+                                </label>
+                            </div>
+                        </div>
+                        <div id="negativeSellerIndicator">
+                            <p class="dot">&#183;&nbsp;&nbsp;</p><p class="form-title">어떤 점이 별로였나요?</p>
+                            <div class="checkbox" th:each="RS:${T(com.exercise.carrotproject.domain.enumList.ReviewSellerIndicator).values()}">
+                                <label th:if="${RS.name().contains('N')}">
+                                    <input class="form-check-inline" type="checkbox" th:name="indicator" th:value="${RS}">
+                                    [[${RS.description}]]
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                    <div id="reviewSellerMessage"></div>
+                </div>
                 <hr class="my-4">
-                <div id="reviewSellerMessage"></div>
-
-                <hr class="my-4">
-                <div class="row">
+                <div class="row review-btns">
                     <div class="col">
-                        <button class="w-100 btn btn-secondary btn-lg"
+                        <button class="w-100 btn btn-secondary btn-lg cancel-btn"
                                 onclick="history.go(-1); return false;"
                                 type="button">이전으로</button>
                     </div>
                     <div class="col">
-                        <button class="w-100 btn btn-secondary btn-lg"
+                        <button class="w-100 btn btn-secondary btn-lg submit-btn"
                                 type="button"
                                 th:onclick="reviewSeller()">리뷰 남기기</button>
                     </div>
-                </div>
+                </div> <!--리뷰 남기기 버튼-->
             </form>
         </div>
 
-        <div th:if="${#httpServletRequest.servletPath.equals('/reviews/buyer')}">
+        <div class="review-form" th:if="${#httpServletRequest.servletPath.equals('/reviews/buyer')}">
             <form id="reviewBuyerForm">
                 <input type="hidden" th:name="postId" th:value="${reviewForm.postId}"/>
                 <input type="hidden" th:name="sellerId" th:value="${reviewForm.sellerId}"/>
                 <input type="hidden" th:name="buyerId" th:value="${reviewForm.buyerId}"/>
-                <div>
-                    <p>판매 후기 남기기</p>
-                    <p th:text="|${reviewForm.sellerId}님, |"></p>
-                    <p th:text="|${reviewForm.buyerId}님과의 거래가 어땠나요?|"></p>
+                <div class="question">
+                    <h4>판매 후기 남기기</h4>
+                    <p th:text="|${reviewForm.sellerNick}님, ${reviewForm.buyerNick}님과의 거래가 어땠나요?|"></p>
                 </div>
 
-               <label for="buyerReviewState">평가</label>
                <div id="buyerReviewState">
-                    <th:block th:each="RSValue:${T(com.exercise.carrotproject.domain.enumList.ReviewState).values()}"  >
-                        <button type="button" th:text="${RSValue.description}"
+                    <div class="btn-wrap" th:each="RSValue:${T(com.exercise.carrotproject.domain.enumList.ReviewState).values()}"  >
+                        <button class="reviewState-btn"
+                                type="button" th:text="${RSValue.description}"
                                 th:onclick="viewBuyerForm([[${RSValue.stateCode}]])">
                         </button>
-                    </th:block>
+                    </div>
                </div>
 
-                <div id="buyerForm">
+
+                <div class="form-content">
                    <div id="buyerIndicators">
                         <div id="positiveBuyerIndicator">
-                            <hr class="my-4">
-                            <h5>어떤 점이 좋았나요?</h5>
-                            <th:block th:each="RB:${T(com.exercise.carrotproject.domain.enumList.ReviewBuyerIndicator).values()}">
+                            <p class="dot">&#183;&nbsp;&nbsp;</p><p class="form-title">어떤 점이 좋았나요? &#128155;</p>
+                            <div class="checkbox" th:each="RB:${T(com.exercise.carrotproject.domain.enumList.ReviewBuyerIndicator).values()}">
                                <label th:if="${RB.name().contains('P')}">
-                                   <input type="checkbox" th:name="indicator" th:value="${RB}">
+                                   <input class="form-check-inline" type="checkbox" th:name="indicator" th:value="${RB}">
                                    [[${RB.description}]]
                                </label>
-                            </th:block>
+                            </div>
                         </div>
                         <div id="negativeBuyerIndicator">
-                            <hr class="my-4">
-                            <h5>어떤 점이 별로였나요?</h5>
-                            <th:block th:each="RB:${T(com.exercise.carrotproject.domain.enumList.ReviewBuyerIndicator).values()}">
+                            <p class="dot">&#183;&nbsp;&nbsp;</p><p class="form-title">어떤 점이 별로였나요?</p>
+                            <div class="checkbox" th:each="RB:${T(com.exercise.carrotproject.domain.enumList.ReviewBuyerIndicator).values()}">
                                 <label th:if="${RB.name().contains('N')}">
-                                    <input type="checkbox" th:name="indicator" th:value="${RB}">
+                                    <input class="form-check-inline" type="checkbox" th:name="indicator" th:value="${RB}">
                                     [[${RB.description}]]
                                 </label>
-                            </th:block>
+                            </div>
                         </div>
                    </div>
-                   <hr class="my-4">
                    <div id="reviewBuyerMessage"> </div>
                 </div>
 
                <hr class="my-4">
-               <div class="row">
+               <div class="row review-btns">
                    <div class="col">
-                       <button class="w-100 btn btn-secondary btn-lg"
+                       <button class="w-100 btn btn-secondary btn-lg cancel-btn"
                                onclick="history.go(-1); return false;"
                                type="button">이전으로</button>
                    </div>
                    <div class="col">
-                       <button class="w-100 btn btn-secondary btn-lg"
+                       <button class="w-100 btn btn-secondary btn-lg submit-btn"
                                type="button"
                        th:onclick="reviewBuyer()">리뷰 남기기</button>
                    </div>
@@ -158,28 +132,28 @@
 
            </form>
         </div>
-
     </div> <!-- /form-container -->
+</section>
 </div>
 
 <div layout:fragment="script">
     <script th:inline="javascript">
         let reviewStateCode = '0';
-
         function createMessage(reviewStateNum) {
             if(reviewStateNum == '0') {
-                return `<h5>아쉬웠던 점을 망고마켓 팀에 알려주세요</h5>
-                    <p>상대방에게 전달되지 않으니 안심하세요 </p>
-                    <textarea name="message" placeholder="여기에 적어주세요. (선택사항)" className="formcontrol"></textarea>`;
+                return `<p class="dot">&#183;&nbsp;&nbsp;</p><p class="form-title">아쉬웠던 점을 망고마켓 팀에 알려주세요.</p>
+                    <p class="message-explanation">상대방에게 전달되지 않으니 안심하세요 </p>
+                    <textarea class="message-area" name="message" placeholder="여기에 적어주세요. (선택사항)"></textarea>`;
             }else{
-                return `<h5>따뜻한 거래경험을 알려주세요!</h5>
-                    <p>남겨주신 거래후기는 상대방의 프로필에 공개돼요</p>
-                    <textarea name="message"  placeholder="여기에 적어주세요. (선택사항)" class="formcontrol"></textarea>`;
+                return `<p class="dot">&#183;&nbsp;&nbsp;</p><p class="form-title">따뜻한 거래경험을 알려주세요! &#128155;</p>
+                    <p class="message-explanation" >남겨주신 거래후기는 상대방의 프로필에 공개돼요</p>
+                    <textarea  class="message-area" name="message"  placeholder="여기에 적어주세요. (선택사항)"></textarea>`;
             }
         }
         function viewSellerForm(reviewStateNum) {
             $("input:checkbox[name='indicator']").prop("checked", false);
             let message = createMessage(reviewStateNum);
+            $(".form-content").addClass('content-border');
             if(reviewStateNum == '0') {
                 reviewStateCode = '0';
                 $("#negativeSellerIndicator").css("display", "block");
@@ -194,10 +168,10 @@
                 $("#reviewSellerMessage").append(message);
             }
         }
-
         function viewBuyerForm(reviewStateNum) {
             $("input:checkbox[name='indicator']").prop("checked", false);
             let message = createMessage(reviewStateNum);
+            $(".form-content").addClass('content-border');
             if(reviewStateNum == '0') {
                 reviewStateCode = '0';
                 $("#negativeBuyerIndicator").css("display", "block");
@@ -212,7 +186,6 @@
                 $("#reviewBuyerMessage").append(message);
             }
         }
-
         function isCheckedBox() {
             if ($('input:checkbox[name="indicator"]:checked').length == 0) {
                 alert("최소 1개 이상의 지표에 체크해주세요.");
@@ -284,5 +257,16 @@
             })
         }
 
+        const reviewStateBtns = document.querySelectorAll('.reviewState-btn');
+        reviewStateBtns.forEach((btn) => {
+            btn.addEventListener('click', () => {
+                // 모든 버튼에서 'selected' 클래스 제거
+                reviewStateBtns.forEach((btn) => {
+                    btn.classList.remove('selected');
+                });
+                // 클릭한 버튼에 'selected' 클래스 추가
+                btn.classList.add('selected');
+            });
+        });
     </script>
 </div>
