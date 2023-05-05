@@ -1,0 +1,29 @@
+.main-text{
+    width: 400px;
+    object-fit: contain;
+}
+.main-img{
+    width: 600px;
+    object-fit: contain;
+}
+.main-container{
+    margin: 0 auto;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+.sec-height{
+    height: 620px;
+}
+.sec-bg {
+    background-color: #E6F3E6;
+}
+.flex-col {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+.btn-wd {
+    width: 200px;
+    height: 45px;
+}

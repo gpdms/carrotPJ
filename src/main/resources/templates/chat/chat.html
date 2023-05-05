@@ -20,19 +20,19 @@
                 </th:block>
                 <th:block th:if="${chatSectionList != null}">
                     <div class="chat-message" th:each="chatSection : ${chatSectionList.keySet()}">
-                        [[${chatSection}]]
+                        <span class="sp-time">[[${chatSection}]]</span>
                         <ul class="chatting chat" th:each="chat : ${chatSectionList.get(chatSection)}">
                             <li th:if="${session.loginMember.memId}==${chat.fromId}" class="right clearfix">
-                                <span class="chat-img pull-right">
-                                    <img th:src="|/members/${chat.fromId}/profileImg|" alt="User Avatar">
-                                </span>
+<!--                                <span class="chat-img pull-right">-->
+<!--                                    <img th:src="|/members/${chat.fromId}/profileImg|" alt="User Avatar">-->
+<!--                                </span>-->
                                 <div class="chat-body clearfix">
                                     <div class="header">
-                                        <strong class="primary-font">[[${chat.fromId}]]</strong>
+<!--                                        <strong class="primary-font">[[${chat.fromId}]]</strong>-->
                                         <small class="pull-right text-muted"><i class="fa fa-clock-o"></i>[[${chat.getCalculatedTimeForChat()}]]</small>
 
                                     </div>
-                                    <p th:if="${chat.imgState.imgStateCode=='0'}">
+                                    <p class="fs-6" th:if="${chat.imgState.imgStateCode=='0'}">
                                         [[${chat.message}]]
                                     </p>
                                     <p th:if="${chat.imgState.imgStateCode=='1'}">
@@ -49,11 +49,11 @@
                                 <div class="chat-body clearfix">
                                     <div class="header">
 
-                                        <strong class="primary-font">[[${chat.fromId}]]</strong>
+<!--                                        <strong class="primary-font">[[${chat.fromId}]]</strong>-->
                                         <small class="pull-right text-muted"><i class="fa fa-clock-o"></i>[[${chat.getCalculatedTimeForChat()}]]</small>
 
                                     </div>
-                                    <p th:if="${chat.imgState.imgStateCode=='0'}">
+                                    <p class="fs-6" th:if="${chat.imgState.imgStateCode=='0'}">
                                         [[${chat.message}]]
                                     </p>
                                     <p th:if="${chat.imgState.imgStateCode=='1'}">
@@ -69,7 +69,7 @@
                         <input id="msg" class="form-control border no-shadow no-rounded"
                                placeholder="Type your message here">
                         <span class="input-group-btn">
-                            <button class="btn btn-success no-rounded" type="button" th:onclick="send()">Send</button>
+                            <button class="btn-orange no-rounded" type="button" th:onclick="send()">Send</button>
                             <input type="file" id="fileUpload" multiple>
                             <button class="btn btn-success no-rounded" type="button" th:onclick="sendImg()">SendImg</button>
                         </span>
@@ -104,7 +104,7 @@
             },
             function (e) {
                 //에러 콜백
-                alert('에러발생!!!!!!');
+                alert('로그인해주세요.');
             }
         );
     }
@@ -119,15 +119,12 @@
         if ([[${session.loginMember.memId}]] == data.from) {
             message =
                 `<li class="right clearfix">
-                        <span class="chat-img pull-right">
-                            <img src="/members/${data.from}/profileImg" alt="My Avatar">
-                        </span>
+
                     <div class="chat-body clearfix">
                         <div class="header">
-                            <strong class="primary-font">${data.from}</strong>
                             <small class="pull-right text-muted"><i class="fa fa-clock-o"></i>${data.createdTime}</small>
                         </div>
-                        <p>${data.chat}</p>
+                        <p class="fs-6">${data.chat}</p>
                         <hr>
                         <span class="read_state">${data.readState}</span>
                     </div>
@@ -140,10 +137,9 @@
                     	</span>
                     <div class="chat-body clearfix">
                         <div class="header">
-                            <strong class="primary-font">${data.from}</strong>
                             <small class="pull-right text-muted"><i class="fa fa-clock-o"></i>${data.createdTime}</small>
                         </div>
-                        <p>${data.chat}</p>
+                        <p class="fs-6">${data.chat}</p>
                     </div>
                 </li>`;
 

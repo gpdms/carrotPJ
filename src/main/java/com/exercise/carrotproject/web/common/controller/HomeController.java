@@ -44,7 +44,7 @@ public class HomeController {
     private final PostRepository postRepository;
     private final ReviewServiceImpl reviewService;
 
-    @PostConstruct
+//    @PostConstruct
     public void init() {
         Member member3 = Member.builder().memId("tester3").mannerScore(365000.0).nickname("3Nick").loc(Loc.GANGBUK).memPwd(securityUtils.getHashedPwd("tester33")).role(Role.USER).build();
         memberRepository.save(member3);
@@ -73,6 +73,9 @@ public class HomeController {
                        RedirectAttributes redirectAttributes ) {
         //세션에 회원 데이터가 없으면 home
         if (loginMember == null) {
+            //게시물 불러오기
+            List<PostDto> postList = postService.selectAllPost(loginMember);
+            model.addAttribute("list", postList);
             return "home";
         }
         //세션이 유지되면 로그인된 홈으로 이동

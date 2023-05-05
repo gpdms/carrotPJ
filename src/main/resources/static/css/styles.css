@@ -11376,9 +11376,9 @@ textarea.form-control-lg {
   }
 }
 .btn-orange:hover {
-  color: #212529;
-  background-color: transparent;
-  border-color: #212529;
+  color: white;
+  background-color: #e38c0a;
+  border-color: #e38c0a;
 
 }
 .font-orange {
@@ -11387,6 +11387,9 @@ textarea.form-control-lg {
 
 .bg-light-orange{
   background-color: #fff2eb;
+}
+.bg-light-yellow{
+  background-color: #f6cc11;
 }
 
 .bg-orange {
@@ -11429,4 +11432,8 @@ textarea.form-control-lg {
   color: grey;
   font-weight: bold;
   margin-right: 1.6rem;
+}
+
+.mg-auto{
+  margin: 0 auto;
 }

@@ -85,7 +85,7 @@ small, .small {
 }
 
 .chat-message {
-  padding: 60px 20px 115px;
+  padding: 60px 20px 1px;
 }
 
 .chat {
@@ -94,7 +94,7 @@ small, .small {
 }
 
 .chat-message{
-  background: #f9f9f9;
+  background: #fff6e5;
 }
 
 .chat li .chat-img img {
@@ -137,7 +137,7 @@ img {
 
 .chat li .chat-body .header {
   padding-bottom: 5px;
-  border-bottom: 1px solid #f1f5fc;
+  /*border-bottom: 1px solid #f1f5fc;*/
 }
 
 .chat li .chat-body p {
@@ -185,7 +185,7 @@ img {
 }
 
 .chat li.right .chat-body {
-  margin-right: 70px;
+  margin-right: 10px;
   margin-left: 100px;
   background-color: #fff;
 }
@@ -219,4 +219,14 @@ a:hover, a:active, a:focus {
 
 #fileUpload {
   display: none;
+}
+
+.sp-time{
+  display: block;
+  background-color: grey;
+  color: white;
+  text-align: center;
+  width: 80px;
+  border-radius: 0.3rem;
+  margin: 0 auto;
 }
