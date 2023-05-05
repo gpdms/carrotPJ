@@ -3,9 +3,7 @@ package com.exercise.carrotproject.domain.config.batch;
 
 import com.exercise.carrotproject.domain.member.dto.MemberDto;
 import com.exercise.carrotproject.domain.member.repository.MemberJdbcRepository;
-import com.exercise.carrotproject.domain.review.repository.ReviewBuyerCustomRepository;
 import com.exercise.carrotproject.domain.review.repository.ReviewCustomRepository;
-import com.exercise.carrotproject.domain.review.repository.ReviewSellerCustomRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.batch.core.Job;

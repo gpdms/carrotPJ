@@ -1,4 +1,4 @@
-package com.exercise.carrotproject.domain.review.repository;
+package com.exercise.carrotproject.domain.review.repository.detail;
 
 import com.exercise.carrotproject.domain.enumList.ReviewIndicator;
 import com.exercise.carrotproject.domain.enumList.ReviewSellerIndicator;

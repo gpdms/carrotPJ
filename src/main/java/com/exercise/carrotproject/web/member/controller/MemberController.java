@@ -4,14 +4,14 @@ package com.exercise.carrotproject.web.member.controller;
 import com.exercise.carrotproject.domain.enumList.Role;
 import com.exercise.carrotproject.domain.member.dto.MemberDto;
 import com.exercise.carrotproject.domain.member.entity.Member;
-import com.exercise.carrotproject.domain.member.service.MemberServiceImpl;
+import com.exercise.carrotproject.domain.member.service.MemberService;
 import com.exercise.carrotproject.domain.post.dto.PostDto;
 import com.exercise.carrotproject.domain.post.dto.SoldPostDto;
 import com.exercise.carrotproject.domain.post.entity.Trade;
 import com.exercise.carrotproject.domain.post.repository.TradeCustomRepository;
 import com.exercise.carrotproject.domain.post.service.PostServiceImpl;
-import com.exercise.carrotproject.domain.review.service.ReviewBuyerServiceImpl;
-import com.exercise.carrotproject.domain.review.service.ReviewSellerServiceImpl;
+import com.exercise.carrotproject.domain.review.service.ReviewBuyerService;
+import com.exercise.carrotproject.domain.review.service.ReviewSellerService;
 import com.exercise.carrotproject.web.common.SessionConst;
 import com.exercise.carrotproject.web.member.form.*;
 import com.exercise.carrotproject.web.member.form.memberInfo.MyBuyListForm;
@@ -43,7 +43,7 @@ import java.util.Map;
 @RequestMapping("/members")
 @RequiredArgsConstructor
 public class MemberController {
-    private final MemberServiceImpl memberService;
+    private final MemberService memberService;
     private final SecurityUtils securityUtils;
     private final PostServiceImpl postService;
 
@@ -52,8 +52,8 @@ public class MemberController {
 
     //for Review
     private final TradeCustomRepository tradeCustomRepository;
-    private final ReviewSellerServiceImpl reviewSellerService;
-    private final ReviewBuyerServiceImpl reviewBuyerService;
+    private final ReviewSellerService reviewSellerService;
+    private final ReviewBuyerService reviewBuyerService;
 
     @GetMapping("/signup")
     public String signupForm(@ModelAttribute("signupForm") SignupForm form, Model model) {

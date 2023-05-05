@@ -1,7 +1,9 @@
 package com.exercise.carrotproject.domain.member.service;
 
 
+import com.exercise.carrotproject.domain.enumList.Role;
 import com.exercise.carrotproject.domain.member.dto.BlockDto;
+import com.exercise.carrotproject.domain.member.dto.MemberDto;
 import com.exercise.carrotproject.domain.member.entity.Block;
 import com.exercise.carrotproject.domain.member.entity.Member;
 import org.springframework.stereotype.Service;
@@ -10,19 +12,29 @@ import org.springframework.web.multipart.MultipartFile;
 import java.util.Map;
 import java.util.Optional;
 
-//@Service
+@Service
 public interface MemberService {
-    Optional<Member> findOneMember(String memId);
+    Member findOneMember(String memId);
+    MemberDto findOneSocialMemberDto(String email, Role role);
+    String getNicknameByMemId(String memId);
     boolean hasDuplicatedMemberId(String memId);
-    Map<String,Object> insertMember(Member member);
+    boolean hasDuplicatedNickname(String nickname);
+    boolean hasSocialMember(String email, Role role);
+    String createMemId();
+    Map<String, Object> insertMember(Member member);
+    Map<String, Object> insertSocialMember(Map<String, Object> userinfo, Role role);
+    String saveSocialProfImg(String url);
 
     Member findMemberForProfileEdit(String memId);
     String getProfPath(String memId);
+    String createProfPath(MultipartFile img);
+    void saveImgServer(MultipartFile profImg, String save_path);
+
     boolean isPwdUpdated(String memId, String newPwd);
-    Member profileUpdate(Member member, MultipartFile profImg);
+    Map<String, Object> profileUpdate(Member updateMember, MultipartFile profImg);
 
-    Block findOneBlockByMemIds(String fromMemId, String toMemId);
-    void insertBlock(String fromMemId, String toMemId);
+    Block findOneBlockByFromMemToMem (String fromMemId, String toMemId);
+    boolean existBlockByMemIds (String memId1, String memId2);
+    Map<String,String> insertBlock(String fromMemId, String toMemId);
     void deleteBlock(String fromMemId, String toMemId);
-
 }

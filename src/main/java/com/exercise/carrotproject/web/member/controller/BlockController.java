@@ -1,13 +1,12 @@
 package com.exercise.carrotproject.web.member.controller;
 
 import com.exercise.carrotproject.domain.member.dto.MemberDto;
-import com.exercise.carrotproject.domain.member.service.MemberServiceImpl;
+import com.exercise.carrotproject.domain.member.service.MemberService;
 import com.exercise.carrotproject.web.common.SessionConst;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
@@ -19,7 +18,7 @@ import java.util.Map;
 @RestController
 @RequiredArgsConstructor
 public class BlockController {
-    private final MemberServiceImpl memberService;
+    private final MemberService memberService;
     @PostMapping("/block/{memId}")
     public ResponseEntity<Map<String, String>> blockMember(@PathVariable String memId,
                                                            HttpSession session){
