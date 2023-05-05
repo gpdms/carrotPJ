@@ -52,7 +52,6 @@ public class PostServiceImpl implements PostService{
     private final MtPlaceRepository mtPlaceRepository;
     private final WishRepository wishRepository;
     private final JPAQueryFactory jpaQueryFactory; //QuerydslConfig파일에 bean등록함
-//    private final CustomPostRepositoryImpl customPostRepository;
 
     @Value("${file.postImg}")
     private String uploadPath;
@@ -505,6 +504,7 @@ public class PostServiceImpl implements PostService{
         List<Post> postList = jpaQueryFactory.select(qWish.post)
                                 .from(qWish)
                                 .where(qWish.member.memId.eq(memId))
+                                .orderBy(qWish.wishId.desc())
                                 .fetch();
         List<PostDto> postDtoList = PostEntityDtoMapper.toDtoList(postList);
 
