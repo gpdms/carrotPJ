@@ -16,7 +16,6 @@ public class MemberEntityDtoMapper {
     }
     //memberEntity -> memberDto
     public static MemberDto toMemberDto(Member member){
-        System.out.println("member.getMannerScore() = " + member.getMannerScore());
         return MemberDto.builder()
                 .memId(member.getMemId())
                 .nickname(member.getNickname())
