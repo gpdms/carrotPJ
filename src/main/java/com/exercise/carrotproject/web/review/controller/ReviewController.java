@@ -59,8 +59,8 @@ public class ReviewController {
             return "redirect:/members/{me}/trade/sellList";
         }*/
         Trade sellOne = tradeRepository.findByPost(post);
-        ReviewForm reviewForm = ReviewForm.builder().sellerId(loginMember.getMemId())
-                .buyerId(sellOne.getBuyer().getMemId())
+        ReviewForm reviewForm = ReviewForm.builder().sellerId(loginMember.getMemId()).sellerNick(sellOne.getSeller().getNickname())
+                .buyerId(sellOne.getBuyer().getMemId()).buyerNick(sellOne.getBuyer().getNickname())
                 .postId(Long.valueOf(postId))
                 .build();
         model.addAttribute("reviewForm", reviewForm);
@@ -121,10 +121,11 @@ public class ReviewController {
             return "redirect:/members/{me}/trade/buyList";
         }
         Trade buyOne = tradeRepository.findByPost(post);
-       ReviewForm reviewForm= ReviewForm.builder().sellerId(buyOne.getSeller().getMemId())
-                .buyerId(loginMember.getMemId())
+       ReviewForm reviewForm= ReviewForm.builder().sellerId(buyOne.getSeller().getMemId()).sellerNick(buyOne.getSeller().getNickname())
+                .buyerId(loginMember.getMemId()).buyerNick(buyOne.getBuyer().getNickname())
                 .postId(Long.valueOf(postId))
                 .build();
+
        model.addAttribute("reviewForm", reviewForm);
         return "review/reviewForm";
     }

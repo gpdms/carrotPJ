@@ -11399,7 +11399,9 @@ textarea.form-control-lg {
 .bd-top-grey{
   border-top: 1px solid grey;
 }
-
+.bd-top-grey-custom{
+  border-top: 1px solid #ccc;
+}
 
 .ft-text{
   color: grey;
