@@ -7,11 +7,7 @@ import com.exercise.carrotproject.domain.member.dto.MemberDto;
 import com.exercise.carrotproject.domain.member.entity.Block;
 import com.exercise.carrotproject.domain.member.entity.Member;
 import com.exercise.carrotproject.domain.member.repository.BlockRepository;
-import com.exercise.carrotproject.domain.member.repository.MemberCustomRepository;
 import com.exercise.carrotproject.domain.member.repository.MemberRepository;
-import com.exercise.carrotproject.web.member.util.SecurityUtils;
-import com.querydsl.core.types.dsl.BooleanExpression;
-import com.querydsl.jpa.JPAExpressions;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -28,40 +24,40 @@ import java.net.URL;
 import java.time.LocalDate;
 import java.util.*;
 
-import static com.exercise.carrotproject.domain.member.entity.QBlock.block;
-import static com.exercise.carrotproject.domain.post.entity.QPost.post;
-
 @Slf4j
 @Service
 @RequiredArgsConstructor
-public class MemberServiceImpl {
+public class MemberServiceImpl implements MemberService{
     private final MemberRepository memberRepository;
     private final BlockRepository blockRepository;
-    private final MemberCustomRepository memberCustomRepository;
 
     @Value("${dir.img-profile}")
     private String rootProfileImgDir;
 
-    //소셜로그인을 위한 아이디 난수생성
+    /**
+     * 소셜로그인을 위한 아이디 난수생성
+     */
+    @Override
     public String createMemId() {
         return UUID.randomUUID().toString();
     }
 
-    //@Override
+    @Override
     public Member findOneMember(String memId) {
         return memberRepository.findById(memId)
                .orElseThrow(() -> new NoSuchElementException("Member Not Found"));
     }
 
-    //@Override
+    @Override
     public boolean hasDuplicatedMemberId(String memId) {
         return memberRepository.existsById(memId) ? true : false;
     }
+    @Override
     public boolean hasDuplicatedNickname(String nickname) {
         return memberRepository.existsByNickname(nickname) ? true : false;
     }
 
-    //@Override
+    @Override
     public Map<String, Object> insertMember(Member member) {
         Map<String, Object> saveResult = new HashMap<>();
         if (hasDuplicatedMemberId(member.getMemId())) {
@@ -77,7 +73,7 @@ public class MemberServiceImpl {
         return saveResult;
     }
 
-
+    @Override
     @Transactional
     public Map<String, Object> insertSocialMember(Map<String, Object> userinfo, Role role) {
         HashMap<String, Object> resultMap = new HashMap<>();
@@ -101,7 +97,7 @@ public class MemberServiceImpl {
         resultMap.put("success", MemberEntityDtoMapper.toMemberDto(member));
         return resultMap;
     }
-
+    @Override
     public String saveSocialProfImg(String url) {
         String save_path = url;
         try {
@@ -128,7 +124,7 @@ public class MemberServiceImpl {
         return save_path;
     }
 
-    //@Override
+    @Override
     public Member findMemberForProfileEdit(String memId) {
         Member member = memberRepository.findById(memId).orElse(null);
         return Member.builder().profPath(member.getProfPath())
@@ -136,12 +132,12 @@ public class MemberServiceImpl {
                 .loc(member.getLoc()).build();
     }
 
-   // @Override
+    @Override
     public String getProfPath(String memId) {
         return memberRepository.findById(memId).orElseThrow().getProfPath();
     }
 
-    //@Override
+    @Override
     @Transactional
     public boolean isPwdUpdated(String memId, String newPwd) {
         Member member = memberRepository.findById(memId).orElseThrow(
@@ -151,6 +147,7 @@ public class MemberServiceImpl {
         return member.getMemPwd().equals(newPwd) ? true : false;
     }
 
+    @Override
     //프로필 이미지 경로 생성
     public String createProfPath(MultipartFile img) {
         //디렉토리 생성
@@ -165,7 +162,7 @@ public class MemberServiceImpl {
         String save_path = profImgDir + "/" + save_name;
         return save_path;
     }
-
+    @Override
     public void saveImgServer(MultipartFile profImg, String save_path){
         try {
             profImg.transferTo(new File(save_path));
@@ -174,7 +171,7 @@ public class MemberServiceImpl {
         }
     }
 
-    //@Override
+    @Override
     @Transactional
     public Map<String, Object> profileUpdate(Member updateMember, MultipartFile profImg) {
         Map<String, Object> profileUpdateMap = new HashMap<>();
@@ -207,7 +204,7 @@ public class MemberServiceImpl {
         return profileUpdateMap;
     }
 
-    //@Override
+    @Override
     public Block findOneBlockByFromMemToMem (String fromMemId, String toMemId){
         Member fromMem = memberRepository.findById(fromMemId).orElse(null);
         Member toMem = memberRepository.findById(toMemId).orElse(null);
@@ -216,11 +213,11 @@ public class MemberServiceImpl {
         }
         return null;
     }
-
+    @Override
     public boolean existBlockByMemIds (String memId1, String memId2) {
-        return memberCustomRepository.hasBlockByMemIds(memId1, memId2);
+        return memberRepository.hasBlockByMemIds(memId1, memId2);
     }
-    //@Override
+    @Override
     public Map<String,String> insertBlock(String fromMemId, String toMemId) {
         Block block = Block.builder().fromMem(memberRepository.findById(fromMemId).orElse(null))
                 .toMem(memberRepository.findById(toMemId).orElse(null)).build();
@@ -232,22 +229,23 @@ public class MemberServiceImpl {
         return saveResult;
     }
 
-    //@Override
+    @Override
     public void deleteBlock(String fromMemId, String toMemId) {
         Block block = findOneBlockByFromMemToMem(fromMemId, toMemId);
         blockRepository.deleteById(block.getBlockId());
     }
-
+    @Override
     public boolean hasSocialMember(String email, Role role) {
         return memberRepository.existsByEmailAndRole(email, role);
     }
+    @Override
     public MemberDto findOneSocialMemberDto(String email, Role role) {
         Member member = memberRepository.findByEmailAndRole(email, role);
         return  MemberEntityDtoMapper.toMemberDto(member);
     }
-
+    @Override
     public String getNicknameByMemId(String memId) {
-        return memberCustomRepository.selectNicknameByMemId(memId);
+        return memberRepository.selectNicknameByMemId(memId);
     }
 
 }

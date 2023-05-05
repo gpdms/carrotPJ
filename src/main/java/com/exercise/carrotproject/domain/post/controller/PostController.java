@@ -5,7 +5,7 @@ import com.exercise.carrotproject.domain.chat.service.ChatServiceImpl;
 import com.exercise.carrotproject.domain.enumList.Category;
 import com.exercise.carrotproject.domain.member.MemberEntityDtoMapper;
 import com.exercise.carrotproject.domain.member.entity.Member;
-import com.exercise.carrotproject.domain.member.service.MemberServiceImpl;
+import com.exercise.carrotproject.domain.member.service.MemberService;
 import com.exercise.carrotproject.domain.post.dto.MtPlaceDto;
 
 import com.exercise.carrotproject.domain.post.entity.Trade;
@@ -51,7 +51,7 @@ public class PostController {
     private final PostService postService;
     private final TradeService tradeService;
     private final ChatServiceImpl chatService;
-    private final MemberServiceImpl memberService;
+    private final MemberService memberService;
 
     @Value("${default.postImg}")
     private String defaultPostImg;

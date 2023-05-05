@@ -2,19 +2,19 @@ package com.exercise.carrotproject.web.common.controller;
 
 import com.exercise.carrotproject.domain.enumList.*;
 import com.exercise.carrotproject.domain.member.entity.Member;
-import com.exercise.carrotproject.domain.member.service.MemberServiceImpl;
+import com.exercise.carrotproject.domain.member.service.MemberService;
 import com.exercise.carrotproject.domain.post.entity.Post;
 import com.exercise.carrotproject.domain.post.entity.Trade;
 import com.exercise.carrotproject.domain.post.repository.PostRepository;
 import com.exercise.carrotproject.domain.post.repository.TradeRepository;
 import com.exercise.carrotproject.domain.review.entity.ReviewBuyer;
 import com.exercise.carrotproject.domain.review.entity.ReviewSeller;
-import com.exercise.carrotproject.domain.review.repository.ReviewBuyerCustomRepository;
-import com.exercise.carrotproject.domain.review.repository.ReviewSellerCustomRepository;
-import com.exercise.carrotproject.domain.review.repository.basic.ReviewBuyerDetailRepository;
-import com.exercise.carrotproject.domain.review.repository.basic.ReviewBuyerRepository;
-import com.exercise.carrotproject.domain.review.repository.basic.ReviewSellerDetailRepository;
-import com.exercise.carrotproject.domain.review.repository.basic.ReviewSellerRepository;
+import com.exercise.carrotproject.domain.review.repository.ReviewBuyerCustomRepositoryImpl;
+import com.exercise.carrotproject.domain.review.repository.ReviewSellerCustomRepositoryImpl;
+import com.exercise.carrotproject.domain.review.repository.detail.ReviewBuyerDetailRepository;
+import com.exercise.carrotproject.domain.review.repository.ReviewBuyerRepository;
+import com.exercise.carrotproject.domain.review.repository.detail.ReviewSellerDetailRepository;
+import com.exercise.carrotproject.domain.review.repository.ReviewSellerRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Controller;
@@ -28,7 +28,6 @@ import javax.persistence.Query;
 import javax.servlet.http.HttpServletRequest;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 import static java.util.Arrays.asList;
@@ -38,14 +37,14 @@ import static java.util.Arrays.stream;
 @RequiredArgsConstructor
 @Slf4j
 public class TestDBController {
-    private final MemberServiceImpl memberService;
+    private final MemberService memberService;
     private final PostRepository postRepository;
     private final TradeRepository tradeRepository;
 
     private final ReviewBuyerRepository reviewBuyerRepository;
     private final ReviewSellerRepository reviewSellerRepository;
-    private final ReviewBuyerCustomRepository reviewBuyerCustomRepository;
-    private final ReviewSellerCustomRepository reviewSellerCustomRepository;
+    private final ReviewBuyerCustomRepositoryImpl reviewBuyerCustomRepositoryImpl;
+    private final ReviewSellerCustomRepositoryImpl reviewSellerCustomRepositoryImpl;
     private final ReviewSellerDetailRepository reviewSellerDetailRepository;
     private final ReviewBuyerDetailRepository reviewBuyerDetailRepository;
 

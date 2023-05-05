@@ -2,17 +2,14 @@ package com.exercise.carrotproject.web.review.controller;
 
 import com.exercise.carrotproject.domain.enumList.*;
 import com.exercise.carrotproject.domain.member.dto.MemberDto;
-import com.exercise.carrotproject.domain.member.entity.Member;
-import com.exercise.carrotproject.domain.member.service.MemberServiceImpl;
+import com.exercise.carrotproject.domain.member.service.MemberService;
 import com.exercise.carrotproject.domain.post.entity.Post;
 import com.exercise.carrotproject.domain.post.entity.Trade;
 import com.exercise.carrotproject.domain.post.repository.PostRepository;
 import com.exercise.carrotproject.domain.post.repository.TradeRepository;
 import com.exercise.carrotproject.domain.review.entity.ReviewBuyer;
 import com.exercise.carrotproject.domain.review.entity.ReviewSeller;
-import com.exercise.carrotproject.domain.review.service.ReviewBuyerServiceImpl;
-import com.exercise.carrotproject.domain.review.service.ReviewSellerServiceImpl;
-import com.exercise.carrotproject.domain.review.service.ReviewServiceImpl;
+import com.exercise.carrotproject.domain.review.service.*;
 import com.exercise.carrotproject.web.common.SessionConst;
 import com.exercise.carrotproject.web.review.form.ReviewDetailForm;
 import com.exercise.carrotproject.web.review.form.ReviewForm;
@@ -34,10 +31,10 @@ import java.util.*;
 @RequestMapping("/reviews")
 @RequiredArgsConstructor
 public class ReviewController {
-    private final MemberServiceImpl memberService;
-    private final ReviewSellerServiceImpl reviewSellerService;
-    private final ReviewBuyerServiceImpl reviewBuyerService;
-    private final ReviewServiceImpl reviewService;
+    private final MemberService memberService;
+    private final ReviewSellerService reviewSellerService;
+    private final ReviewBuyerService reviewBuyerService;
+    private final ReviewService reviewService;
 
     private final PostRepository postRepository;
     private final TradeRepository tradeRepository;

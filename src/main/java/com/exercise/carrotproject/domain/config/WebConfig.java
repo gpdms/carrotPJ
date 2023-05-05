@@ -2,6 +2,7 @@ package com.exercise.carrotproject.domain.config;
 
 import com.exercise.carrotproject.domain.config.interceptor.KaKaoCodeInterceptor;
 import com.exercise.carrotproject.domain.config.interceptor.MemberInfoCheckInterceptor;
+import com.exercise.carrotproject.domain.config.interceptor.PostMemberCheckInterceptor;
 import com.exercise.carrotproject.web.argumentresolver.LoginMemberArgumentResolver;
 import com.exercise.carrotproject.domain.config.interceptor.LoginCheckInterceptor;
 import org.springframework.boot.web.servlet.ServletContextInitializer;
@@ -33,10 +34,12 @@ public class WebConfig implements WebMvcConfigurer {
                         "/css/**", "/*.ico", "/error");*/
         registry.addInterceptor(new LoginCheckInterceptor())
                 .order(1)
-                .addPathPatterns("/members/**", "/reviews/**")
+                .addPathPatterns("/members/**", "/reviews/**", "/post/**")
                 .excludePathPatterns("/members/signup",  "/members/**/profileImg",
                         "/members/css/**","/members/js/**","/members/assets/**", "/members/error",
-                        "/reviews/css/**","/reviews/js/**","/reviews/assets/**", "/reviews/error");
+                        "/reviews/css/**","/reviews/js/**","/reviews/assets/**", "/reviews/error",
+                        "/post/css/**","/post/js/**","/post/assets/**", "/post/error",
+                        "/post/board/**", "/post/firstImg/**","post/img/**","post/onSale/**", "post/search");
         registry.addInterceptor(new MemberInfoCheckInterceptor())
                 .order(2)
                 .addPathPatterns("/members/**")
@@ -45,6 +48,11 @@ public class WebConfig implements WebMvcConfigurer {
                         "/members/error");
 
         registry.addInterceptor(new KaKaoCodeInterceptor()).addPathPatterns("/login/kakao");
+    }
+
+    @Bean
+    public PostMemberCheckInterceptor postMemberCheckInterceptor() {
+        return new PostMemberCheckInterceptor();
     }
 
     @Bean

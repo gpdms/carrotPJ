@@ -7,7 +7,7 @@ import com.exercise.carrotproject.domain.member.dto.MemberDto;
 import com.exercise.carrotproject.domain.member.entity.Member;
 import com.exercise.carrotproject.domain.member.ouath.KaKaoOauth;
 import com.exercise.carrotproject.domain.member.ouath.KakaoServiceImpl;
-import com.exercise.carrotproject.domain.member.service.MemberServiceImpl;
+import com.exercise.carrotproject.domain.member.service.MemberService;
 import com.exercise.carrotproject.web.common.SessionConst;
 import com.exercise.carrotproject.web.member.form.SignupForm;
 import com.exercise.carrotproject.web.member.form.SignupSocialForm;
@@ -35,7 +35,7 @@ import java.util.stream.Collectors;
 public class OauthController {
     private final KaKaoOauth kaKaoOauth;
     private final KakaoServiceImpl kakaoService;
-    private final MemberServiceImpl memberService;
+    private final MemberService memberService;
 
     @GetMapping("/login/getKakaoLoginURL")
     public String toKakaoLoginForm() {

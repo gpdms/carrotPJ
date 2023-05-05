@@ -1,7 +1,6 @@
 package com.exercise.carrotproject.domain.member.repository;
 
 import com.exercise.carrotproject.domain.member.dto.MemberDto;
-import com.exercise.carrotproject.domain.review.repository.ReviewBuyerCustomRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.jdbc.core.BatchPreparedStatementSetter;

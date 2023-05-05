@@ -1,4 +1,4 @@
-package com.exercise.carrotproject.domain.review.repository.basic;
+package com.exercise.carrotproject.domain.review.repository.detail;
 
 import com.exercise.carrotproject.domain.post.entity.Post;
 import com.exercise.carrotproject.domain.review.entity.ReviewBuyer;

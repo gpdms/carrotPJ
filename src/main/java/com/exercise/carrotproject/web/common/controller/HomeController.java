@@ -8,12 +8,12 @@ import com.exercise.carrotproject.domain.member.MemberEntityDtoMapper;
 import com.exercise.carrotproject.domain.member.dto.MemberDto;
 import com.exercise.carrotproject.domain.member.entity.Member;
 import com.exercise.carrotproject.domain.member.repository.MemberRepository;
-import com.exercise.carrotproject.domain.member.service.MemberServiceImpl;
+import com.exercise.carrotproject.domain.member.service.MemberService;
 import com.exercise.carrotproject.domain.post.dto.PostDto;
 import com.exercise.carrotproject.domain.post.repository.PostRepository;
 import com.exercise.carrotproject.domain.post.service.PostServiceImpl;
 import com.exercise.carrotproject.domain.review.dto.ReviewMessageDto;
-import com.exercise.carrotproject.domain.review.service.ReviewServiceImpl;
+import com.exercise.carrotproject.domain.review.service.ReviewService;
 import com.exercise.carrotproject.web.argumentresolver.Login;
 import com.exercise.carrotproject.web.common.SessionConst;
 import com.exercise.carrotproject.web.member.util.SecurityUtils;
@@ -34,11 +34,11 @@ import java.util.*;
 @Slf4j
 public class HomeController {
     private final MemberRepository memberRepository;
-    private final MemberServiceImpl memberService;
+    private final MemberService memberService;
     private final PostServiceImpl postService;
     private final SecurityUtils securityUtils;
     private final PostRepository postRepository;
-    private final ReviewServiceImpl reviewService;
+    private final ReviewService reviewService;
 
 //    @PostConstruct
     public void init() {
@@ -67,17 +67,16 @@ public class HomeController {
     @GetMapping("/")
     public String home(@Login MemberDto loginMember, Model model,
                        RedirectAttributes redirectAttributes ) {
-        //세션에 회원 데이터가 없으면 home
-        if (loginMember == null) {
+
             //게시물 불러오기
             List<PostDto> postList = postService.selectAllPost(loginMember);
             model.addAttribute("list", postList);
             return "home";
-        }
         //세션이 유지되면 로그인된 홈으로 이동
-        redirectAttributes.addAttribute("memId", loginMember.getMemId());
+      /*  redirectAttributes.addAttribute("memId", loginMember.getMemId());
         model.addAttribute("member", loginMember);
-        return "redirect:/home/{memId}";
+        return "redirect:/home/{memId}";*/
+
     }
 
     @GetMapping("/home/{memId}")

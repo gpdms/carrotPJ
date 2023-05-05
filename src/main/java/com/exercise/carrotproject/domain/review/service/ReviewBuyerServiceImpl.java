@@ -2,18 +2,12 @@ package com.exercise.carrotproject.domain.review.service;
 
 
 import com.exercise.carrotproject.domain.enumList.ReviewBuyerIndicator;
-import com.exercise.carrotproject.domain.enumList.ReviewSellerIndicator;
 import com.exercise.carrotproject.domain.post.entity.Post;
 import com.exercise.carrotproject.domain.review.dto.ReviewBuyerDto;
 import com.exercise.carrotproject.domain.review.entity.ReviewBuyer;
 import com.exercise.carrotproject.domain.review.entity.ReviewBuyerDetail;
-import com.exercise.carrotproject.domain.review.entity.ReviewSeller;
-import com.exercise.carrotproject.domain.review.entity.ReviewSellerDetail;
-import com.exercise.carrotproject.domain.review.repository.ReviewBuyerCustomRepository;
-import com.exercise.carrotproject.domain.review.repository.basic.ReviewBuyerDetailRepository;
-import com.exercise.carrotproject.domain.review.repository.basic.ReviewBuyerRepository;
-import com.exercise.carrotproject.domain.review.repository.basic.ReviewSellerDetailRepository;
-import com.exercise.carrotproject.domain.review.repository.basic.ReviewSellerRepository;
+import com.exercise.carrotproject.domain.review.repository.detail.ReviewBuyerDetailRepository;
+import com.exercise.carrotproject.domain.review.repository.ReviewBuyerRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -27,18 +21,18 @@ import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
-public class ReviewBuyerServiceImpl {
-    private final ReviewBuyerCustomRepository reviewBuyerCustomRepository;
+public class ReviewBuyerServiceImpl implements ReviewBuyerService {
     private final ReviewBuyerRepository reviewBuyerRepository;
     private final ReviewBuyerDetailRepository reviewBuyerDetailRepository;
 
-
     @Transactional
+    @Override
     public void insertReviewBuyer(ReviewBuyer reviewBuyer, List<ReviewBuyerIndicator> indicatorList) {
         ReviewBuyer newReviewBuyer = reviewBuyerRepository.save(reviewBuyer);
         insertReviewBuyerDetail(newReviewBuyer, indicatorList);
     }
     @Transactional
+    @Override
     public void insertReviewBuyerDetail(ReviewBuyer newReviewBuyer, List<ReviewBuyerIndicator> indicatorList) {
         for (ReviewBuyerIndicator reviewBuyerIndicator : indicatorList) {
             ReviewBuyerDetail reviewBuyerDetail = ReviewBuyerDetail.builder()
@@ -49,17 +43,20 @@ public class ReviewBuyerServiceImpl {
             reviewBuyerDetailRepository.save(reviewBuyerDetail);
         }
     }
+    @Override
     public ReviewBuyer findOneReviewBuyer(Long reviewBuyerId){
         reviewBuyerRepository.findById(reviewBuyerId);
         return reviewBuyerRepository.findById(reviewBuyerId)
                 .orElseThrow(() -> new NoSuchElementException("reviewBuyer Not Found"));
     }
 
+    @Override
     public Long findReviewBuyerIdByPost(Post post) {
         ReviewBuyer reviewBuyer = reviewBuyerRepository.findByPost(post);
         return reviewBuyerRepository.findByPost(post) != null? reviewBuyer.getReviewBuyerId() : 0L;
     }
 
+    @Override
     public List<ReviewBuyerIndicator> getReviewBuyerIndicatorsByReview(ReviewBuyer reviewBuyer){
         List<ReviewBuyerDetail> reviewBuyerDetails = reviewBuyerDetailRepository.findByReviewBuyer(reviewBuyer);
         return reviewBuyerDetails.stream()
@@ -68,14 +65,16 @@ public class ReviewBuyerServiceImpl {
     }
 
     @Transactional
+    @Override
     public void deleteReviewBuyer(Long reviewBuyerId) {
         ReviewBuyer oneReviewBuyer = findOneReviewBuyer(reviewBuyerId);
         reviewBuyerRepository.deleteById(reviewBuyerId);
     }
 
     @Transactional
+    @Override
     public Map<String, String> hideReviewBuyer(Long reviewSellerId) {
-        long result = reviewBuyerCustomRepository.hideReviewBuyerById(reviewSellerId);
+        long result = reviewBuyerRepository.hideReviewBuyerById(reviewSellerId);
         Map<String, String> resultMap = new HashMap<>();
         if(result>0) {
             resultMap.put("success", "숨김에 성공했습니다");
@@ -85,7 +84,8 @@ public class ReviewBuyerServiceImpl {
         return resultMap;
     }
 
+    @Override
     public List<ReviewBuyerDto> findReviewsByPostId(List<Long> postIds) {
-       return reviewBuyerCustomRepository.getReviewIdsByPostIds(postIds);
+       return reviewBuyerRepository.getReviewIdsByPostIds(postIds);
     }
 }
