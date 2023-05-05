@@ -4,42 +4,70 @@
       layout:decorate="~{layout/basic.html}">
 <head layout:fragment="head">
     <title>망고마켓</title>
-    <style>
-        .main-text{
-            width: 500px;
-            object-fit: contain;
-        }
-        .main-img{
-            width: 500px;
-            object-fit: contain;
-        }
-        .main-container{
-            margin: 0 auto;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-        }
-        .sec-height{
-            height: 620px;
-        }
-        .sec-bg {
-            background-color: #E6F3E6;
-        }
-    </style>
+    <link href="/css/home.css" rel="stylesheet">
 </head>
 
 <div layout:fragment="content">
     <section class="py-5 bg-light-orange">
             <div class="main-container sec-height py-5 px-5">
-                <img class="main-text" src="/css/images/main_home_text.png">
-                <img class="main-img" src="/css/images/main_home_img.png">
+                <section class="flex-col">
+                    <img class="main-text" src="/css/images/banner/main_home_text.png">
+                    <button class="btn-orange btn-wd fs-5" th:if="${session.loginMember == null}"
+                            th:onclick="|location.href='@{/login}'|">시작하기</button>
+                </section>
+                <section>
+                    <img class="main-img" src="/css/images/banner/main_home_img.png">
+                </section>
 
             </div>
     </section>
     <section class="py-5 sec-bg">
         <div class="main-container sec-height py-5 px-5">
+            <section>
+                <img class="main-img" src="/css/images/banner/main_home_img_2.png">
+            </section>
+            <section>
+                <img class="main-text" src="/css/images/banner/main_home_text_2.png">
+            </section>
         </div>
+    </section>
 
+    <section class="py-5">
+        <div class="container px-4 my-5">
+            <section class="py-5">
+                <div>
+                    <h1 class="text-center" th:if="${session.loginMember == null}">중고거래 매물</h1>
+                    <h1 class="text-center" th:if="${session.loginMember != null}">[[${session.loginMember.loc.locName}]] 중고거래 상품</h1>
+                </div>
+                <br/><br/>
+                <div class="container px-4 mt-5">
+                    <div class="row gx-4 gx-lg-5 row-cols-2 row-cols-md-3 row-cols-xl-4 justify-content-center">
+                        <div class="col mb-5" th:each = "post, index:${list}" th:if="${index.index} < 8">
+                            <div class="card h-100" th:onclick="|location.href='@{|/post/detail/${post.postId}|}'|" style="cursor: pointer;">
+                                <!-- 제품사진-->
+                                <img class="card-img-top" th:src="|/post/firstImg/${post.postId}|" alt="제품사진" />
+                                <!-- Product details-->
+                                <div class="card-body p-3">
+                                    <div class="text-center">
+                                        <!-- 제목-->
+                                        <h5 class="fw-bolder text-truncate" th:text="${post.title}">제목</h5>
+                                        <!--지역, 시간-->
+                                        <h6 class="fs-7 fw-normal text-secondary">[[${post.loc.locName}]] ∙ [[${post.createdTime}]]</h6>
+                                        <!-- 가격-->
+                                        <h6 class="fw-bolder" th:if="${post.price}!=0" th:text="|${post.price}원|">가격</h6>
+                                        <h6 class="fw-bolder" th:if="${post.price} == 0">가격없음</h6>
+                                        <!--예약중,판매완료 배지-->
+                                        <span class="badge bg-success" th:if="${post.sellState.getSellStateName().equals('예약중')}">예약중</span>
+                                        <span class="badge bg-secondary" th:if="${post.sellState.getSellStateName().equals('판매완료')}">거래완료</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="text-center"><a class="fs-6 text-dark " th:href="@{/post/board}">중고거래 매물 더보기</a></div>
+            </section>
+        </div>
     </section>
 </div>
 
