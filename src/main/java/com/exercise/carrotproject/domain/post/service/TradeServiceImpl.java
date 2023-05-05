@@ -20,7 +20,7 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 @RequiredArgsConstructor
 @Slf4j
-public class TradeServiceImpl {
+public class TradeServiceImpl implements TradeService{
     private final PostRepository postRepository;
     private final TradeRepository tradeRepository;
     private final MemberRepository memberRepository;
@@ -28,7 +28,7 @@ public class TradeServiceImpl {
     private final ReviewBuyerRepository reviewBuyerRepository;
     private final ReviewSellerRepository reviewSellerRepository;
 
-    //    @Override
+    @Override
     public Trade selectTradeByPost(Long postId){
         Post post = postRepository.findById(postId).orElseThrow();
         Trade trade = tradeRepository.findByPost(post);
@@ -38,7 +38,7 @@ public class TradeServiceImpl {
         return trade;
     }
 
-    //    @Override
+    @Override
     @Transactional
     public void insertTrade(Long postId, String buyerId){
         Post post = postRepository.findById(postId).orElseThrow();
@@ -49,7 +49,7 @@ public class TradeServiceImpl {
         tradeRepository.save(trade);
     }
 
-    //    @Override
+    @Override
     @Transactional
     public void updateTrade(Long postId, String buyerId){
         Member buyer = memberRepository.findById(buyerId).orElseThrow();
@@ -62,7 +62,7 @@ public class TradeServiceImpl {
                 .execute();
     }
 
-//    @Override
+    @Override
     @Transactional
     public void deleteTradeAndReview(Long postId){
         Post post = postRepository.findById(postId).orElseThrow();
