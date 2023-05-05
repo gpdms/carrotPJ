@@ -51,8 +51,7 @@ public class WebConfig implements WebMvcConfigurer {
                 .addPathPatterns("/post/**")
                 .excludePathPatterns("/post/css/**","/post/js/**","/post/assets/**", "/post/error",
                                     "/post/board/**", "/post/firstImg/**","post/img/**","post/onSale/**", "post/search",
-                        "/post/detail/**");
-
+                        "/post/detail/**", "/post/addWish", "/post/rmvWish");
         registry.addInterceptor(new KaKaoCodeInterceptor()).addPathPatterns("/login/kakao");
     }
 
