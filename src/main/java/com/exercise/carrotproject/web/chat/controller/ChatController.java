@@ -1,4 +1,4 @@
-package com.exercise.carrotproject.domain.chat.controller;
+package com.exercise.carrotproject.web.chat.controller;
 
 import com.exercise.carrotproject.domain.chat.dto.ChatDto;
 import com.exercise.carrotproject.domain.chat.dto.ChatRoomDto;

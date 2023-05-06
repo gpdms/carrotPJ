@@ -69,12 +69,10 @@ public class PostServiceImpl implements PostService{
         }
 
         for(MultipartFile file : uploadFiles) {
-            //1개이상 파일 올리고 && 이미지 타입이 아닐때 -> post에 저장하지 않는다.
             if ( !file.isEmpty() && file.getContentType().startsWith("image") == false) {
                 return "이미지타입오류";
             }
         }
-        //이미지 1개이상올리고 모두 이미지타입 / 이미지 0개
         //post에 insert
         em.persist(postEntity);
 
