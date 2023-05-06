@@ -78,5 +78,6 @@ public class Post extends BaseEntity {
         this.price = this.price == null ? 0 : this.price;
         this.hideState = this.hideState == null ? HideState.SHOW : this.hideState;
         this.sellState = this.sellState == null ? SellState.ON_SALE : this.sellState;
+        this.hits = this.hits == null ? 0 : this.hits;
     }
 }

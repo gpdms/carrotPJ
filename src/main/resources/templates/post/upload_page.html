@@ -307,7 +307,6 @@
                 data: formData,
                 processData: false, //processData : false로 선언 시 formData를 string으로 변환하지 않음
                 contentType: false, //contentType : false 로 선언 시 content-type 헤더가 multipart/form-data로 전송되게 함
-                // dataType:'json',
                 enctype:'multipart/form-data',
                 success: function(result){ //컨트롤러에서 return이 없을 경우 바로 새로고침해버림(?)
                     console.log(result);
