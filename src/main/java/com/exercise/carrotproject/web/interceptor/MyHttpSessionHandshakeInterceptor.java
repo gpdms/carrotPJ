@@ -1,4 +1,4 @@
-package com.exercise.carrotproject.domain.config.interceptor;
+package com.exercise.carrotproject.web.interceptor;
 
 import com.exercise.carrotproject.domain.member.dto.MemberDto;
 import org.springframework.http.server.ServerHttpRequest;

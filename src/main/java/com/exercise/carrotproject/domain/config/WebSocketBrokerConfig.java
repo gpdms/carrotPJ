@@ -1,8 +1,7 @@
 package com.exercise.carrotproject.domain.config;
 
-import com.exercise.carrotproject.domain.config.interceptor.MyHttpSessionHandshakeInterceptor;
+import com.exercise.carrotproject.web.interceptor.MyHttpSessionHandshakeInterceptor;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.messaging.simp.config.ChannelRegistration;
 import org.springframework.messaging.simp.config.MessageBrokerRegistry;
 import org.springframework.web.socket.config.annotation.EnableWebSocketMessageBroker;
 import org.springframework.web.socket.config.annotation.StompEndpointRegistry;

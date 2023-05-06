@@ -1,10 +1,10 @@
 package com.exercise.carrotproject.domain.config;
 
-import com.exercise.carrotproject.domain.config.interceptor.KaKaoCodeInterceptor;
-import com.exercise.carrotproject.domain.config.interceptor.MemberInfoCheckInterceptor;
-import com.exercise.carrotproject.domain.config.interceptor.PostMemberCheckInterceptor;
+import com.exercise.carrotproject.web.interceptor.KaKaoCodeInterceptor;
+import com.exercise.carrotproject.web.interceptor.MemberInfoCheckInterceptor;
+import com.exercise.carrotproject.web.interceptor.PostMemberCheckInterceptor;
 import com.exercise.carrotproject.web.argumentresolver.LoginMemberArgumentResolver;
-import com.exercise.carrotproject.domain.config.interceptor.LoginCheckInterceptor;
+import com.exercise.carrotproject.web.interceptor.LoginCheckInterceptor;
 import org.springframework.boot.web.servlet.ServletContextInitializer;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

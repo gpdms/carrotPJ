@@ -1,4 +1,4 @@
-package com.exercise.carrotproject.domain.post.controller;
+package com.exercise.carrotproject.web.post.controller;
 
 import com.exercise.carrotproject.domain.chat.dto.ChatRoomDto;
 import com.exercise.carrotproject.domain.chat.service.ChatServiceImpl;
@@ -182,10 +182,7 @@ public class PostController {
 
     //게시글 업로드
     @PostMapping("/post/upload")
-//    @ResponseBody
     public ResponseEntity<String> insPost(PostDto postDto, @RequestParam MultipartFile[] uploadFiles, MtPlaceDto mtPlaceDto, HttpSession session) throws IOException {
-        log.info("컨트롤러단 mtPlaceDto:{}", mtPlaceDto);
-//        log.info("controller uploadfiles-length {}", uploadFiles.length);
 
         //제목, 카테고리, 내용 null체크
         if(postDto.getTitle().isEmpty() || postDto.getCategory()==null || postDto.getContent().isEmpty()){
@@ -207,17 +204,11 @@ public class PostController {
             mtPlaceDto.setPlaceInfo(null);
         }
 
-        log.info("컨트롤러단 아래 mtPlaceDto:{}", mtPlaceDto);
-
-
         //DB에 insert
         String insResult = postService.insertPost(postDto, uploadFiles, mtPlaceDto);
          if(insResult.equals("이미지타입오류")){
              return new ResponseEntity<>("이미지 파일이 아닙니다.",HttpStatus.BAD_REQUEST);
          }
-
-
-
         return new ResponseEntity<>("상품이 게시되었습니다.",HttpStatus.OK);
     }
 

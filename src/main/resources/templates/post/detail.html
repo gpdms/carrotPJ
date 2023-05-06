@@ -97,6 +97,8 @@
                             <!--가격-->
                             <div class="fs-3 fw-bolder mx-sm-4">
                                 <span th:if="${post.price}!=0" th:text="|${post.price}원|">가격</span>
+                                <span th:if="${post.price} == 0">가격없음</span>
+
                             </div>
                             <!--채팅하기-->
                             <div class="me-0 ms-auto">
