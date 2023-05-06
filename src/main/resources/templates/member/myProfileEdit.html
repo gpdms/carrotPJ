@@ -4,15 +4,7 @@
       layout:decorate="~{layout/basic.html}">
 <head layout:fragment="head">
     <title>회원 정보</title>
-<!--    <link href="/css/profile.css" rel="stylesheet" />-->
     <link href="/css/member_info.css" rel="stylesheet" />
-    <style>
-        /*.form_container {
-            !*min-width: 560px;*!
-            padding-top: 100px;
-        }*/
-
-    </style>
 </head>
 <div layout:fragment="content">
     <div class="container info-container my-5">
@@ -73,8 +65,7 @@
         target.disabled = false;
     }
     $("#inputImg").change(function(e){
-        let file = e.target.files[0]; //선택한 파일을 가져옴.
-        //업로드 가능 파일인지 체크
+        let file = e.target.files[0];
         if(!checkSize(file.size)){
             return false;
         }
@@ -121,16 +112,12 @@
             .done(function (data) {
                 console.log(data.member);
                 alert('프로필 변경에 성공했습니다');
-                // location.reload()
-                // console.log("수정!")
                 location.reload($('#nav-pf-img'));
                 $('#nav-pf-nick').replaceWith(`<p id="nav-pf-nick"> ${data.member.nickname}</p>`);
             })
             .fail(function (err) {
                 alert('프로필 변경에 실패했습니다');
                 const message = err.responseJSON;
-                console.log(message);
-                console.log(message.nickname);
                 if (message.nickname) {
                     $('#nick-error').replaceWith(`<div id="nick-error" class="field-error">${message.nickname}</div>`)
                     $('#nickname').addClass("field-error-border");

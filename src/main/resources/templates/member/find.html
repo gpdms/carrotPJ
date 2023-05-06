@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout/basic.html}">
+
+<head layout:fragment="head">
+  <meta charset="utf-8">
+  <link href="/css/signup.css" rel="stylesheet">
+  <style>
+    .pwd-container {
+      text-align: center;
+      margin: 30px 0;
+    }
+    .pwd-container .label {
+      font-size: 15px;
+      margin: 0;
+    }
+    .pwd-container .send {
+      margin: 20px 0;
+    }
+  </style>
+</head>
+
+<div layout:fragment="content">
+  <section class="px-md-5 mt-5 d-flex justify-content-center">
+    <div class="signup-container">
+        <div class="pwd-container">
+          <div class="py-4 text-center">
+            <h2>비밀번호 재설정</h2>
+            <p class="label">비밀번호를 잃어버리셨나요?</p>
+            <p class="label">망고마켓에 가입한 이메일을 정확히 입력해 주세요.</p>
+            <p class="label">이메일을 통해 임시비밀번호가 전송됩니다</p>
+          </div>
+          <div class="input" id="input-email">
+            <input type="text" id="email" class="form-control">
+            <div id="email-error"></div>
+            <div class="send">
+              <button class="send-btn" id="sendPwd" type="button">
+                이메일 전송하기
+              </button>
+          </div>
+
+        </div>
+      </div>
+    </div>
+  </section>
+</div>
+
+<div layout:fragment="script" >
+  <script th:inline="javascript">
+    $('#sendPwd').click(function() {
+      $.ajax({
+        type: "POST",
+        url: "findPwd",
+        data: {
+          "email": $('#email').val()
+        }
+      }).done(function (data) {
+        alert("해당 이메일로 임시번호가 발급되었습니다.")
+        location.href ="/members/login";
+      }).fail(function (err) {
+        const message = err.responseJSON;
+        console.log(message);
+        if (message.email) {
+          console.log(message.email)
+          $('#email-error').replaceWith(`<div id="email-error" class="field-error">${message.email}</div>`)
+          $('#email').addClass("field-error-border");
+        }
+        if ('no-email' in message) {
+          $('#email-error').replaceWith(`<div id="email-error" class="field-error">가입하지 않은 이메일입니다.</div>`)
+          $('#email').addClass("field-error-border");
+        }
+      })
+
+    })
+  </script>
+</div>
+</html>

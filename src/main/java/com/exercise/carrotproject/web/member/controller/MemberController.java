@@ -4,6 +4,7 @@ package com.exercise.carrotproject.web.member.controller;
 import com.exercise.carrotproject.domain.enumList.Role;
 import com.exercise.carrotproject.domain.member.dto.MemberDto;
 import com.exercise.carrotproject.domain.member.entity.Member;
+import com.exercise.carrotproject.domain.member.service.EmailServiceImpl;
 import com.exercise.carrotproject.domain.member.service.MemberService;
 import com.exercise.carrotproject.domain.post.dto.PostDto;
 import com.exercise.carrotproject.domain.post.dto.SoldPostDto;
@@ -29,9 +30,11 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.mail.MessagingException;
 import javax.servlet.http.HttpSession;
 import javax.validation.Valid;
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -46,6 +49,7 @@ public class MemberController {
     private final MemberService memberService;
     private final SecurityUtils securityUtils;
     private final PostServiceImpl postService;
+    private final EmailServiceImpl emailService;
 
     @Value("${dir.img-profile}")
     private String rootProfileImgDir;
@@ -139,11 +143,9 @@ public class MemberController {
         MemberDto loginMember = (MemberDto)session.getAttribute(SessionConst.LOGIN_MEMBER);
         if(bindingResult.hasErrors()) {
             String error = bindingResult.getFieldError("nickname").getDefaultMessage();
-            System.out.println("수정수정수정"+ error);
             resultMap.put("nickname", bindingResult.getFieldError("nickname").getDefaultMessage());
             return ResponseEntity.badRequest().body(resultMap);
         }
-
         Member updateMember = Member.builder().memId(profileForm.getMemId())
                 .nickname(profileForm.getNickname())
                 .loc(profileForm.getLoc()).build();
@@ -220,5 +222,46 @@ public class MemberController {
         return "myPage/wishList";
     }
 
+    @PostMapping("signup/emailConfirm")
+    @ResponseBody
+    public ResponseEntity emailConfirm(@Valid @ModelAttribute("emailRequestForm") EmailRequestForm emailRequestForm, BindingResult bindingResult) throws MessagingException, UnsupportedEncodingException {
+        Map<String, String> resultMap =new HashMap<>();
+        if(bindingResult.hasErrors()) {
+            String errorMessage = bindingResult.getFieldError("email").getDefaultMessage();
+            resultMap.put("email", errorMessage);
+            return ResponseEntity.badRequest().body(resultMap);
+        }
+        boolean hasEmail = memberService.hasEmailAndRole(emailRequestForm.getEmail(), Role.USER);
+        if (hasEmail) {
+            resultMap.put("duplicated-email", "중복된 이메일입니다");
+            return ResponseEntity.badRequest().body(resultMap);
+        }
+        String authCode = emailService.createCode();
+        emailService.sendSignupEmail(emailRequestForm.getEmail(), authCode);
+        resultMap.put("authCode", authCode);
+        return ResponseEntity.ok().body(resultMap);
+    }
 
+    @GetMapping("findPwd")
+    public String toFindForm (@Valid @ModelAttribute("emailRequestForm") EmailRequestForm emailRequestForm, BindingResult bindingResult){
+        return "/member/find";
+    }
+    @PostMapping("findPwd")
+    @ResponseBody
+    public ResponseEntity sendEmailForFindPwd (@Valid @ModelAttribute("emailRequestForm") EmailRequestForm emailRequestForm, BindingResult bindingResult) throws MessagingException, UnsupportedEncodingException {
+        Map<String, String> resultMap =new HashMap<>();
+        if(bindingResult.hasErrors()) {
+            String errorMessage = bindingResult.getFieldError("email").getDefaultMessage();
+            resultMap.put("email", errorMessage);
+            return ResponseEntity.badRequest().body(resultMap);
+        }
+        boolean hasEmail = memberService.hasEmailAndRole(emailRequestForm.getEmail(), Role.USER);
+        if (!hasEmail) {
+            resultMap.put("no-email", "가입하지 않은 이메일입니다.");
+            return ResponseEntity.badRequest().body(resultMap);
+        }
+        long result = memberService.temporaryPwdUdpate(emailRequestForm.getEmail());
+        resultMap.put("success", String.valueOf(result));
+        return ResponseEntity.ok().body(resultMap);
+    }
 }

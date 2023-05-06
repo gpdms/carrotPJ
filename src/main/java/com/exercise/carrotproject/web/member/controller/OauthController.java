@@ -59,7 +59,7 @@ public class OauthController {
         System.out.println("userInfo 닉네임 = " + userInfo.get("nickname").toString());
         System.out.println("userInfo 프로필 이미지 = " + userInfo.get("email").toString());
         String email = userInfo.get("email").toString();
-        boolean hasKakaoMember = memberService.hasSocialMember(email, Role.SOCIAL_KAKAO);
+        boolean hasKakaoMember = memberService.hasEmailAndRole(email, Role.SOCIAL_KAKAO);
         if(!hasKakaoMember) {
             session.setAttribute(SessionConst.KAKAO_ACCESS_TOKEN, accessToken);
             model.addAttribute("userInfo",userInfo);

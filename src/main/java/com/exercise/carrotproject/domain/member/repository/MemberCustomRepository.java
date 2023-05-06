@@ -6,4 +6,5 @@ import org.springframework.stereotype.Repository;
 public interface MemberCustomRepository {
     String selectNicknameByMemId(String memId);
     boolean hasBlockByMemIds(String memId1, String memId2);
+    long updateTemporaryPwd(String email, String hashedPwd);
 }
