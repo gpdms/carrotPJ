@@ -9,6 +9,8 @@ import com.exercise.carrotproject.domain.member.entity.Member;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.mail.MessagingException;
+import java.io.UnsupportedEncodingException;
 import java.util.Map;
 import java.util.Optional;
 
@@ -19,7 +21,7 @@ public interface MemberService {
     String getNicknameByMemId(String memId);
     boolean hasDuplicatedMemberId(String memId);
     boolean hasDuplicatedNickname(String nickname);
-    boolean hasSocialMember(String email, Role role);
+    boolean hasEmailAndRole(String email, Role role);
     String createMemId();
     Map<String, Object> insertMember(Member member);
     Map<String, Object> insertSocialMember(Map<String, Object> userinfo, Role role);
@@ -32,6 +34,7 @@ public interface MemberService {
 
     boolean isPwdUpdated(String memId, String newPwd);
     Map<String, Object> profileUpdate(Member updateMember, MultipartFile profImg);
+    long temporaryPwdUdpate(String email) throws MessagingException, UnsupportedEncodingException;
 
     Block findOneBlockByFromMemToMem (String fromMemId, String toMemId);
     boolean existBlockByMemIds (String memId1, String memId2);

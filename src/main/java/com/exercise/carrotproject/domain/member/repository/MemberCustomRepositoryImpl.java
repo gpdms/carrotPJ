@@ -1,5 +1,6 @@
 package com.exercise.carrotproject.domain.member.repository;
 
+import com.exercise.carrotproject.domain.enumList.Role;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
@@ -20,6 +21,13 @@ public class MemberCustomRepositoryImpl implements MemberCustomRepository{
         return jpaQueryFactory.select(member.nickname).from(member)
                 .where(member.memId.eq(memId))
                 .fetchFirst();
+    }
+    public long updateTemporaryPwd(String email, String hashedPwd){
+        return jpaQueryFactory.update(member)
+                .set(member.memPwd, hashedPwd)
+                .where(member.email.eq(email),
+                        member.role.eq(Role.USER))
+                .execute();
     }
     public boolean hasBlockByMemIds(String memId1, String memId2) {
         BooleanExpression condition1 = block.fromMem.memId.eq(memId1).and(

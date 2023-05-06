@@ -8,6 +8,7 @@ import com.exercise.carrotproject.domain.member.entity.Block;
 import com.exercise.carrotproject.domain.member.entity.Member;
 import com.exercise.carrotproject.domain.member.repository.BlockRepository;
 import com.exercise.carrotproject.domain.member.repository.MemberRepository;
+import com.exercise.carrotproject.web.member.util.SecurityUtils;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -16,9 +17,11 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.imageio.ImageIO;
+import javax.mail.MessagingException;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.time.LocalDate;
@@ -30,6 +33,8 @@ import java.util.*;
 public class MemberServiceImpl implements MemberService{
     private final MemberRepository memberRepository;
     private final BlockRepository blockRepository;
+    private final EmailServiceImpl emailService;
+    private final SecurityUtils securityUtils;
 
     @Value("${dir.img-profile}")
     private String rootProfileImgDir;
@@ -56,6 +61,7 @@ public class MemberServiceImpl implements MemberService{
     public boolean hasDuplicatedNickname(String nickname) {
         return memberRepository.existsByNickname(nickname) ? true : false;
     }
+
 
     @Override
     public Map<String, Object> insertMember(Member member) {
@@ -235,7 +241,7 @@ public class MemberServiceImpl implements MemberService{
         blockRepository.deleteById(block.getBlockId());
     }
     @Override
-    public boolean hasSocialMember(String email, Role role) {
+    public boolean hasEmailAndRole(String email, Role role) {
         return memberRepository.existsByEmailAndRole(email, role);
     }
     @Override
@@ -248,4 +254,15 @@ public class MemberServiceImpl implements MemberService{
         return memberRepository.selectNicknameByMemId(memId);
     }
 
+    @Override
+    @Transactional
+    public long temporaryPwdUdpate(String email) throws MessagingException, UnsupportedEncodingException {
+        String tempPwd = emailService.createCode();
+        String hashedPwd = securityUtils.getHashedPwd(tempPwd);
+        long result = memberRepository.updateTemporaryPwd(email, hashedPwd);
+        if(result >0) {
+            emailService.sendPwdEmail(email, tempPwd);
+        }
+        return result;
+    }
 }

@@ -27,6 +27,9 @@ public class SignupForm {
     @Size(min=2, max = 15, message = "닉네임은 2자 이상, 15자 이하여야 합니다.")
     private String nickname;
 
+    @NotEmpty(message = "이메일을 입력해주세요")
+    private String email;
+
     @NotNull
     private Loc loc;
 
