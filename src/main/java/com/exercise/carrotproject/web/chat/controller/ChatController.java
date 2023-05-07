@@ -183,7 +183,7 @@ public class ChatController {
 
         return chatRoomDto;
     }
-
+/*
     //채팅 이미지 출력
     @ResponseBody
     @GetMapping("/chatImg/{chatImgId}")
@@ -191,5 +191,5 @@ public class ChatController {
         String imgPath = chatService.getChatImgPath(chatImgId);
         UrlResource urlResource = new UrlResource("file:" + imgPath);
         return urlResource;
-    }
+    }*/
 }

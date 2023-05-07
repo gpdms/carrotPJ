@@ -13,12 +13,13 @@ import com.exercise.carrotproject.domain.post.repository.TradeCustomRepository;
 import com.exercise.carrotproject.domain.post.service.PostServiceImpl;
 import com.exercise.carrotproject.domain.review.service.ReviewBuyerService;
 import com.exercise.carrotproject.domain.review.service.ReviewSellerService;
+import com.exercise.carrotproject.web.argumentresolver.Login;
 import com.exercise.carrotproject.web.common.SessionConst;
 import com.exercise.carrotproject.web.member.form.*;
 import com.exercise.carrotproject.web.member.form.memberInfo.MyBuyListForm;
 import com.exercise.carrotproject.web.member.form.memberInfo.ProfileForm;
 import com.exercise.carrotproject.web.member.form.memberInfo.PwdUpdateForm;
-import com.exercise.carrotproject.web.member.util.SecurityUtils;
+import com.exercise.carrotproject.domain.member.util.SecurityUtils;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -95,14 +96,6 @@ public class MemberController {
         return "redirect:/login";
     }
 
-    @GetMapping("/{memId}/edit/pf")
-    public String profileEditForm(@PathVariable String memId,
-                                 @ModelAttribute("profileForm") ProfileForm profileForm) {
-        Member member = memberService.findMemberForProfileEdit(memId);
-        profileForm.setNickname(member.getNickname());
-        profileForm.setLoc(member.getLoc());
-        return "/member/myProfileEdit";
-    }
     @GetMapping("/{memId}/edit/pwd")
     public String pwdEditForm(@PathVariable String memId,
                                  @ModelAttribute("pwdUpdateForm") PwdUpdateForm pwdUpdateForm) {
@@ -132,15 +125,21 @@ public class MemberController {
         }
         return "/member/myProfileEdit";
     }
-
+    @GetMapping("/{memId}/profile")
+    public String profileEditForm(@PathVariable String memId,
+                                  @ModelAttribute("profileForm") ProfileForm profileForm) {
+        Member member = memberService.findMemberForProfileEdit(memId);
+        profileForm.setNickname(member.getNickname());
+        profileForm.setLoc(member.getLoc());
+        return "/member/myProfileEdit";
+    }
     @ResponseBody
-    @PatchMapping("/{memId}/edit/profile")
-    public ResponseEntity<Map<String, Object>> profileUpdate(@PathVariable String memId,
-                                @Valid @ModelAttribute("profileForm") ProfileForm profileForm, BindingResult bindingResult,
-                                @RequestParam("profImg") MultipartFile profImg,
-                                                             HttpSession session) {
+    @PatchMapping("/{memId}/profile")
+    public ResponseEntity profileUpdate(@PathVariable String memId,
+                                        @Valid @ModelAttribute("profileForm") ProfileForm profileForm, BindingResult bindingResult,
+                                        @RequestParam("profImg") MultipartFile profImg,
+                                        @Login MemberDto loginMember) {
         Map<String, Object> resultMap = new HashMap<>();
-        MemberDto loginMember = (MemberDto)session.getAttribute(SessionConst.LOGIN_MEMBER);
         if(bindingResult.hasErrors()) {
             String error = bindingResult.getFieldError("nickname").getDefaultMessage();
             resultMap.put("nickname", bindingResult.getFieldError("nickname").getDefaultMessage());
@@ -156,25 +155,12 @@ public class MemberController {
             Member after = (Member) resultMap.get("success");
             loginMember.setNickname(after.getNickname());
             loginMember.setLoc(after.getLoc());
-            session.setAttribute(SessionConst.LOGIN_MEMBER, loginMember);
             Member member = (Member) resultMap.get("success");
             resultMap.clear();
             resultMap.put("member",
                     new ProfileForm(member.getMemId(), member.getProfPath(), member.getNickname(), member.getLoc()));
             return ResponseEntity.ok().body(resultMap);
         }
-    }
-
-    //프로필 이미지 출력
-    @ResponseBody
-    @GetMapping("/{memId}/profileImg")
-    public UrlResource viewProfileImg(@PathVariable("memId") String memId) throws IOException {
-        String profPath = memberService.getProfPath(memId);
-        if(profPath == null || profPath.isEmpty()) {
-            profPath = rootProfileImgDir+"profile_img.png";
-        }
-        UrlResource urlResource = new UrlResource("file:" + profPath);
-        return urlResource;
     }
 
     //buyList 뽑아오는 것
@@ -224,16 +210,16 @@ public class MemberController {
 
     @PostMapping("signup/emailConfirm")
     @ResponseBody
-    public ResponseEntity emailConfirm(@Valid @ModelAttribute("emailRequestForm") EmailRequestForm emailRequestForm, BindingResult bindingResult) throws MessagingException, UnsupportedEncodingException {
+    public ResponseEntity emailConfirm(@Valid @ModelAttribute("emailRequestForm") EmailRequestForm emailRequestForm) throws MessagingException, UnsupportedEncodingException {
         Map<String, String> resultMap =new HashMap<>();
-        if(bindingResult.hasErrors()) {
+      /*  if(bindingResult.hasErrors()) {
             String errorMessage = bindingResult.getFieldError("email").getDefaultMessage();
             resultMap.put("email", errorMessage);
             return ResponseEntity.badRequest().body(resultMap);
-        }
+        }*/
         boolean hasEmail = memberService.hasEmailAndRole(emailRequestForm.getEmail(), Role.USER);
         if (hasEmail) {
-            resultMap.put("duplicated-email", "중복된 이메일입니다");
+            resultMap.put("duplicated-email", "이미 존재하는 이메일입니다");
             return ResponseEntity.badRequest().body(resultMap);
         }
         String authCode = emailService.createCode();
@@ -243,14 +229,15 @@ public class MemberController {
     }
 
     @GetMapping("findPwd")
-    public String toFindForm (@Valid @ModelAttribute("emailRequestForm") EmailRequestForm emailRequestForm, BindingResult bindingResult){
+    public String toFindForm (@Valid @ModelAttribute("emailRequestForm") EmailRequestForm emailRequestForm){
         return "/member/find";
     }
     @PostMapping("findPwd")
     @ResponseBody
-    public ResponseEntity sendEmailForFindPwd (@Valid @ModelAttribute("emailRequestForm") EmailRequestForm emailRequestForm, BindingResult bindingResult) throws MessagingException, UnsupportedEncodingException {
+    public ResponseEntity sendEmailForFindPwd (@Valid @ModelAttribute("emailRequestForm") EmailRequestForm emailRequestForm,
+                                               BindingResult bindingResult) throws MessagingException, UnsupportedEncodingException {
         Map<String, String> resultMap =new HashMap<>();
-        if(bindingResult.hasErrors()) {
+       if(bindingResult.hasErrors()) {
             String errorMessage = bindingResult.getFieldError("email").getDefaultMessage();
             resultMap.put("email", errorMessage);
             return ResponseEntity.badRequest().body(resultMap);

@@ -8,7 +8,7 @@ import com.exercise.carrotproject.domain.member.entity.Block;
 import com.exercise.carrotproject.domain.member.entity.Member;
 import com.exercise.carrotproject.domain.member.repository.BlockRepository;
 import com.exercise.carrotproject.domain.member.repository.MemberRepository;
-import com.exercise.carrotproject.web.member.util.SecurityUtils;
+import com.exercise.carrotproject.domain.member.util.SecurityUtils;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -64,6 +64,7 @@ public class MemberServiceImpl implements MemberService{
 
 
     @Override
+    @Transactional
     public Map<String, Object> insertMember(Member member) {
         Map<String, Object> saveResult = new HashMap<>();
         if (hasDuplicatedMemberId(member.getMemId())) {
@@ -224,6 +225,7 @@ public class MemberServiceImpl implements MemberService{
         return memberRepository.hasBlockByMemIds(memId1, memId2);
     }
     @Override
+    @Transactional
     public Map<String,String> insertBlock(String fromMemId, String toMemId) {
         Block block = Block.builder().fromMem(memberRepository.findById(fromMemId).orElse(null))
                 .toMem(memberRepository.findById(toMemId).orElse(null)).build();
@@ -236,6 +238,7 @@ public class MemberServiceImpl implements MemberService{
     }
 
     @Override
+    @Transactional
     public void deleteBlock(String fromMemId, String toMemId) {
         Block block = findOneBlockByFromMemToMem(fromMemId, toMemId);
         blockRepository.deleteById(block.getBlockId());

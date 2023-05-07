@@ -1,22 +1,30 @@
-package com.exercise.carrotproject.web.member.error;
+package com.exercise.carrotproject.web.member.controller;
 
 import com.exercise.carrotproject.web.member.controller.MemberController;
+import com.exercise.carrotproject.web.member.error.ErrorCode;
+import com.exercise.carrotproject.web.member.error.ErrorResult;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.TypeMismatchException;
+import org.springframework.core.Ordered;
+import org.springframework.core.annotation.Order;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.BindException;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.MethodArgumentNotValidException;
+import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 import javax.servlet.http.HttpServletRequest;
 
 @Slf4j
-@RestControllerAdvice(assignableTypes = {MemberController.class})
+@ControllerAdvice (basePackages = "com.exercise.carrotproject.web.member")
 public class MemberErrorController {
 
-    @ExceptionHandler(MethodArgumentNotValidException.class)
-    public ResponseEntity<ErrorResult> bindingExceptionHandle(MethodArgumentNotValidException e,
+    @ExceptionHandler({BindException.class})
+    public ResponseEntity<ErrorResult> bindingExceptionHandle(BindException e,
                                                               HttpServletRequest request) {
         log.warn("MethodArgumentNotValidException 발생!!! url:{}, trace:{}",request.getRequestURI(), e.getStackTrace());
         ErrorResult errorResult = makeErrorResponse(e.getBindingResult());
@@ -46,8 +54,20 @@ public class MemberErrorController {
                     code = ErrorCode.SIZE.getCode();
                     description = ErrorCode.SIZE.getDescription();
                     break;
+                case "Pattern":
+                    code = ErrorCode.PATTERN.getCode();
+                    description = ErrorCode.PATTERN.getDescription();
+                    break;
             }
         }
         return new ErrorResult(code, description, detail);
     }
+
+/*    @ExceptionHandler(IllegalArgumentException.class)
+    public ResponseEntity<ErrorResult>  illegalExHandle(IllegalArgumentException e) {
+        log.error("[exceptionHandle] ex", e);
+        ErrorResult errorResult = new ErrorResult(ErrorCode.NO_SUCH_ELEMENT.getCode(),
+                "BAD-REQ", e.getMessage());
+        return new ResponseEntity<>(errorResult, HttpStatus.BAD_REQUEST);
+    }*/
 }

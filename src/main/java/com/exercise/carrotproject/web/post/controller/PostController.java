@@ -207,7 +207,7 @@ public class PostController {
         return new ResponseEntity<>("상품이 게시되었습니다.",HttpStatus.OK);
     }
 
-    //첫번째 이미지 urlresource 반환
+/*    //첫번째 이미지 urlresource 반환
     @GetMapping("/post/firstImg/{postId}")
     @ResponseBody
     public UrlResource postFirstImg(@PathVariable Long postId) throws MalformedURLException {
@@ -224,7 +224,7 @@ public class PostController {
         UrlResource urlResource = new UrlResource("file:"+ firstImgPath);
         return urlResource;
     }
-    
+
     //imgId로 urlresource 반환
     @GetMapping("/post/img/{imgId}")
     @ResponseBody
@@ -237,7 +237,7 @@ public class PostController {
 
         UrlResource urlResource = new UrlResource("file:"+ imgPath);
         return urlResource;
-    }
+    }*/
 
     //게시글 삭제
     @PostMapping("/post/remove")

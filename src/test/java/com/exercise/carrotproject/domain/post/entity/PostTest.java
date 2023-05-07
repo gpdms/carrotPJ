@@ -5,14 +5,12 @@ import com.exercise.carrotproject.domain.enumList.Loc;
 import com.exercise.carrotproject.domain.enumList.Role;
 import com.exercise.carrotproject.domain.member.entity.Member;
 import com.exercise.carrotproject.domain.post.repository.PostRepository;
-import com.exercise.carrotproject.web.member.util.SecurityUtils;
+import com.exercise.carrotproject.domain.member.util.SecurityUtils;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.annotation.Rollback;
 import org.springframework.transaction.annotation.Transactional;
-
-import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest
 class PostTest {

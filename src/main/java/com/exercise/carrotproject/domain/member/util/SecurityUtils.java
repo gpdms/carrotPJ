@@ -1,4 +1,4 @@
-package com.exercise.carrotproject.web.member.util;
+package com.exercise.carrotproject.domain.member.util;
 
 
 import org.mindrot.jbcrypt.BCrypt;
