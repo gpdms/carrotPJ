@@ -35,7 +35,6 @@ public class MemberJdbcRepository {
         if (!subMemberDtos.isEmpty()) {
             batchCount = mannerScoreUpdate(batchCount, subMemberDtos);
         }
-        System.out.println("batchCount: " + batchCount);
     }
 
     @Transactional
