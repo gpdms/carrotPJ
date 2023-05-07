@@ -16,7 +16,7 @@ import com.exercise.carrotproject.domain.review.dto.ReviewMessageDto;
 import com.exercise.carrotproject.domain.review.service.ReviewService;
 import com.exercise.carrotproject.web.argumentresolver.Login;
 import com.exercise.carrotproject.web.common.SessionConst;
-import com.exercise.carrotproject.web.member.util.SecurityUtils;
+import com.exercise.carrotproject.domain.member.util.SecurityUtils;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Controller;

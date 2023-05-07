@@ -96,7 +96,7 @@
     $('#profileEditForm').on('submit', function(e) {
         e.preventDefault();
         let memId = [[${profileForm.memId}]];
-        let url = `/members/${memId}/edit/profile`;
+        let url = `/members/${memId}/profile`;
         const formData = new FormData($('#profileEditForm')[0]);
         $.ajax({
             url: url,

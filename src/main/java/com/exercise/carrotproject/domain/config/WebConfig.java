@@ -54,7 +54,6 @@ public class WebConfig implements WebMvcConfigurer {
                         "/post/detail/**", "/post/addWish", "/post/rmvWish");
         registry.addInterceptor(new KaKaoCodeInterceptor()).addPathPatterns("/login/kakao");
     }
-
     @Bean
     public PostMemberCheckInterceptor postMemberCheckInterceptor() {
         return new PostMemberCheckInterceptor();

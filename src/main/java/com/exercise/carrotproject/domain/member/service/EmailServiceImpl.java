@@ -19,8 +19,7 @@ public class EmailServiceImpl {
     private final JavaMailSender emailSender;
     // 타임리프를사용하기 위한 객체
     private final SpringTemplateEngine templateEngine;
-//    private String authNum; //랜덤 인증 코드
-    private final String setFrom = "clkjkj@naver.com";
+    private final String setFrom = "jk65333@gmail.com";
 
     //랜덤 인증 코드 생성
     public String createCode() {
@@ -49,7 +48,7 @@ public class EmailServiceImpl {
     //메일 양식 작성
     public MimeMessage createSignupEmailForm(String email, String authNum) throws MessagingException {
         String toEmail = email; //받는 사람
-        String title = "망고마켓 회원가입 인증 번호입니다"; //제목
+        String title = "망고마켓, 회원가입 인증 번호입니다"; //제목
 
         MimeMessage message = emailSender.createMimeMessage();
         message.addRecipients(MimeMessage.RecipientType.TO, email); //보낼 이메일 설정
@@ -75,7 +74,7 @@ public class EmailServiceImpl {
     //비밀번호 재설정
     public MimeMessage createPwdEmailForm(String email, String authNum) throws MessagingException {
         String toEmail = email; //받는 사람
-        String title = "망고마켓 재발급된 임시비밀번호입니다."; //제목
+        String title = "망고마켓, 발급된 임시비밀번호입니다."; //제목
         MimeMessage message = emailSender.createMimeMessage();
         message.addRecipients(MimeMessage.RecipientType.TO, email); //보낼 이메일 설정
         message.setSubject(title); //제목 설정

@@ -10,7 +10,7 @@ import com.exercise.carrotproject.domain.post.repository.TradeRepository;
 import com.exercise.carrotproject.domain.review.entity.ReviewBuyer;
 import com.exercise.carrotproject.domain.review.entity.ReviewSeller;
 import com.exercise.carrotproject.domain.review.service.*;
-import com.exercise.carrotproject.web.common.SessionConst;
+import com.exercise.carrotproject.web.argumentresolver.Login;
 import com.exercise.carrotproject.web.review.form.ReviewDetailForm;
 import com.exercise.carrotproject.web.review.form.ReviewForm;
 import lombok.RequiredArgsConstructor;
@@ -24,7 +24,6 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import javax.servlet.http.HttpSession;
 import java.util.*;
-
 
 @Slf4j
 @Controller
@@ -48,8 +47,7 @@ public class ReviewController {
     }
 
     @GetMapping("/buyer")
-    public String toBuyerReviewForm(@RequestParam String postId,  HttpSession session, RedirectAttributes redirectAttributes, Model model){
-       MemberDto loginMember = (MemberDto) session.getAttribute(SessionConst.LOGIN_MEMBER);
+    public String toBuyerReviewForm(@RequestParam String postId, @Login MemberDto loginMember, RedirectAttributes redirectAttributes, Model model){
         Post post = postRepository.findById(Long.valueOf(postId)).orElseThrow(() -> new NoSuchElementException("Post Not Found"));
 /*        if(reviewBuyerService.findReviewBuyerIdByPost(post) != 0L) { //이미 등록된 판매자 리뷰가 있으면 판매완료 페이지로
             redirectAttributes.addAttribute("me", loginMember.getMemId());
@@ -65,7 +63,8 @@ public class ReviewController {
     }
     @PostMapping("/buyer")
     @ResponseBody
-    public String addBuyerReview(@RequestBody ReviewForm reviewForm, RedirectAttributes redirectAttributes) {
+    public String addBuyerReview(@RequestBody ReviewForm reviewForm,
+                                 RedirectAttributes redirectAttributes) {
         Post post = postRepository.findById(reviewForm.getPostId()).orElseThrow(() -> new NoSuchElementException("Post Not Found"));
        /*if(reviewBuyerService.findReviewBuyerIdByPost(post) != 0L) { //이미 등록된 판매자 리뷰가 있으면 판매완료 페이지로
             redirectAttributes.addAttribute("me", reviewForm.getSellerId());
@@ -86,7 +85,7 @@ public class ReviewController {
     }
     @GetMapping("/buyer/{reviewBuyerId}")
     public String reviewBuyerDetail (@PathVariable String reviewBuyerId,
-                                     HttpSession session,
+                                     @Login MemberDto loginMember,
                                      Model model) {
        ReviewBuyer reviewBuyer = reviewBuyerService.findOneReviewBuyer(Long.valueOf(reviewBuyerId));
         ReviewDetailForm detailForm = ReviewDetailForm.builder()
@@ -98,20 +97,19 @@ public class ReviewController {
                 .buyerIndicatorList(reviewBuyerService.getReviewBuyerIndicatorsByReview(reviewBuyer))
                 .message(reviewBuyer.getMessage())
                 .build();
-        MemberDto loginMember = (MemberDto)session.getAttribute(SessionConst.LOGIN_MEMBER);
         model.addAttribute("isReviewer", loginMember.getMemId().equals(detailForm.getBuyerId())? false : true);
         model.addAttribute("reviewDetailForm", detailForm);
         return "review/reviewDetail";
     }
     @DeleteMapping("/buyer/{reviewBuyerId}")
-    public ResponseEntity<Map<String, Object>> deleteBuyerReview(@PathVariable String reviewBuyerId) {
+    public ResponseEntity deleteBuyerReview(@PathVariable String reviewBuyerId) {
         reviewBuyerService.deleteReviewBuyer(Long.valueOf(reviewBuyerId));
         return new ResponseEntity<>(Collections.singletonMap("message", "삭제에 성공했습니다."), HttpStatus.OK);
     }
 
     @GetMapping("/seller")
-    public String toSellerReviewForm(@RequestParam String postId,  HttpSession session, RedirectAttributes redirectAttributes, Model model){
-        MemberDto loginMember = (MemberDto) session.getAttribute(SessionConst.LOGIN_MEMBER);
+    public String toSellerReviewForm(@RequestParam String postId,@Login MemberDto loginMember,
+                                     RedirectAttributes redirectAttributes, Model model){
         Post post = postRepository.findById(Long.valueOf(postId)).orElseThrow(() -> new NoSuchElementException("Post Not Found"));
         if(reviewSellerService.findReviewSellerIdByPost(post) != 0L) { //이미 등록한 구매자 리뷰가 있으면 나의 구매 목록으로
             redirectAttributes.addAttribute("me", loginMember.getMemId());
@@ -149,7 +147,7 @@ public class ReviewController {
     }
     @GetMapping("/seller/{reviewSellerId}")
     public String reviewSellerDetail (@PathVariable String reviewSellerId,
-                                      HttpSession session,
+                                      @Login MemberDto loginMember,
                                       Model model) {
         ReviewSeller reviewSeller = reviewSellerService.findOneReviewSeller(Long.valueOf(reviewSellerId));
         ReviewDetailForm detailForm = ReviewDetailForm.builder()
@@ -161,7 +159,6 @@ public class ReviewController {
                 .sellerIndicatorList(reviewSellerService.getReviewSellerIndicatorsByReview(reviewSeller))
                 .message(reviewSeller.getMessage())
                 .build();
-        MemberDto loginMember = (MemberDto)session.getAttribute(SessionConst.LOGIN_MEMBER);
         model.addAttribute("isReviewer", loginMember.getMemId().equals(detailForm.getSellerId())? false : true);
         model.addAttribute("reviewDetailForm", detailForm);
         return "review/reviewDetail";

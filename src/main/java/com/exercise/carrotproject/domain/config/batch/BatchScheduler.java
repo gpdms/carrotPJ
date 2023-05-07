@@ -24,7 +24,7 @@ public class BatchScheduler {
     private final JobLauncher jobLauncher;
     private final JobRegistry jobRegistry;
 
-    @Scheduled(cron = "0 0 5 * * *")
+    @Scheduled(cron = "0 0 5 * * *") //매일 새벽 5시
     public void runMannerScoreBatchUpdate() {
         //job paramter설정
         Map<String, JobParameter> jobParametersMap = new HashMap<>();

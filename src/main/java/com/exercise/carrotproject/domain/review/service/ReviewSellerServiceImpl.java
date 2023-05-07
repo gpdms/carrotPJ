@@ -18,7 +18,6 @@ import java.util.stream.Collectors;
 @Service
 @RequiredArgsConstructor
 public class ReviewSellerServiceImpl implements ReviewSellerService {
-    //private final ReviewSellerCustomRepositoryImpl reviewSellerCustomRepositoryImpl;
     private final ReviewSellerRepository reviewSellerRepository;
     private final ReviewSellerDetailRepository reviewSellerDetailRepository;
 

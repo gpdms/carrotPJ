@@ -166,13 +166,12 @@
         }).fail(function (err) {
             const message = err.responseJSON;
             console.log(message);
-            if (message.email) {
-                console.log(message.email)
-                $('#email-error').replaceWith(`<div id="email-error" class="field-error">${message.email}</div>`)
+            if (message.detail) {
+                $('#email-error').replaceWith(`<div id="email-error" class="field-error">${message.detail}</div>`)
                 $('#email').addClass("field-error-border");
             }
             if ('duplicated-email' in message) {
-                $('#email-error').replaceWith(`<div id="email-error" class="field-error">중복된 이메일입니다.</div>`)
+                $('#email-error').replaceWith(`<div id="email-error" class="field-error">이미 존재하는 이메일입니다.</div>`)
                 $('#email').addClass("field-error-border");
             }
         })

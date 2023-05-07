@@ -1,6 +1,14 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
-
+<head>
+  <style>
+    .content-box {
+      border: 1px solid #fd7e14;
+      font-family: Pretendard, sans-serif;
+      padding: 20px;
+    }
+  </style>
+</head>
 <body>
 <div style="margin:100px;">
   <h1> 안녕하세요.</h1>
@@ -9,7 +17,10 @@
   <p> 아래 코드를 회원가입 창으로 돌아가 입력해주세요.</p>
   <br>
 
-  <div text-align="center" style="border:1px solid #ff6a00; font-family:verdana;">
+  <div text-align="center" class="content-box" style="border: 1px solid #ccc;
+      border-radius: 20px;
+      font-family: Pretendard, sans-serif;
+      padding: 20px;">
     <h3 style="color:#333"> 임시비밀번호 입니다. </h3>
     <div style="font-size:130%" th:text="${code}"> </div>
   </div>
