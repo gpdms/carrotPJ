@@ -117,11 +117,7 @@ public class PostController {
 
         if (cookies != null) {
             for (Cookie cookie : cookies) {
-                log.info("cookie.getName():{}",cookie.getName());
-                log.info("cookie.getValue():{}",cookie.getValue());
                 if (cookie.getName().equals("postView")) {
-//                    log.info("cookie.getName():{}",cookie.getName());
-//                    log.info("cookie.getValue():{}",cookie.getValue());
                     oldCookie = cookie;
                 }
             }
@@ -203,7 +199,6 @@ public class PostController {
         MemberDto loginMember = (MemberDto) session.getAttribute(SessionConst.LOGIN_MEMBER);
         postDto.setMember(loginMember);
         postDto.setLoc(loginMember.getLoc());
-        postDto.setHits(0);
         //게시글 내용 개행 처리
         postDto.setContent(postDto.getContent().replace("\r\n","<br>")); //줄개행
 
