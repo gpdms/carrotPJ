@@ -47,6 +47,7 @@ public class CustomPostRepositoryImpl implements CustomPostRepository{
                         post.sellState.eq(SellState.SOLD))
                 .leftJoin(reviewBuyer)
                 .on(reviewBuyer.post.postId.eq(post.postId))
+                 .orderBy(post.postId.desc())
                 .fetch();
     }
 
