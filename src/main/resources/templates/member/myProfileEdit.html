@@ -120,8 +120,9 @@
             .fail(function (err) {
                 alert('프로필 변경에 실패했습니다');
                 const message = err.responseJSON;
-                if (message.nickname) {
-                    $('#nick-error').replaceWith(`<div id="nick-error" class="field-error">${message.nickname}</div>`)
+                if (message.detail) {
+                    console.log(message);
+                    $('#nick-error').replaceWith(`<div id="nick-error" class="field-error">${message.detail}</div>`)
                     $('#nickname').addClass("field-error-border");
                 }
                 if ('fail-nickname' in message) {

@@ -26,7 +26,7 @@ public class MemberErrorController {
     @ExceptionHandler({BindException.class})
     public ResponseEntity<ErrorResult> bindingExceptionHandle(BindException e,
                                                               HttpServletRequest request) {
-        log.warn("MethodArgumentNotValidException 발생!!! url:{}, trace:{}",request.getRequestURI(), e.getStackTrace());
+        log.warn("BindException 발생!!! url:{}, trace:{}",request.getRequestURI(), e.getStackTrace());
         ErrorResult errorResult = makeErrorResponse(e.getBindingResult());
         return new ResponseEntity<>(errorResult, HttpStatus.BAD_REQUEST);
     }

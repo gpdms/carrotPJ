@@ -37,6 +37,7 @@ public interface MemberService {
     long temporaryPwdUdpate(String email) throws MessagingException, UnsupportedEncodingException;
 
     Block findOneBlockByFromMemToMem (String fromMemId, String toMemId);
+    boolean existBlockByFromMemToMem (String fromMemId, String toMemId);
     boolean existBlockByMemIds (String memId1, String memId2);
     Map<String,String> insertBlock(String fromMemId, String toMemId);
     void deleteBlock(String fromMemId, String toMemId);

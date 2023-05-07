@@ -13,6 +13,7 @@ import com.exercise.carrotproject.web.member.form.SignupForm;
 import com.exercise.carrotproject.web.member.form.SignupSocialForm;
 import lombok.RequiredArgsConstructor;
 import lombok.Value;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -30,6 +31,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+@Slf4j
 @Controller
 @RequiredArgsConstructor
 public class OauthController {
@@ -47,17 +49,16 @@ public class OauthController {
 
     @GetMapping("/login/kakao")
     public String kakaoLogin(@RequestParam String code, Model model, HttpServletRequest request) throws Throwable {
-        System.out.println("code = " + code);
         HttpSession session = request.getSession();
         session.setAttribute(SessionConst.KAKAO_REVOKED_CODE, code);
         //access토큰얻기
         String accessToken = kakaoService.getAccessToken(code);
-        System.out.println("###access_Token#### : " + accessToken);
+        log.info("accessTocken {} ", accessToken);
         //토큰으로 유저정보얻기
         HashMap<String, Object> userInfo = kakaoService.getUserInfo(accessToken);
-        System.out.println("userInfo 프로필 이미지 = " + userInfo.get("profPath").toString());
-        System.out.println("userInfo 닉네임 = " + userInfo.get("nickname").toString());
-        System.out.println("userInfo 프로필 이미지 = " + userInfo.get("email").toString());
+        log.info("userInfo 프로필 이미지 = {} ", userInfo.get("profPath").toString());
+        log.info("userInfo 닉네임 = {} ", userInfo.get("nickname").toString());
+        log.info("userInfo 이메일 = {} ", userInfo.get("email").toString());
         String email = userInfo.get("email").toString();
         boolean hasKakaoMember = memberService.hasEmailAndRole(email, Role.SOCIAL_KAKAO);
         if(!hasKakaoMember) {
@@ -118,7 +119,6 @@ public class OauthController {
 /*    @GetMapping("/logout/kakao")
     @ResponseBody
     public String kakaoLogout() {
-
     }*/
 
 

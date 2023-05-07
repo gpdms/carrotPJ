@@ -8,6 +8,7 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -17,7 +18,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class MemberJdbcRepository {
     private final JdbcTemplate jdbcTemplate;
-    @Value("${spring.jpa.properties.hibernate.jdbc.batch_size}")
+    @Value("${spring.jpa.properties.hibernate.jdbc.batch_size}") //10명씩 업데이트
     private int batchSize;
 
     @Transactional
@@ -34,7 +35,6 @@ public class MemberJdbcRepository {
         if (!subMemberDtos.isEmpty()) {
             batchCount = mannerScoreUpdate(batchCount, subMemberDtos);
         }
-        System.out.println("batchCount: " + batchCount);
     }
 
     @Transactional

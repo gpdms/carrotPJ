@@ -136,15 +136,10 @@ public class MemberController {
     @ResponseBody
     @PatchMapping("/{memId}/profile")
     public ResponseEntity profileUpdate(@PathVariable String memId,
-                                        @Valid @ModelAttribute("profileForm") ProfileForm profileForm, BindingResult bindingResult,
+                                        @Valid @ModelAttribute("profileForm") ProfileForm profileForm,
                                         @RequestParam("profImg") MultipartFile profImg,
                                         @Login MemberDto loginMember) {
         Map<String, Object> resultMap = new HashMap<>();
-        if(bindingResult.hasErrors()) {
-            String error = bindingResult.getFieldError("nickname").getDefaultMessage();
-            resultMap.put("nickname", bindingResult.getFieldError("nickname").getDefaultMessage());
-            return ResponseEntity.badRequest().body(resultMap);
-        }
         Member updateMember = Member.builder().memId(profileForm.getMemId())
                 .nickname(profileForm.getNickname())
                 .loc(profileForm.getLoc()).build();
@@ -194,7 +189,6 @@ public class MemberController {
         //숨김 게시글
         List<PostDto> hidePostList = postService.selectHidePost(memId);
         model.addAttribute("hidePostList", hidePostList);
-
         return "myPage/sellList";
     }
 
