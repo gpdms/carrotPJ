@@ -49,17 +49,19 @@ public class WebConfig implements WebMvcConfigurer {
                 .excludePathPatterns("/post/css/**","/post/js/**","/post/assets/**", "/post/error",
                                     "/post/board/**", "/post/firstImg/**","post/img/**","post/onSale/**", "post/search",
                         "/post/detail/**", "/post/addWish", "/post/rmvWish");
-        registry.addInterceptor(blockCheckInterceptor()).addPathPatterns("/post/detail/**");
+//        registry.addInterceptor(blockCheckInterceptor())
+//                 .order(2)
+//                .addPathPatterns("/post/detail/**");
         registry.addInterceptor(new KaKaoCodeInterceptor()).addPathPatterns("/login/kakao");
     }
     @Bean
     public PostMemberCheckInterceptor postMemberCheckInterceptor() {
         return new PostMemberCheckInterceptor();
     }
-    @Bean
+/*    @Bean
     public BlockCheckInterceptor blockCheckInterceptor() {
         return new BlockCheckInterceptor();
-    }
+    }*/
 
     @Bean
     public ServletContextInitializer clearJsession() {
