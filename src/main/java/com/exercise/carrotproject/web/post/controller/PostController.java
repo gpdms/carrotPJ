@@ -98,15 +98,6 @@ public class PostController {
     public String postDetail(@PathVariable Long postId,
                              Model model, HttpSession session, HttpServletRequest request, HttpServletResponse response){
         String memId = ((MemberDto) session.getAttribute(SessionConst.LOGIN_MEMBER)).getMemId();
-        PostDto postDto = postService.selectOnePost(postId);
-        if(postDto != null && memId != null) {
-            System.out.println("postDto !!!= " + postDto.getMember().getMemId());
-            System.out.println("memId!!!! = " + memId);
-            boolean hasBlock = memberService.existBlockByMemIds(postDto.getMember().getMemId(), memId);
-            if(hasBlock) {
-                return "redirect:/";
-            }
-        }
         /* 조회수 로직 */
         Cookie oldCookie = null;
         Cookie[] cookies = request.getCookies();
@@ -139,9 +130,14 @@ public class PostController {
             response.addCookie(newCookie);
         }
 
-
         //Post하나 불러오기
-        //PostDto postDto = postService.selectOnePost(postId);
+        PostDto postDto = postService.selectOnePost(postId);
+        if(postDto != null && memId != null) {
+            boolean hasBlock = memberService.existBlockByMemIds(postDto.getMember().getMemId(), memId);
+            if(hasBlock) {
+                return "redirect:/";
+            }
+        }
 
         //해당 포스트의 이미지 리스트
         List<PostImgDto> postImgDtoList = postService.selectPostImgs(postId);
