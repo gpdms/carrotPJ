@@ -6,6 +6,7 @@ import com.exercise.carrotproject.domain.enumList.ReviewIndicator;
 import com.exercise.carrotproject.domain.enumList.Role;
 import com.exercise.carrotproject.domain.member.MemberEntityDtoMapper;
 import com.exercise.carrotproject.domain.member.dto.MemberDto;
+import com.exercise.carrotproject.domain.member.entity.Block;
 import com.exercise.carrotproject.domain.member.entity.Member;
 import com.exercise.carrotproject.domain.member.repository.MemberRepository;
 import com.exercise.carrotproject.domain.member.service.MemberService;
@@ -84,7 +85,7 @@ public class HomeController {
         boolean hasBlock = false;
         MemberDto loginMember = (MemberDto) session.getAttribute(SessionConst.LOGIN_MEMBER);
         if(loginMember != null) {
-            hasBlock = memberService.existBlockByMemIds(loginMember.getMemId(), member.getMemId());
+            hasBlock = memberService.existBlockByFromMemToMem(loginMember.getMemId(), memId);
         }
         System.out.println("hasBlock!!!!! = " + hasBlock);
         Long countReviewMessage = countReviewMessage = reviewService.countGoodReviewMessage(memId);

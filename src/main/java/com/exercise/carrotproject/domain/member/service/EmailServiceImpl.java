@@ -63,7 +63,7 @@ public class EmailServiceImpl {
         context.setVariable("code", code);
         return templateEngine.process("member/mail/signupMail", context); //signupMail.html
     }
-    //실제 메일 전송
+    //메일 전송
     public void sendSignupEmail(String toEmail,String authNum) throws MessagingException, UnsupportedEncodingException {
         //메일전송에 필요한 정보 설정
         MimeMessage emailForm = createSignupEmailForm(toEmail, authNum);
@@ -71,22 +71,23 @@ public class EmailServiceImpl {
         emailSender.send(emailForm);
     }
 
-    //비밀번호 재설정
+    //비밀번호 재설정 메일 생성
     public MimeMessage createPwdEmailForm(String email, String authNum) throws MessagingException {
-        String toEmail = email; //받는 사람
-        String title = "망고마켓, 발급된 임시비밀번호입니다."; //제목
         MimeMessage message = emailSender.createMimeMessage();
-        message.addRecipients(MimeMessage.RecipientType.TO, email); //보낼 이메일 설정
+        String title = "망고마켓, 발급된 임시비밀번호입니다."; //제목
         message.setSubject(title); //제목 설정
-        message.setFrom(setFrom); //보내는 이메일
-        message.setText(setPwdContext(authNum), "utf-8", "html");
+        message.addRecipients(MimeMessage.RecipientType.TO, email); //받을 이메일 설정
+        message.setFrom(setFrom); //보내는 이메일 설정
+        message.setText(setPwdContext(authNum), "utf-8", "html"); //보내는 템플릿
         return message;
     }
+    //비밀번호 재설정 메일 <타임리프 템플릿> 적용
     public String setPwdContext(String code) {
         Context context = new Context();
         context.setVariable("code", code);
-        return templateEngine.process("member/mail/pwdMail", context); //signupMail.html
+        return templateEngine.process("member/mail/pwdMail", context);
     }
+    //메일 보내기
     public void sendPwdEmail(String toEmail, String authNum) throws MessagingException, UnsupportedEncodingException {
         //메일전송에 필요한 정보 설정
         MimeMessage emailForm = createPwdEmailForm(toEmail, authNum);

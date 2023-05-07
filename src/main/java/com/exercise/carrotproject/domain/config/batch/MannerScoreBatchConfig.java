@@ -49,7 +49,7 @@ public class MannerScoreBatchConfig {
                 .tasklet((contribution, chunkContext) -> {
                     List<MemberDto> memberDtos = reviewCustomRepository.sumScoreForUpdateMannerScore();
                     memberJdbcRepository.mannerScoreUpdateAll(memberDtos);
-                    log.info("update Step!!!!!!!!!");
+                    log.info("update Step");
                     return RepeatStatus.FINISHED;
                 })
                 .build();

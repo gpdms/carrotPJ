@@ -63,6 +63,7 @@ public class MemberServiceImpl implements MemberService{
     }
 
 
+
     @Override
     @Transactional
     public Map<String, Object> insertMember(Member member) {
@@ -223,6 +224,10 @@ public class MemberServiceImpl implements MemberService{
     @Override
     public boolean existBlockByMemIds (String memId1, String memId2) {
         return memberRepository.hasBlockByMemIds(memId1, memId2);
+    }
+    @Override
+    public boolean existBlockByFromMemToMem (String fromMemId, String toMemId) {
+        return memberRepository.hasBlockByFromMemToMem(fromMemId, toMemId);
     }
     @Override
     @Transactional

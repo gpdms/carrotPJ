@@ -39,6 +39,11 @@ public class MemberCustomRepositoryImpl implements MemberCustomRepository{
                 .fetchFirst();
         return result != null? true : false;
     }
-
-
+    public boolean hasBlockByFromMemToMem(String fromMemId, String toMemId) {
+        Integer result = jpaQueryFactory.selectOne().from(block)
+                .where(block.fromMem.memId.eq(fromMemId),
+                        block.toMem.memId.eq(toMemId))
+                .fetchFirst();
+        return result != null? true : false;
+    }
 }

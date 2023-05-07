@@ -23,14 +23,15 @@ public class PostMemberCheckInterceptor implements HandlerInterceptor {
     @Resource
     private PostService postService;
     @Override
+    @SuppressWarnings("unchecked")
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response,
                              Object handler) throws Exception {
-        log.info("게시물 인증 체크 인터셉터 실행 {}", request.getRequestURI());
+        log.info("게시물 인가 체크 인터셉터 실행 {}", request.getRequestURI());
         //쿼리스트링에서 추출 (삭제,숨기기)
         String postIdQ = request.getParameter("postId");
         //pathVariable에서 추출 (수정)
-        final Map<String, String> pathVariables = (Map<String, String>) request
-                .getAttribute(HandlerMapping.URI_TEMPLATE_VARIABLES_ATTRIBUTE);
+        final Map<String, String> pathVariables =  (Map<String, String>) request
+                                                .getAttribute(HandlerMapping.URI_TEMPLATE_VARIABLES_ATTRIBUTE);
         String postIdP = null;
         if(pathVariables.containsKey("postId")) {
             postIdP = pathVariables.get("postId");
@@ -57,7 +58,6 @@ public class PostMemberCheckInterceptor implements HandlerInterceptor {
             return true;
         } else {
             log.info("권한 없는 사용자 요청");
-            //홈으로 redirect
             response.sendRedirect("/");
             return false;
         }

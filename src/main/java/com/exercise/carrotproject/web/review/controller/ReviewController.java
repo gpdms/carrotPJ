@@ -108,7 +108,7 @@ public class ReviewController {
     }
 
     @GetMapping("/seller")
-    public String toSellerReviewForm(@RequestParam String postId,@Login MemberDto loginMember,
+    public String toSellerReviewForm(@RequestParam String postId, @Login MemberDto loginMember,
                                      RedirectAttributes redirectAttributes, Model model){
         Post post = postRepository.findById(Long.valueOf(postId)).orElseThrow(() -> new NoSuchElementException("Post Not Found"));
         if(reviewSellerService.findReviewSellerIdByPost(post) != 0L) { //이미 등록한 구매자 리뷰가 있으면 나의 구매 목록으로
@@ -169,7 +169,7 @@ public class ReviewController {
        return new ResponseEntity<>(Collections.singletonMap("message", "삭제에 성공했습니다."), HttpStatus.OK);
     }
 
-    //매너 디테일 지표
+    //매너 디테일 지표 + 보임
     @GetMapping("/manner/{memId}")
     public String toMannerDetail(@PathVariable String memId, Model model) {
         model.addAttribute("positiveMannerMap", reviewService.getPositiveMannerDetails(memId));

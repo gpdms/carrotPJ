@@ -14,12 +14,10 @@ public class DateUtil {
      * x초전, x분전, x시간 전m, x일 전, x개월전, x년전
      */
     public static String CALCULATE_TIME(Timestamp ts) {
-
         String msg;
         long curTime = System.currentTimeMillis();
         long regTime = ts.getTime();
         long diffTime = (curTime - regTime) / 1000;
-
         if (diffTime < SEC) {
             msg = diffTime + "초 전";
         } else if ((diffTime /= SEC) < MIN) {
