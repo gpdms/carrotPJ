@@ -11,6 +11,7 @@ import com.exercise.carrotproject.domain.member.repository.MemberRepository;
 import com.exercise.carrotproject.domain.post.dto.MtPlaceDto;
 import com.exercise.carrotproject.domain.post.dto.PostDto;
 import com.exercise.carrotproject.domain.post.dto.PostImgDto;
+import com.exercise.carrotproject.domain.post.dto.SoldPostDto;
 import com.exercise.carrotproject.domain.post.entity.*;
 import com.exercise.carrotproject.domain.post.repository.*;
 import com.querydsl.core.types.ExpressionUtils;
@@ -384,12 +385,14 @@ public class PostServiceImpl implements PostService{
 
         //판매중,예약중
         List<Post> onSalePostList = postRepository.findByMemberAndHideStateAndSellStateOrSellStateOrderByPostIdDesc(member, HideState.SHOW, SellState.ON_SALE,SellState.RESERVATION);
+        //판매완료
+        List<SoldPostDto> soldPostDtoList= postRepository.getSoldList(memId);
         //entity리스트->dto리스트
         List<PostDto> postDtoOnSaleList = PostEntityDtoMapper.toDtoList(onSalePostList);
 
         Map map = new HashMap();
         map.put("onSaleAndRsvList", postDtoOnSaleList);
-        map.put("soldList", postRepository.getSoldList(memId));
+        map.put("soldList", soldPostDtoList);
 
         return map;
     }
