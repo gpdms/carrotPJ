@@ -1,10 +1,7 @@
 package com.exercise.carrotproject.domain.config;
 
-import com.exercise.carrotproject.web.interceptor.KaKaoCodeInterceptor;
-import com.exercise.carrotproject.web.interceptor.MemberInfoCheckInterceptor;
-import com.exercise.carrotproject.web.interceptor.PostMemberCheckInterceptor;
+import com.exercise.carrotproject.web.interceptor.*;
 import com.exercise.carrotproject.web.argumentresolver.LoginMemberArgumentResolver;
-import com.exercise.carrotproject.web.interceptor.LoginCheckInterceptor;
 import org.springframework.boot.web.servlet.ServletContextInitializer;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -52,11 +49,16 @@ public class WebConfig implements WebMvcConfigurer {
                 .excludePathPatterns("/post/css/**","/post/js/**","/post/assets/**", "/post/error",
                                     "/post/board/**", "/post/firstImg/**","post/img/**","post/onSale/**", "post/search",
                         "/post/detail/**", "/post/addWish", "/post/rmvWish");
+        registry.addInterceptor(blockCheckInterceptor()).addPathPatterns("/post/detail/**");
         registry.addInterceptor(new KaKaoCodeInterceptor()).addPathPatterns("/login/kakao");
     }
     @Bean
     public PostMemberCheckInterceptor postMemberCheckInterceptor() {
         return new PostMemberCheckInterceptor();
+    }
+    @Bean
+    public BlockCheckInterceptor blockCheckInterceptor() {
+        return new BlockCheckInterceptor();
     }
 
     @Bean
