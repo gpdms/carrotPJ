@@ -53,16 +53,17 @@ public class TestDBController {
 
     @PersistenceContext
     EntityManager em;
-    //@PostConstruct
+   //@PostConstruct
     public void init2() {
         Member member3 = Member.builder().memId("tester3").mannerScore(365000.0).nickname("3Nick").loc(Loc.GANGBUK).memPwd(securityUtils.getHashedPwd("tester33")).role(Role.USER).build();
         memberRepository.save(member3);
         Member member2 = Member.builder().memId("tester2").mannerScore(365000.0).nickname("2Nick").loc(Loc.GANGBUK).memPwd(securityUtils.getHashedPwd("tester22")).role(Role.USER).build();
         memberRepository.save(member2);
-        Member member1 = Member.builder().memId("tester1").mannerScore(365000.0).nickname("1Nick").loc(Loc.GANGBUK).memPwd(securityUtils.getHashedPwd("tester11")).role(Role.USER).build();
+        Member member1 = Member.builder().memId("hyeeun1").mannerScore(365000.0).nickname("혜은").loc(Loc.GANGBUK).memPwd(securityUtils.getHashedPwd("hyeeun11")).role(Role.USER).build();
         memberRepository.save(member1);
         Member admin = Member.builder().memId("admin1").mannerScore(365000.0).nickname("adminNick").loc(Loc.GANGBUK).memPwd(securityUtils.getHashedPwd("admin1234")).role(Role.ADMIN).build();
         memberRepository.save(admin);
+
         Member member4 = Member.builder().memId("tester4").mannerScore(365000.0).nickname("4Nick").loc(Loc.GANGNAM).memPwd(securityUtils.getHashedPwd("tester44")).role(Role.USER).build();
         memberRepository.save(member4);
         Member member5 = Member.builder().memId("tester5").mannerScore(365000.0).nickname("5Nick").loc(Loc.GANGDONG).memPwd(securityUtils.getHashedPwd("tester55")).role(Role.USER).build();
@@ -71,17 +72,17 @@ public class TestDBController {
         memberRepository.save(member6);
     }
 
-    @GetMapping("td3")
+    //@GetMapping("td3")
     @ResponseBody
     @Transactional
     public void testDB3 (HttpServletRequest request) {
-        Member mem1 = memberService.findOneMember("tester1");
+        Member mem1 = memberService.findOneMember("hyeeun1");
         Member mem2 = memberService.findOneMember("tester2");
         Member mem3 = memberService.findOneMember("tester3");
         Member nam = memberService.findOneMember("tester4");
         Member dong = memberService.findOneMember("tester5");
         Member seo = memberService.findOneMember("tester6");
-        for(int i=241; i<=360; i++){
+        for(int i=120; i<=240; i++){
             if(i%6 == 0) {
                 Post post = Post.builder().title("제목" + i).content("내용" + i).category(Category.DIGITAL_DEVICE)
                         .price(10000).member(mem1).loc(Loc.GANGBUK).hits(0).build();
@@ -110,21 +111,21 @@ public class TestDBController {
         }
     }
 
-    @GetMapping("td1")
+    //@GetMapping("td1")
     @ResponseBody
     @Transactional
     public void testDB(HttpServletRequest request) {
-        Member mem1 = memberService.findOneMember("tester1");
+        Member mem1 = memberService.findOneMember("hyeeun1");
         Member mem2 = memberService.findOneMember("tester2");
         Member mem3 = memberService.findOneMember("tester3");
-        for(int i = 1 ; i <= 240; i++ ){
+        for(int i = 1 ; i <= 120; i++ ){
             if(i% 4  == 0 ){
                 //mem1->mem2
-                Post postBuild1 = Post.builder().title("글" + i).member(mem1).price(i * 1000).category(Category.ETC).loc(mem1.getLoc()).hideState(HideState.SHOW).sellState(SellState.SOLD).content("내용" + i).build();
+                Post postBuild1 = Post.builder().title("글" + i).member(mem1).price(i * 1000).category(Category.HOME_ELECTRONICS).loc(mem1.getLoc()).hideState(HideState.SHOW).sellState(SellState.SOLD).content("내용" + i).build();
                 Post post1 = postRepository.save(postBuild1);
                 Trade trade = Trade.builder().post(post1).buyer(mem2).seller(mem1).hideStateBuyer(HideState.SHOW).build();
                 tradeRepository.save(trade);
-                if(i < 80) {
+                if(i < 40) {
                     List<ReviewBuyerIndicator> bis= asList(ReviewBuyerIndicator.P1, ReviewBuyerIndicator.P2, ReviewBuyerIndicator.PB1);
                     ReviewBuyer save = reviewBuyerRepository.save(
                             ReviewBuyer.builder().seller(mem1).buyer(mem2).totalScore(ReviewBuyerIndicator.sumScore(bis)).post(post1)
@@ -138,7 +139,7 @@ public class TestDBController {
                         query.setParameter("review_buyer_indicator",  bi.name());
                         query.getResultList();
                     }
-                } else if (i >= 80 && i < 160) {
+                } else if (i >= 40 && i < 80) {
                     List<ReviewBuyerIndicator> bis= asList(ReviewBuyerIndicator.P2, ReviewBuyerIndicator.PB1);
                     ReviewBuyer save = reviewBuyerRepository.save(
                             ReviewBuyer.builder().seller(mem1).buyer(mem2).totalScore(ReviewBuyerIndicator.sumScore(bis)).post(post1)
@@ -175,7 +176,7 @@ public class TestDBController {
                 Trade trade = Trade.builder().post(post2).buyer(mem3).seller(mem2).hideStateBuyer(HideState.SHOW).build();
                 tradeRepository.save(trade);
                 //리뷰
-                if(i < 120) {
+                if(i < 60) {
                     List<ReviewBuyerIndicator> bis= asList(ReviewBuyerIndicator.P1, ReviewBuyerIndicator.P2, ReviewBuyerIndicator.PB1);
                     ReviewBuyer save = reviewBuyerRepository.save(
                             ReviewBuyer.builder().seller(mem2).buyer(mem3).totalScore(ReviewBuyerIndicator.sumScore(bis)).post(post2)
@@ -203,7 +204,7 @@ public class TestDBController {
                         query2.setParameter("review_seller_indicator",  si.name());
                         query2.getResultList();
                     }
-                } else if (i >=120) {
+                } else if (i >=60) {
                     List<ReviewBuyerIndicator> bis = asList(ReviewBuyerIndicator.P2, ReviewBuyerIndicator.PB1);
                     ReviewBuyer save = reviewBuyerRepository.save(
                             ReviewBuyer.builder().seller(mem2).buyer(mem3).totalScore(ReviewBuyerIndicator.sumScore(bis)).post(post2)
@@ -234,13 +235,13 @@ public class TestDBController {
                 }
             } else if(i% 4  == 2 ) {
                 //mem3->mem2
-                Post postBuild3 = Post.builder().title("글" + i).member(mem3).price(i * 1000).category(Category.BOOK).loc(mem3.getLoc()).hideState(HideState.SHOW).sellState(SellState.SOLD).content("내용" + i).build();
+                Post postBuild3 = Post.builder().title("글" + i).member(mem3).price(i * 1000).category(Category.HOME_ELECTRONICS).loc(mem3.getLoc()).hideState(HideState.SHOW).sellState(SellState.SOLD).content("내용" + i).build();
                 Post post2 = postRepository.save(postBuild3);
                 Trade trade = Trade.builder().post(post2).buyer(mem1).seller(mem2).hideStateBuyer(HideState.SHOW).build();
                 tradeRepository.save(trade);
             } else {
                 //mem2->mem1
-                Post postBuild2 = Post.builder().title("글" + i).member(mem2).price(i * 1000).category(Category.FOOD).loc(mem2.getLoc()).hideState(HideState.SHOW).sellState(SellState.SOLD).content("내용" + i).build();
+                Post postBuild2 = Post.builder().title("글" + i).member(mem2).price(i * 1000).category(Category.DIGITAL_DEVICE).loc(mem2.getLoc()).hideState(HideState.SHOW).sellState(SellState.SOLD).content("내용" + i).build();
                 Post post2 = postRepository.save(postBuild2);
                 Trade trade = Trade.builder().post(post2).buyer(mem1).seller(mem2).hideStateBuyer(HideState.SHOW).build();
                 tradeRepository.save(trade);
@@ -248,17 +249,17 @@ public class TestDBController {
         }
     }
 
-    @GetMapping("td2")
+   // @GetMapping("td2")
     @ResponseBody
     @Transactional
     public void testDB2 () {
-        Member mem1 = memberService.findOneMember("tester1");
+        Member mem1 = memberService.findOneMember("hyeeun1");
         Member mem2 = memberService.findOneMember("tester2");
         Member mem3 = memberService.findOneMember("tester3");
-        for(int i = 1 ; i <= 240; i++ ){
+        for(int i = 1 ; i <= 120; i++ ){
             if(i%4 == 2) {
                 Post post3 = postRepository.findById(Long.valueOf(i)).orElseThrow();
-                if (i < 120) {
+                if (i < 60) {
                     //mem3->mem2
                     List<ReviewBuyerIndicator> bis = asList(ReviewBuyerIndicator.N1, ReviewBuyerIndicator.N3, ReviewBuyerIndicator.N5, ReviewBuyerIndicator.NB1);
                     ReviewBuyer save = reviewBuyerRepository.save(
@@ -274,7 +275,7 @@ public class TestDBController {
                         query.getResultList();
                     }
 
-                    List<ReviewSellerIndicator> sis = asList(ReviewSellerIndicator.N1, ReviewSellerIndicator.N3, ReviewSellerIndicator.N5, ReviewSellerIndicator.N9,ReviewSellerIndicator.N6, ReviewSellerIndicator.N2);
+                    List<ReviewSellerIndicator> sis = asList(ReviewSellerIndicator.N1, ReviewSellerIndicator.N2, ReviewSellerIndicator.N3, ReviewSellerIndicator.N4,ReviewSellerIndicator.N6, ReviewSellerIndicator.NS1);
                     ReviewSeller save2 = reviewSellerRepository.save(
                             ReviewSeller.builder().seller(mem3).buyer(mem2).totalScore(ReviewSellerIndicator.sumScore(sis)).post(post3)
                                     .hideState(HideState.SHOW).reviewState(ReviewState.BAD).build()
@@ -287,7 +288,7 @@ public class TestDBController {
                         query2.setParameter("review_seller_indicator", si.name());
                         query2.getResultList();
                     }
-                } else if (i >= 120) {
+                } else if (i >= 60) {
                     List<ReviewBuyerIndicator> bis = asList(ReviewBuyerIndicator.PB1, ReviewBuyerIndicator.P2,
                             ReviewBuyerIndicator.P3);
                     ReviewBuyer save = reviewBuyerRepository.save(
@@ -319,7 +320,7 @@ public class TestDBController {
                 }
             } else if(i%4 == 3) {
                 Post post4 = postRepository.findById(Long.valueOf(i)).orElseThrow();
-                if (i < 120) {
+                if (i < 60) {
                     //mem2->mem1
                     List<ReviewBuyerIndicator> bis = Arrays.stream(ReviewBuyerIndicator.values())
                             .filter(indicator -> indicator.name().contains("P") && !indicator.name().contains("B"))
@@ -329,7 +330,7 @@ public class TestDBController {
                                     .hideState(HideState.SHOW).reviewState(ReviewState.BEST).build()
                     );
                     String sql = "INSERT INTO review_buyer_detail (review_buyer_id, buyer_id, review_buyer_indicator) " +
-                            " VALUES ( :reviewBuyerId, 'tester1', :review_buyer_indicator) ";
+                            " VALUES ( :reviewBuyerId, 'hyeeun1', :review_buyer_indicator) ";
                     Query query = em.createNativeQuery(sql);
                     for (ReviewBuyerIndicator bi : bis) {
                         query.setParameter("reviewBuyerId", save.getReviewBuyerId());
@@ -352,7 +353,7 @@ public class TestDBController {
                         query2.setParameter("review_seller_indicator", si.name());
                         query2.getResultList();
                     }
-                } else if (i >= 120) {
+                } else if (i >= 60) {
                     List<ReviewBuyerIndicator> bis = Arrays.stream(ReviewBuyerIndicator.values())
                             .filter(indicator -> indicator.name().contains("N"))
                             .collect(Collectors.toList());
@@ -376,7 +377,7 @@ public class TestDBController {
                                     .hideState(HideState.SHOW).reviewState(ReviewState.BEST).build()
                     );
                     String sql2 = "INSERT INTO review_seller_detail (review_seller_id, seller_id, review_seller_indicator) " +
-                            " VALUES ( :reviewSellerId, 'tester1', :review_seller_indicator) ";
+                            " VALUES ( :reviewSellerId, 'hyeeun1', :review_seller_indicator) ";
                     Query query2 = em.createNativeQuery(sql2);
                     for (ReviewSellerIndicator si : sis) {
                         query2.setParameter("reviewSellerId", save2.getReviewSellerId());

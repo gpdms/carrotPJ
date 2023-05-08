@@ -32,8 +32,11 @@ public class ReviewCustomRepository {
     private final JPAQueryFactory jpaQueryFactory;
 
     public List<MemberDto> sumScoreForUpdateMannerScore() {
-        Timestamp from = Timestamp.valueOf(LocalDateTime.now().minusDays(1));
-        Timestamp to = Timestamp.valueOf(LocalDateTime.now().minusMinutes(1));
+        //2주~1주전 리뷰
+        Timestamp from = Timestamp.valueOf(LocalDateTime.now().minusWeeks(2));
+        Timestamp to = Timestamp.valueOf(LocalDateTime.now().minusWeeks(1));
+//        Timestamp from = Timestamp.valueOf(LocalDateTime.now().minusMinutes(10));
+//        Timestamp to = Timestamp.valueOf(LocalDateTime.now());
         List<MemberDto> rb = jpaQueryFactory.select(
                         Projections.constructor(MemberDto.class, reviewBuyer.buyer.memId, reviewBuyer.totalScore.sum()))
                 .from(reviewBuyer)
@@ -70,7 +73,6 @@ public class ReviewCustomRepository {
                 "     ) as t " +
                 "GROUP BY mem_id " +
                 "ORDER BY mem_id";
-
         Query query = em.createNativeQuery(sql);
         return query.getResultList();
     }*/
