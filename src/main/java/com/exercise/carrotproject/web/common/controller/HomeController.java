@@ -44,7 +44,7 @@ public class HomeController {
 
     @GetMapping("/init")
     public String init(HttpServletRequest request) {
-        Member loginMember = memberRepository.findById("tester1").orElse(null);
+        Member loginMember = memberRepository.findById("hyeeun1").orElse(null);
         MemberDto loginMemberDto = MemberDto.builder().memId(loginMember.getMemId())
                 .nickname(loginMember.getNickname())
                 .role(Role.USER)
