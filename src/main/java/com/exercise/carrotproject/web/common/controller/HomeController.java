@@ -26,6 +26,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import javax.annotation.PostConstruct;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 import java.util.*;
@@ -41,7 +42,7 @@ public class HomeController {
     private final PostRepository postRepository;
     private final ReviewService reviewService;
 
-//    @PostConstruct
+ @PostConstruct
     public void init() {
         Member member3 = Member.builder().memId("tester3").mannerScore(365000.0).nickname("3Nick").loc(Loc.GANGBUK).memPwd(securityUtils.getHashedPwd("tester33")).role(Role.USER).build();
         memberRepository.save(member3);
