@@ -24,7 +24,6 @@ class PostTest {
     @Transactional
     @Rollback(value = false)
     public void postIns(){
-
         Member member3 = Member.builder().memId("tester3").mannerScore(365000.0).nickname("3Nick").loc(Loc.GANGBUK).memPwd(securityUtils.getHashedPwd("tester33")).role(Role.USER).build();
         Member member2 = Member.builder().memId("tester2").mannerScore(365000.0).nickname("2Nick").loc(Loc.GANGBUK).memPwd(securityUtils.getHashedPwd("tester22")).role(Role.USER).build();
         Member member1 = Member.builder().memId("tester1").mannerScore(365000.0).nickname("1Nick").loc(Loc.GANGBUK).memPwd(securityUtils.getHashedPwd("tester11")).role(Role.USER).build();
