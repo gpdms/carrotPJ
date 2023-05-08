@@ -67,6 +67,7 @@ public class ImgController {
         String profPath = memberService.getProfPath(memId);
         if(profPath == null || profPath.isEmpty()) {
             profPath = rootProfileImgDir+"profile_img.png";
+            System.out.println("rootProfileImgDir = " + rootProfileImgDir);
         }
         UrlResource urlResource = new UrlResource("file:" + profPath);
         return urlResource;

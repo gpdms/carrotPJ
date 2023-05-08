@@ -208,14 +208,22 @@
 <!--리뷰 모달-->
 <div class="reviewModal review_modal">
     <div class="review_modal_body">
-        <a id="review_hide_btn" th:if="${session.loginMember != null && session.loginMember.memId.equals(memId)}">
-            리뷰 숨김</a>
-        <a id="review_del_btn" th:if="${session.loginMember != null && !session.loginMember.memId.equals(memId)}">
-            리뷰 삭제</a>
+        <div class="modal_box">
+            <a id="review_hide_btn" th:if="${session.loginMember != null && session.loginMember.memId.equals(memId)}">
+                리뷰 숨김</a>
+        </div>
+        <div class="modal_box">
+            <a id="review_del_btn" th:if="${session.loginMember != null && !session.loginMember.memId.equals(memId)}">
+                리뷰 삭제</a>
+        </div>
         <hr/>
-        <a id="review_detail_btn">리뷰 보기</a>
+        <div class="modal_box">
+            <a id="review_detail_btn">리뷰 보기</a>
+        </div>
         <hr/>
-        <a id="review_close_btn">취소</a>
+        <div class="modal_box">
+         <a id="review_close_btn">취소</a>
+        </div>
     </div>
 </div>
 </div>

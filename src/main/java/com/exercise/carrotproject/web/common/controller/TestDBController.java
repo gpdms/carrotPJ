@@ -53,7 +53,7 @@ public class TestDBController {
 
     @PersistenceContext
     EntityManager em;
-    @PostConstruct
+    //@PostConstruct
     public void init2() {
         Member member3 = Member.builder().memId("tester3").mannerScore(365000.0).nickname("3Nick").loc(Loc.GANGBUK).memPwd(securityUtils.getHashedPwd("tester33")).role(Role.USER).build();
         memberRepository.save(member3);

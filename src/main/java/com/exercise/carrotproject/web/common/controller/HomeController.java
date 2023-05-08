@@ -26,6 +26,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import javax.annotation.PostConstruct;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 import java.util.*;
@@ -40,7 +41,6 @@ public class HomeController {
     private final SecurityUtils securityUtils;
     private final PostRepository postRepository;
     private final ReviewService reviewService;
-
 
     @GetMapping("/init")
     public String init(HttpServletRequest request) {
