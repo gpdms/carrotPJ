@@ -29,8 +29,8 @@ public class ImgController {
     @Value("${default.postImg}")
     private String defaultPostImg;
 
-    @Value("${dir.img-profile}")
-    private String rootProfileImgDir;
+    @Value("${file.postImg}")
+    private String rootImgDir;
 
     //첫번째 이미지 urlresource 반환
     @GetMapping("/post/firstImg/{postId}")
@@ -57,7 +57,6 @@ public class ImgController {
             PostImgDto postImgDto = postService.selectOnePostImg(imgId);
             imgPath = postImgDto.getSavedPath();
         }
-
         UrlResource urlResource = new UrlResource("file:"+ imgPath);
         return urlResource;
     }
@@ -66,8 +65,7 @@ public class ImgController {
     public UrlResource viewProfileImg(@PathVariable("memId") String memId) throws IOException {
         String profPath = memberService.getProfPath(memId);
         if(profPath == null || profPath.isEmpty()) {
-            profPath = rootProfileImgDir+"profile_img.png";
-            System.out.println("rootProfileImgDir = " + rootProfileImgDir);
+            profPath = rootImgDir+"/pf/profile_img.png";
         }
         UrlResource urlResource = new UrlResource("file:" + profPath);
         return urlResource;

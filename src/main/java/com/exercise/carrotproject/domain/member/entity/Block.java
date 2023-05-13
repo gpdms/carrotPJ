@@ -13,7 +13,6 @@ import java.sql.Timestamp;
 @AllArgsConstructor
 @Builder
 @ToString
-//@DynamicInsert
 public class Block {
     @Id
     @GeneratedValue(strategy= GenerationType.IDENTITY)

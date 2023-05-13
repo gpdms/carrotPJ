@@ -34,6 +34,7 @@ public class ReviewServiceImpl implements ReviewService{
                         LinkedHashMap::new
                 ));
     }
+
     @Override
     public Map<ReviewIndicator, Long> getPositiveMannerDetails (String memId) {
       return reviewDetailCustomRepository.getMannerDetails(memId, "P")
@@ -45,6 +46,7 @@ public class ReviewServiceImpl implements ReviewService{
                         LinkedHashMap::new
                 ));
     }
+
     @Override
     public Map<ReviewIndicator, Long> getNegativeMannerDetails (String memId) {
        return reviewDetailCustomRepository.getMannerDetails(memId, "N")
@@ -56,11 +58,14 @@ public class ReviewServiceImpl implements ReviewService{
                         LinkedHashMap::new
                 ));
     }
+
+    //리뷰 메시지 페이지: 판매자/구매자 각각 필요, 따라서 모든 메시지는 각 테이블에서 얻은 메시지에서 합친다.
     @Override
     public Long countGoodReviewMessage(String memId) {
-        return reviewBuyerRepository.countMessageByBuyer(memId) +
-                reviewSellerRepository.countMessageBySeller(memId) ;
+        return reviewBuyerRepository.countMessageByBuyer(memId)
+                + reviewSellerRepository.countMessageBySeller(memId) ;
     }
+    @Override
     public Map<String, List<ReviewMessageDto>> goodReviewMessagesDetail(String memId) {
         List<ReviewMessageDto> buyerMessages = reviewBuyerRepository.reviewMessageByBuyer(memId);
         List<ReviewMessageDto> sellerMessages = reviewSellerRepository.reviewMessageBySeller(memId);

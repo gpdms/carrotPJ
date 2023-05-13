@@ -53,7 +53,7 @@ public class TestDBController {
 
     @PersistenceContext
     EntityManager em;
-   //@PostConstruct
+    //@PostConstruct
     public void init2() {
         Member member3 = Member.builder().memId("tester3").mannerScore(365000.0).nickname("3Nick").loc(Loc.GANGBUK).memPwd(securityUtils.getHashedPwd("tester33")).role(Role.USER).build();
         memberRepository.save(member3);
@@ -63,7 +63,6 @@ public class TestDBController {
         memberRepository.save(member1);
         Member admin = Member.builder().memId("admin1").mannerScore(365000.0).nickname("adminNick").loc(Loc.GANGBUK).memPwd(securityUtils.getHashedPwd("admin1234")).role(Role.ADMIN).build();
         memberRepository.save(admin);
-
         Member member4 = Member.builder().memId("tester4").mannerScore(365000.0).nickname("4Nick").loc(Loc.GANGNAM).memPwd(securityUtils.getHashedPwd("tester44")).role(Role.USER).build();
         memberRepository.save(member4);
         Member member5 = Member.builder().memId("tester5").mannerScore(365000.0).nickname("5Nick").loc(Loc.GANGDONG).memPwd(securityUtils.getHashedPwd("tester55")).role(Role.USER).build();
@@ -72,7 +71,7 @@ public class TestDBController {
         memberRepository.save(member6);
     }
 
-    //@GetMapping("td3")
+    @GetMapping("td3")
     @ResponseBody
     @Transactional
     public void testDB3 (HttpServletRequest request) {
@@ -111,7 +110,7 @@ public class TestDBController {
         }
     }
 
-    //@GetMapping("td1")
+    @GetMapping("td1")
     @ResponseBody
     @Transactional
     public void testDB(HttpServletRequest request) {
@@ -249,7 +248,7 @@ public class TestDBController {
         }
     }
 
-   // @GetMapping("td2")
+    @GetMapping("td2")
     @ResponseBody
     @Transactional
     public void testDB2 () {

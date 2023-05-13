@@ -112,10 +112,9 @@
             .done(function (data) {
                 console.log(data.member);
                 alert('프로필 변경에 성공했습니다');
-                location.reload($('#nav-pf-img'));
+                 location.reload($('#nav-pf-img'));
+                // $('#nav-pf-img').load(location.href+' #nav-pf-img'); //앞 공백 필수
                 // $('#nav-pf-nick').replaceWith(`<p id="nav-pf-nick"> ${data.member.nickname}</p>`);
-                location.reload($('#nav-pf-nick'));
-
             })
             .fail(function (err) {
                 alert('프로필 변경에 실패했습니다');
