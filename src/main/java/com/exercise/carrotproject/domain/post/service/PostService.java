@@ -47,6 +47,5 @@ public interface PostService {
     List<PostDto> searchPost(String loginMemId, String searchWord);
     List<PostDto> selectPostListByCategory(MemberDto memberDto, Category category);
     void updateHits(Long postId);
-
-
+    List<PostDto> postListBrief(int limit, String memId);
 }

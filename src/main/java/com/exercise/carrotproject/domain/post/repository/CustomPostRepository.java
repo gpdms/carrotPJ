@@ -15,7 +15,4 @@ public interface CustomPostRepository {
     List<Post> selectBoardPostByCategory(String loginMemId, Loc loginMemLoc, Category category);
     List<Post> searchPost(String loginMemId, String searchWord);
     List<Post> postListByLimit(int limit, String memId);
-    BooleanExpression notExistsBlock(String loginMemId);
-    BooleanExpression locEq(Loc loc);
-    BooleanExpression memIdEq(String memId);
 }

@@ -52,9 +52,6 @@ public class MemberController {
     private final PostServiceImpl postService;
     private final EmailServiceImpl emailService;
 
-    @Value("${dir.img-profile}")
-    private String rootProfileImgDir;
-
     //for Review
     private final TradeCustomRepository tradeCustomRepository;
     private final ReviewSellerService reviewSellerService;
@@ -82,14 +79,13 @@ public class MemberController {
                 .role(Role.USER)
                 .loc(form.getLoc()).build();
         Map<String, Object> saveResult = memberService.insertMember(member);
-        //log.info("saveResult {}", saveResult.containsValue("fail-DM"));
         //중복된 아이디 -> field 오류로 알릴 수 있다.
         if(saveResult.containsKey("fail")) {
             if (saveResult.containsValue("id")) {
-                bindingResult.rejectValue("memId", "duplicatedMemId");
+                bindingResult.rejectValue("memId", "duplicated");
             }
             if (saveResult.containsValue("nickname")) {
-                bindingResult.rejectValue("nickname", "duplicateNickname");
+                bindingResult.rejectValue("nickname", "duplicated");
             }
             return "/member/signupForm";
         }
@@ -105,7 +101,6 @@ public class MemberController {
     public String pwdUpdate(@PathVariable String memId,
                             @ModelAttribute("profileForm") ProfileForm profileForm,
                             @Valid @ModelAttribute("pwdUpdateForm") PwdUpdateForm pwdUpdateForm, BindingResult bindingResult) {
-                            //BindingResult나 Errors는 바인딩 받는 객체 바로 다음에 선언해야 한다
         Member member = memberService.findMemberForProfileEdit(memId);
         profileForm.setNickname(member.getNickname());
         profileForm.setLoc(member.getLoc());
@@ -116,7 +111,7 @@ public class MemberController {
             bindingResult.rejectValue("pwdConfirm", "pwdConfirmIncorrect", "암호가 일치하지 않습니다.");
             return "/member/myProfileEdit";
         }
-        //db에 업데이트 실패 -> 검증오류(PwdUpdateForm에 관한 문제) 아니고, 서버 오류일 것이다
+        //db에 업데이트 실패 -> 검증오류(PwdUpdateForm에 관한 문제) 아니고, 서버 오류
         //bindingResult에 담아서 보내지 말아야하지 않을까?
         String hashedPwd = securityUtils.getHashedPwd(pwdUpdateForm.getPwd());
         boolean isPwdUpdated = memberService.isPwdUpdated(memId, hashedPwd);
@@ -125,12 +120,13 @@ public class MemberController {
         }
         return "/member/myProfileEdit";
     }
+
     @GetMapping("/{memId}/profile")
     public String profileEditForm(@PathVariable String memId,
+                                  @Login MemberDto loginMember,
                                   @ModelAttribute("profileForm") ProfileForm profileForm) {
-        Member member = memberService.findMemberForProfileEdit(memId);
-        profileForm.setNickname(member.getNickname());
-        profileForm.setLoc(member.getLoc());
+        profileForm.setNickname(loginMember.getNickname());
+        profileForm.setLoc(loginMember.getLoc());
         return "/member/myProfileEdit";
     }
     @ResponseBody

@@ -19,6 +19,7 @@ import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import java.sql.Timestamp;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 @NoArgsConstructor
@@ -29,17 +30,18 @@ import java.util.List;
 @ToString (exclude = {"blockfromMemList", "blocktoMemList", "reviewBuyerList", "reviewSellerList"})
 public class MemberDto {
     private String memId;
-    //private String memPwd;
     private String nickname;
     //private String profPath;
     private Double mannerScore;
     private Loc loc;
     private Timestamp createdTime;
     private Timestamp updatedTime;
+    private Date updatedTimeManner;
     private Role role;
 
-    public MemberDto(String mem_id, Double mannerScore) {
+    //for mannerScore update
+    public MemberDto(String mem_id, Double totalScore) {
         this.memId = mem_id;
-        this.mannerScore = mannerScore;
+        this.mannerScore = totalScore;
     }
 }

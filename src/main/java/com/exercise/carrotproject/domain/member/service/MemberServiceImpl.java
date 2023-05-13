@@ -36,9 +36,8 @@ public class MemberServiceImpl implements MemberService{
     private final EmailServiceImpl emailService;
     private final SecurityUtils securityUtils;
 
-    @Value("${dir.img-profile}")
-    private String rootProfileImgDir;
-
+    @Value("${file.postImg}")
+    private String rootImgDir;
     /**
      * 소셜로그인을 위한 아이디 난수생성
      */
@@ -112,7 +111,7 @@ public class MemberServiceImpl implements MemberService{
             URL imgURL = new URL(url);
             String extension = url.substring(url.lastIndexOf(".")+1); // 확장자
 
-            File profImgDir = new File(rootProfileImgDir + LocalDate.now());
+            File profImgDir = new File(rootImgDir + LocalDate.now());
             profImgDir.mkdir();
 
             String uuid = UUID.randomUUID().toString();
@@ -151,7 +150,6 @@ public class MemberServiceImpl implements MemberService{
         Member member = memberRepository.findById(memId).orElseThrow(
                 ()-> new NoSuchElementException());
         member.updatePwd(newPwd);
-
         return member.getMemPwd().equals(newPwd) ? true : false;
     }
 
@@ -159,15 +157,16 @@ public class MemberServiceImpl implements MemberService{
     //프로필 이미지 경로 생성
     public String createProfPath(MultipartFile img) {
         //디렉토리 생성
-        File profImgDir = new File(rootProfileImgDir + LocalDate.now());
-        profImgDir.mkdir();
+        String profDirPath = rootImgDir + File.separator + "member" + File.separator + LocalDate.now();
+        File profDir = new File(profDirPath);
+        profDir.mkdir();
 
         //이미지 path 생성
         String origin_name = img.getOriginalFilename();
         String uuid = UUID.randomUUID().toString();
         String extension = origin_name.substring(origin_name.lastIndexOf("."));
         String save_name = uuid + extension;
-        String save_path = profImgDir + "/" + save_name;
+        String save_path =profDirPath + "/" + save_name;
         return save_path;
     }
     @Override

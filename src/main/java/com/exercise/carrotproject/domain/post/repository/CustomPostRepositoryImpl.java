@@ -91,12 +91,12 @@ public class CustomPostRepositoryImpl implements CustomPostRepository{
         return jpaQueryFactory.select(post)
                         .from(post)
                         .where(post.hideState.eq(HideState.SHOW),
-                                memIdEq(memId))
+                               memIdEq(memId))
                         .limit(limit)
                         .orderBy(post.postId.desc())
                         .fetch();
     }
-    @Override
+
     public BooleanExpression notExistsBlock(String loginMemId) {
         BooleanExpression booleanExpression = null;
         if(hasText(loginMemId)) {
@@ -110,11 +110,9 @@ public class CustomPostRepositoryImpl implements CustomPostRepository{
         }
         return booleanExpression;
     }
-    @Override
     public BooleanExpression locEq(Loc loc){
         return loc != null ? post.loc.eq(loc) : null;
     }
-    @Override
     public BooleanExpression memIdEq(String memId){
         return hasText(memId) ? post.member.memId.eq(memId) : null;
     }

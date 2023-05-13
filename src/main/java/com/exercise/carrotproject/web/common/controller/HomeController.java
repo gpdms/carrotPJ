@@ -11,7 +11,9 @@ import com.exercise.carrotproject.domain.member.entity.Member;
 import com.exercise.carrotproject.domain.member.repository.MemberRepository;
 import com.exercise.carrotproject.domain.member.service.MemberService;
 import com.exercise.carrotproject.domain.post.dto.PostDto;
+import com.exercise.carrotproject.domain.post.entity.Post;
 import com.exercise.carrotproject.domain.post.repository.PostRepository;
+import com.exercise.carrotproject.domain.post.service.PostService;
 import com.exercise.carrotproject.domain.post.service.PostServiceImpl;
 import com.exercise.carrotproject.domain.review.dto.ReviewMessageDto;
 import com.exercise.carrotproject.domain.review.service.ReviewService;
@@ -37,14 +39,33 @@ import java.util.*;
 public class HomeController {
     private final MemberRepository memberRepository;
     private final MemberService memberService;
-    private final PostServiceImpl postService;
-    private final SecurityUtils securityUtils;
-    private final PostRepository postRepository;
     private final ReviewService reviewService;
+    private final PostService postService;
+    private final PostRepository postRepository;
 
+    private final SecurityUtils securityUtils;
+
+    //@PostConstruct
+    public void testMember() {
+        for(int i = 1 ; i <= 5 ; i++) {
+            Member member =
+                    Member.builder().memId("tester"+i).nickname(i+"Nick")
+                            .loc(Loc.GANGBUK)
+                            .memPwd(securityUtils.getHashedPwd("tester"+(i*10)+i)).role(Role.USER).build();
+            memberRepository.save(member);
+        }
+        Member hyeeun1 = Member.builder().memId("hyeeun1").mannerScore(365000.0).nickname("혜은").loc(Loc.GANGBUK).memPwd(securityUtils.getHashedPwd("hyeeun11")).role(Role.USER).build();
+        memberRepository.save(hyeeun1);
+        Member Gangnam = Member.builder().memId("tester6").mannerScore(365000.0).nickname("6Nick").loc(Loc.GANGNAM).memPwd(securityUtils.getHashedPwd("tester66")).role(Role.USER).build();
+        memberRepository.save(Gangnam);
+        Member Gangdong = Member.builder().memId("tester7").mannerScore(365000.0).nickname("7Nick").loc(Loc.GANGDONG).memPwd(securityUtils.getHashedPwd("tester77")).role(Role.USER).build();
+        memberRepository.save(Gangdong);
+        Member Gangseo = Member.builder().memId("tester8").mannerScore(365000.0).nickname("8Nick").loc(Loc.GANGSEO).memPwd(securityUtils.getHashedPwd("tester88")).role(Role.USER).build();
+        memberRepository.save(Gangseo);
+    }
     @GetMapping("/init")
     public String init(HttpServletRequest request) {
-        Member loginMember = memberRepository.findById("hyeeun1").orElse(null);
+        Member loginMember = memberRepository.findById("tester1").orElse(null);
         MemberDto loginMemberDto = MemberDto.builder().memId(loginMember.getMemId())
                 .nickname(loginMember.getNickname())
                 .role(Role.USER)
@@ -56,45 +77,41 @@ public class HomeController {
     }
 
     @GetMapping("/")
-    public String home(@Login MemberDto loginMember, Model model,
-                       RedirectAttributes redirectAttributes ) {
-        List<PostDto> postList = postService.selectAllPost(loginMember);
-        model.addAttribute("list", postList);
+    public String home(@Login MemberDto loginMember, Model model) {
+        model.addAttribute("list", postService.selectAllPost(loginMember));
         return "home";
     }
 
     @GetMapping("/home/{memId}")
     public String toMemberHome(@PathVariable String memId, Model model,
-                               HttpSession session){
+                               @Login MemberDto loginMember){
         Optional<Member> opMember = memberRepository.findById(memId);
         if(opMember.isEmpty()) {
             return "redirect:/";
         }
+
         Member member = opMember.orElseThrow();
 
-        boolean hasBlock = false;
-        MemberDto loginMember = (MemberDto) session.getAttribute(SessionConst.LOGIN_MEMBER);
+        boolean isBlocked= false;
         if(loginMember != null) {
-            hasBlock = memberService.existBlockByFromMemToMem(loginMember.getMemId(), memId);
+            isBlocked = memberService.existBlockByFromMemToMem(loginMember.getMemId(), memId);
         }
-        System.out.println("hasBlock!!!!! = " + hasBlock);
-        Long countReviewMessage = countReviewMessage = reviewService.countGoodReviewMessage(memId);
+        Long countAllPost = 0L;
+        List<PostDto> postListBrief = new ArrayList<>();
+        if(isBlocked == false) {
+            countAllPost = postRepository.countByMember(member);
+            postListBrief =  postService.postListBrief(6, memId);
+        }
         Map<ReviewIndicator, Long> positiveMannerBrief = reviewService.getPositiveMannerDetailsBrief(memId, 3L);
         List<ReviewMessageDto> reviewMessageBrief =reviewService.goodReviewMessagesBrief(memId, 3L);
 
-        Long countPost = 0L;
-        List<PostDto> postListBrief = new ArrayList<>();
-        if(hasBlock == false) {
-            countPost = postRepository.countByMember(member);
-            postListBrief =  postService.postListBrief(6, memId);
-        }
         model.addAttribute("member", MemberEntityDtoMapper.toMemberDto(member));
-        model.addAttribute("hasBlock", hasBlock);
+        model.addAttribute("hasBlock", isBlocked);
         model.addAttribute("postList", postListBrief);
-        model.addAttribute("countPost", countPost);
         model.addAttribute("positiveMannerBrief", positiveMannerBrief);
-        model.addAttribute("countReviewMessage", countReviewMessage);
         model.addAttribute("reviewMessageBrief", reviewMessageBrief);
+        model.addAttribute("countAllPost", countAllPost);
+        model.addAttribute("countAllMessages", reviewService.countGoodReviewMessage(memId));
         return "memberHome";
     }
 

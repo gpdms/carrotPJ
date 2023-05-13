@@ -2,7 +2,7 @@ package com.exercise.carrotproject.domain.config.batch;
 
 
 import com.exercise.carrotproject.domain.member.dto.MemberDto;
-import com.exercise.carrotproject.domain.member.repository.MemberJdbcRepository;
+import com.exercise.carrotproject.domain.member.repository.MannerScoreRepository;
 import com.exercise.carrotproject.domain.review.repository.ReviewCustomRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -20,6 +20,8 @@ import org.springframework.beans.factory.config.BeanPostProcessor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 @Slf4j
@@ -31,12 +33,13 @@ public class MannerScoreBatchConfig {
     private final StepBuilderFactory stepBuilderFactory;
     private final JobRegistry jobRegistry;
     private final ReviewCustomRepository reviewCustomRepository;
-    private final MemberJdbcRepository memberJdbcRepository;
+    private final MannerScoreRepository mannerScoreRepository;
 
     @Bean
     public Job job() {
         Job job = jobBuilderFactory.get("mannerScoreUpdateJob")
                 .start(step1(null))
+                .next(step2(null))
                 .build();
         return job;
     }
@@ -44,12 +47,25 @@ public class MannerScoreBatchConfig {
     @Bean
     @JobScope
     public Step step1(@Value("#{jobParameters[date]}") String date) {
-        log.info("jobParameters value : " + date);
         return stepBuilderFactory.get("step1")
                 .tasklet((contribution, chunkContext) -> {
                     List<MemberDto> memberDtos = reviewCustomRepository.sumScoreForUpdateMannerScore();
-                    memberJdbcRepository.mannerScoreUpdateAll(memberDtos);
-                    log.info("update Step");
+                    //test
+                    /*MemberDto tester2 = MemberDto.builder().mannerScore(5000000.0).memId("tester2").build();
+                    MemberDto tester3 = MemberDto.builder().mannerScore(15000.0).memId("tester3").build();
+                    List<MemberDto> memberDtos = new ArrayList<>(Arrays.asList(tester3));*/
+                    mannerScoreRepository.mannerScoreUpdate(memberDtos);
+                    return RepeatStatus.FINISHED;
+                })
+                .build();
+    }
+
+    @Bean
+    @JobScope
+    public Step step2(@Value("#{jobParameters[date]}") String date) {
+        return stepBuilderFactory.get("step2")
+                .tasklet((contribution, chunkContext) -> {
+                    long result = mannerScoreRepository.updateMannerScoreDown();
                     return RepeatStatus.FINISHED;
                 })
                 .build();

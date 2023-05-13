@@ -15,5 +15,4 @@ public interface ReviewService {
     Long countGoodReviewMessage(String memId);
     Map<String, List<ReviewMessageDto>> goodReviewMessagesDetail(String memId);
     List<ReviewMessageDto> goodReviewMessagesBrief(String memId, long limitSize);
-
 }

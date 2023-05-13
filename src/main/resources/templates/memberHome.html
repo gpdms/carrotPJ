@@ -19,11 +19,11 @@
                 <div class="profile-center">
                     <p class="nickname"> [[${member.nickname}]] </p>
                     <p class="loc"> [[${member.loc.locName}]] </p>
-                    <div class="setting">
+                    <div class="setting" id="pf-setting">
                         <a id="profile_edit_btn" class="pf-btn" th:if="${session.loginMember?.memId == member.memId}"> 프로필 편집 </a>
-                        <a id="block_btn" class="pf-btn" th:if="${session.loginMember != null && session.loginMember.memId != member.memId && !hasBlock}" type="button">
+                        <a id="block_btn" class="pf-btn" th:if="${session.loginMember != null && session.loginMember.memId != member.memId && !isBlocked}" type="button">
                             차단하기</a>
-                        <a id="block_cancel_btn" class="pf-btn" th:if="${hasBlock}" type="button">
+                        <a id="block_cancel_btn" class="pf-btn" th:if="${isBlocked}" type="button">
                             차단해제</a>
                     </div>
                 </div>
@@ -41,9 +41,9 @@
             </div>
             <hr>
             <!--판매 상품-->
-            <div class="second-container">
+            <div class="second-container" id="postList">
                 <div class="title">
-                    <p class="selling-count-label" th:text="|판매 물품 (${countPost}) |"></p>
+                    <p class="selling-count-label" th:text="|판매 물품 (${countAllPost}) |"></p>
                     <button class="home-btn" type="button"
                             th:if="${session.loginMember == null || session.loginMember.memId != member.memId}"
                             th:onclick="|location.href = '@{|/post/onSale/${member.memId}|}'|"> >&nbsp;이동</button> <br/>
@@ -53,7 +53,7 @@
                 </div>
                 <div class="px-2 mt-3 content">
                     <div th:if="${postList.isEmpty()}">
-                        <p class="no-selling">게시중인 상품이 없습품니다.</p>
+                        <p class="no-selling">게시중인 상품이 없습니다.</p>
                     </div>
                     <div th:unless="${postList.isEmpty()}"
                          class="row gx-4 gx-lg-5 row-cols-2 row-cols-md-3 row-cols-xl-3 justify-content-center">
@@ -85,7 +85,7 @@
             <!--매너 지표-->
             <div class="third-container">
                 <div class="title">
-                    <p class="manner-detail-label" th:text="|받은 매너 평가|"></p>
+                    <p class="manner-detail-label" th:text="|받은 매너 평가 (${countAllMessages})|"></p>
                     <button class="home-btn" type="button"
                             th:onclick="|location.href='@{/reviews/manner/{memId}(memId=${member.memId})}'|">
                         >&nbsp;더보기</button> <br/>
@@ -111,7 +111,7 @@
             <!--거래 후기-->
             <div class="fourth-container">
                 <div class="title">
-                    <p class="manner-message-label" th:text="|받은 거래 후기 : ${countReviewMessage}개|"></p>
+                    <p class="manner-message-label" th:text="|받은 거래 후기 : ${countAllMessages}개|"></p>
                     <button class="home-btn"
                             th:onclick="|location.href='@{/reviews/{memId}(memId=${member.memId})}'|">
                         >&nbsp;더보기</button>
@@ -238,7 +238,6 @@
             $("#block_btn").on("click", block);
         // });
         function block() {
-            console.log("블락버튼누름")
             if (!blockConfirm()) { return; }
             let blockWho = [[${member.memId}]];
             $.ajax({
@@ -247,7 +246,9 @@
                 data: {blockWho: blockWho},
                 success: function (data) {
                     alert("차단에 성공했습니다.");
-                    location.reload();
+                    $('#postList').load(location.href+' #postList');
+                    $('#pf-setting').empty();
+                    $('#pf-setting').append( `<a id="block_cancel_btn" className="pf-btn" type="button">차단해제</a>`)
                 },
                 error: function (err) {
                     console.log(err);
@@ -268,7 +269,9 @@
                 data: {blockWho: blockCancelWho},
                 success: function (data) {
                     alert("차단을 해제했습니다");
-                    location.reload();
+                    $('#postList').load(location.href+' #postList');
+                    $('#pf-setting').empty();
+                    $('#pf-setting').append( `<a id="block_btn" className="pf-btn" type="button"> 차단하기</a>`)
                 },
                 error: function (err) {
                     console.log(err);

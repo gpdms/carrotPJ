@@ -7,6 +7,11 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Repository;
 
+import java.sql.Timestamp;
+import java.time.DayOfWeek;
+import java.time.LocalDateTime;
+import java.time.temporal.TemporalAdjusters;
+
 import static com.exercise.carrotproject.domain.member.entity.QBlock.block;
 import static com.exercise.carrotproject.domain.member.entity.QMember.member;
 import static org.springframework.util.StringUtils.hasText;
@@ -29,6 +34,7 @@ public class MemberCustomRepositoryImpl implements MemberCustomRepository{
                         member.role.eq(Role.USER))
                 .execute();
     }
+
     public boolean hasBlockByMemIds(String memId1, String memId2) {
         BooleanExpression condition1 = block.fromMem.memId.eq(memId1).and(
                 block.toMem.memId.eq(memId2));

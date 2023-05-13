@@ -141,7 +141,7 @@ public class PostServiceImpl implements PostService{
         String folderPath = str.replace("/", File.separator);
 
         // make folder ----
-        File uploadPatheFolder = new File(uploadPath,folderPath);
+        File uploadPatheFolder = new File(uploadPath, folderPath);
 
         if(uploadPatheFolder.exists() == false){
             uploadPatheFolder.mkdirs();
@@ -539,6 +539,7 @@ public class PostServiceImpl implements PostService{
                 .execute();
     }
 
+    @Override
     public List<PostDto> postListBrief(int limit, String memId) {
         List<Post> posts = postRepository.postListByLimit(limit, memId);
         return PostEntityDtoMapper.toDtoList(posts);

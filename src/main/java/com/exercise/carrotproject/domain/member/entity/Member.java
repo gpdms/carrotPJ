@@ -1,7 +1,5 @@
 package com.exercise.carrotproject.domain.member.entity;
 
-
-
 import com.exercise.carrotproject.domain.common.entity.BaseEntity;
 import com.exercise.carrotproject.domain.enumList.Loc;
 import com.exercise.carrotproject.domain.converter.LocAttributeConverter;
@@ -13,12 +11,14 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.*;
 import org.hibernate.annotations.ColumnDefault;
 import org.hibernate.annotations.DynamicInsert;
+import org.hibernate.validator.constraints.Range;
 
 import javax.persistence.*;
-import javax.validation.constraints.DecimalMax;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
+import java.sql.Timestamp;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -34,7 +34,6 @@ public class Member extends BaseEntity {
     @Size(min = 6, max = 40)
     private String memId;
 
-    //@NotNull
     @Size(min = 8)
     private String memPwd;
 
@@ -51,14 +50,20 @@ public class Member extends BaseEntity {
     @Size(max=500)
     private String profPath;
 
-    @Column(nullable = false)
-    @ColumnDefault("365000.0")
-    @DecimalMax("999000.0")
+
+    @NotNull
+    @ColumnDefault("365000")
+    @Range(min = 0, max = 1200000)
+    @Column(columnDefinition = "double precision CHECK (manner_score >= 0 AND manner_score <= 1200000)")
     private Double mannerScore;
 
     @NotNull
     @Convert(converter = LocAttributeConverter.class)
     private Loc loc;
+
+    @Column(insertable = false)
+    @Temporal(TemporalType.TIMESTAMP)
+    private Date updatedTimeManner;
 
     @PrePersist
     public void createDefault() {
@@ -105,11 +110,9 @@ public class Member extends BaseEntity {
     public Loc getLoc() {
         return loc;
     }
-
     public Role getRole() {
         return role;
     }
-
     public List<Block> getBlockfromMemList() {
         return blockfromMemList.stream().
                 collect(Collectors.toUnmodifiableList());
@@ -126,6 +129,5 @@ public class Member extends BaseEntity {
         return reviewSellerList.stream().
                 collect(Collectors.toUnmodifiableList());
     }
-
-
 }
+
