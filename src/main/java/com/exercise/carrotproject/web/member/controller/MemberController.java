@@ -154,10 +154,10 @@ public class MemberController {
         }
     }
 
-    //buyList 뽑아오는 것
+    //buyList
     @GetMapping("/{memId}/trade/buyList")
     public String buyList(@PathVariable String memId, Model model) {
-        List<Trade> buyList = tradeCustomRepository.getBuyList(memId);//나중에 TradeService
+        List<Trade> buyList = tradeCustomRepository.getBuyList(memId);
         List<MyBuyListForm> buyFormList = new ArrayList<>();
         if(buyList != null) {
             for (Trade buyOne : buyList) {
@@ -192,9 +192,7 @@ public class MemberController {
     @GetMapping("/{memId}/wishes")
     public String wishList(@PathVariable String memId, Model model){
         List<PostDto> postList = postService.selectPostListFromWish(memId);
-
         model.addAttribute("postList", postList);
-
         return "myPage/wishList";
     }
 

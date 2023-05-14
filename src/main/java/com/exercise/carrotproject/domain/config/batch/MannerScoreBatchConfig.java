@@ -19,14 +19,11 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.beans.factory.config.BeanPostProcessor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 @Slf4j
-@RequiredArgsConstructor
 @Configuration
+@RequiredArgsConstructor
 @EnableBatchProcessing
 public class MannerScoreBatchConfig {
     private final JobBuilderFactory jobBuilderFactory;
@@ -54,7 +51,7 @@ public class MannerScoreBatchConfig {
                     /*MemberDto tester2 = MemberDto.builder().mannerScore(5000000.0).memId("tester2").build();
                     MemberDto tester3 = MemberDto.builder().mannerScore(15000.0).memId("tester3").build();
                     List<MemberDto> memberDtos = new ArrayList<>(Arrays.asList(tester3));*/
-                    mannerScoreRepository.mannerScoreUpdate(memberDtos);
+                    mannerScoreRepository.updateMannerScore(memberDtos);
                     return RepeatStatus.FINISHED;
                 })
                 .build();

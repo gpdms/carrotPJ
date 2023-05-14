@@ -166,7 +166,7 @@
                 method: 'DELETE'
             }).then(response => {
                 if (response.ok) {
-                    return response.json();  // HTTP 응답 객체를 JSON으로 변환하여 반환
+                    return response.json();
                 } else {
                     throw new Error('서버로부터 응답을 받지 못했습니다.');  // 예외 발생
                 }

@@ -9,9 +9,6 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
-import javax.persistence.Query;
 import java.sql.*;
 import java.time.DayOfWeek;
 import java.time.LocalDateTime;
@@ -31,23 +28,22 @@ public class  MannerScoreRepository {
     private int batchSize;
 
     @Transactional
-    public void mannerScoreUpdate(List<MemberDto> memberDtos) {
+    public void updateMannerScore(List<MemberDto> memberDtos) {
         int batchCount = 0;
         List<MemberDto> subMemberDtos = new ArrayList<>();
         for (int i = 0; i < memberDtos.size(); i++) {
             subMemberDtos.add(memberDtos.get(i));
             if ((i + 1) % batchSize == 0) {
-                batchCount = mannerScoreSubUpdate(batchCount, subMemberDtos);
+                batchCount = updateMannerScoreSub(batchCount, subMemberDtos);
             }
         }
         // 나머지 subMemberDtos를 update
         if (!subMemberDtos.isEmpty()) {
-            batchCount = mannerScoreSubUpdate(batchCount, subMemberDtos);
+            batchCount = updateMannerScoreSub(batchCount, subMemberDtos);
         }
     }
-
     @Transactional
-    public int mannerScoreSubUpdate(int batchCount, List<MemberDto> subMemberDtos) {
+    public int updateMannerScoreSub(int batchCount, List<MemberDto> subMemberDtos) {
         LocalDateTime monday5am = LocalDateTime.now().with(TemporalAdjusters.previousOrSame(DayOfWeek.MONDAY))
                 .withHour(5).withMinute(0).withSecond(0).withNano(0);
         Timestamp updatedTimeManner = Timestamp.valueOf(monday5am.minusDays(7));
@@ -86,26 +82,6 @@ public class  MannerScoreRepository {
                         member.mannerScore.gt(365000))
                 .execute();
     }
- /*   @Transactional
-    public int[] mannerScoreDownUpdate() {
-        LocalDateTime monday5am = LocalDateTime.now().with(TemporalAdjusters.previousOrSame(DayOfWeek.MONDAY))
-                .withHour(5).withMinute(0).withSecond(0).withNano(0);
-        Timestamp updatedTimeManner = Timestamp.valueOf(monday5am);
-        int[] batchUpdate = this.jdbcTemplate.batchUpdate(
-                "UPDATE member SET manner_score = manner_score - ?"
-                       + " WHERE updated_time_manner not between ? and now()" +
-                        " and manner_score > 365000",
-                new BatchPreparedStatementSetter() {
-                    public void setValues(PreparedStatement ps, int i) throws SQLException {
-                        ps.setDouble(1,  5000);
-                        ps.setTimestamp(2, updatedTimeManner);
-                    }
-                    public int getBatchSize() {
-                        return 1;
-                    }
-                });
-        return batchUpdate;
-    }*/
 
 }
 

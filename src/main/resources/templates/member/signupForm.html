@@ -157,6 +157,7 @@
             alert("해당 이메일로 인증번호 발송이 완료되었습니다.")
             $('#email-error').replaceWith(`<div id="email-error"></div>`)
             $('#email').removeClass("field-error-border");
+            $('#input-email').empty();
             const str = `<div class="form-group last mb-4 check_input">
                     <label for="emailConfirm" id="emailConfirmTxt">인증번호를 입력해주세요</label>
                     <input type="text" class="form-control" id="emailConfirm">
@@ -200,7 +201,7 @@
             }
         })
     }
-/*    $('#socialCancelBtn').on("click", function(){
+/*   $('#socialCancelBtn').on("click", function(){
         $.ajax({
             type: 'get',
             url: '/unlink/kakao',
@@ -212,18 +213,7 @@
             }
         })
     });
-    $('#socialCancelBtn2').on("click", function(){
-        $.ajax({
-            type: 'get',
-            url: '/unlink/kakao',
-            success: function (data) {
-                location.href="/login";
-            },
-            error: function (err) {
-                console.log(err);
-            }
-        })
-    });*/
+*/
 
 </script>
 </div>
