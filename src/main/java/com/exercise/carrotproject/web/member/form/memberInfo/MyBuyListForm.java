@@ -15,7 +15,7 @@ public class MyBuyListForm {
     private PostDto postDto;
     private String buyerId;
     private String sellerId;
-    //리뷰버튼 보이기 위한 것
+    //리뷰버튼 보이기 위한
     // Long reviewSellerId = reviewSellerService.findReviewSellerIdByPost(buyOne.getPost());
     private Long reviewSellerId;
 
