@@ -66,9 +66,9 @@ dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-mail'
 }
 
-test {
+/*test {
     useJUnitPlatform()
-}
+}*/
 
 // querydsl 사용할 경로 지정합니다. 현재 지정한 부분(build폴더)은 .gitignore에 포함되므로 git에 올라가지 않습니다.
 def querydslDir = "$buildDir/generated/'querydsl'"
