@@ -29,7 +29,7 @@
 .send {
 
 }
-.email, .send {
+.send {
     display: inline-block;
 }
 .send .send-btn {
@@ -65,4 +65,4 @@
 }
 .signup-btn {
 
-}ㅣ
+}

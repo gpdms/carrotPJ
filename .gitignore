@@ -36,9 +36,10 @@ out/
 ### VS Code ###
 .vscode/
 
-### oauth ###
-application-oauth.properties
-### email ###
+### properties ###
+application-social.properties
+application-dev.properties
+application-local.properties
 email.properties
 ### testDB ###
 com/exercise/carrotproject/web/common/TestDBController.java

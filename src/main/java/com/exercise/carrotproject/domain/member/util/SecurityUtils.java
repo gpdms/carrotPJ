@@ -6,7 +6,7 @@ import org.springframework.stereotype.Component;
 
 @Component
 public class SecurityUtils{
-    public String getHashedPwd(String memPwd) {
+    public static String getHashedPwd(String memPwd) {
         return BCrypt.hashpw(memPwd, BCrypt.gensalt());
     }
 

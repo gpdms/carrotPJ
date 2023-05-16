@@ -38,6 +38,9 @@ dependencies {
     annotationProcessor 'org.projectlombok:lombok'
     providedRuntime 'org.springframework.boot:spring-boot-starter-tomcat'
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
+/*    testImplementation("org.junit.vintage:junit-vintage-engine") {
+        exclude group: "org.hamcrest", module: "hamcrest-core"
+    }*/
 //    testImplementation 'org.springframework.security:spring-security-test'
     implementation group: 'nz.net.ultraq.thymeleaf', name: 'thymeleaf-layout-dialect', version: '3.1.0'
     //validation
@@ -63,7 +66,7 @@ dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-mail'
 }
 
-tasks.named('test') {
+test {
     useJUnitPlatform()
 }
 
@@ -94,3 +97,13 @@ configurations {
     querydsl.extendsFrom compileClasspath
 }
 
+//Querydsl 추가, 자동 생성된 Q클래스 gradle clean으로 제거
+clean {
+    delete file(querydslDir)
+}
+jar {
+    enabled = false
+}
+war {
+    enabled = false
+}

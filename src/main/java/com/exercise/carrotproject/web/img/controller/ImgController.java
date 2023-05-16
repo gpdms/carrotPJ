@@ -29,6 +29,9 @@ public class ImgController {
     @Value("${default.postImg}")
     private String defaultPostImg;
 
+    @Value("${default.pfImg}")
+    private String defaultPfImg;
+
     @Value("${file.postImg}")
     private String rootImgDir;
 
@@ -65,7 +68,8 @@ public class ImgController {
     public UrlResource viewProfileImg(@PathVariable("memId") String memId) throws IOException {
         String profPath = memberService.getProfPath(memId);
         if(profPath == null || profPath.isEmpty()) {
-            profPath = rootImgDir+"/pf/profile_img.png";
+//            profPath = rootImgDir+"/pf/profile_img.png";
+            profPath = defaultPfImg;
         }
         UrlResource urlResource = new UrlResource("file:" + profPath);
         return urlResource;
