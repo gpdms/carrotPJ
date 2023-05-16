@@ -162,7 +162,19 @@
         })
     }
 
+    let isCheckEmail = false;
+    let isCheckId = false;
+    let isCheckNick = false;
+    function activeSignBtn () {
+        const target = document.getElementById('signup-btn');
+        if (isCheckEmail && isCheckId && isCheckNick) {
+            target.disabled = false;
+        } else if (~isCheckId || ~isCheckEmail ||~isCheckNick) {
+            target.disabled = true;
+        }
+    }
     $('#sendCode').click(function() {
+        activeSignBtn()
         $.ajax({
             type: "POST",
             url: "signup/emailConfirm",
@@ -198,23 +210,22 @@
     function chkEmailConfirm(data, emailConfirm, emailConfirmTxt){
         emailConfirm.on("keyup", function(){
             if (data != emailConfirm.val()) {
-                let emailCheck = false;
                 emailConfirmTxt.html("<span id='checkTxt'>인증번호가 잘못되었습니다</span>")
                 $("#checkTxt").css({
                     "color" : "#FA3E3E",
                     "font-weight" : "bold",
                     "font-size" : "10px"
                 })
+                isCheckEmail = false;
             } else { // 아니면 중복아님
-                let emailCheck = true;
                 emailConfirmTxt.html("<span id='checkTxt'>인증번호 확인 완료</span>")
                 $("#checkTxt").css({
                     "color" : "#0D6EFD",
                     "font-weight" : "bold",
                     "font-size" : "10px"
                 })
-                const target = document.getElementById('signup-btn');
-                target.disabled = false;
+                isCheckEmail = true;
+                activeSignBtn()
             }
         })
     }
@@ -226,12 +237,12 @@
     const pwdConfirmInput = document.getElementById("pwdConfirm");
     const emailInput = document.getElementById("email");
     memIdInput.addEventListener("input", function(event) {
+        isCheckId = false;
+        activeSignBtn();
         let memId= event.target.value; // 입력 데이터 가져오기
-        console.log(memId);
         const pattern = /^[a-zA-Z0-9]{6,12}$/;
         const btn = document.getElementById('idCheck');
         if (pattern.test(memId)) {
-            //$('#memId').addClass("field-error-border");
             event.target.classList.remove('field-error-border');
             $('#memId-error').empty()
             btn.disabled = false;
@@ -243,6 +254,8 @@
         }
     });
     nicknameInput.addEventListener("input", function(event) {
+        isCheckNick = false;
+        activeSignBtn();
         let memId= event.target.value; // 입력 데이터 가져오기
         const btn = document.getElementById('nickCheck');
         if (memId.length >=2 && memId.length <=10) {
@@ -282,6 +295,7 @@
     emailInput.addEventListener("input", function(event) {
         let email = event.target.value;
         const emailPattern = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+        isCheckEmail = false;
         if (emailPattern.test(email)) {
             event.target.classList.remove('field-error-border');
             $('#email-error').empty();
@@ -303,6 +317,8 @@
         .done(function (data) {
             memIdInput.classList.remove('field-error-border');
             $('#memId-error').replaceWith(`<div id="memId-error">사용가능한 아이디 입니다.</div>`)
+            isCheckId = true;
+            activeSignBtn()
         })
         .fail(function (err) {
             const message = err.responseJSON;
@@ -310,6 +326,7 @@
                 memIdInput.classList.add('field-error-border');
                 $('#memId-error').replaceWith(`<div class="field-error" id="memId-error">중복된 아이디 입니다</div>`)
             }
+            isCheckId = false;
         })
     })
     $('#nickCheck').click(function() {
@@ -322,6 +339,8 @@
         .done(function (data) {
             nicknameInput.classList.remove('field-error-border');
             $('#nick-error').replaceWith(`<div id="nick-error">사용가능한 닉네임 입니다.</div>`)
+            isCheckNick = true;
+            activeSignBtn()
         })
         .fail(function (err) {
             const message = err.responseJSON;
@@ -329,6 +348,7 @@
                 nicknameInput.classList.add('field-error-border');
                 $('#nick-error').replaceWith(`<div class="field-error" id="nick-error">중복된 닉네임입니다</div>`)
             }
+            isCheckNick = false;
         })
     })
 
