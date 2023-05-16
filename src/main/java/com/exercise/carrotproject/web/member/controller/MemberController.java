@@ -27,6 +27,7 @@ import org.springframework.core.io.UrlResource;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.util.StringUtils;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -40,6 +41,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import static org.springframework.util.StringUtils.hasText;
 
 
 @Slf4j
@@ -90,6 +93,39 @@ public class MemberController {
             return "/member/signupForm";
         }
         return "redirect:/login";
+    }
+
+    @GetMapping("/signup/checkI")
+    @ResponseBody
+    public ResponseEntity doubleCheckId(@RequestParam String memId) {
+        Map<String, String> resultMap = new HashMap<>();
+        if(!hasText(memId)) {
+            resultMap.put("null","아이디를 입력해주세요.");
+            return ResponseEntity.badRequest().body(resultMap);
+        }
+        boolean hasMemId = memberService.hasDuplicatedMemberId(memId);
+        if(hasMemId) {
+            resultMap.put("fail","중복된 아이디입니다.");
+            return ResponseEntity.badRequest().body(resultMap);
+        }
+        resultMap.put("success","사용 가능한 아이디입니다.");
+        return ResponseEntity.ok().body(resultMap);
+    }
+    @GetMapping("/signup/checkN")
+    @ResponseBody
+    public ResponseEntity doubleCheckNickname(@RequestParam String nickname) {
+        Map<String, String> resultMap = new HashMap<>();
+        if(!hasText(nickname)) {
+            resultMap.put("null","닉네임임을 입력해주세요.");
+            return ResponseEntity.badRequest().body(resultMap);
+        }
+        boolean hasNickname= memberService.hasDuplicatedNickname(nickname);
+        if(hasNickname) {
+            resultMap.put("fail","중복된 닉네임입니다.");
+            return ResponseEntity.badRequest().body(resultMap);
+        }
+        resultMap.put("success","사용 가능한 닉네임입니다.");
+        return ResponseEntity.ok().body(resultMap);
     }
 
     @GetMapping("/{memId}/edit/pwd")

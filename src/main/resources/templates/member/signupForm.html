@@ -35,7 +35,7 @@
                         <input type="text" id="nicknameSocial"
                                class="form-control"
                                th:value="${userInfo.get('nickname')}">
-                        <div id="nick-error"/>
+                        <div id="nick-error-social"/>
                     </div>
                     <div class="bottom-sec">
                         <div class="bottom-btn">
@@ -51,10 +51,16 @@
                 <form action="" th:action th:object="${signupForm}" method="post">
                     <h4 class="mb-3 text-center">회원 정보 입력</h4>
                     <div class="input">
-                        <label for="memId">아이디</label>
+                        <label for="memId" style="display: block">아이디</label>
                         <input type="text" id="memId" th:field="*{memId}"
                                class="form-control"
-                               th:errorclass="field-error">
+                               th:errorclass="field-error" style="display: inline-block; width:78%">
+                        <div class="send">
+                            <button class="send-btn" id="idCheck" type="button" disabled>
+                                중복확인
+                            </button>
+                        </div>
+                        <div class="field-error" id="memId-error"/>
                         <div class="field-error" th:errors="*{memId}" />
                     </div>
                     <div class="input">
@@ -62,6 +68,7 @@
                         <input type="password" id="memPwd" th:field="*{pwd}"
                                class="form-control"
                                th:errorclass="field-error">
+                        <div class="field-error" id="memPwd-error"/>
                         <div class="field-error" th:errors="*{pwd}" />
                     </div>
                     <div class="input">
@@ -69,12 +76,13 @@
                         <input type="password" id="pwdConfirm" th:field="*{pwdConfirm}"
                                class="form-control"
                                th:errorclass="field-error">
+                        <div class="field-error" id="pwdConfirm-error"/>
                         <div class="field-error" th:errors="*{pwdConfirm}" />
                     </div>
                     <div class="input" id="input-email">
                         <label for="email" style="display: block">이메일</label>
                         <input type="text" id="email" th:field="*{email}"
-                               class="form-control" style="display: inline-block; width:73%">
+                               class="form-control" style="display: inline-block; width:74%">
                         <div class="send">
                             <button class="send-btn" id="sendCode" type="button">
                               이메일 인증
@@ -83,11 +91,18 @@
                         <div id="email-error"></div>
                         <div class="field-error" th:errors="*{email}" />
                     </div>
+                    <div class="input" id="email-code"></div>
                     <div class="input">
-                        <label for="nickname">닉네임</label>
+                        <label for="nickname" style="display: block">닉네임</label>
                         <input type="text" id="nickname" th:field="*{nickname}"
                                class="form-control"
-                               th:errorclass="field-error">
+                               th:errorclass="field-error" style="display: inline-block; width:78%">
+                        <div class="send">
+                            <button class="send-btn" id="nickCheck" type="button" disabled>
+                                중복확인
+                            </button>
+                        </div>
+                        <div class="field-error" id="nick-error"/>
                         <div class="field-error" th:errors="*{nickname}" />
                     </div>
                     <div class="input">
@@ -141,11 +156,12 @@
                 const message = err.responseJSON;
                 console.log(message);
                 console.log(message.nickname);
-                $('#nick-error').replaceWith(`<div id="nick-error" class="field-error">${message.nickname}</div>`)
+                $('#nick-error-social').replaceWith(`<div id="nick-error" class="field-error">${message.nickname}</div>`)
                 $("#nicknameSocial").addClass("field-error-border");
             }
         })
     }
+
     $('#sendCode').click(function() {
         $.ajax({
             type: "POST",
@@ -157,12 +173,13 @@
             alert("해당 이메일로 인증번호 발송이 완료되었습니다.")
             $('#email-error').replaceWith(`<div id="email-error"></div>`)
             $('#email').removeClass("field-error-border");
-            $('#input-email').empty();
-            const str = `<div class="form-group last mb-4 check_input">
+            const str = `<div class="input" id ="email-code">
+                <div class="form-group last mb-4 check_input">
                     <label for="emailConfirm" id="emailConfirmTxt">인증번호를 입력해주세요</label>
                     <input type="text" class="form-control" id="emailConfirm">
-                </div>`
-            $('#input-email').append(str);
+                </div>
+            </div>`
+            $('#email-code').replaceWith(str);
             chkEmailConfirm(data.authCode, $('#emailConfirm'), $('#emailConfirmTxt'));
         }).fail(function (err) {
             const message = err.responseJSON;
@@ -180,7 +197,7 @@
     // 이메일 인증번호 체크 함수
     function chkEmailConfirm(data, emailConfirm, emailConfirmTxt){
         emailConfirm.on("keyup", function(){
-            if (data != emailConfirm.val()) { //
+            if (data != emailConfirm.val()) {
                 let emailCheck = false;
                 emailConfirmTxt.html("<span id='checkTxt'>인증번호가 잘못되었습니다</span>")
                 $("#checkTxt").css({
@@ -201,6 +218,120 @@
             }
         })
     }
+
+    //입력데이터 클라이언트 검증
+    const memIdInput = document.getElementById("memId");
+    const nicknameInput = document.getElementById("nickname");
+    const memPwdInput = document.getElementById("memPwd");
+    const pwdConfirmInput = document.getElementById("pwdConfirm");
+    const emailInput = document.getElementById("email");
+    memIdInput.addEventListener("input", function(event) {
+        let memId= event.target.value; // 입력 데이터 가져오기
+        console.log(memId);
+        const pattern = /^[a-zA-Z0-9]{6,12}$/;
+        const btn = document.getElementById('idCheck');
+        if (pattern.test(memId)) {
+            //$('#memId').addClass("field-error-border");
+            event.target.classList.remove('field-error-border');
+            $('#memId-error').empty()
+            btn.disabled = false;
+        } else {
+            event.target.classList.add('field-error-border');
+            const str = `<div class="field-error" id="memId-error">아이디는 영문 대/소문자이나 숫자로 6~12자로 구성되어야합니다 </div>`
+            $('#memId-error').replaceWith(str)
+            btn.disabled = true;
+        }
+    });
+    nicknameInput.addEventListener("input", function(event) {
+        let memId= event.target.value; // 입력 데이터 가져오기
+        const btn = document.getElementById('nickCheck');
+        if (memId.length >=2 && memId.length <=10) {
+            event.target.classList.remove('field-error-border');
+            $('#nick-error').empty();
+            btn.disabled = false;
+        } else {
+            event.target.classList.add('field-error-border');
+            const str = `<div class="field-error" id="nick-error">닉네임은 2자 이상, 15자 이하여야 합니다.</div>`
+            $('#nick-error').replaceWith(str)
+            btn.disabled = true;
+        }
+    });
+    memPwdInput.addEventListener("input", function(event) {
+        let memPwd= event.target.value; // 입력 데이터 가져오기
+        if (memPwd.length >= 8) {
+            event.target.classList.remove('field-error-border');
+            $('#memPwd-error').empty();
+        } else {
+            event.target.classList.add('field-error-border');
+            const str = `<div class="field-error" id="memPwd-error">비밀번호는 8자 이상이어야 합니다.</div>`
+            $('#memPwd-error').replaceWith(str)
+        }
+    });
+    pwdConfirmInput.addEventListener("input", function(event) {
+        let memPwd = memPwdInput.value;
+        let pwdConfirm = event.target.value;
+        if (memPwd === pwdConfirm) {
+            event.target.classList.remove('field-error-border');
+            $('#pwdConfirm-error').empty();
+        } else {
+            event.target.classList.add('field-error-border');
+            const str = `<div class="field-error" id="pwdConfirm-error">비밀번호가 일치하지 않습니다.</div>`
+            $('#pwdConfirm-error').replaceWith(str)
+        }
+    });
+    emailInput.addEventListener("input", function(event) {
+        let email = event.target.value;
+        const emailPattern = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+        if (emailPattern.test(email)) {
+            event.target.classList.remove('field-error-border');
+            $('#email-error').empty();
+        } else {
+            event.target.classList.add('field-error-border');
+            const str = `<div class="field-error" id="email-error">이메일 형식에 맞지 않습니다.</div>`
+            $('#email-error').replaceWith(str)
+        }
+    });
+
+    //중복체크
+    $('#idCheck').click(function() {
+        let queryString = 'memId='+ memIdInput.value;
+        $.ajax({
+            type: "GET",
+            url: "signup/checkI",
+            data: queryString
+        })
+        .done(function (data) {
+            memIdInput.classList.remove('field-error-border');
+            $('#memId-error').replaceWith(`<div id="memId-error">사용가능한 아이디 입니다.</div>`)
+        })
+        .fail(function (err) {
+            const message = err.responseJSON;
+            if ('fail' in message) {
+                memIdInput.classList.add('field-error-border');
+                $('#memId-error').replaceWith(`<div class="field-error" id="memId-error">중복된 아이디 입니다</div>`)
+            }
+        })
+    })
+    $('#nickCheck').click(function() {
+        let queryString = 'nickname='+ nicknameInput.value;
+        $.ajax({
+            type: "GET",
+            url: "signup/checkN",
+            data: queryString
+        })
+        .done(function (data) {
+            nicknameInput.classList.remove('field-error-border');
+            $('#nick-error').replaceWith(`<div id="nick-error">사용가능한 닉네임 입니다.</div>`)
+        })
+        .fail(function (err) {
+            const message = err.responseJSON;
+            if ('fail' in message) {
+                nicknameInput.classList.add('field-error-border');
+                $('#nick-error').replaceWith(`<div class="field-error" id="nick-error">중복된 닉네임입니다</div>`)
+            }
+        })
+    })
+
 /*   $('#socialCancelBtn').on("click", function(){
         $.ajax({
             type: 'get',
