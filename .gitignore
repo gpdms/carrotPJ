@@ -37,7 +37,7 @@ out/
 .vscode/
 
 ### properties ###
-application-oauth.properties
+application-social.properties
 application-dev.properties
 application-local.properties
 email.properties
