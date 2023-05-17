@@ -69,9 +69,9 @@
                         <input id="msg" class="form-control border no-shadow no-rounded"
                                placeholder="Type your message here">
                         <span class="input-group-btn">
-                            <button class="btn-orange no-rounded" type="button" th:onclick="send()">Send</button>
+                            <button class="btn-orange no-rounded" type="button" th:onclick="send()">보내기</button>
                             <input type="file" id="fileUpload" multiple>
-                            <button class="btn btn-success no-rounded" type="button" th:onclick="sendImg()">SendImg</button>
+                            <button class="btn btn-success no-rounded" type="button" th:onclick="sendImg()">이미지</button>
                         </span>
                     </div><!-- /input-group -->
                 </div>
@@ -104,8 +104,8 @@
             },
             function (e) {
                 //에러 콜백
-                alert('로그인해주세요.');
-            }
+                //alert('로그인해주세요.');
+                console.log('로그인필요 chat')            }
         );
     }
 

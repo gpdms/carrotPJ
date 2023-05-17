@@ -106,7 +106,7 @@ public class HomeController {
         List<ReviewMessageDto> reviewMessageBrief =reviewService.goodReviewMessagesBrief(memId, 3L);
 
         model.addAttribute("member", MemberEntityDtoMapper.toMemberDto(member));
-        model.addAttribute("hasBlock", isBlocked);
+        model.addAttribute("isBlocked", isBlocked);
         model.addAttribute("postList", postListBrief);
         model.addAttribute("positiveMannerBrief", positiveMannerBrief);
         model.addAttribute("reviewMessageBrief", reviewMessageBrief);
