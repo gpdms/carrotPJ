@@ -13,6 +13,8 @@
 .field-error {
     border-color: #dc3545;
     color: #dc3545;
+    font-size: 13px;
+    padding-top: 3px;
 }
 .field-error-border {
     border-color: #dc3545;

@@ -56,7 +56,7 @@
                                class="form-control"
                                th:errorclass="field-error" style="display: inline-block; width:78%">
                         <div class="send">
-                            <button class="send-btn" id="idCheck" type="button" disabled>
+                            <button class="send-btn" id="idDuplicateCheck" type="button">
                                 중복확인
                             </button>
                         </div>
@@ -91,14 +91,14 @@
                         <div id="email-error"></div>
                         <div class="field-error" th:errors="*{email}" />
                     </div>
-                    <div class="input" id="email-code"></div>
+                    <div class="input" id="email-code-check"></div>
                     <div class="input">
                         <label for="nickname" style="display: block">닉네임</label>
                         <input type="text" id="nickname" th:field="*{nickname}"
                                class="form-control"
                                th:errorclass="field-error" style="display: inline-block; width:78%">
                         <div class="send">
-                            <button class="send-btn" id="nickCheck" type="button" disabled>
+                            <button class="send-btn" id="nickDuplicateCheck" type="button">
                                 중복확인
                             </button>
                         </div>
@@ -136,36 +136,10 @@
 
 <div layout:fragment="script" th:inline="javascript">
 <script th:inline="javascript">
-    function signupSocialMember(platform) {
-        console.log($('#profPath').val())
-        $.ajax({
-            type: 'post',
-            url: '/signup/'+platform,
-            data:  JSON.stringify({
-                loc : $("select[name=locSocial]").val(),
-                nickname : $('#nicknameSocial').val(),
-                email : $('#emailSocial').val(),
-                profPath : $('#profPath').val(),
-            }),
-            contentType: "application/json; charset=utf-8",
-            success: function (data) {
-                alert("회원가입에 성공했습니다.");
-                location.href="/"
-            },
-            error: function (err) {
-                const message = err.responseJSON;
-                console.log(message);
-                console.log(message.nickname);
-                $('#nick-error-social').replaceWith(`<div id="nick-error" class="field-error">${message.nickname}</div>`)
-                $("#nicknameSocial").addClass("field-error-border");
-            }
-        })
-    }
-
     let isCheckEmail = false;
     let isCheckId = false;
     let isCheckNick = false;
-    function activeSignBtn () {
+    function activeSignupBtn () {
         const target = document.getElementById('signup-btn');
         if (isCheckEmail && isCheckId && isCheckNick) {
             target.disabled = false;
@@ -174,7 +148,7 @@
         }
     }
     $('#sendCode').click(function() {
-        activeSignBtn()
+        activeSignupBtn()
         $.ajax({
             type: "POST",
             url: "signup/emailConfirm",
@@ -183,19 +157,16 @@
             }
         }).done(function (data) {
             alert("해당 이메일로 인증번호 발송이 완료되었습니다.")
-            $('#email-error').replaceWith(`<div id="email-error"></div>`)
-            $('#email').removeClass("field-error-border");
-            const str = `<div class="input" id ="email-code">
+            const str = `<div class="input" id ="email-code-check">
                 <div class="form-group last mb-4 check_input">
                     <label for="emailConfirm" id="emailConfirmTxt">인증번호를 입력해주세요</label>
                     <input type="text" class="form-control" id="emailConfirm">
                 </div>
             </div>`
-            $('#email-code').replaceWith(str);
+            $('#email-code-check').replaceWith(str);
             chkEmailConfirm(data.authCode, $('#emailConfirm'), $('#emailConfirmTxt'));
         }).fail(function (err) {
             const message = err.responseJSON;
-            console.log(message);
             if (message.detail) {
                 $('#email-error').replaceWith(`<div id="email-error" class="field-error">${message.detail}</div>`)
                 $('#email').addClass("field-error-border");
@@ -206,6 +177,7 @@
             }
         })
     })
+
     // 이메일 인증번호 체크 함수
     function chkEmailConfirm(data, emailConfirm, emailConfirmTxt){
         emailConfirm.on("keyup", function(){
@@ -225,7 +197,7 @@
                     "font-size" : "10px"
                 })
                 isCheckEmail = true;
-                activeSignBtn()
+                activeSignupBtn()
             }
         })
     }
@@ -238,36 +210,15 @@
     const emailInput = document.getElementById("email");
     memIdInput.addEventListener("input", function(event) {
         isCheckId = false;
-        activeSignBtn();
-        let memId= event.target.value; // 입력 데이터 가져오기
-        const pattern = /^[a-zA-Z0-9]{6,12}$/;
-        const btn = document.getElementById('idCheck');
-        if (pattern.test(memId)) {
-            event.target.classList.remove('field-error-border');
-            $('#memId-error').empty()
-            btn.disabled = false;
-        } else {
-            event.target.classList.add('field-error-border');
-            const str = `<div class="field-error" id="memId-error">아이디는 영문 대/소문자이나 숫자로 6~12자로 구성되어야합니다 </div>`
-            $('#memId-error').replaceWith(str)
-            btn.disabled = true;
-        }
+        activeSignupBtn();
+        let memId = event.target.value; // 입력 데이터 가져오기
+        memIdCheck(memId);
     });
     nicknameInput.addEventListener("input", function(event) {
         isCheckNick = false;
-        activeSignBtn();
-        let memId= event.target.value; // 입력 데이터 가져오기
-        const btn = document.getElementById('nickCheck');
-        if (memId.length >=2 && memId.length <=10) {
-            event.target.classList.remove('field-error-border');
-            $('#nick-error').empty();
-            btn.disabled = false;
-        } else {
-            event.target.classList.add('field-error-border');
-            const str = `<div class="field-error" id="nick-error">닉네임은 2자 이상, 15자 이하여야 합니다.</div>`
-            $('#nick-error').replaceWith(str)
-            btn.disabled = true;
-        }
+        activeSignupBtn();
+        let nick= event.target.value; // 입력 데이터 가져오기
+        nickCheck(nick)
     });
     memPwdInput.addEventListener("input", function(event) {
         let memPwd= event.target.value; // 입력 데이터 가져오기
@@ -307,51 +258,104 @@
     });
 
     //중복체크
-    $('#idCheck').click(function() {
-        let queryString = 'memId='+ memIdInput.value;
-        $.ajax({
-            type: "GET",
-            url: "signup/checkI",
-            data: queryString
-        })
-        .done(function (data) {
-            memIdInput.classList.remove('field-error-border');
-            $('#memId-error').replaceWith(`<div id="memId-error">사용가능한 아이디 입니다.</div>`)
-            isCheckId = true;
-            activeSignBtn()
-        })
-        .fail(function (err) {
-            const message = err.responseJSON;
-            if ('fail' in message) {
-                memIdInput.classList.add('field-error-border');
-                $('#memId-error').replaceWith(`<div class="field-error" id="memId-error">중복된 아이디 입니다</div>`)
-            }
-            isCheckId = false;
-        })
+    $('#idDuplicateCheck').click(function() {
+        let memId = memIdInput.value
+        const isPassed = memIdCheck(memId);
+        if(isPassed) {
+            $.ajax({
+                type: "GET",
+                url: "signup/checkI",
+                data: `memId=${memId}`
+            }).done(function (data) {
+                memIdInput.classList.remove('field-error-border');
+                $('#memId-error').replaceWith(`<div id="memId-error">사용가능한 아이디 입니다.</div>`)
+                isCheckId = true;
+                activeSignupBtn()
+            }).fail(function (err) {
+                const message = err.responseJSON;
+                if ('fail' in message) {
+                    memIdInput.classList.add('field-error-border');
+                    $('#memId-error').replaceWith(`<div class="field-error" id="memId-error">중복된 아이디 입니다</div>`)
+                }
+                isCheckId = false;
+            })
+        }
     })
-    $('#nickCheck').click(function() {
-        let queryString = 'nickname='+ nicknameInput.value;
-        $.ajax({
-            type: "GET",
-            url: "signup/checkN",
-            data: queryString
-        })
-        .done(function (data) {
-            nicknameInput.classList.remove('field-error-border');
-            $('#nick-error').replaceWith(`<div id="nick-error">사용가능한 닉네임 입니다.</div>`)
-            isCheckNick = true;
-            activeSignBtn()
-        })
-        .fail(function (err) {
-            const message = err.responseJSON;
-            if ('fail' in message) {
-                nicknameInput.classList.add('field-error-border');
-                $('#nick-error').replaceWith(`<div class="field-error" id="nick-error">중복된 닉네임입니다</div>`)
-            }
-            isCheckNick = false;
-        })
+    $('#nickDuplicateCheck').click(function() {
+        let nickname= nicknameInput.value;
+        const isPassed = nickCheck(nickname);
+        if(isPassed) {
+            $.ajax({
+                type: "GET",
+                url: "signup/checkN",
+                data: `nickname=${nickname}`
+            }).done(function (data) {
+                nicknameInput.classList.remove('field-error-border');
+                $('#nick-error').replaceWith(`<div id="nick-error">사용가능한 닉네임 입니다.</div>`)
+                isCheckNick = true;
+                activeSignupBtn()
+            }).fail(function (err) {
+                const message = err.responseJSON;
+                if ('fail' in message) {
+                    nicknameInput.classList.add('field-error-border');
+                    $('#nick-error').replaceWith(`<div class="field-error" id="nick-error">중복된 닉네임입니다</div>`)
+                }
+                isCheckNick = false;
+            })
+        }
     })
 
+    function memIdCheck(memId) {
+        const pattern = /^[a-zA-Z0-9]{6,12}$/;
+        if (pattern.test(memId)) {
+            memIdInput.classList.remove('field-error-border');
+            $('#memId-error').empty()
+            return true;
+        } else {
+            memIdInput.classList.add('field-error-border');
+            const str = `<div class="field-error" id="memId-error">아이디는 영문 대/소문자이나 숫자로 6~12자로 구성되어야합니다 </div>`
+            $('#memId-error').replaceWith(str)
+            return false;
+        }
+    }
+    function nickCheck(nick) {
+        if (nick.length >=2 && nick.length <=10) {
+            memIdInput.classList.remove('field-error-border');
+            $('#nick-error').empty();
+            return true;
+        } else {
+            nicknameInput.classList.add('field-error-border');
+            const str = `<div class="field-error" id="nick-error">닉네임은 2자 이상, 15자 이하여야 합니다.</div>`
+            $('#nick-error').replaceWith(str)
+            return false;
+        }
+    }
+
+    function signupSocialMember(platform) {
+        console.log($('#profPath').val())
+        $.ajax({
+            type: 'post',
+            url: '/signup/'+platform,
+            data:  JSON.stringify({
+                loc : $("select[name=locSocial]").val(),
+                nickname : $('#nicknameSocial').val(),
+                email : $('#emailSocial').val(),
+                profPath : $('#profPath').val(),
+            }),
+            contentType: "application/json; charset=utf-8",
+            success: function (data) {
+                alert("회원가입에 성공했습니다.");
+                location.href="/"
+            },
+            error: function (err) {
+                const message = err.responseJSON;
+                console.log(message);
+                console.log(message.nickname);
+                $('#nick-error-social').replaceWith(`<div id="nick-error" class="field-error">${message.nickname}</div>`)
+                $("#nicknameSocial").addClass("field-error-border");
+            }
+        })
+    }
 /*   $('#socialCancelBtn').on("click", function(){
         $.ajax({
             type: 'get',

@@ -9,14 +9,14 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.UrlResource;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.http.CacheControl;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 @Slf4j
 @RestController
@@ -32,8 +32,6 @@ public class ImgController {
     @Value("${default.pfImg}")
     private String defaultPfImg;
 
-    @Value("${file.postImg}")
-    private String rootImgDir;
 
     //첫번째 이미지 urlresource 반환
     @GetMapping("/post/firstImg/{postId}")
@@ -68,17 +66,30 @@ public class ImgController {
     public UrlResource viewProfileImg(@PathVariable("memId") String memId) throws IOException {
         String profPath = memberService.getProfPath(memId);
         if(profPath == null || profPath.isEmpty()) {
-//            profPath = rootImgDir+"/pf/profile_img.png";
             profPath = defaultPfImg;
         }
         UrlResource urlResource = new UrlResource("file:" + profPath);
         return urlResource;
     }
+  /*  @GetMapping("members/{memId}/profileImg")
+    public ResponseEntity<UrlResource> viewProfileImg(@PathVariable("memId") String memId)
+            throws IOException {
+        String profPath = memberService.getProfPath(memId);
+        if (profPath == null || profPath.isEmpty()) {
+            profPath = defaultPfImg;
+        }
+        UrlResource urlResource = new UrlResource("file:" + profPath);
+        // 이미지 캐싱 설정
+        CacheControl cacheControl = CacheControl.maxAge(1, TimeUnit.HOURS); // 1일 동안 캐시 유지
+        return ResponseEntity.ok()
+                .cacheControl(cacheControl)
+                .body(urlResource);
+    }*/
 
     //채팅 이미지 출력
     @ResponseBody
     @GetMapping("chat/chatImg/{chatImgId}")
-    public Resource viewProfileImg(@PathVariable("chatImgId") Long chatImgId) throws IOException {
+    public Resource viewChatImg(@PathVariable("chatImgId") Long chatImgId) throws IOException {
         String imgPath = chatService.getChatImgPath(chatImgId);
         UrlResource urlResource = new UrlResource("file:" + imgPath);
         return urlResource;

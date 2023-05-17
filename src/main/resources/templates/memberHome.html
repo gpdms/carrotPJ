@@ -20,7 +20,8 @@
                     <p class="nickname"> [[${member.nickname}]] </p>
                     <p class="loc"> [[${member.loc.locName}]] </p>
                     <div class="setting" id="pf-setting">
-                        <a id="profile_edit_btn" class="pf-btn" th:if="${session.loginMember?.memId == member.memId}"> 프로필 편집 </a>
+                        <a id="profile_edit_btn" class="pf-btn" th:if="${session.loginMember?.memId == member.memId}"
+                           th:href="@{/members/{memId}/profile(memId=${session.loginMember.memId})}"> 프로필 편집 </a>
                         <a id="block_btn" class="pf-btn" th:if="${session.loginMember != null && session.loginMember.memId != member.memId && !isBlocked}" type="button">
                             차단하기</a>
                         <a id="block_cancel_btn" class="pf-btn" th:if="${isBlocked}" type="button">
