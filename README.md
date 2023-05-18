@@ -18,7 +18,7 @@
 
 ## 팀원 소개
 
-* 박재경 : 회원, 리뷰
+* 박재경 : 회원, 리뷰 
 * 최혜은 : 상품 게시글
 * 남호용 : 채팅
 
@@ -27,14 +27,13 @@
 * Frontend : Thymeleaf, Bootstrap
 * Backend : 
   * Java11
-  * Framework : Spring Boot2.7.2
+  * Framework : Spring Boot(2.7.2)
   * ORM : JPA, QueryDsl
-  * Database : H2, MariaDB 10.6.10
+  * Database : H2, MariaDB(10.6.10)
   * IDE : IntelliJ
   * Distribution : Amazon EC2, Amazon RDS
 
 ## 주요 기능
-
 
 #### &nbsp;회원
 1. 로그인/카카오톡 로그인, 회원가입, 비밀번호 재발급
