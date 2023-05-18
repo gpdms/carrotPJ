@@ -74,7 +74,7 @@
     </tr>
     <tr>
         <td colspan="2">
-            <img width="100%" alt="image" src="https://github.com/gpdms/carrotPJ/assets/109894921/5f7dbde1-13d9-4b67-8ba8-227b60d32b7e">
+            <img width="100%" alt="스크린샷 2023-05-18 오후 10 34 25" src="https://github.com/gpdms/carrotPJ/assets/109894921/43222af0-41ce-423c-b20d-1385dde0d5e8">
         </td>
     </tr>
     <tr>
