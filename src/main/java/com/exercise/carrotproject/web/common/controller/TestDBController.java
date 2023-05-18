@@ -53,13 +53,13 @@ public class TestDBController {
 
     @PersistenceContext
     EntityManager em;
-    //@PostConstruct
+    @PostConstruct
     public void init2() {
         Member member3 = Member.builder().memId("tester3").mannerScore(365000.0).nickname("3Nick").loc(Loc.GANGBUK).memPwd(securityUtils.getHashedPwd("tester33")).role(Role.USER).build();
         memberRepository.save(member3);
         Member member2 = Member.builder().memId("tester2").mannerScore(365000.0).nickname("2Nick").loc(Loc.GANGBUK).memPwd(securityUtils.getHashedPwd("tester22")).role(Role.USER).build();
         memberRepository.save(member2);
-        Member member1 = Member.builder().memId("hyeeun1").mannerScore(365000.0).nickname("혜은").loc(Loc.GANGBUK).memPwd(securityUtils.getHashedPwd("hyeeun11")).role(Role.USER).build();
+        Member member1 = Member.builder().memId("tester1").mannerScore(365000.0).nickname("1Nick").loc(Loc.GANGBUK).memPwd(securityUtils.getHashedPwd("tester11")).role(Role.USER).build();
         memberRepository.save(member1);
         Member admin = Member.builder().memId("admin1").mannerScore(365000.0).nickname("adminNick").loc(Loc.GANGBUK).memPwd(securityUtils.getHashedPwd("admin1234")).role(Role.ADMIN).build();
         memberRepository.save(admin);
@@ -75,7 +75,7 @@ public class TestDBController {
     @ResponseBody
     @Transactional
     public void testDB3 (HttpServletRequest request) {
-        Member mem1 = memberService.findOneMember("hyeeun1");
+        Member mem1 = memberService.findOneMember("tester1");
         Member mem2 = memberService.findOneMember("tester2");
         Member mem3 = memberService.findOneMember("tester3");
         Member nam = memberService.findOneMember("tester4");
@@ -114,7 +114,7 @@ public class TestDBController {
     @ResponseBody
     @Transactional
     public void testDB(HttpServletRequest request) {
-        Member mem1 = memberService.findOneMember("hyeeun1");
+        Member mem1 = memberService.findOneMember("tester1");
         Member mem2 = memberService.findOneMember("tester2");
         Member mem3 = memberService.findOneMember("tester3");
         for(int i = 1 ; i <= 120; i++ ){
@@ -252,7 +252,7 @@ public class TestDBController {
     @ResponseBody
     @Transactional
     public void testDB2 () {
-        Member mem1 = memberService.findOneMember("hyeeun1");
+        Member mem1 = memberService.findOneMember("tester1");
         Member mem2 = memberService.findOneMember("tester2");
         Member mem3 = memberService.findOneMember("tester3");
         for(int i = 1 ; i <= 120; i++ ){
@@ -329,7 +329,7 @@ public class TestDBController {
                                     .hideState(HideState.SHOW).reviewState(ReviewState.BEST).build()
                     );
                     String sql = "INSERT INTO review_buyer_detail (review_buyer_id, buyer_id, review_buyer_indicator) " +
-                            " VALUES ( :reviewBuyerId, 'hyeeun1', :review_buyer_indicator) ";
+                            " VALUES ( :reviewBuyerId, 'tester1', :review_buyer_indicator) ";
                     Query query = em.createNativeQuery(sql);
                     for (ReviewBuyerIndicator bi : bis) {
                         query.setParameter("reviewBuyerId", save.getReviewBuyerId());
@@ -376,7 +376,7 @@ public class TestDBController {
                                     .hideState(HideState.SHOW).reviewState(ReviewState.BEST).build()
                     );
                     String sql2 = "INSERT INTO review_seller_detail (review_seller_id, seller_id, review_seller_indicator) " +
-                            " VALUES ( :reviewSellerId, 'hyeeun1', :review_seller_indicator) ";
+                            " VALUES ( :reviewSellerId, 'tester1', :review_seller_indicator) ";
                     Query query2 = em.createNativeQuery(sql2);
                     for (ReviewSellerIndicator si : sis) {
                         query2.setParameter("reviewSellerId", save2.getReviewSellerId());

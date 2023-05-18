@@ -50,7 +50,6 @@ public class Member extends BaseEntity {
     @Size(max=500)
     private String profPath;
 
-
     @NotNull
     @ColumnDefault("365000")
     @Range(min = 0, max = 1200000)
