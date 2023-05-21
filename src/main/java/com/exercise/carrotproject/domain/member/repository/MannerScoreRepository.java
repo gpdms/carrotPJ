@@ -77,7 +77,7 @@ public class  MannerScoreRepository {
         Timestamp updatedTimeManner = Timestamp.valueOf(monday5am);
         Timestamp nowTime = Timestamp.valueOf(now);
         return jpaQueryFactory.update(member)
-                .set(member.mannerScore, member.mannerScore.subtract(5000))
+                .set(member.mannerScore, member.mannerScore.subtract(2500))
                 .where(member.updatedTimeManner.notBetween(updatedTimeManner, nowTime),
                         member.mannerScore.gt(365000))
                 .execute();
