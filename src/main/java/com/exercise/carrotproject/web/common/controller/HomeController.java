@@ -63,7 +63,7 @@ public class HomeController {
         Member Gangseo = Member.builder().memId("tester8").mannerScore(365000.0).nickname("8Nick").loc(Loc.GANGSEO).memPwd(securityUtils.getHashedPwd("tester88")).role(Role.USER).build();
         memberRepository.save(Gangseo);
     }
-    @GetMapping("/init")
+    //@GetMapping("/init")
     public String init(HttpServletRequest request) {
         Member loginMember = memberRepository.findById("tester1").orElse(null);
         MemberDto loginMemberDto = MemberDto.builder().memId(loginMember.getMemId())
