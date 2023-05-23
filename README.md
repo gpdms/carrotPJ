@@ -18,8 +18,8 @@
 
 ## 팀원 소개
 
-* 박재경 : 회원, 리뷰
-* 최혜은 : 상품 게시글
+* 박재경 : 회원, 리뷰, 검색
+* 최혜은 : 상품 게시글, 거래 내역, 찜
 * 남호용 : 채팅
 
 ## 기술 스택
@@ -39,7 +39,7 @@
 1. 로그인/카카오톡 로그인, 회원가입, 비밀번호 재발급
 2. 회원정보
     * 회원정보 수정(프로필/비밀번호)
-    * 판매내역/구매내역/찜 [최혜은]
+    * 판매내역/구매내역/찜
 3. 회원등급(매너온도)
 4. 차단
 
@@ -49,8 +49,7 @@
 3. 게시판
 4. 게시글 상세보기
 5. 조회수
-6. 검색 [박재경]
-
+6. 검색 
 #### &nbsp;채팅
 1. 텍스트 전송
 2. 이미지 전송
@@ -71,9 +70,9 @@
         <td align="center" colspan="2">메인 페이지</td>
     </tr>
     <tr>
-        <td colspan="2">
-            <img width="50%" alt="main" src="https://github.com/gpdms/carrotPJ/assets/109894921/43222af0-41ce-423c-b20d-1385dde0d5e8">
-           <img width="50%" alt="main2" src="https://github.com/gpdms/carrotPJ/assets/109894921/85cb0d61-d7da-4e7f-91d3-77a96fa4c013">
+        <td colspan="2" align="center">
+            <img width="47%" alt="main" src="https://github.com/gpdms/carrotPJ/assets/109894921/43222af0-41ce-423c-b20d-1385dde0d5e8">
+           <img width="47%" alt="main2" src="https://github.com/gpdms/carrotPJ/assets/109894921/85cb0d61-d7da-4e7f-91d3-77a96fa4c013">
         </td>
     </tr>
     <tr>
@@ -82,12 +81,12 @@
     </tr>
     <tr>
         <td width="50%">
-            <img width="47%" alt="login" src="https://github.com/gpdms/carrotPJ/assets/109894921/0478c981-a9bc-46da-a543-623a8489acb1">
-            <img width="47%" alt="signup" src="https://github.com/gpdms/carrotPJ/assets/109894921/77ac841d-e8ef-4e5a-9152-a3eda0fb6eff">
+            <img width="49%" alt="login" src="https://github.com/gpdms/carrotPJ/assets/109894921/0478c981-a9bc-46da-a543-623a8489acb1">
+            <img width="49%" alt="signup" src="https://github.com/gpdms/carrotPJ/assets/109894921/77ac841d-e8ef-4e5a-9152-a3eda0fb6eff">
         </td>
         <td width="50%">
-           <img width="47%" alt="myhome" src="https://github.com/gpdms/carrotPJ/assets/109894921/2ca8e42a-398e-4e22-ba67-3072b4d21d53">
-            <img width="47%" alt="myhome2" src="https://github.com/gpdms/carrotPJ/assets/109894921/3db8e36f-3279-46b0-bea7-cbef85486e52">
+           <img width="49%" alt="myhome" src="https://github.com/gpdms/carrotPJ/assets/109894921/2ca8e42a-398e-4e22-ba67-3072b4d21d53">
+            <img width="49%" alt="myhome2" src="https://github.com/gpdms/carrotPJ/assets/109894921/3db8e36f-3279-46b0-bea7-cbef85486e52">
         </td>
     </tr>
     <tr>
@@ -99,8 +98,8 @@
            <img width="100%" alt="pfEdit" src="https://github.com/gpdms/carrotPJ/assets/109894921/2d1c5fe5-04c7-44b3-9fda-45521203640d">
         </td>
         <td>
-           <img width="47%" alt="sellList" src="https://github.com/gpdms/carrotPJ/assets/109894921/3459f2d7-e81f-4cbc-897a-3b4082375bb7">
-           <img width="47%" alt="sellList2" src="https://github.com/gpdms/carrotPJ/assets/109894921/d0556bd0-73c5-4ed4-8fc8-6296333136fd">
+           <img width="49%" alt="sellList" src="https://github.com/gpdms/carrotPJ/assets/109894921/3459f2d7-e81f-4cbc-897a-3b4082375bb7">
+           <img width="49%" alt="sellList2" src="https://github.com/gpdms/carrotPJ/assets/109894921/d0556bd0-73c5-4ed4-8fc8-6296333136fd">
        </td>
     </tr>
     <tr>
@@ -133,12 +132,12 @@
     </tr>
     <tr>
         <td>
-           <img width="47%" alt="reviewUpload" src="https://github.com/gpdms/carrotPJ/assets/109894921/8209569a-3824-46b2-8274-7752b1bff3a2">
-            <img width="47%" alt="reviewDetail" src="https://github.com/gpdms/carrotPJ/assets/109894921/732d38fa-8fe6-4275-8504-dcf983c966e0">
+           <img width="49%" alt="reviewUpload" src="https://github.com/gpdms/carrotPJ/assets/109894921/8209569a-3824-46b2-8274-7752b1bff3a2">
+            <img width="49%" alt="reviewDetail" src="https://github.com/gpdms/carrotPJ/assets/109894921/732d38fa-8fe6-4275-8504-dcf983c966e0">
        </td>
         <td>
-           <img width="47%" alt="reviewList2" src="https://github.com/gpdms/carrotPJ/assets/109894921/c73d3812-16b9-49a4-8474-ee8c697d6c48">
-            <img width="47%" alt="mannerDetail" src="https://github.com/gpdms/carrotPJ/assets/109894921/0ac6442b-e378-4e62-9f76-737cf8676b55">
+           <img width="49%" alt="reviewList2" src="https://github.com/gpdms/carrotPJ/assets/109894921/c73d3812-16b9-49a4-8474-ee8c697d6c48">
+            <img width="49%" alt="mannerDetail" src="https://github.com/gpdms/carrotPJ/assets/109894921/0ac6442b-e378-4e62-9f76-737cf8676b55">
        </td>
     </tr>
     <tr>
