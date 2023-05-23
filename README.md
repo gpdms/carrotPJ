@@ -82,12 +82,12 @@
     </tr>
     <tr>
         <td width="50%">
-            <img width="45%" alt="login" src="https://github.com/gpdms/carrotPJ/assets/109894921/0478c981-a9bc-46da-a543-623a8489acb1">
-            <img width="45%" alt="signup" src="https://github.com/gpdms/carrotPJ/assets/109894921/77ac841d-e8ef-4e5a-9152-a3eda0fb6eff">
+            <img width="47%" alt="login" src="https://github.com/gpdms/carrotPJ/assets/109894921/0478c981-a9bc-46da-a543-623a8489acb1">
+            <img width="47%" alt="signup" src="https://github.com/gpdms/carrotPJ/assets/109894921/77ac841d-e8ef-4e5a-9152-a3eda0fb6eff">
         </td>
         <td width="50%">
-           <img width="45%" alt="myhome" src="https://github.com/gpdms/carrotPJ/assets/109894921/2ca8e42a-398e-4e22-ba67-3072b4d21d53">
-            <img width="45%" alt="myhome2" src="https://github.com/gpdms/carrotPJ/assets/109894921/3db8e36f-3279-46b0-bea7-cbef85486e52">
+           <img width="47%" alt="myhome" src="https://github.com/gpdms/carrotPJ/assets/109894921/2ca8e42a-398e-4e22-ba67-3072b4d21d53">
+            <img width="47%" alt="myhome2" src="https://github.com/gpdms/carrotPJ/assets/109894921/3db8e36f-3279-46b0-bea7-cbef85486e52">
         </td>
     </tr>
     <tr>
@@ -99,8 +99,8 @@
            <img width="100%" alt="pfEdit" src="https://github.com/gpdms/carrotPJ/assets/109894921/2d1c5fe5-04c7-44b3-9fda-45521203640d">
         </td>
         <td>
-           <img width="45%" alt="sellList" src="https://github.com/gpdms/carrotPJ/assets/109894921/3459f2d7-e81f-4cbc-897a-3b4082375bb7">
-           <img width="45%" alt="sellList2" src="https://github.com/gpdms/carrotPJ/assets/109894921/d0556bd0-73c5-4ed4-8fc8-6296333136fd">
+           <img width="47%" alt="sellList" src="https://github.com/gpdms/carrotPJ/assets/109894921/3459f2d7-e81f-4cbc-897a-3b4082375bb7">
+           <img width="47%" alt="sellList2" src="https://github.com/gpdms/carrotPJ/assets/109894921/d0556bd0-73c5-4ed4-8fc8-6296333136fd">
        </td>
     </tr>
     <tr>
@@ -124,7 +124,7 @@
            <img width="100%" alt="postUpload" src="https://github.com/gpdms/carrotPJ/assets/109894921/90148052-0869-465e-9a8b-8a2a090ff254">
          </td>
         <td>
-           <img width="100%" alt="postDetail" src="https://github.com/gpdms/carrotPJ/assets/109894921/9b5a9bb7-b33c-4c01-88db-d1cdc6d84a02">
+           <img width="100%" alt="postDetail" src="https://github.com/gpdms/carrotPJ/assets/109894921/7a28574e-dc3e-446d-8e4b-8b9306e59600">
        </td>
     </tr>
     <tr>
@@ -133,12 +133,12 @@
     </tr>
     <tr>
         <td>
-           <img width="45%" alt="reviewUpload" src="https://github.com/gpdms/carrotPJ/assets/109894921/8209569a-3824-46b2-8274-7752b1bff3a2">
-            <img width="45%" alt="reviewDetail" src="https://github.com/gpdms/carrotPJ/assets/109894921/732d38fa-8fe6-4275-8504-dcf983c966e0">
+           <img width="47%" alt="reviewUpload" src="https://github.com/gpdms/carrotPJ/assets/109894921/8209569a-3824-46b2-8274-7752b1bff3a2">
+            <img width="47%" alt="reviewDetail" src="https://github.com/gpdms/carrotPJ/assets/109894921/732d38fa-8fe6-4275-8504-dcf983c966e0">
        </td>
         <td>
-           <img width="45%" alt="reviewList2" src="https://github.com/gpdms/carrotPJ/assets/109894921/c73d3812-16b9-49a4-8474-ee8c697d6c48">
-            <img width="45%" alt="mannerDetail" src="https://github.com/gpdms/carrotPJ/assets/109894921/0ac6442b-e378-4e62-9f76-737cf8676b55">
+           <img width="47%" alt="reviewList2" src="https://github.com/gpdms/carrotPJ/assets/109894921/c73d3812-16b9-49a4-8474-ee8c697d6c48">
+            <img width="47%" alt="mannerDetail" src="https://github.com/gpdms/carrotPJ/assets/109894921/0ac6442b-e378-4e62-9f76-737cf8676b55">
        </td>
     </tr>
     <tr>
