@@ -112,7 +112,7 @@
             <img width="100%" alt="image" src="https://github.com/gpdms/carrotPJ/assets/109894921/c216c37b-0002-484e-b9c4-603c7c686df2">
         </td>
         <td>
-            <img alt="category" src="https://github.com/gpdms/carrotPJ/assets/109894921/580b9c36-ebdc-4d25-99b3-6c2d28b7fd38">
+            <img width="100%" alt="category" src="https://github.com/gpdms/carrotPJ/assets/109894921/580b9c36-ebdc-4d25-99b3-6c2d28b7fd38">
        </td>
     </tr>
     <tr>
@@ -124,11 +124,8 @@
            <img width="100%" alt="postUpload" src="https://github.com/gpdms/carrotPJ/assets/109894921/90148052-0869-465e-9a8b-8a2a090ff254">
          </td>
         <td>
-<!--            <img width="49%" alt="detail" src="https://github.com/gpdms/carrotPJ/assets/109894921/405af00e-47df-4f78-8b84-449304dd21a0">
-           <img width="50%" alt="detail2" src="https://github.com/gpdms/carrotPJ/assets/109894921/0306b0fd-3e57-4074-9b2b-ca15572a9ad7"> -->
            <img alt="postDetail" src="https://github.com/gpdms/carrotPJ/assets/109894921/9b5a9bb7-b33c-4c01-88db-d1cdc6d84a02">
        </td>
-        <td></td>
     </tr>
     <tr>
         <td align="center">리뷰 작성/조회</td>
