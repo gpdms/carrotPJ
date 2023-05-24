@@ -10,18 +10,18 @@
     * 당근마켓은 앱 위주의 플랫폼으로 웹페이지가 부실하여, 앱의 기능을 웹에서 구현하고자하였습니다.
 
 
-## ✔️ 프로젝트 기간
+## 프로젝트 기간
 
 * 2023.03.13 ~ 2023.05.08
 
 
-## 🪄 팀원 소개
+## 팀원 소개
 
 * 박재경 : 회원, 리뷰, 검색
 * 최혜은 : 상품 게시글, 거래 내역, 찜
 * 남호용 : 채팅
 
-## ▪️ 기술 스택
+## 기술 스택
 
 * Frontend : Thymeleaf, Bootstrap, HTML, CSS, Javascript
 * Backend 
@@ -61,7 +61,7 @@
 2. 리뷰 지표 합산
 
 ---
-## 화면
+## 🪄 화면
 
 <table>
     <tr>
@@ -158,7 +158,7 @@
 
 
 
-## ERD
+## 🪄 ERD
 <img width="100%" alt="ERD" src="https://github.com/gpdms/carrotPJ/assets/118142992/ee5238ae-110f-4fc3-8cb3-79ebc48f7e9a">
 
 
