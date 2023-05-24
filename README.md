@@ -10,18 +10,18 @@
     * 당근마켓은 앱 위주의 플랫폼으로 웹페이지가 부실하여, 앱의 기능을 웹에서 구현하고자하였습니다.
 
 
-## 프로젝트 기간
+## ⏱️ 프로젝트 기간
 
 * 2023.03.13 ~ 2023.05.08
 
 
-## 팀원 소개
+## 👨‍👩‍👧 팀원 소개
 
 * 박재경 : 회원, 리뷰, 검색
 * 최혜은 : 상품 게시글, 거래 내역, 찜
 * 남호용 : 채팅
 
-## 기술 스택
+## 🪄 기술 스택
 
 * Frontend : Thymeleaf, Bootstrap, HTML, CSS, Javascript
 * Backend 
@@ -32,7 +32,7 @@
   * IDE : IntelliJ
   * Distribution : Amazon EC2, Amazon RDS
 
-## 주요 기능
+## 💡 주요 기능
 
 #### &nbsp;회원
 1. 로그인/카카오톡 로그인, 회원가입, 비밀번호 재발급
@@ -158,13 +158,13 @@
 
 
 
-## ERD
+## 📝 ERD
 <img width="100%" alt="ERD" src="https://github.com/gpdms/carrotPJ/assets/118142992/ee5238ae-110f-4fc3-8cb3-79ebc48f7e9a">
 
 
 
 
-## 소스코드 바로가기
+## 🔎 소스코드 바로가기
 
 #### 회원
   * [DTO,Entity,Repository,Service](https://github.com/gpdms/carrotPJ/tree/main/src/main/java/com/exercise/carrotproject/domain/member)
