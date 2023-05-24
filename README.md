@@ -18,8 +18,8 @@
 
 ## 팀원 소개
 
-* 박재경 : 회원, 리뷰
-* 최혜은 : 상품 게시글
+* 박재경 : 회원, 리뷰, 검색
+* 최혜은 : 상품 게시글, 거래 내역, 찜
 * 남호용 : 채팅
 
 ## 기술 스택
@@ -39,7 +39,7 @@
 1. 로그인/카카오톡 로그인, 회원가입, 비밀번호 재발급
 2. 회원정보
     * 회원정보 수정(프로필/비밀번호)
-    * 판매내역/구매내역/찜 [최혜은]
+    * 판매내역/구매내역/찜
 3. 회원등급(매너온도)
 4. 차단
 
@@ -49,8 +49,7 @@
 3. 게시판
 4. 게시글 상세보기
 5. 조회수
-6. 검색 [박재경]
-
+6. 검색 
 #### &nbsp;채팅
 1. 텍스트 전송
 2. 이미지 전송
@@ -71,8 +70,9 @@
         <td align="center" colspan="2">메인 페이지</td>
     </tr>
     <tr>
-        <td colspan="2">
-            <img width="100%" alt="스크린샷 2023-05-18 오후 10 34 25" src="https://github.com/gpdms/carrotPJ/assets/109894921/43222af0-41ce-423c-b20d-1385dde0d5e8">
+        <td colspan="2" align="center">
+            <img width="47%" alt="main" src="https://github.com/gpdms/carrotPJ/assets/109894921/43222af0-41ce-423c-b20d-1385dde0d5e8">
+           <img width="47%" alt="main2" src="https://github.com/gpdms/carrotPJ/assets/109894921/85cb0d61-d7da-4e7f-91d3-77a96fa4c013">
         </td>
     </tr>
     <tr>
@@ -80,11 +80,13 @@
         <td align="center">멤버 홈 </td>
     </tr>
     <tr>
-        <td>
-            <img width="49%" alt="스크린샷 2023-05-18 오후 7 47 31" src="https://github.com/gpdms/carrotPJ/assets/109894921/0478c981-a9bc-46da-a543-623a8489acb1">
-            <img width="49%" alt="회원가입" src="https://github.com/gpdms/carrotPJ/assets/109894921/77ac841d-e8ef-4e5a-9152-a3eda0fb6eff">
+        <td width="50%">
+            <img width="49%" alt="login" src="https://github.com/gpdms/carrotPJ/assets/109894921/0478c981-a9bc-46da-a543-623a8489acb1">
+            <img width="49%" alt="signup" src="https://github.com/gpdms/carrotPJ/assets/109894921/77ac841d-e8ef-4e5a-9152-a3eda0fb6eff">
         </td>
-        <td>
+        <td width="50%">
+           <img width="49%" alt="myhome" src="https://github.com/gpdms/carrotPJ/assets/109894921/2ca8e42a-398e-4e22-ba67-3072b4d21d53">
+            <img width="49%" alt="myhome2" src="https://github.com/gpdms/carrotPJ/assets/109894921/3db8e36f-3279-46b0-bea7-cbef85486e52">
         </td>
     </tr>
     <tr>
@@ -92,8 +94,13 @@
         <td align="center">회원정보(<strong>판매</strong>/구매/찜목록)</td>
     </tr>
     <tr>
-        <td></td>
-        <td></td>
+        <td>
+           <img width="100%" alt="pfEdit" src="https://github.com/gpdms/carrotPJ/assets/109894921/2d1c5fe5-04c7-44b3-9fda-45521203640d">
+        </td>
+        <td>
+           <img width="49%" alt="sellList" src="https://github.com/gpdms/carrotPJ/assets/109894921/3459f2d7-e81f-4cbc-897a-3b4082375bb7">
+           <img width="49%" alt="sellList2" src="https://github.com/gpdms/carrotPJ/assets/109894921/d0556bd0-73c5-4ed4-8fc8-6296333136fd">
+       </td>
     </tr>
     <tr>
         <td align="center">게시판</td>
@@ -103,31 +110,48 @@
         <td>
             <img width="100%" alt="image" src="https://github.com/gpdms/carrotPJ/assets/109894921/c216c37b-0002-484e-b9c4-603c7c686df2">
         </td>
-        <td></td>
+        <td>
+            <img width="100%" alt="category" src="https://github.com/gpdms/carrotPJ/assets/109894921/580b9c36-ebdc-4d25-99b3-6c2d28b7fd38">
+       </td>
     </tr>
     <tr>
-         <td align="center">게시글 작성/수정</td>
+        <td align="center">게시글 작성/수정</td>
         <td align="center">게시글 조회</td>
     </tr>
     <tr>
-        <td></td>
-        <td></td>
+        <td>
+           <img width="100%" alt="postUpload" src="https://github.com/gpdms/carrotPJ/assets/109894921/90148052-0869-465e-9a8b-8a2a090ff254">
+         </td>
+        <td>
+           <img width="100%" alt="postDetail" src="https://github.com/gpdms/carrotPJ/assets/109894921/7a28574e-dc3e-446d-8e4b-8b9306e59600">
+       </td>
     </tr>
     <tr>
         <td align="center">리뷰 작성/조회</td>
         <td align="center">리뷰 통계/메시지</td>
     </tr>
     <tr>
-        <td></td>
-        <td></td>
+        <td>
+           <img width="49%" alt="reviewUpload" src="https://github.com/gpdms/carrotPJ/assets/109894921/8209569a-3824-46b2-8274-7752b1bff3a2">
+            <img width="49%" alt="reviewDetail" src="https://github.com/gpdms/carrotPJ/assets/109894921/732d38fa-8fe6-4275-8504-dcf983c966e0">
+       </td>
+        <td>
+           <img width="49%" alt="reviewList2" src="https://github.com/gpdms/carrotPJ/assets/109894921/c73d3812-16b9-49a4-8474-ee8c697d6c48">
+            <img width="49%" alt="mannerDetail" src="https://github.com/gpdms/carrotPJ/assets/109894921/0ac6442b-e378-4e62-9f76-737cf8676b55">
+       </td>
     </tr>
     <tr>
         <td align="center">채팅</td>
         <td align="center">채팅 목록</td>
     </tr>
     <tr>
-        <td></td>
-        <td></td>
+        <td>
+       <img width="100%" alt="chat" src="https://github.com/gpdms/carrotPJ/assets/109894921/c241277b-64e5-4687-935b-650c5fa9b291">
+       </td>
+        <td>
+       <img width="100%" alt="chatRoom1" src="https://github.com/gpdms/carrotPJ/assets/109894921/a6f85404-2012-4a10-8818-930eaded4f64">
+      <img width="100%" alt="buyerSelection" src="https://github.com/gpdms/carrotPJ/assets/109894921/1a886293-ee32-4ac4-ac86-03e288941d81">
+       </td>
     </tr>
 </table>
 
