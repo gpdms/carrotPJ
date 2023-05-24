@@ -3,8 +3,7 @@
 
 
 ## 🍋 프로젝트 소개
-
-> http://15.164.25.45:8888/
+> http://15.164.25.45:8888/ &nbsp;|&nbsp;  http://3.37.98.151:8888/
 
 * 중고거래 플랫폼
     * 중고거래 사이트에 필요한 기능이 포집되어있는 기존 플랫폼(당근마켓)을 참고하여 제작하였습니다.
@@ -24,7 +23,7 @@
 
 ## 기술 스택
 
-* Frontend : Thymeleaf, Bootstrap
+* Frontend : Thymeleaf, Bootstrap, HTML, CSS, Javascript
 * Backend 
   * Java11
   * Framework : Spring Boot (2.7.2)
@@ -61,9 +60,8 @@
 1. 리뷰 작성 / 삭제
 2. 리뷰 지표 합산
 
-
+---
 ## 화면
-
 
 <table>
     <tr>
@@ -155,3 +153,37 @@
     </tr>
 </table>
 
+
+
+
+
+
+## ERD
+<img width="100%" alt="ERD" src="https://github.com/gpdms/carrotPJ/assets/118142992/ee5238ae-110f-4fc3-8cb3-79ebc48f7e9a">
+
+
+
+
+## 소스코드 바로가기
+
+#### 회원
+  * [DTO,Entity,Repository,Service](https://github.com/gpdms/carrotPJ/tree/main/src/main/java/com/exercise/carrotproject/domain/member)
+  *  [Controller](https://github.com/gpdms/carrotPJ/tree/main/src/main/java/com/exercise/carrotproject/web/member/controller)
+
+#### 게시글
+   * [DTO,Entity,Repository,Service](https://github.com/gpdms/carrotPJ/tree/main/src/main/java/com/exercise/carrotproject/domain/post)
+   * [Controller](https://github.com/gpdms/carrotPJ/tree/main/src/main/java/com/exercise/carrotproject/web/post/controller)
+   
+#### 채팅
+   * [DTO,Entity,Repository,Service](https://github.com/gpdms/carrotPJ/tree/main/src/main/java/com/exercise/carrotproject/domain/chat)
+   * [Controller](https://github.com/gpdms/carrotPJ/tree/main/src/main/java/com/exercise/carrotproject/web/chat/controller)
+   
+#### 리뷰
+   * [DTO,Entity,Repository,Service](https://github.com/gpdms/carrotPJ/tree/main/src/main/java/com/exercise/carrotproject/domain/review)
+   * [Controller](https://github.com/gpdms/carrotPJ/tree/main/src/main/java/com/exercise/carrotproject/web/review/controller)
+
+#### HTML
+   * [Layout,nav바,홈,회원,게시글,채팅 HTML](https://github.com/gpdms/carrotPJ/tree/NewNewHyeeun/src/main/resources/templates)
+
+#### CSS
+   * [Bootstrap,직접제작CSS](https://github.com/gpdms/carrotPJ/tree/NewNewHyeeun/src/main/resources/static/css)
