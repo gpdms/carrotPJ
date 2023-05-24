@@ -31,7 +31,6 @@
   * Database : H2, MariaDB (10.6.10)
   * IDE : IntelliJ
   * Distribution : Amazon EC2, Amazon RDS
-  * Test : JUnit
 
 ## 주요 기능
 
