@@ -15,7 +15,7 @@
 * 2023.03.13 ~ 2023.05.08
 
 
-## 🔸 팀원 소개
+## 🪄 팀원 소개
 
 * 박재경 : 회원, 리뷰, 검색
 * 최혜은 : 상품 게시글, 거래 내역, 찜
@@ -32,7 +32,7 @@
   * IDE : IntelliJ
   * Distribution : Amazon EC2, Amazon RDS
 
-## ◾ 주요 기능
+## 주요 기능
 
 #### &nbsp;회원
 1. 로그인/카카오톡 로그인, 회원가입, 비밀번호 재발급
@@ -61,7 +61,7 @@
 2. 리뷰 지표 합산
 
 ---
-## 🔸 화면
+## 화면
 
 <table>
     <tr>
@@ -158,7 +158,7 @@
 
 
 
-## 🔸 ERD
+## ERD
 <img width="100%" alt="ERD" src="https://github.com/gpdms/carrotPJ/assets/118142992/ee5238ae-110f-4fc3-8cb3-79ebc48f7e9a">
 
 
