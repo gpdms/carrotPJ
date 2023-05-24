@@ -61,7 +61,7 @@
 2. 리뷰 지표 합산
 
 ---
-## 화면
+## 🪄 화면
 
 <table>
     <tr>
@@ -158,13 +158,13 @@
 
 
 
-## ERD
+## 🪄 ERD
 <img width="100%" alt="ERD" src="https://github.com/gpdms/carrotPJ/assets/118142992/ee5238ae-110f-4fc3-8cb3-79ebc48f7e9a">
 
 
 
 
-## 소스코드 바로가기
+## 🔎 소스코드 바로가기
 
 #### 회원
   * [DTO,Entity,Repository,Service](https://github.com/gpdms/carrotPJ/tree/main/src/main/java/com/exercise/carrotproject/domain/member)
