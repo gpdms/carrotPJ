@@ -23,7 +23,7 @@
 
 ## 기술 스택
 
-* Frontend : Thymeleaf, Bootstrap
+* Frontend : Thymeleaf, Bootstrap, HTML, CSS, Javascript
 * Backend 
   * Java11
   * Framework : Spring Boot (2.7.2)
