@@ -32,7 +32,7 @@
                                             <!--지역, 시간-->
                                             <p class="fs-7 fw-normal text-secondary">[[${buyOne.postDto.loc.locName}]] / [[${buyOne.postDto.createdTime}]]</p>
                                             <!-- 가격-->
-                                            <h6 class="fw-bolder" th:if="${buyOne.postDto.price}!=0" th:text="|${buyOne.postDto.price}원|">가격</h6>
+                                            <h6 class="fw-bolder" th:if="${buyOne.postDto.price}!=0" th:text="|${#numbers.formatInteger(buyOne.postDto.price, 0, 'COMMA')}원|">가격</h6>
                                         </div>
                                     </div>
                                 </div>

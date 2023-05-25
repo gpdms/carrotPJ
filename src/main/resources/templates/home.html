@@ -54,7 +54,7 @@
                                         <!--지역, 시간-->
                                         <h6 class="fs-7 fw-normal text-secondary">[[${post.loc.locName}]] ∙ [[${post.createdTime}]]</h6>
                                         <!-- 가격-->
-                                        <h6 class="fw-bolder" th:if="${post.price}!=0" th:text="|${post.price}원|">가격</h6>
+                                        <h6 class="fw-bolder" th:if="${post.price}!=0" th:text="|${#numbers.formatInteger(post.price, 0, 'COMMA')}원|">가격</h6>
                                         <h6 class="fw-bolder" th:if="${post.price} == 0">가격없음</h6>
                                         <!--예약중,판매완료 배지-->
                                         <span class="badge bg-success" th:if="${post.sellState.getSellStateName().equals('예약중')}">예약중</span>
