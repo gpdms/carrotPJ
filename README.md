@@ -30,7 +30,7 @@
   * ORM : JPA, QueryDsl
   * Database : H2, MariaDB (10.6.10)
   * IDE : IntelliJ
-  * Distribution : Amazon EC2, Amazon RDS
+  * Distribution : Amazon EC2(Linux/UNIX), Amazon RDS
 
 ## 주요 기능
 
@@ -43,8 +43,8 @@
 4. 차단
 
 #### &nbsp;상품 게시판
-1. 게시글(글,사진,지도) 업로드 / 수정 / 삭제
-2. 판매 상태 변경(예약중, 판매중, 판매완료)
+1. 게시글(글,사진,지도) 업로드, 수정, 삭제
+2. 판매 상태 변경(예약중/판매중/판매완료)
 3. 게시판
 4. 게시글 상세보기
 5. 조회수
@@ -159,7 +159,7 @@
 
 
 ## 🪄 ERD
-<img width="100%" alt="ERD" src="https://github.com/gpdms/carrotPJ/assets/118142992/ee5238ae-110f-4fc3-8cb3-79ebc48f7e9a">
+<img width="100%" alt="스크린샷 2023-05-25 오후 6 17 32" src="https://github.com/gpdms/carrotPJ/assets/109894921/75240980-e9d9-4763-a7c1-0298ee60c6f8">
 
 
 
@@ -167,23 +167,24 @@
 ## 🔎 소스코드 바로가기
 
 #### 회원
-  * [DTO,Entity,Repository,Service](https://github.com/gpdms/carrotPJ/tree/main/src/main/java/com/exercise/carrotproject/domain/member)
+  * [DTO, Entity, Repository, Service](https://github.com/gpdms/carrotPJ/tree/main/src/main/java/com/exercise/carrotproject/domain/member)
   *  [Controller](https://github.com/gpdms/carrotPJ/tree/main/src/main/java/com/exercise/carrotproject/web/member/controller)
+  *  [Interceptor](https://github.com/gpdms/carrotPJ/tree/main/src/main/java/com/exercise/carrotproject/web/interceptor)
 
 #### 게시글
-   * [DTO,Entity,Repository,Service](https://github.com/gpdms/carrotPJ/tree/main/src/main/java/com/exercise/carrotproject/domain/post)
+   * [DTO, Entity, Repository, Service](https://github.com/gpdms/carrotPJ/tree/main/src/main/java/com/exercise/carrotproject/domain/post)
    * [Controller](https://github.com/gpdms/carrotPJ/tree/main/src/main/java/com/exercise/carrotproject/web/post/controller)
    
 #### 채팅
-   * [DTO,Entity,Repository,Service](https://github.com/gpdms/carrotPJ/tree/main/src/main/java/com/exercise/carrotproject/domain/chat)
+   * [DTO, Entity, Repository, Service](https://github.com/gpdms/carrotPJ/tree/main/src/main/java/com/exercise/carrotproject/domain/chat)
    * [Controller](https://github.com/gpdms/carrotPJ/tree/main/src/main/java/com/exercise/carrotproject/web/chat/controller)
    
 #### 리뷰
-   * [DTO,Entity,Repository,Service](https://github.com/gpdms/carrotPJ/tree/main/src/main/java/com/exercise/carrotproject/domain/review)
+   * [DTO, Entity, Repository, Service](https://github.com/gpdms/carrotPJ/tree/main/src/main/java/com/exercise/carrotproject/domain/review)
    * [Controller](https://github.com/gpdms/carrotPJ/tree/main/src/main/java/com/exercise/carrotproject/web/review/controller)
 
 #### HTML
-   * [Layout,nav바,홈,회원,게시글,채팅 HTML](https://github.com/gpdms/carrotPJ/tree/NewNewHyeeun/src/main/resources/templates)
+   * [Layout, nav, 홈, 회원, 게시글, 채팅 HTML](https://github.com/gpdms/carrotPJ/tree/NewNewHyeeun/src/main/resources/templates)
 
 #### CSS
-   * [Bootstrap,직접제작CSS](https://github.com/gpdms/carrotPJ/tree/NewNewHyeeun/src/main/resources/static/css)
+   * [Bootstrap, 직접 제작CSS](https://github.com/gpdms/carrotPJ/tree/NewNewHyeeun/src/main/resources/static/css)
