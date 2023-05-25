@@ -159,7 +159,7 @@
 
 
 ## 🪄 ERD
-<img width="918" alt="스크린샷 2023-05-25 오후 6 03 26" src="https://github.com/gpdms/carrotPJ/assets/109894921/af996b6d-8e83-49c4-9f73-93841ee9237e">
+<img width="100%" alt="erd" src="https://github.com/gpdms/carrotPJ/assets/109894921/644c138c-4b78-453a-9aa8-1e6ed4074234">
 
 
 
