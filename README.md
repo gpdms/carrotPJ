@@ -188,3 +188,8 @@
 
 #### CSS
    * [Bootstrap, 직접 제작CSS](https://github.com/gpdms/carrotPJ/tree/NewNewHyeeun/src/main/resources/static/css)
+
+## ✂️ 업데이트 내용
+* 5.26 : 원화 천 단위 절삭추가
+
+
