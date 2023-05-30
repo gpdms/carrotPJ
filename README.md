@@ -32,6 +32,11 @@
   * IDE : IntelliJ
   * Distribution : Amazon EC2(Linux/UNIX), Amazon RDS
 
+
+## 🪄 ERD
+<img width="100%" alt="스크린샷 2023-05-25 오후 6 17 32" src="https://github.com/gpdms/carrotPJ/assets/109894921/75240980-e9d9-4763-a7c1-0298ee60c6f8">
+
+
 ## 주요 기능
 
 #### &nbsp;회원
@@ -153,13 +158,6 @@
     </tr>
 </table>
 
-
-
-
-
-
-## 🪄 ERD
-<img width="100%" alt="스크린샷 2023-05-25 오후 6 17 32" src="https://github.com/gpdms/carrotPJ/assets/109894921/75240980-e9d9-4763-a7c1-0298ee60c6f8">
 
 
 
