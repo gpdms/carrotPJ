@@ -38,36 +38,32 @@ public class MemberServiceImpl implements MemberService{
 
     @Value("${file.postImg}")
     private String rootImgDir;
-    /**
-     * 소셜로그인을 위한 아이디 난수생성
-     */
+
     @Override
-    public String createMemId() {
+    public String generateSocialMemId() {
         return UUID.randomUUID().toString();
     }
 
     @Override
-    public Member findOneMember(String memId) {
+    public Member findMemberByMemId(String memId) {
         return memberRepository.findById(memId)
                .orElseThrow(() -> new NoSuchElementException("Member Not Found"));
     }
 
     @Override
-    public boolean hasDuplicatedMemberId(String memId) {
-        return memberRepository.existsById(memId) ? true : false;
+    public boolean hasDuplicatedMemId(String memId) {
+        return memberRepository.existsById(memId);
     }
     @Override
     public boolean hasDuplicatedNickname(String nickname) {
-        return memberRepository.existsByNickname(nickname) ? true : false;
+        return memberRepository.existsByNickname(nickname);
     }
-
-
 
     @Override
     @Transactional
     public Map<String, Object> insertMember(Member member) {
         Map<String, Object> saveResult = new HashMap<>();
-        if (hasDuplicatedMemberId(member.getMemId())) {
+        if (hasDuplicatedMemId(member.getMemId())) {
             saveResult.put("fail", "id");
             return saveResult;
         }
@@ -75,7 +71,7 @@ public class MemberServiceImpl implements MemberService{
             saveResult.put("fail", "nickname");
             return saveResult;
         }
-        Member newMember = memberRepository.save(member);
+        memberRepository.save(member);
         saveResult.put("success", "저장 성공");
         return saveResult;
     }
@@ -92,7 +88,7 @@ public class MemberServiceImpl implements MemberService{
         if(!save_path.isEmpty()) {
             save_path = saveSocialProfImg(save_path);
         }
-        Member member = Member.builder().memId(createMemId())
+        Member member = Member.builder().memId(generateSocialMemId())
                 .mannerScore(36.5)
                 .email(userinfo.get("email").toString())
                 .nickname(userinfo.get("nickname").toString())
@@ -111,12 +107,14 @@ public class MemberServiceImpl implements MemberService{
             URL imgURL = new URL(url);
             String extension = url.substring(url.lastIndexOf(".")+1); // 확장자
 
-            File profImgDir = new File(rootImgDir + LocalDate.now());
-            profImgDir.mkdir();
+            String profDirPath = rootImgDir + File.separator + "member" + File.separator + LocalDate.now();
+            File profDir = new File(profDirPath);
+            profDir.mkdir();
+
 
             String uuid = UUID.randomUUID().toString();
             String save_name = uuid +"."+ extension;
-            save_path = profImgDir + "/" + save_name;
+            save_path = profDir + "/" + save_name;
 
             BufferedImage image = ImageIO.read(imgURL);
             File file = new File(save_path);
@@ -149,7 +147,7 @@ public class MemberServiceImpl implements MemberService{
     public boolean isPwdUpdated(String memId, String newPwd) {
         Member member = memberRepository.findById(memId).orElseThrow(
                 ()-> new NoSuchElementException());
-        member.updatePwd(newPwd);
+        member.updateMemPwd(newPwd);
         return member.getMemPwd().equals(newPwd) ? true : false;
     }
 
@@ -205,7 +203,7 @@ public class MemberServiceImpl implements MemberService{
             return profileUpdateMap;
         }
         //아니라면 업데이트 진행
-        member.updateProfile(updateMember.getNickname(), profPath, updateMember.getLoc());
+        member.updateProfile(updateMember);
         log.info("afterUpdateMember {}", member);
         profileUpdateMap.put("success", member);
         return profileUpdateMap;

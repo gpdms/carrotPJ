@@ -39,8 +39,8 @@ public enum ReviewBuyerIndicator {//100000
         return 5000/4;
     }
     
-    public static List<ReviewBuyerIndicator> findAllByEnumName(List<String> searchCodes){
-        return searchCodes.stream()
+    public static List<ReviewBuyerIndicator> findAllByEnumName(List<String> searchNames){
+        return searchNames.stream()
                 .map(ReviewBuyerIndicator::findOneByEnumName)
                 .collect(Collectors.toList());
     }

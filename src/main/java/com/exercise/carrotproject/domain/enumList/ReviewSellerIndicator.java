@@ -40,12 +40,12 @@ public enum ReviewSellerIndicator {
         return 5000/7;
     }
 
-    public static List<ReviewSellerIndicator> findAllByEnumName(List<String> searchCodes){
-        return searchCodes.stream()
-                .map(ReviewSellerIndicator::findByEnumName)
+    public static List<ReviewSellerIndicator> findAllByEnumName(List<String> searchNames){
+        return searchNames.stream()
+                .map(ReviewSellerIndicator::findOneByEnumName)
                 .collect(Collectors.toList());
     }
-    public static ReviewSellerIndicator findByEnumName(String enumName){
+    public static ReviewSellerIndicator findOneByEnumName(String enumName){
         return Arrays.stream(values())
                 .filter(value -> value.name().equals(enumName))
                 .findAny()

@@ -56,7 +56,7 @@ public class ReviewSellerServiceImpl implements ReviewSellerService {
     @Override
     public Long findReviewSellerIdByPost (Post post) {
         ReviewSeller reviewSeller = reviewSellerRepository.findByPost(post);
-        return reviewSellerRepository.findByPost(post) != null? reviewSeller.getReviewSellerId() : 0L;
+        return reviewSeller != null ? reviewSeller.getReviewSellerId() : 0L;
     }
 
     @Transactional

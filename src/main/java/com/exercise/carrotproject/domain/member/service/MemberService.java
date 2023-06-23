@@ -2,7 +2,6 @@ package com.exercise.carrotproject.domain.member.service;
 
 
 import com.exercise.carrotproject.domain.enumList.Role;
-import com.exercise.carrotproject.domain.member.dto.BlockDto;
 import com.exercise.carrotproject.domain.member.dto.MemberDto;
 import com.exercise.carrotproject.domain.member.entity.Block;
 import com.exercise.carrotproject.domain.member.entity.Member;
@@ -12,17 +11,16 @@ import org.springframework.web.multipart.MultipartFile;
 import javax.mail.MessagingException;
 import java.io.UnsupportedEncodingException;
 import java.util.Map;
-import java.util.Optional;
 
 @Service
 public interface MemberService {
-    Member findOneMember(String memId);
+    Member findMemberByMemId(String memId);
     MemberDto findOneSocialMemberDto(String email, Role role);
     String getNicknameByMemId(String memId);
-    boolean hasDuplicatedMemberId(String memId);
+    boolean hasDuplicatedMemId(String memId);
     boolean hasDuplicatedNickname(String nickname);
     boolean hasEmailAndRole(String email, Role role);
-    String createMemId();
+    String generateSocialMemId();
     Map<String, Object> insertMember(Member member);
     Map<String, Object> insertSocialMember(Map<String, Object> userinfo, Role role);
     String saveSocialProfImg(String url);

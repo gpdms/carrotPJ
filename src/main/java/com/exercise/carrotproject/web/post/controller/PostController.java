@@ -11,7 +11,6 @@ import com.exercise.carrotproject.domain.post.dto.MtPlaceDto;
 import com.exercise.carrotproject.domain.post.entity.Trade;
 import com.exercise.carrotproject.domain.post.service.PostService;
 import com.exercise.carrotproject.domain.post.service.TradeService;
-import com.exercise.carrotproject.web.argumentresolver.Login;
 import com.exercise.carrotproject.web.common.SessionConst;
 import com.exercise.carrotproject.domain.member.dto.MemberDto;
 import com.exercise.carrotproject.domain.post.dto.PostDto;
@@ -19,7 +18,6 @@ import com.exercise.carrotproject.domain.post.dto.PostImgDto;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.core.io.UrlResource;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
@@ -35,7 +33,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import java.io.IOException;
-import java.net.MalformedURLException;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
@@ -402,7 +399,7 @@ public class PostController {
     @GetMapping("/post/onSale/{memId}")
     public String onSalePost(@PathVariable String memId, Model model, @PageableDefault(page = 0, size = 20)Pageable pageable){
         //판매자 정보
-        Member member = memberService.findOneMember(memId);
+        Member member = memberService.findMemberByMemId(memId);
         MemberDto seller = MemberEntityDtoMapper.toMemberDto(member);
         //판매중,예약중 게시글
         Map map = postService.selectPostBySellState(memId);

@@ -36,16 +36,16 @@ public class Block {
         return blockId;
     }
     public Member getFromMem() {
-        return Member.builder().memId(getFromMem().getMemId())
-                .loc(getFromMem().getLoc())
-                .nickname(getFromMem().getNickname())
-                .mannerScore(getFromMem().getMannerScore()).build();
+        return Member.builder().memId(fromMem.getMemId())
+                .loc(fromMem.getLoc())
+                .nickname(fromMem.getNickname())
+                .mannerScore(fromMem.getMannerScore()).build();
     }
     public Member getToMem() {
-        return Member.builder().memId(getToMem().getMemId())
-                .loc(getToMem().getLoc())
-                .nickname(getToMem().getNickname())
-                .mannerScore(getToMem().getMannerScore()).build();
+        return Member.builder().memId(toMem.getMemId())
+                .loc(toMem.getLoc())
+                .nickname(toMem.getNickname())
+                .mannerScore(toMem.getMannerScore()).build();
     }
     public Timestamp getCreatedTime() {
         return createdTime;

@@ -22,7 +22,6 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-import javax.servlet.http.HttpSession;
 import java.util.*;
 
 @Slf4j
@@ -73,8 +72,8 @@ public class ReviewController {
         List<ReviewBuyerIndicator> indicatorList = ReviewBuyerIndicator.findAllByEnumName(reviewForm.getIndicators());
         reviewForm.setMessage(reviewForm.getMessage().replace("\r\n","<br>"));
         ReviewBuyer reviewBuyer = ReviewBuyer.builder()
-                .seller(memberService.findOneMember(reviewForm.getSellerId()))
-                .buyer(memberService.findOneMember(reviewForm.getBuyerId()))
+                .seller(memberService.findMemberByMemId(reviewForm.getSellerId()))
+                .buyer(memberService.findMemberByMemId(reviewForm.getBuyerId()))
                 .post(postRepository.findById(reviewForm.getPostId()).orElse(null))
                 .reviewState(ReviewState.findByStateCode(reviewForm.getReviewStateCode()))
                 .totalScore(ReviewBuyerIndicator.sumScore(indicatorList))
@@ -135,8 +134,8 @@ public class ReviewController {
         List<ReviewSellerIndicator> indicatorList = ReviewSellerIndicator.findAllByEnumName(reviewForm.getIndicators());
         reviewForm.setMessage(reviewForm.getMessage().replace("\r\n","<br>")); //줄개행);
         ReviewSeller reviewSeller = ReviewSeller.builder()
-                .seller(memberService.findOneMember(reviewForm.getSellerId()))
-                .buyer(memberService.findOneMember(reviewForm.getBuyerId()))
+                .seller(memberService.findMemberByMemId(reviewForm.getSellerId()))
+                .buyer(memberService.findMemberByMemId(reviewForm.getBuyerId()))
                 .post(postRepository.findById(reviewForm.getPostId()).orElse(null))
                 .reviewState(ReviewState.findByStateCode(reviewForm.getReviewStateCode()))
                 .totalScore(ReviewSellerIndicator.sumScore(indicatorList))

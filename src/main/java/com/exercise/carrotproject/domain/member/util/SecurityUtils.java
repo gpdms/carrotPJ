@@ -1,6 +1,5 @@
 package com.exercise.carrotproject.domain.member.util;
 
-
 import org.mindrot.jbcrypt.BCrypt;
 import org.springframework.stereotype.Component;
 
