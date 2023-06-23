@@ -26,12 +26,14 @@
 
 * Frontend : Thymeleaf, Bootstrap
 * Backend 
-  * Java11
-  * Framework : Spring Boot (2.7.2)
-  * ORM : JPA, QueryDsl
-  * Database : H2, MariaDB (10.6.10)
+  * Java 11
+  * Framework : Spring Boot 2.7.2
+  * ORM : JPA
+  * Database : H2, MariaDB 10.6.10
   * IDE : IntelliJ
-  * Distribution : Amazon EC2, Amazon RDS
+  * Distribution : Amazon EC2(Linux/UNIX), Amazon RDS
+  * API/Library : Kakao 로그인 Rest API & Kakao 맵 API, QueryDSL
+
 
 ## 주요 기능
 
