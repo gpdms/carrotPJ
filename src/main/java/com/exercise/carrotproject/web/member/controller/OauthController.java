@@ -50,16 +50,21 @@ public class OauthController {
     @GetMapping("/login/kakao")
     public String kakaoLogin(@RequestParam String code, Model model, HttpServletRequest request) throws Throwable {
         HttpSession session = request.getSession();
+        //해당 페이지에서 새로고침시 : 인증 code가 파기되어 오류페이지가 뜨지 않도록, login페이지로 이동시킨다.
+        String revokedCode = (String) session.getAttribute(SessionConst.KAKAO_REVOKED_CODE);
+        if (revokedCode!= null && revokedCode.equals(code)) {
+            session.removeAttribute(SessionConst.KAKAO_ACCESS_TOKEN);
+            return "redirect:/login";
+        }
+        //새로고침이 아니라 해당 url로 처음 요청하는 경우
         session.setAttribute(SessionConst.KAKAO_REVOKED_CODE, code);
-        //access토큰얻기
         String accessToken = kakaoService.getAccessToken(code);
-        log.info("accessTocken {} ", accessToken);
-        //토큰으로 유저정보얻기
         HashMap<String, Object> userInfo = kakaoService.getUserInfo(accessToken);
         log.info("userInfo 프로필 이미지 = {} ", userInfo.get("profPath").toString());
         log.info("userInfo 닉네임 = {} ", userInfo.get("nickname").toString());
         log.info("userInfo 이메일 = {} ", userInfo.get("email").toString());
         String email = userInfo.get("email").toString();
+
         boolean hasKakaoMember = memberService.hasEmailAndRole(email, Role.SOCIAL_KAKAO);
         if(!hasKakaoMember) {
             session.setAttribute(SessionConst.KAKAO_ACCESS_TOKEN, accessToken);
@@ -72,6 +77,7 @@ public class OauthController {
         session.removeAttribute(SessionConst.KAKAO_REVOKED_CODE);
         return "redirect:/";
     }
+
     @GetMapping("/unlink/kakao")
     @ResponseBody
     public String unlink(HttpSession session) throws Throwable {
@@ -80,6 +86,7 @@ public class OauthController {
         session.removeAttribute(SessionConst.KAKAO_REVOKED_CODE);
         return "성공";
     }
+
     @PostMapping("/signup/kakao")
     @ResponseBody
     public ResponseEntity<?> kakaoSignup(@Valid @RequestBody SignupSocialForm signupSocialForm,
@@ -116,10 +123,6 @@ public class OauthController {
     }
 }
 
-/*    @GetMapping("/logout/kakao")
-    @ResponseBody
-    public String kakaoLogout() {
-    }*/
 
 
 

@@ -16,11 +16,10 @@ import org.hibernate.validator.constraints.Range;
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
-import java.sql.Timestamp;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Entity
 @NoArgsConstructor
@@ -30,72 +29,39 @@ import java.util.stream.Collectors;
 @ToString (exclude = {"blockfromMemList", "blocktoMemList", "reviewBuyerList", "reviewSellerList"})
 @DynamicInsert
 public class Member extends BaseEntity {
-    @Id
-    @Size(min = 6, max = 40)
+    @Id @Column(updatable = false) @Size(min = 6, max = 40)
     private String memId;
-
     @Size(min = 8)
     private String memPwd;
-
-    @NotNull
-    @Enumerated(EnumType.STRING)
+    @NotNull @Enumerated(EnumType.STRING)
     private Role role;
-
     private String email;
-
-    @NotNull
-    @Size(min = 2, max = 15)
+    @NotNull @Column(unique = true) @Size(min = 2, max = 15)
     private String nickname;
-
     @Size(max=500)
     private String profPath;
-
-    @NotNull
-    @ColumnDefault("365000")
-    @Range(min = 0, max = 1200000)
+    @NotNull @ColumnDefault("365000") @Range(min = 0, max = 1200000)
     @Column(columnDefinition = "double precision CHECK (manner_score >= 0 AND manner_score <= 1200000)")
     private Double mannerScore;
-
-    @NotNull
-    @Convert(converter = LocAttributeConverter.class)
+    @NotNull @Convert(converter = LocAttributeConverter.class)
     private Loc loc;
+    @Column(insertable = false) @Temporal(TemporalType.TIMESTAMP)
+    private Date updatedMannerScoreTime;
 
-    @Column(insertable = false)
-    @Temporal(TemporalType.TIMESTAMP)
-    private Date updatedTimeManner;
-
-    @PrePersist
-    public void createDefault() {
-        this.mannerScore = 365000.0;
-    }
-
-    public void updatePwd(String memPwd) {
-        this.memPwd = memPwd;
-    }
-    public void updateProfile(String nickname, String profPath, Loc loc) {
-        this.nickname = nickname;
-        this.profPath = profPath;
-        this.loc = loc;
-    }
-
-    //Block테이블
     @OneToMany(mappedBy="fromMem", fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)
-    private List<Block> blockfromMemList = new ArrayList<>();
+    private List<Block> blockFromMemList = new ArrayList<>();
     @OneToMany(mappedBy="toMem", fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)
-    private List<Block> blocktoMemList = new ArrayList<>();
-
-    //reviewBuyer 테이블
+    private List<Block> blockToMemList = new ArrayList<>();
     @OneToMany(mappedBy="buyer", fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)
     private List<ReviewBuyer> reviewBuyerList = new ArrayList<>();
-    //reviewSeller 테이블
     @OneToMany(mappedBy="seller", fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)
     private List<ReviewSeller> reviewSellerList = new ArrayList<>();
 
     public String getMemId() {
-        return new String(memId);
+        return memId;
     }
     public String getMemPwd() {
-        return new String(memPwd);
+        return memPwd;
     }
     public String getNickname() {
         return nickname;
@@ -112,21 +78,31 @@ public class Member extends BaseEntity {
     public Role getRole() {
         return role;
     }
-    public List<Block> getBlockfromMemList() {
-        return blockfromMemList.stream().
-                collect(Collectors.toUnmodifiableList());
+    public List<Block> getBlockFromMemList() {
+        return Collections.unmodifiableList(blockFromMemList);
     }
     public List<Block> getBlocktoMemList() {
-        return blocktoMemList.stream().
-                collect(Collectors.toUnmodifiableList());
+        return Collections.unmodifiableList(blockToMemList);
     }
     public List<ReviewBuyer> getReviewBuyerList() {
-        return reviewBuyerList.stream().
-                collect(Collectors.toUnmodifiableList());
+        return Collections.unmodifiableList(reviewBuyerList);
     }
     public List<ReviewSeller> getReviewSellerList() {
-        return reviewSellerList.stream().
-                collect(Collectors.toUnmodifiableList());
+        return Collections.unmodifiableList(reviewSellerList);
+    }
+
+    @PrePersist
+    public void prePersistMember() {
+        this.mannerScore = 365000.0;
+    }
+
+    public void updateMemPwd(String memPwd) {
+        this.memPwd = memPwd;
+    }
+    public void updateProfile(Member updateMember) {
+        this.nickname = updateMember.getNickname();
+        this.profPath = updateMember.getProfPath();
+        this.loc = updateMember.getLoc();
     }
 }
 
