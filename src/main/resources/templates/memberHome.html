@@ -235,11 +235,11 @@
         }
 
 
-        // $('#block_btn').ready(function(){
-            $("#block_btn").on("click", block);
-        // });
+        $("#block_btn").on("click", block);
         function block() {
-            if (!blockConfirm()) { return; }
+            if (!blockConfirm()) {
+                return;
+            }
             let blockWho = [[${member.memId}]];
             $.ajax({
                 type: 'post',
@@ -249,7 +249,7 @@
                     alert("차단에 성공했습니다.");
                     $('#postList').load(location.href+' #postList');
                     $('#pf-setting').empty();
-                    $('#pf-setting').append( `<a id="block_cancel_btn" className="pf-btn" type="button">차단해제</a>`)
+                    $('#pf-setting').append( `<a id="block_cancel_btn" class="pf-btn" type="button">차단해제</a>`)
                 },
                 error: function (err) {
                     console.log(err);
@@ -272,7 +272,7 @@
                     alert("차단을 해제했습니다");
                     $('#postList').load(location.href+' #postList');
                     $('#pf-setting').empty();
-                    $('#pf-setting').append( `<a id="block_btn" className="pf-btn" type="button"> 차단하기</a>`)
+                    $('#pf-setting').append( `<a id="block_btn" class="pf-btn" type="button">차단하기</a>`)
                 },
                 error: function (err) {
                     console.log(err);
