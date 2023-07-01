@@ -8,6 +8,6 @@ import org.springframework.stereotype.Repository;
 import java.util.Optional;
 
 @Repository
-public interface BlockRepository extends JpaRepository<Block, Long> {
+public interface BlockRepository extends JpaRepository<Block, Long>, BlockCustomRepository {
     Optional<Block> findByFromMemAndToMem(Member fromMem, Member toMem);
 }
