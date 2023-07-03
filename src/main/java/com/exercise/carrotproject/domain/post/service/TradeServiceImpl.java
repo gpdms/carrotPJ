@@ -66,12 +66,9 @@ public class TradeServiceImpl implements TradeService{
     public void deleteTradeAndReview(Long postId){
         Post post = postRepository.findById(postId).orElseThrow();
         //trade테이블에서 delete
-            tradeRepository.deleteByPost(post);
-            //리뷰도 삭제
-            reviewBuyerRepository.deleteByPost(post);
-            reviewSellerRepository.deleteByPost(post);
+        tradeRepository.deleteByPost(post);
+        //리뷰도 삭제
+        reviewBuyerRepository.deleteByPost(post);
+        reviewSellerRepository.deleteByPost(post);
     }
-
-
-
 }

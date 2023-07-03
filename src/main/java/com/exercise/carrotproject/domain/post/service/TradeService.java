@@ -9,5 +9,4 @@ public interface TradeService {
     void insertTrade(Long postId, String buyerId);
     void updateTrade(Long postId, String buyerId);
     void deleteTradeAndReview(Long postId);
-
 }

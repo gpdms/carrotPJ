@@ -18,14 +18,13 @@ import org.springframework.stereotype.Repository;
 import java.util.List;
 //QPost를 static import함으로써, QPost에 미리 정의된 Q 타입 인스턴스 상수를 사용
 import static com.exercise.carrotproject.domain.member.entity.QBlock.block;
- import static com.exercise.carrotproject.domain.post.entity.QPost.post;
+import static com.exercise.carrotproject.domain.post.entity.QPost.post;
 import static com.exercise.carrotproject.domain.review.entity.QReviewBuyer.reviewBuyer;
 import static org.springframework.util.StringUtils.hasText;
 
 @Repository
 @RequiredArgsConstructor
 public class CustomPostRepositoryImpl implements CustomPostRepository{
-
     private final JPAQueryFactory jpaQueryFactory;
 
     @Override
@@ -36,23 +35,35 @@ public class CustomPostRepositoryImpl implements CustomPostRepository{
                 .where(post.postId.eq(postId))
                 .execute();
     }
-//findByMemberAndSellStateAndHideStateOrderByPostIdDesc
+
+
     @Override
-    public List<SoldPostDto> getSoldList(String memId) {
-         return jpaQueryFactory
+    public List<SoldPostDto> findSoldPostListByMemId(String memId) {
+        return jpaQueryFactory
                 .select(new QSoldPostDto(post, reviewBuyer.reviewBuyerId))
                 .from(post)
-                .where(post.member.memId.eq(memId),
-                        post.hideState.eq(HideState.SHOW),
-                        post.sellState.eq(SellState.SOLD))
+                .where(post.hideState.eq(HideState.SHOW),
+                        post.sellState.eq(SellState.SOLD),
+                        post.member.memId.eq(memId))
                 .leftJoin(reviewBuyer)
                 .on(reviewBuyer.post.postId.eq(post.postId))
-                 .orderBy(post.postId.desc())
+                .orderBy(post.postId.desc())
                 .fetch();
     }
 
     @Override
-    public List<Post> selectBoardPost(String loginMemId, Loc loginMemLoc){
+    public List<Post> postListByLimit(String memId, int limit) {
+        return jpaQueryFactory.select(post)
+                .from(post)
+                .where(post.hideState.eq(HideState.SHOW),
+                        memIdEq(memId))
+                .limit(limit)
+                .orderBy(post.postId.desc())
+                .fetch();
+    }
+
+    @Override
+    public List<Post> selectPostForBoard(String loginMemId, Loc loginMemLoc){
         return jpaQueryFactory.select(post)
                 .from(post)
                 .where(post.hideState.eq(HideState.SHOW),
@@ -62,8 +73,9 @@ public class CustomPostRepositoryImpl implements CustomPostRepository{
                 .orderBy(post.postId.desc())
                 .fetch();
     }
+
     @Override
-    public List<Post> selectBoardPostByCategory(String loginMemId, Loc loginMemLoc, Category category){
+    public List<Post> selectPostForBoardByCategory(String loginMemId, Loc loginMemLoc, Category category){
         return jpaQueryFactory.select(post)
                 .from(post)
                 .where(post.hideState.eq(HideState.SHOW),
@@ -86,35 +98,25 @@ public class CustomPostRepositoryImpl implements CustomPostRepository{
                 )
                 .fetch();
     }
-    @Override
-    public List<Post> postListByLimit(int limit, String memId) {
-        return jpaQueryFactory.select(post)
-                        .from(post)
-                        .where(post.hideState.eq(HideState.SHOW),
-                               memIdEq(memId))
-                        .limit(limit)
-                        .orderBy(post.postId.desc())
-                        .fetch();
-    }
 
-    public BooleanExpression notExistsBlock(String loginMemId) {
+    private BooleanExpression notExistsBlock (String loginMemId) {
         BooleanExpression booleanExpression = null;
-        if(hasText(loginMemId)) {
-            BooleanExpression fromIdEq= block.fromMem.memId.eq(loginMemId).and(
-                    block.toMem.memId.eq(post.member.memId));
-            BooleanExpression toIdEq = block.toMem.memId.eq(loginMemId).and(
-                    block.fromMem.memId.eq(post.member.memId));
-            booleanExpression = JPAExpressions.selectFrom(block)
+        if (hasText(loginMemId)) {
+            BooleanExpression fromIdEq = block.fromMem.memId.eq(loginMemId)
+                    .and(block.toMem.memId.eq(post.member.memId));
+            BooleanExpression toIdEq = block.toMem.memId.eq(loginMemId)
+                    .and(block.fromMem.memId.eq(post.member.memId));
+            booleanExpression = JPAExpressions
+                    .selectFrom(block)
                     .where(fromIdEq.or(toIdEq))
                     .exists().not();
         }
         return booleanExpression;
     }
-    public BooleanExpression locEq(Loc loc){
+    private BooleanExpression locEq(Loc loc){
         return loc != null ? post.loc.eq(loc) : null;
     }
-    public BooleanExpression memIdEq(String memId){
+    private BooleanExpression memIdEq(String memId){
         return hasText(memId) ? post.member.memId.eq(memId) : null;
     }
-
 }
