@@ -13,27 +13,27 @@
     <div class="info-nav-btns">
         <div class="info-nav-btn">
             <p>&#183; &nbsp;</p>
-            <a th:href="@{/members/{memId}/trade/sellList(memId=${session.loginMember.memId})}">
+            <a th:href="@{/members/{memId}/trade/sell-list(memId=${session.loginMember.memId})}">
                 판매내역 </a>
         </div>
         <div class="info-nav-btn">
             <p>&#183; &nbsp;</p>
-            <a th:href="@{/members/{memId}/trade/buyList(memId=${session.loginMember.memId})}">
+            <a th:href="@{/members/{memId}/trade/buy-list(memId=${session.loginMember.memId})}">
                 구매내역 </a>
         </div>
         <div class="info-nav-btn">
             <p>&#183; &nbsp;</p>
-            <a th:href="@{/members/{memId}/wishes(memId=${session.loginMember.memId})}">
+            <a th:href="@{/members/{memId}/wish-list(memId=${session.loginMember.memId})}">
                 관심목록 </a>
         </div>
         <div class="info-nav-btn">
             <p>&#183; &nbsp;</p>
-            <a th:href="@{/members/{memId}/profile(memId=${session.loginMember.memId})}">
+            <a th:href="@{/members/settings/profile}">
                 프로필 관리 </a>
         </div>
         <div class="info-nav-btn">
             <p>&#183; &nbsp;</p>
-            <a th:href="@{/members/{memId}/edit/pwd(memId=${session.loginMember.memId})}">
+            <a th:href="@{/members/settings/pwd}">
                 비밀번호 변경 </a>
         </div>
     </div>

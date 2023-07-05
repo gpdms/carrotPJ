@@ -18,7 +18,7 @@
             <div class="edit-form">
                 <h4 class="edit-title"> 프로필 변경 </h4>
                 <form id="profileEditForm" style="width:300px">
-                    <input type="hidden" name="memId" th:value="${profileForm.memId}" >
+                    <input type="hidden" name="memId" th:value="${profileForm.memId}">
                     <div class="pf-input img-form">
                         <div class="profile-img" id="profile-img">
                             <img th:src="@{|/members/${profileForm.memId}/profileImg|}" alt="프로필이미지">
@@ -113,111 +113,22 @@
                 console.log(data.member);
                 alert('프로필 변경에 성공했습니다');
                  location.reload($('#nav-pf-img'));
-                // $('#nav-pf-img').load(location.href+' #nav-pf-img'); //앞 공백 필수
-                // $('#nav-pf-nick').replaceWith(`<p id="nav-pf-nick"> ${data.member.nickname}</p>`);
             })
             .fail(function (err) {
                 alert('프로필 변경에 실패했습니다');
                 const message = err.responseJSON;
                 if (message.detail) {
-                    console.log(message);
                     $('#nick-error').replaceWith(`<div id="nick-error" class="field-error">${message.detail}</div>`)
                     $('#nickname').addClass("field-error-border");
                 }
-                if ('fail-nickname' in message) {
-                    $('#nick-error').replaceWith(`<div id="nick-error" class="field-error">중복된 닉네임입니다.</div>`)
-                    $("#nickname").addClass("field-error-border");
-                }
-                if ('fail-image' in message) {
+                if ('fail' in message) {
                     $('#image-error').replaceWith(`<div id="image-error" class="field-error">
                                     프로필 사진이 이미지 파일이 아닙니다. .jpg, .png, .gif의 이미지 파일만 업로드 가능합니다.
                                     </div>`)
                 }
-                if (!message.nickname && !'fail-nickname' in message && !'fail-image' in message)
+                if (!message.nickname && !'fail' in message)
                     alert('프로필 변경에 실패했습니다');
             });
     })
-
-/*    function pfImgRefresh (memId) {
-        $.ajax({
-            url: `/members/${memId}/profileImg`,
-            type: "get",
-        }).done(function(data) {
-            console.log(data);
-            $('#nav-pf-img').replaceWith(`<div class="profile-img" id="nav-pf-img">
-                <img src="/members/${memId}/profileImg" alt="프로필이미지">
-            </div>`)
-        })
-    }*/
-
-
-    /*
-    const profileEditForm = document.getElementById('profileEditForm');
-    profileEditForm.addEventListener('submit', (e) => {
-        e.preventDefault();
-        let memId = [[${profileForm.memId}]];
-        let url = `/members/${memId}/edit/profile`;
-        console.log(url);
-        const formData= new FormData(profileEditForm);
-        fetch(url, {
-            method: "PATCH",
-            body: formData,
-            headers: {
-                "Accept": "application/json"
-            }
-        })
-        .then((response) => {
-            if (!response.ok){
-                return response.text().then(text => { throw new Error(text) })
-            } else {
-                return response.json()
-            };
-        })
-        .then((data) => {
-            console.log(data.member);
-            alert('프로필 변경에 성공했습니다');
-        })
-        .catch((error) => {
-            const failUpdate = JSON.parse(error.message).fail_update;
-            if(failUpdate == 'imageType') {
-                alert('프로필 사진이 이미지 파일이 아닙니다. .jpg, .png, .gif의 이미지 파일만 업로드 가능합니다.');
-            } else{
-                alert('프로필 변경에 실패했습니다');
-            }
-        });
-    });*/
-
-/*function buyListView() {
-    let memId = [[${session.loginMember.memId}]];
-    let url = '/members/buyList'+memId
-    $.ajax({
-        type: 'get',
-        url: url,
-        success: function (data) {
-            $("#buyList").replaceWith(`
-                                    `);
-
-        },
-        error: function (err) {
-        }
-    })
-}
-
-    function sellListView() {
-        let memId = [[${session.loginMember.memId}]];
-        let url = '/members/sellList'+memId
-        $.ajax({
-            type: 'get',
-            url: url,
-            success: function (data) {
-                $("#buyList").replaceWith(`<div class="user_name" id="user_nick"> ${nickname} </div>`
-                );
-
-                $("#sellList").replaceWith(`<div id="modal_nick"> ${nickname}님의 프로필 </div>`);
-            },
-            error: function (err) {
-            }
-        })
-    }*/
 </script>
 </div>

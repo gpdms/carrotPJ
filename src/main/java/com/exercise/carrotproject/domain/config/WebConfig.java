@@ -41,7 +41,7 @@ public class WebConfig implements WebMvcConfigurer {
         registry.addInterceptor(new MemberInfoCheckInterceptor())
                 .order(2)
                 .addPathPatterns("/members/**")
-                .excludePathPatterns("/members/signup/**", "/members/**/profileImg", "/members/findPwd",
+                .excludePathPatterns("/members/signup/**", "/members/**/profileImg", "/members/pwd/find", "/members/settings/**",
                         "/members/css/**","/members/js/**","/members/assets/**",
                         "/members/error");
         registry.addInterceptor(postMemberCheckInterceptor())

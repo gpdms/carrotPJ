@@ -11,11 +11,16 @@ import javax.validation.constraints.*;
 @Setter
 @ToString
 public class SignupSocialForm {
-    @NotBlank
-    private String email;
+    @Pattern(regexp = "^(?=.*[a-zA-Z])[a-zA-Z0-9]{6,12}$",
+            message = "아이디는 6~12자의 영문 대/소문자, 숫자만 사용가능합니다.")
+    private String memId;
 
-    @Size(min=2, max = 15, message = "닉네임은 2자 이상, 15자 이하여야 합니다.")
+    @Pattern(regexp = "^[a-zA-Z0-9가-힣]{2,15}$",
+            message = "닉네임은 2~15자의 영문, 한글, 숫자만 사용가능합니다.")
     private String nickname;
+
+    @NotEmpty
+    private String email;
 
     @NotNull
     private Loc loc;

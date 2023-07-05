@@ -15,28 +15,19 @@ import java.util.Map;
 @Service
 public interface MemberService {
     Member findMemberByMemId(String memId);
-    MemberDto findOneSocialMemberDto(String email, Role role);
-    String getNicknameByMemId(String memId);
+    Member findMemberByEmail(String email);
+    Member findMemberByEmailAndRole(String email, Role role);
     boolean hasDuplicatedMemId(String memId);
-    boolean hasDuplicatedNickname(String nickname);
-    boolean hasEmailAndRole(String email, Role role);
-    String generateSocialMemId();
-    Map<String, Object> insertMember(Member member);
-    Map<String, Object> insertSocialMember(Map<String, Object> userinfo, Role role);
-    String saveSocialProfImg(String url);
+    boolean hasDuplicatedEmail(String email);
+    boolean hasDuplicatedEmailAndRole(String email, Role role);
 
-    Member findMemberForProfileEdit(String memId);
-    String getProfPath(String memId);
-    String createProfPath(MultipartFile img);
-    void saveImgServer(MultipartFile profImg, String save_path);
+    Member login(String loginId, String loginPwd);
+    void insertMember(Member member);
+    Map<String, Object> insertSocialMember(MemberDto memberDto);
 
-    boolean isPwdUpdated(String memId, String newPwd);
-    Map<String, Object> profileUpdate(Member updateMember, MultipartFile profImg);
-    long temporaryPwdUdpate(String email) throws MessagingException, UnsupportedEncodingException;
+    String sendAuthCodeByEmail(String email);
+    void issueTemporaryPwdByEmail(String email);
 
-    Block findOneBlockByFromMemToMem (String fromMemId, String toMemId);
-    boolean existBlockByFromMemToMem (String fromMemId, String toMemId);
-    boolean existBlockByMemIds (String memId1, String memId2);
-    Map<String,String> insertBlock(String fromMemId, String toMemId);
-    void deleteBlock(String fromMemId, String toMemId);
+    Map<String, Object> changeProfile(Member updateMember, MultipartFile profImg);
+    void changePwdByMemId(String newPwd, String memId);
 }

@@ -1,6 +1,7 @@
 package com.exercise.carrotproject.web.member.controller;
 
 import com.exercise.carrotproject.domain.enumList.Role;
+import com.exercise.carrotproject.domain.member.MemberEntityDtoMapper;
 import com.exercise.carrotproject.domain.member.service.MemberService;
 import com.exercise.carrotproject.web.common.SessionConst;
 import com.exercise.carrotproject.domain.member.dto.MemberDto;
@@ -33,17 +34,12 @@ public class LoginController {
         if (bindingResult.hasErrors()) {
             return "member/loginForm";
         }
-        Member loginMember = memberService.login(form.getLoginId(), form.getPwd());
-        if (loginMember == null) {
+        Member member = memberService.login(form.getLoginId(), form.getPwd());
+        if (member == null) {
             bindingResult.reject("loginFail", "아이디 또는 비밀번호가 맞지 않습니다.");
             return "member/loginForm";
         }
-        MemberDto loginMemberDto = MemberDto.builder().memId(loginMember.getMemId())
-                .nickname(loginMember.getNickname())
-                .mannerScore(loginMember.getMannerScore())
-                .role(Role.USER)
-                .loc(loginMember.getLoc()).build();
-
+        MemberDto loginMemberDto = MemberEntityDtoMapper.toMemberDto(member);
         HttpSession session = request.getSession();
         session.setAttribute(SessionConst.LOGIN_MEMBER, loginMemberDto);
         return "redirect:" + redirectURL;

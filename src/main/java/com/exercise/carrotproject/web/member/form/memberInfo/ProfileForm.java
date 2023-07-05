@@ -20,7 +20,8 @@ public class ProfileForm {
     @Size(max=1000)
     private String profPath;
 
-    @Size(min=2, max = 12, message = "2자 이상, 12자 이하여야 합니다.")
+    @Pattern(regexp = "^[a-zA-Z0-9가-힣]{2,15}$",
+            message = "닉네임은 2~15자의 영문, 한글, 숫자만 사용가능합니다.")
     private String nickname;
 
     @NotNull

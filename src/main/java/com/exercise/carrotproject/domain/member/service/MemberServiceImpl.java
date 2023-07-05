@@ -1,10 +1,8 @@
 package com.exercise.carrotproject.domain.member.service;
 
-import com.exercise.carrotproject.domain.enumList.Loc;
 import com.exercise.carrotproject.domain.enumList.Role;
 import com.exercise.carrotproject.domain.member.MemberEntityDtoMapper;
 import com.exercise.carrotproject.domain.member.dto.MemberDto;
-import com.exercise.carrotproject.domain.member.entity.Block;
 import com.exercise.carrotproject.domain.member.entity.Member;
 import com.exercise.carrotproject.domain.member.repository.BlockRepository;
 import com.exercise.carrotproject.domain.member.repository.MemberRepository;
@@ -32,22 +30,25 @@ import java.util.*;
 @RequiredArgsConstructor
 public class MemberServiceImpl implements MemberService{
     private final MemberRepository memberRepository;
-    private final BlockRepository blockRepository;
     private final EmailServiceImpl emailService;
-    private final SecurityUtils securityUtils;
 
     @Value("${file.postImg}")
     private String rootImgDir;
 
     @Override
-    public String generateSocialMemId() {
-        return UUID.randomUUID().toString();
-    }
-
-    @Override
     public Member findMemberByMemId(String memId) {
         return memberRepository.findById(memId)
                .orElseThrow(() -> new NoSuchElementException("Member Not Found"));
+    }
+    @Override
+    public Member findMemberByEmail(String email) {
+        return memberRepository.findByEmail(email)
+                .orElseThrow(() -> new NoSuchElementException("Member Not Found"));
+    }
+    @Override
+    public Member findMemberByEmailAndRole(String email, Role role) {
+        return memberRepository.findByEmailAndRole(email, role)
+                .orElseThrow(() -> new NoSuchElementException("Member Not Found"));
     }
 
     @Override
@@ -55,219 +56,150 @@ public class MemberServiceImpl implements MemberService{
         return memberRepository.existsById(memId);
     }
     @Override
-    public boolean hasDuplicatedNickname(String nickname) {
-        return memberRepository.existsByNickname(nickname);
+    public boolean hasDuplicatedEmail(String email) {
+        return memberRepository.existsByEmail(email);
+    }
+    @Override
+    public boolean hasDuplicatedEmailAndRole(String email, Role role) {
+        return memberRepository.existsByEmailAndRole(email, role);
+    }
+
+    @Override
+    public Member login(String loginId, String loginPwd) {
+        Member member = findMemberByMemId(loginId);
+        boolean pwdMatch = member.isPwdMatch(loginPwd);
+        System.out.println("pwdMatch !!!= " + pwdMatch);
+        return member.isPwdMatch(loginPwd) ? member : null;
     }
 
     @Override
     @Transactional
-    public Map<String, Object> insertMember(Member member) {
-        Map<String, Object> saveResult = new HashMap<>();
-        if (hasDuplicatedMemId(member.getMemId())) {
-            saveResult.put("fail", "id");
-            return saveResult;
-        }
-        if(hasDuplicatedNickname(member.getNickname())) {
-            saveResult.put("fail", "nickname");
-            return saveResult;
-        }
+    public String sendAuthCodeByEmail(String email) {
+        String authCode = emailService.generateAuthCode();
+        emailService.sendAuthCodeByEmail(authCode, email);
+        return authCode;
+    }
+
+    @Override
+    @Transactional
+    public void insertMember(Member member) {
         memberRepository.save(member);
-        saveResult.put("success", "저장 성공");
-        return saveResult;
     }
 
     @Override
     @Transactional
-    public Map<String, Object> insertSocialMember(Map<String, Object> userinfo, Role role) {
+    public Map<String, Object> insertSocialMember(MemberDto memberDto) {
         HashMap<String, Object> resultMap = new HashMap<>();
-        if(hasDuplicatedNickname(userinfo.get("nickname").toString())) {
-            resultMap.put("fail", "nickname");
-            return resultMap;
+
+        String url = memberDto.getProfPath();
+        if(!url.isEmpty()) {
+            String savePath = saveUrlImgToServer(url);
+            memberDto.setProfPath(savePath);
         }
-        String save_path = userinfo.get("profPath").toString();
-        if(!save_path.isEmpty()) {
-            save_path = saveSocialProfImg(save_path);
-        }
-        Member member = Member.builder().memId(generateSocialMemId())
-                .mannerScore(36.5)
-                .email(userinfo.get("email").toString())
-                .nickname(userinfo.get("nickname").toString())
-                .loc((Loc)userinfo.get("loc"))
-                .profPath(save_path)
-                .role(role)
-                .build();
+
+        memberDto.setMemId(createUniqueMemId());
+        memberDto.setRole(Role.SOCIAL_KAKAO);
+        Member member = MemberEntityDtoMapper.toSocialMemberEntity(memberDto);
         memberRepository.save(member);
         resultMap.put("success", MemberEntityDtoMapper.toMemberDto(member));
         return resultMap;
     }
-    @Override
-    public String saveSocialProfImg(String url) {
-        String save_path = url;
+
+    private String createUniqueMemId() {
+        String uniqueId = UUID.randomUUID().toString();
+        uniqueId = uniqueId.replace("-", "");
+        uniqueId = uniqueId.substring(0, 16);
+        return uniqueId;
+    }
+
+    private String saveUrlImgToServer(String url) {
+        String savePath;
         try {
             URL imgURL = new URL(url);
-            String extension = url.substring(url.lastIndexOf(".")+1); // 확장자
-
-            String profDirPath = rootImgDir + File.separator + "member" + File.separator + LocalDate.now();
-            File profDir = new File(profDirPath);
-            profDir.mkdir();
-
-
-            String uuid = UUID.randomUUID().toString();
-            String save_name = uuid +"."+ extension;
-            save_path = profDir + "/" + save_name;
-
             BufferedImage image = ImageIO.read(imgURL);
-            File file = new File(save_path);
-
-            ImageIO.write(image, extension, file); // image를 file로 업로드
-            System.out.println("이미지 업로드 완료!");
+            String extension = url.substring(url.lastIndexOf(".")+1);
+            savePath = createProfPath(url);
+            File file = new File(savePath);
+            ImageIO.write(image, extension, file);
         } catch (MalformedURLException e) {
             throw new RuntimeException(e);
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
-        return save_path;
+        return savePath;
     }
-
-    @Override
-    public Member findMemberForProfileEdit(String memId) {
-        Member member = memberRepository.findById(memId).orElse(null);
-        return Member.builder().profPath(member.getProfPath())
-                .nickname(member.getNickname())
-                .loc(member.getLoc()).build();
-    }
-
-    @Override
-    public String getProfPath(String memId) {
-        return memberRepository.findById(memId).orElseThrow().getProfPath();
-    }
-
-    @Override
-    @Transactional
-    public boolean isPwdUpdated(String memId, String newPwd) {
-        Member member = memberRepository.findById(memId).orElseThrow(
-                ()-> new NoSuchElementException());
-        member.updateMemPwd(newPwd);
-        return member.getMemPwd().equals(newPwd) ? true : false;
-    }
-
-    @Override
-    //프로필 이미지 경로 생성
-    public String createProfPath(MultipartFile img) {
-        //디렉토리 생성
-        String profDirPath = rootImgDir + File.separator + "member" + File.separator + LocalDate.now();
-        File profDir = new File(profDirPath);
-        profDir.mkdir();
-
-        //이미지 path 생성
-        String origin_name = img.getOriginalFilename();
-        String uuid = UUID.randomUUID().toString();
-        String extension = origin_name.substring(origin_name.lastIndexOf("."));
-        String save_name = uuid + extension;
-        String save_path =profDirPath + "/" + save_name;
-        return save_path;
-    }
-    @Override
-    public void saveImgServer(MultipartFile profImg, String save_path){
+    private void saveImgToServer(MultipartFile profImg){
+        String savePath = createProfPath(profImg);
         try {
-            profImg.transferTo(new File(save_path));
+            profImg.transferTo(new File(savePath));
         } catch (IllegalStateException | IOException e) {
             e.printStackTrace();
         }
     }
+    private String createProfPath(MultipartFile profImg) {
+        String profDirPath = createProfDir();
+        String originName = profImg.getOriginalFilename();
+        String extension = originName.substring(originName.lastIndexOf("."));
+        String uuid = UUID.randomUUID().toString();
+        String saveName = uuid + extension;
+        String savePath = profDirPath + File.separator + saveName;
+        return savePath;
+    }
+    private String createProfPath(String url) {
+        String profDirPath = createProfDir();
+        String extension = url.substring(url.lastIndexOf("."));
+        String uuid = UUID.randomUUID().toString();
+        String saveName = uuid + extension;
+        String savePath = profDirPath + File.separator + saveName;
+        return savePath;
+    }
+    private String createProfDir(){
+        String profDirPath = rootImgDir + File.separator + "member" + File.separator + LocalDate.now();
+        new File(profDirPath).mkdir();
+        return profDirPath;
+    }
 
     @Override
     @Transactional
-    public Map<String, Object> profileUpdate(Member updateMember, MultipartFile profImg) {
-        Map<String, Object> profileUpdateMap = new HashMap<>();
-        Member member = memberRepository.findById(updateMember.getMemId()).orElseThrow(
-                ()-> new NoSuchElementException());
-        String profPath = member.getProfPath();
-        //프로필 이미지를 변경한다면
+    public void changePwdByMemId (String newPwd, String memId) {
+        Member member = findMemberByMemId(memId);
+        if (member.isPwdMatch(newPwd)) {
+            return;
+        }
+        member.updateMemPwd(newPwd);
+    }
+
+    @Override
+    @Transactional
+    public Map<String, Object> changeProfile (Member updateMember, MultipartFile profImg) {
+        Map<String, Object> updateResult = new HashMap<>();
+
+        Member member = findMemberByMemId(updateMember.getMemId());
+        String profPathForUdpate = member.getProfPath();
+        //프로필 이미지를 변경한다면,
         if(!profImg.isEmpty()) {
-            if(profImg.getContentType().startsWith("image")==false) {
-                profileUpdateMap.put("fail-image", "NotImageType");
+            boolean isImageType = profImg.getContentType().startsWith("image");
+            if(!isImageType) {
+                updateResult.put("fail", "image");
+                return updateResult;
             } else {
-                profPath = createProfPath(profImg);
-                saveImgServer(profImg, profPath) ;
+                profPathForUdpate = createProfPath(profImg);
+                saveImgToServer(profImg) ;
             }
         }
-        //닉네임을 변경한다면
-        if(!member.getNickname().equals(updateMember.getNickname())) {
-            if(hasDuplicatedNickname(updateMember.getNickname()))
-                profileUpdateMap.put("fail-nickname", "duplicatedNickname");
-        }
-        //하나라도 실패하면
-        boolean hasFail = profileUpdateMap.keySet().stream().anyMatch(key -> key.contains("fail"));
-        if(hasFail) {
-            return profileUpdateMap;
-        }
-        //아니라면 업데이트 진행
+
         member.updateProfile(updateMember);
-        log.info("afterUpdateMember {}", member);
-        profileUpdateMap.put("success", member);
-        return profileUpdateMap;
-    }
-
-    @Override
-    public Block findOneBlockByFromMemToMem (String fromMemId, String toMemId){
-        Member fromMem = memberRepository.findById(fromMemId).orElse(null);
-        Member toMem = memberRepository.findById(toMemId).orElse(null);
-        if(fromMem!=null && toMem!=null) {
-            return blockRepository.findByFromMemAndToMem(fromMem, toMem).orElse(null);
-        }
-        return null;
-    }
-    @Override
-    public boolean existBlockByMemIds (String memId1, String memId2) {
-        return memberRepository.hasBlockByMemIds(memId1, memId2);
-    }
-    @Override
-    public boolean existBlockByFromMemToMem (String fromMemId, String toMemId) {
-        return memberRepository.hasBlockByFromMemToMem(fromMemId, toMemId);
-    }
-    @Override
-    @Transactional
-    public Map<String,String> insertBlock(String fromMemId, String toMemId) {
-        Block block = Block.builder().fromMem(memberRepository.findById(fromMemId).orElse(null))
-                .toMem(memberRepository.findById(toMemId).orElse(null)).build();
-        Map<String, String> saveResult = new HashMap<>();
-        if (blockRepository.save(block) != null) {
-            saveResult.put("resultCode", "fail");
-        }
-        saveResult.put("resultCode", "success");
-        return saveResult;
+        updateResult.put("success", member);
+        return updateResult;
     }
 
     @Override
     @Transactional
-    public void deleteBlock(String fromMemId, String toMemId) {
-        Block block = findOneBlockByFromMemToMem(fromMemId, toMemId);
-        blockRepository.deleteById(block.getBlockId());
-    }
-    @Override
-    public boolean hasEmailAndRole(String email, Role role) {
-        return memberRepository.existsByEmailAndRole(email, role);
-    }
-    @Override
-    public MemberDto findOneSocialMemberDto(String email, Role role) {
-        Member member = memberRepository.findByEmailAndRole(email, role);
-        return  MemberEntityDtoMapper.toMemberDto(member);
-    }
-    @Override
-    public String getNicknameByMemId(String memId) {
-        return memberRepository.selectNicknameByMemId(memId);
-    }
-
-    @Override
-    @Transactional
-    public long temporaryPwdUdpate(String email) throws MessagingException, UnsupportedEncodingException {
-        String tempPwd = emailService.createCode();
-        String hashedPwd = securityUtils.getHashedPwd(tempPwd);
-        long result = memberRepository.updateTemporaryPwd(email, hashedPwd);
-        if(result >0) {
-            emailService.sendPwdEmail(email, tempPwd);
-        }
-        return result;
+    public void issueTemporaryPwdByEmail (String email) {
+        String tempPwd = emailService.generateAuthCode();
+        String hashedTempPwd = SecurityUtils.encrpytPwd(tempPwd);
+        Member member = memberRepository.findByEmail(email).orElseThrow();
+        member.updateMemPwd(hashedTempPwd);
+        emailService.sendTemporaryPwdByEmail(tempPwd, email);
     }
 }

@@ -4,6 +4,7 @@ import com.exercise.carrotproject.domain.common.entity.BaseEntity;
 import com.exercise.carrotproject.domain.enumList.Loc;
 import com.exercise.carrotproject.domain.converter.LocAttributeConverter;
 import com.exercise.carrotproject.domain.enumList.Role;
+import com.exercise.carrotproject.domain.member.util.SecurityUtils;
 import com.exercise.carrotproject.domain.review.entity.ReviewBuyer;
 import com.exercise.carrotproject.domain.review.entity.ReviewSeller;
 
@@ -12,6 +13,7 @@ import lombok.*;
 import org.hibernate.annotations.ColumnDefault;
 import org.hibernate.annotations.DynamicInsert;
 import org.hibernate.validator.constraints.Range;
+import org.springframework.util.StringUtils;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
@@ -22,31 +24,36 @@ import java.util.Date;
 import java.util.List;
 
 @Entity
-@NoArgsConstructor
-@AllArgsConstructor
 @Builder
 @JsonIgnoreProperties({"blockfromMemList", "blocktoMemList", "reviewBuyerList", "reviewSellerList"})
 @ToString (exclude = {"blockfromMemList", "blocktoMemList", "reviewBuyerList", "reviewSellerList"})
 @DynamicInsert
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
+@AllArgsConstructor
 public class Member extends BaseEntity {
-    @Id @Column(updatable = false) @Size(min = 6, max = 40)
+    @Id
+    @Size(min = 6, max = 12)
     private String memId;
-    @Size(min = 8)
     private String memPwd;
-    @NotNull @Enumerated(EnumType.STRING)
-    private Role role;
     private String email;
-    @NotNull @Column(unique = true) @Size(min = 2, max = 15)
+    @Size(min = 2, max = 15)
     private String nickname;
-    @Size(max=500)
+    @Size(max = 500)
     private String profPath;
-    @NotNull @ColumnDefault("365000") @Range(min = 0, max = 1200000)
+    @ColumnDefault("365000")
+    @Range(min = 0, max = 1200000)
     @Column(columnDefinition = "double precision CHECK (manner_score >= 0 AND manner_score <= 1200000)")
-    private Double mannerScore;
-    @NotNull @Convert(converter = LocAttributeConverter.class)
+    @Builder.Default
+    private Double mannerScore = 365000.0;
+    @NotNull
+    @Convert(converter = LocAttributeConverter.class)
     private Loc loc;
-    @Column(insertable = false) @Temporal(TemporalType.TIMESTAMP)
-    private Date updatedMannerScoreTime;
+    @NotNull
+    @Enumerated(EnumType.STRING)
+    private Role role;
+    @Column(insertable = false)
+    @Temporal(TemporalType.TIMESTAMP)
+    private Date updatedTimeManner;
 
     @OneToMany(mappedBy="fromMem", fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)
     private List<Block> blockFromMemList = new ArrayList<>();
@@ -57,11 +64,12 @@ public class Member extends BaseEntity {
     @OneToMany(mappedBy="seller", fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)
     private List<ReviewSeller> reviewSellerList = new ArrayList<>();
 
+
     public String getMemId() {
         return memId;
     }
-    public String getMemPwd() {
-        return memPwd;
+    public String getEmail() {
+        return email;
     }
     public String getNickname() {
         return nickname;
@@ -81,7 +89,7 @@ public class Member extends BaseEntity {
     public List<Block> getBlockFromMemList() {
         return Collections.unmodifiableList(blockFromMemList);
     }
-    public List<Block> getBlocktoMemList() {
+    public List<Block> getBlockToMemList() {
         return Collections.unmodifiableList(blockToMemList);
     }
     public List<ReviewBuyer> getReviewBuyerList() {
@@ -92,17 +100,25 @@ public class Member extends BaseEntity {
     }
 
     @PrePersist
-    public void prePersistMember() {
-        this.mannerScore = 365000.0;
+    private void prePersistMember() {
+        String hashedPwd = StringUtils.hasText(this.memPwd) ? SecurityUtils.encrpytPwd(this.memPwd) : null;
+        this.memPwd = hashedPwd;
     }
 
     public void updateMemPwd(String memPwd) {
-        this.memPwd = memPwd;
+        this.memPwd = SecurityUtils.encrpytPwd(memPwd);
     }
+
     public void updateProfile(Member updateMember) {
         this.nickname = updateMember.getNickname();
         this.profPath = updateMember.getProfPath();
         this.loc = updateMember.getLoc();
+    }
+
+    public boolean isPwdMatch(String plainPwd) {
+        System.out.println("plainPwd = " + plainPwd);
+        System.out.println("this.memPwd = " + this.memPwd);
+        return SecurityUtils.isSamePlainPwdAndHashedPwd(plainPwd, this.memPwd);
     }
 }
 

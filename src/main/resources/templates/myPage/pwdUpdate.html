@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout/basic.html}">
+<head layout:fragment="head">
+    <title>회원 정보</title>
+    <link href="/css/profile.css" rel="stylesheet" />
+    <link href="/css/member_info.css" rel="stylesheet" />
+</head>
+<div layout:fragment="content">
+    <div class="container info-container my-5">
+        <!--메뉴 바 (왼쪽)-->
+        <div th:replace="~{/fragments/myPage_nav.html :: fragment-info-nav}"></div>
+        <!--내용 (오른쪽)-->
+        <div class="info-content">
+            <div class="py-3 text-center">
+                <h2 style="color: #555;">개인정보 수정</h2>
+            </div>
+            <div class="edit-form">
+                <h4 class="mb-3 edit-title">비밀번호 변경</h4>
+                <form id="pwdEditForm" action="" style="width:300px">
+                    <input type="hidden" name="memId" id="memId" th:value="${session.loginMember.memId}">
+                    <div class="pf-input">
+                        <label for="pwd">비밀번호</label>
+                        <input type="password" id="pwd"
+                               class="form-control">
+                        <div class="field-error" id="pwd-error"></div>
+                    </div>
+                    <div class="pf-input">
+                        <label for="pwdConfirm">비밀번호 재확인</label>
+                        <input type="password" id="pwdConfirm"
+                               class="form-control">
+                        <div class="field-error" id="pwdConfirm-error"></div>
+                    </div>
+                    <button class="edit-btn w-50 btn-orange btn-group-sm" type="submit">비밀번호 변경</button>
+                </form>
+            </div>
+        </div> <!-- /form-container -->
+    </div>
+</div>
+
+<div layout:fragment="script">
+<script th:inline="javascript">
+    const pwdInput = document.getElementById("pwd");
+    const pwdConfirmInput = document.getElementById("pwdConfirm");
+
+    pwdInput.addEventListener("input", function(event) {
+        let pwd = pwdInput.value;
+        isValidPwd(pwd);
+    });
+    pwdConfirmInput.addEventListener("input", function(event) {
+        let pwd = pwdInput.value;
+        let pwdConfirm = pwdConfirmInput.value;
+        isCorrectPwdConfirm(pwd, pwdConfirm);
+    });
+
+    function isValidPwd(pwd) {
+        const pattern = /^(?=.*[a-zA-Z])(?=.*\d)(?=.*\W).{8,16}$/;
+        if (pattern.test(pwd)) {
+            removePwdErrorView();
+            return true;
+        } else {
+            pwdInput.classList.add('field-error-border');
+            const str = `<div class="field-error" id="pwd-error">비밀번호는 8~16자의 영문, 특수문자, 숫자를 사용해야합니다.</div>`;
+            $('#pwd-error').replaceWith(str);
+            return false;
+        }
+    }
+
+    function isCorrectPwdConfirm(pwd, pwdConfirm) {
+        if (pwd === pwdConfirm) {
+            removePwdConfirmErrorView();
+            return true;
+        } else {
+            pwdConfirmInput.classList.add('field-error-border');
+            const str = `<div class="field-error" id="pwdConfirm-error">비밀번호가 일치하지 않습니다.</div>`;
+            $('#pwdConfirm-error').replaceWith(str);
+            return false;
+        }
+    }
+
+    $('#pwdEditForm').on('submit', function(e) {
+        e.preventDefault();
+        let pwd = pwdInput.value;
+        let pwdConfirm = pwdConfirmInput.value;
+        if (isValidPwd(pwd) && isCorrectPwdConfirm(pwd,pwdConfirm)) {
+            let memId = document.getElementById("memId").value;
+            let url = `/members/${memId}/pwd`;
+            const data = {
+                memId : memId,
+                pwd: pwd,
+                pwdConfirm: pwdConfirm,
+            };
+            changePwd(url, data);
+        } else {
+            alert('비밀번호 변경에 실패했습니다');
+        }
+    })
+
+    function changePwd(url, data) {
+        $.ajax({
+            url: url,
+            type: 'PATCH',
+            contentType: 'application/json; charset=utf-8',
+            data: JSON.stringify(data)
+        }).done(function (data) {
+                alert('비밀번호 변경에 성공했습니다');
+        }).fail(function (jqXHR) {
+                alert('비밀번호 변경에 실패했습니다');
+                const errResponse = jqXHR.responseJSON;
+                console.error(errResponse)
+        });
+    }
+
+    function removePwdErrorView() {
+        $('#pwd').removeClass("field-error-border");
+        $('#pwd-error').empty();
+    }
+    function removePwdConfirmErrorView() {
+        $('#pwdConfirm').removeClass("field-error-border");
+        $('#pwdConfirm-error').empty();
+    }
+</script>
+</div>
