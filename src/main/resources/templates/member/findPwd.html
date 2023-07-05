@@ -51,7 +51,7 @@
     $('#sendPwd').click(function() {
       $.ajax({
         type: "POST",
-        url: "findPwd",
+        url: "members/pwd/find",
         data: {
           "email": $('#email').val()
         }
