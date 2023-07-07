@@ -1,18 +1,13 @@
 package com.exercise.carrotproject.domain.review.dto;
 
-import com.exercise.carrotproject.domain.common.util.DateUtil;
-import com.exercise.carrotproject.domain.enumList.ReviewState;
-import com.exercise.carrotproject.domain.member.MemberEntityDtoMapper;
+import com.exercise.carrotproject.domain.member.util.MemberEntityDtoMapper;
 import com.exercise.carrotproject.domain.member.dto.MemberDto;
 import com.exercise.carrotproject.domain.member.entity.Member;
-import com.querydsl.core.annotations.QueryProjection;
 import lombok.*;
 
-import javax.validation.constraints.NotNull;
 import java.sql.Timestamp;
 
 import static com.exercise.carrotproject.domain.common.util.DateUtil.CALCULATE_TIME;
-import static com.exercise.carrotproject.domain.common.util.DateUtil.CALCULATE_TIME_CHAT;
 
 
 @NoArgsConstructor

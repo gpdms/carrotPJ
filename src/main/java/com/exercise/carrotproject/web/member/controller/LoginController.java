@@ -1,7 +1,6 @@
 package com.exercise.carrotproject.web.member.controller;
 
-import com.exercise.carrotproject.domain.enumList.Role;
-import com.exercise.carrotproject.domain.member.MemberEntityDtoMapper;
+import com.exercise.carrotproject.domain.member.util.MemberEntityDtoMapper;
 import com.exercise.carrotproject.domain.member.service.MemberService;
 import com.exercise.carrotproject.web.common.SessionConst;
 import com.exercise.carrotproject.domain.member.dto.MemberDto;
