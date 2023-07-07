@@ -9,11 +9,8 @@ import org.springframework.stereotype.Repository;
 import java.util.List;
 
 @Repository
-public interface TradeRepository extends JpaRepository<Trade,Long> {
-
+public interface TradeRepository extends JpaRepository<Trade,Long>{
     //for review
-    List<Trade> findBySeller(Member seller);
     Trade findByPost(Post post);
-    List<Trade> findByBuyer (Member buyer);
     void deleteByPost (Post post);
 }

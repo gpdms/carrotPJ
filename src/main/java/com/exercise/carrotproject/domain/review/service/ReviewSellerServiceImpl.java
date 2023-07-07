@@ -27,6 +27,7 @@ public class ReviewSellerServiceImpl implements ReviewSellerService {
         ReviewSeller newReviewSeller = reviewSellerRepository.save(reviewSeller);
         insertReviewSellerDetail(newReviewSeller, indicatorList);
     }
+
     @Transactional
     @Override
     public void insertReviewSellerDetail(ReviewSeller newReviewSeller, List<ReviewSellerIndicator> indicatorList) {
@@ -39,10 +40,11 @@ public class ReviewSellerServiceImpl implements ReviewSellerService {
            reviewSellerDetailRepository.save(reviewSellerDetail);
         }
     }
+
     @Override
     public ReviewSeller findOneReviewSeller(Long reviewSellerId){
         return reviewSellerRepository.findById(reviewSellerId)
-                .orElseThrow(() -> new NoSuchElementException("reviewSeller Not Found"));
+                .orElseThrow(() -> new NoSuchElementException("ReviewSeller Not Found"));
     }
 
     @Override
@@ -56,7 +58,7 @@ public class ReviewSellerServiceImpl implements ReviewSellerService {
     @Override
     public Long findReviewSellerIdByPost (Post post) {
         ReviewSeller reviewSeller = reviewSellerRepository.findByPost(post);
-        return reviewSellerRepository.findByPost(post) != null? reviewSeller.getReviewSellerId() : 0L;
+        return reviewSeller != null ? reviewSeller.getReviewSellerId() : 0L;
     }
 
     @Transactional

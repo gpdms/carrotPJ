@@ -4,7 +4,7 @@ import com.exercise.carrotproject.domain.chat.dto.ChatRoomDto;
 import com.exercise.carrotproject.domain.chat.entity.QChat;
 import com.exercise.carrotproject.domain.chat.entity.QChatRoom;
 import com.exercise.carrotproject.domain.enumList.*;
-import com.exercise.carrotproject.domain.member.MemberEntityDtoMapper;
+import com.exercise.carrotproject.domain.member.util.MemberEntityDtoMapper;
 import com.exercise.carrotproject.domain.member.dto.MemberDto;
 import com.exercise.carrotproject.domain.member.entity.Member;
 import com.exercise.carrotproject.domain.member.repository.MemberRepository;
@@ -202,7 +202,7 @@ public class PostServiceImpl implements PostService{
             loginMemLoc = memberDto.getLoc();
         }
 
-        List<Post> postEntityList = postRepository.selectBoardPost(loginMemId, loginMemLoc);
+        List<Post> postEntityList = postRepository.selectPostForBoard(loginMemId, loginMemLoc);
 
         //Entity리스트 -> Dto 리스트
         List<PostDto> postDtoList = PostEntityDtoMapper.toDtoList(postEntityList);
@@ -386,7 +386,7 @@ public class PostServiceImpl implements PostService{
         //판매중,예약중
         List<Post> onSalePostList = postRepository.findByMemberAndHideStateAndSellStateOrSellStateOrderByPostIdDesc(member, HideState.SHOW, SellState.ON_SALE,SellState.RESERVATION);
         //판매완료
-        List<SoldPostDto> soldPostDtoList= postRepository.getSoldList(memId);
+        List<SoldPostDto> soldPostDtoList= postRepository.findSoldPostListByMemId(memId);
         //entity리스트->dto리스트
         List<PostDto> postDtoOnSaleList = PostEntityDtoMapper.toDtoList(onSalePostList);
 
@@ -513,23 +513,6 @@ public class PostServiceImpl implements PostService{
     }
 
     @Override
-    public List<PostDto> searchPost(String loginMemId, String searchWord) {
-        List<Post> postList = postRepository.searchPost(loginMemId, searchWord);
-        return PostEntityDtoMapper.toDtoList(postList);
-    }
-    @Override
-    public List<PostDto> selectPostListByCategory(MemberDto memberDto, Category category) {
-        String loginMemId = null;
-        Loc loginMemLoc = null;
-        if(memberDto != null) {
-            loginMemId = memberDto.getMemId();
-            loginMemLoc = memberDto.getLoc();
-        }
-        List<Post> postList = postRepository.selectBoardPostByCategory(loginMemId, loginMemLoc, category);
-        return PostEntityDtoMapper.toDtoList(postList);
-    }
-
-    @Override
     @Transactional
     public void updateHits(Long postId){
         QPost qPost = QPost.post;
@@ -540,8 +523,26 @@ public class PostServiceImpl implements PostService{
     }
 
     @Override
-    public List<PostDto> postListBrief(int limit, String memId) {
-        List<Post> posts = postRepository.postListByLimit(limit, memId);
+    public List<PostDto> searchPostList(String loginMemId, String searchWord) {
+        List<Post> postList = postRepository.searchPost(loginMemId, searchWord);
+        return PostEntityDtoMapper.toDtoList(postList);
+    }
+
+    @Override
+    public List<PostDto> selectPostListByCategory(MemberDto memberDto, Category category) {
+        String loginMemId = null;
+        Loc loginMemLoc = null;
+        if(memberDto != null) {
+            loginMemId = memberDto.getMemId();
+            loginMemLoc = memberDto.getLoc();
+        }
+        List<Post> postList = postRepository.selectPostForBoardByCategory(loginMemId, loginMemLoc, category);
+        return PostEntityDtoMapper.toDtoList(postList);
+    }
+
+    @Override
+    public List<PostDto> postListBrief(String memId, int limit) {
+        List<Post> posts = postRepository.postListByLimit(memId, limit);
         return PostEntityDtoMapper.toDtoList(posts);
     }
 }

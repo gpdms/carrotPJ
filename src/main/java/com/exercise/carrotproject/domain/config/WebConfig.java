@@ -32,7 +32,7 @@ public class WebConfig implements WebMvcConfigurer {
         registry.addInterceptor(new LoginCheckInterceptor())
                 .order(1)
                 .addPathPatterns("/members/**", "/reviews/**", "/post/**", "/chat/**")
-                .excludePathPatterns("/members/signup/**",  "/members/**/profileImg", "/members/findPwd",
+                .excludePathPatterns("/members/signup/**",  "/members/**/profileImg", "/members/pwd/reset",
                         "/members/css/**","/members/js/**","/members/assets/**", "/members/error",
                         "/reviews/css/**","/reviews/js/**","/reviews/assets/**", "/reviews/error",
                         "/post/css/**","/post/js/**","/post/assets/**", "/post/error",
@@ -41,7 +41,8 @@ public class WebConfig implements WebMvcConfigurer {
         registry.addInterceptor(new MemberInfoCheckInterceptor())
                 .order(2)
                 .addPathPatterns("/members/**")
-                .excludePathPatterns("/members/signup/**", "/members/**/profileImg", "/members/findPwd",
+                .excludePathPatterns("/members/signup/**", "/members/**/profileImg",
+                        "/members/pwd/reset", "/members/settings/**",
                         "/members/css/**","/members/js/**","/members/assets/**",
                         "/members/error");
         registry.addInterceptor(postMemberCheckInterceptor())
@@ -50,14 +51,11 @@ public class WebConfig implements WebMvcConfigurer {
                 .excludePathPatterns("/post/css/**","/post/js/**","/post/assets/**", "/post/error",
                                     "/post/board/**", "/post/firstImg/**","post/img/**","post/onSale/**", "post/search",
                         "/post/detail/**", "/post/addWish", "/post/rmvWish", "/post/uploadPage/**");
-        registry.addInterceptor(new KaKaoCodeInterceptor()).addPathPatterns("/login/kakao");
     }
     @Bean
     public PostMemberCheckInterceptor postMemberCheckInterceptor() {
         return new PostMemberCheckInterceptor();
     }
-
-
     @Bean
     public ServletContextInitializer clearJsession() {
         return new ServletContextInitializer() {

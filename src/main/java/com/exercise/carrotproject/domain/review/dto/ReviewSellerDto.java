@@ -1,22 +1,14 @@
 package com.exercise.carrotproject.domain.review.dto;
 
-import com.exercise.carrotproject.domain.common.entity.BaseEntity;
-import com.exercise.carrotproject.domain.converter.ReviewStateConverter;
-import com.exercise.carrotproject.domain.enumList.ReviewSellerIndicator;
 import com.exercise.carrotproject.domain.enumList.ReviewState;
-import com.exercise.carrotproject.domain.member.MemberEntityDtoMapper;
+import com.exercise.carrotproject.domain.member.util.MemberEntityDtoMapper;
 import com.exercise.carrotproject.domain.member.dto.MemberDto;
 import com.exercise.carrotproject.domain.member.entity.Member;
-import com.exercise.carrotproject.domain.post.entity.Post;
-import com.exercise.carrotproject.domain.review.entity.ReviewSellerDetail;
 import com.querydsl.core.annotations.QueryProjection;
 import lombok.*;
 import org.hibernate.annotations.DynamicInsert;
 
-import javax.persistence.*;
-import javax.validation.constraints.NotNull;
 import java.sql.Timestamp;
-import java.util.List;
 
 @NoArgsConstructor
 @AllArgsConstructor

@@ -3,8 +3,9 @@ package com.exercise.carrotproject.web.post.controller;
 import com.exercise.carrotproject.domain.chat.dto.ChatRoomDto;
 import com.exercise.carrotproject.domain.chat.service.ChatServiceImpl;
 import com.exercise.carrotproject.domain.enumList.Category;
-import com.exercise.carrotproject.domain.member.MemberEntityDtoMapper;
+import com.exercise.carrotproject.domain.member.util.MemberEntityDtoMapper;
 import com.exercise.carrotproject.domain.member.entity.Member;
+import com.exercise.carrotproject.domain.member.service.BlockService;
 import com.exercise.carrotproject.domain.member.service.MemberService;
 import com.exercise.carrotproject.domain.post.dto.MtPlaceDto;
 
@@ -19,7 +20,6 @@ import com.exercise.carrotproject.domain.post.dto.PostImgDto;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.core.io.UrlResource;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
@@ -35,7 +35,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import java.io.IOException;
-import java.net.MalformedURLException;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
@@ -53,6 +52,7 @@ public class PostController {
     private final TradeService tradeService;
     private final ChatServiceImpl chatService;
     private final MemberService memberService;
+    private final BlockService blockService;
 
     @Value("${default.postImg}")
     private String defaultPostImg;
@@ -133,7 +133,7 @@ public class PostController {
         //Post하나 불러오기
         PostDto postDto = postService.selectOnePost(postId);
         if(postDto != null && memId != null) {
-            boolean hasBlock = memberService.existBlockByMemIds(postDto.getMember().getMemId(), memId);
+            boolean hasBlock = blockService.hasBlockByMemIds(postDto.getMember().getMemId(), memId);
             if(hasBlock) {
                 return "redirect:/";
             }
@@ -397,12 +397,11 @@ public class PostController {
         return "관심목록에서 제거되었습니다.";
     }
 
-
     //한 판매자가 판매중인 상품
     @GetMapping("/post/onSale/{memId}")
     public String onSalePost(@PathVariable String memId, Model model, @PageableDefault(page = 0, size = 20)Pageable pageable){
         //판매자 정보
-        Member member = memberService.findOneMember(memId);
+        Member member = memberService.findMemberByMemId(memId);
         MemberDto seller = MemberEntityDtoMapper.toMemberDto(member);
         //판매중,예약중 게시글
         Map map = postService.selectPostBySellState(memId);
@@ -415,19 +414,17 @@ public class PostController {
         return "post/sellerSellList";
     }
 
-    //검색
     @GetMapping("/post/search")
     public String searchPost(@RequestParam String word,
-                           HttpSession session,
-                           @PageableDefault(page = 0, size = 12) Pageable pageable,
-                           Model model) {
-        MemberDto loginMember = (MemberDto) session.getAttribute(SessionConst.LOGIN_MEMBER);
+                             @PageableDefault(page = 0, size = 12) Pageable pageable,
+                             @Login MemberDto loginMember, Model model) {
         String loginMemId = "";
-        if(loginMember != null) {
+        if (loginMember != null) {
             loginMemId = loginMember.getMemId();
         }
-        List<PostDto> postList = postService.searchPost(loginMemId, word);
-        model.addAttribute("postList", postService.paging(postList, pageable));
+        List<PostDto> postList = postService.searchPostList(loginMemId, word);
+        Page<PostDto> paginatedPostList = postService.paging(postList, pageable);
+        model.addAttribute("postList", paginatedPostList);
         model.addAttribute("searchedWord", word);
         return "post/searchList";
     }

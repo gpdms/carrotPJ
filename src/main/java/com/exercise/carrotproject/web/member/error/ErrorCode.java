@@ -2,19 +2,24 @@ package com.exercise.carrotproject.web.member.error;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
+import org.springframework.http.HttpStatus;
 
 import java.util.NoSuchElementException;
 
 @Getter
 @AllArgsConstructor
 public enum ErrorCode {
-    NOT_NULL("ERROR_CODE_0001","필수값이 누락되었습니다"),
-    NOT_BLANK("ERROR_CODE_0002","빈 값과 공백을 허용하지 않습니다"),
-    SIZE ("ERROR_CODE_0003", "크기가 맞지 않습니다"),
-    PATTERN ("ERROR_CODE_0004", "패턴이 맞지 않습니다"),
+    //Common
+    INVALID_INPUT_VALUE(400,"C001", "invalid input value"),
+    NO_SUCH_ELEMENT(404, "C002", "no such element"),
 
-    NO_SUCH_ELEMENT ("ERROR_CODE_0010", "DB에 없는 데이터입니다.");
+    //Member
+    NOT_CORRECT_PWD_CONFIRM(400, "M001","not correct pwdConfirm"),
+    DUPLICATED_MEM_ID(409, "M002","duplicated memId"),
+    DUPLICATED_EMAIL(409, "M003","duplicated email"),
+    NOT_FOUND_EMAIL(404,"M003", "not found email");
 
-    private String code;
-    private String description;
+    private final int status;
+    private final String divisionCode;
+    private final String message;
 }

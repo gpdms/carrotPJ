@@ -32,25 +32,18 @@ public class ImgController {
     @Value("${default.pfImg}")
     private String defaultPfImg;
 
-
-    //첫번째 이미지 urlresource 반환
     @GetMapping("/post/firstImg/{postId}")
     public UrlResource postFirstImg(@PathVariable Long postId) throws MalformedURLException {
-
         List<PostImgDto> postImgDtoList = postService.selectPostImgs(postId);
 //        log.info("컨트롤러단 postImgDtoList:{}", postImgDtoList);
-
         String firstImgPath = defaultPostImg;
         if(!postImgDtoList.isEmpty()) {
             firstImgPath = postImgDtoList.get(0).getSavedPath();
         }
-
-
         UrlResource urlResource = new UrlResource("file:"+ firstImgPath);
         return urlResource;
     }
 
-    //imgId로 urlresource 반환
     @GetMapping("/post/img/{imgId}")
     public UrlResource postImgUrl(@PathVariable Long imgId) throws MalformedURLException {
         String imgPath = defaultPostImg;
@@ -61,32 +54,17 @@ public class ImgController {
         UrlResource urlResource = new UrlResource("file:"+ imgPath);
         return urlResource;
     }
-    //프로필 이미지 출력
+
     @GetMapping("members/{memId}/profileImg")
     public UrlResource viewProfileImg(@PathVariable("memId") String memId) throws IOException {
-        String profPath = memberService.getProfPath(memId);
+        String profPath = memberService.findMemberByMemId(memId).getProfPath();
         if(profPath == null || profPath.isEmpty()) {
             profPath = defaultPfImg;
         }
         UrlResource urlResource = new UrlResource("file:" + profPath);
         return urlResource;
     }
-  /*  @GetMapping("members/{memId}/profileImg")
-    public ResponseEntity<UrlResource> viewProfileImg(@PathVariable("memId") String memId)
-            throws IOException {
-        String profPath = memberService.getProfPath(memId);
-        if (profPath == null || profPath.isEmpty()) {
-            profPath = defaultPfImg;
-        }
-        UrlResource urlResource = new UrlResource("file:" + profPath);
-        // 이미지 캐싱 설정
-        CacheControl cacheControl = CacheControl.maxAge(1, TimeUnit.HOURS); // 1일 동안 캐시 유지
-        return ResponseEntity.ok()
-                .cacheControl(cacheControl)
-                .body(urlResource);
-    }*/
 
-    //채팅 이미지 출력
     @ResponseBody
     @GetMapping("chat/chatImg/{chatImgId}")
     public Resource viewChatImg(@PathVariable("chatImgId") Long chatImgId) throws IOException {

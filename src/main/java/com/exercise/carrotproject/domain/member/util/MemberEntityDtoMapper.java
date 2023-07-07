@@ -1,4 +1,4 @@
-package com.exercise.carrotproject.domain.member;
+package com.exercise.carrotproject.domain.member.util;
 
 import com.exercise.carrotproject.domain.enumList.Role;
 import com.exercise.carrotproject.domain.member.dto.MemberDto;
@@ -16,16 +16,26 @@ public class MemberEntityDtoMapper {
     }
     //memberEntity -> memberDto
     public static MemberDto toMemberDto(Member member){
-        double mannerScore = Math.round(member.getMannerScore() / 10000.0 * 10) / 10.0;
+        double roundedMannerScore = Math.round(member.getMannerScore() / 10000.0 * 10) / 10.0;
         return MemberDto.builder()
                 .memId(member.getMemId())
                 .nickname(member.getNickname())
                 .mannerScore(
-                        mannerScore >= 99.9 ? 99.9 : mannerScore)
+                        roundedMannerScore >= 99.9 ? 99.9 : roundedMannerScore)
                 .loc(member.getLoc())
                 .role(member.getRole())
+                .email(member.getEmail())
                 .build();
     }
 
-
+    public static Member toSocialMemberEntity(MemberDto memberDto) {
+        return Member.builder()
+                .memId(memberDto.getMemId())
+                .email(memberDto.getEmail())
+                .profPath(memberDto.getProfPath())
+                .loc(memberDto.getLoc())
+                .nickname(memberDto.getNickname())
+                .role(memberDto.getRole())
+                .build();
+    }
 }

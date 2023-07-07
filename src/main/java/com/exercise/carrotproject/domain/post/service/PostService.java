@@ -43,9 +43,10 @@ public interface PostService {
     void deleteWish(Long postId, String memId);
     String isWishExist(Long postId, String memId);
     Integer countWish(Long postId);
-    List<PostDto> selectPostListFromWish(String memId);
-    List<PostDto> searchPost(String loginMemId, String searchWord);
-    List<PostDto> selectPostListByCategory(MemberDto memberDto, Category category);
     void updateHits(Long postId);
-    List<PostDto> postListBrief(int limit, String memId);
+    List<PostDto> selectPostListFromWish(String memId);
+
+    List<PostDto> searchPostList(String loginMemId, String searchWord);
+    List<PostDto> selectPostListByCategory(MemberDto memberDto, Category category);
+    List<PostDto> postListBrief(String memId, int limit);
 }

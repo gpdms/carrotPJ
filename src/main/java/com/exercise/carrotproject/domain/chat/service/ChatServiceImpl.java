@@ -9,7 +9,7 @@ import com.exercise.carrotproject.domain.chat.repoisitory.ChatRepository;
 import com.exercise.carrotproject.domain.chat.repoisitory.ChatRoomRepository;
 import com.exercise.carrotproject.domain.enumList.ImgState;
 import com.exercise.carrotproject.domain.enumList.ReadState;
-import com.exercise.carrotproject.domain.member.MemberEntityDtoMapper;
+import com.exercise.carrotproject.domain.member.util.MemberEntityDtoMapper;
 import com.exercise.carrotproject.domain.member.dto.MemberDto;
 import com.exercise.carrotproject.domain.member.entity.Member;
 import com.exercise.carrotproject.domain.member.repository.MemberRepository;

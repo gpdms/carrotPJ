@@ -47,7 +47,7 @@
                 <button class="custom-btn" th:if="${not #strings.isEmpty(session.loginMember)}" type="button"
                         th:onclick="|location.href='@{/chat/chatRoomList}'|"> 채팅 <span id="chat">0</span> </button>
                 <button  class="custom-btn" type="button"
-                         th:onclick="|location.href='@{/members/{memId}/profile(memId=${session.loginMember.memId})}'|">
+                         th:onclick="|location.href='@{/members/settings/profile}'|">
                     회원정보 </button>
                 <button  th:if="${session.loginMember.role.name().equals('USER')}"
                          class="custom-btn" type="submit"> 로그아웃 </button>

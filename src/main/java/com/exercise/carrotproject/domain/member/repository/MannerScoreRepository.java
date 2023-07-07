@@ -37,7 +37,6 @@ public class  MannerScoreRepository {
                 batchCount = updateMannerScoreSub(batchCount, subMemberDtos);
             }
         }
-        // 나머지 subMemberDtos를 update
         if (!subMemberDtos.isEmpty()) {
             batchCount = updateMannerScoreSub(batchCount, subMemberDtos);
         }
@@ -48,7 +47,8 @@ public class  MannerScoreRepository {
                 .withHour(5).withMinute(0).withSecond(0).withNano(0);
         Timestamp updatedTimeManner = Timestamp.valueOf(monday5am.minusDays(7));
         this.jdbcTemplate.batchUpdate(
-                "UPDATE member SET manner_score = manner_score + ?, updated_time_manner = ?" +
+                "UPDATE member SET manner_score = manner_score + ?," +
+                        " updated_time_manner = ?" +
                         " WHERE mem_id = ?" +
                         " and manner_score + ? between 0 and 1200000",
                 new BatchPreparedStatementSetter() {
@@ -68,7 +68,8 @@ public class  MannerScoreRepository {
         return batchCount;
     }
 
-    //최근 활동 없으면(최근 받은 리뷰가 없어 매너온도 업데이트 되지 않았다면) 매너온도 down
+    //최근 활동 없으면 매너온도 down
+    //최근 받은 리뷰가 없어 매너온도 업데이트가 되지 않았다면, 최근 활동이 없는 것이다.
     @Transactional
     public long updateMannerScoreDown() {
         LocalDateTime now = LocalDateTime.now();

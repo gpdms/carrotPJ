@@ -3,6 +3,7 @@ package com.exercise.carrotproject.domain.review.repository;
 import com.exercise.carrotproject.domain.enumList.HideState;
 import com.exercise.carrotproject.domain.enumList.ReviewState;
 import com.exercise.carrotproject.domain.member.dto.MemberDto;
+import com.exercise.carrotproject.domain.member.dto.QMemberDto;
 import com.exercise.carrotproject.domain.review.dto.ReviewMessageDto;
 import com.querydsl.core.types.Projections;
 import com.querydsl.core.types.dsl.BooleanExpression;
@@ -30,35 +31,33 @@ import static org.springframework.util.StringUtils.hasText;
 public class ReviewCustomRepository {
     private final JPAQueryFactory jpaQueryFactory;
 
-    public List<MemberDto> sumScoreForUpdateMannerScore() {
-        // 현재 날짜에서 이번 주 월요일 새벽 5시
-        LocalDateTime monday5am = LocalDateTime.now()
+    public List<MemberDto> combineReviewScoreForUpdateMannerScore() {
+        LocalDateTime everyMonday5am = LocalDateTime.now()
                 .with(TemporalAdjusters.previousOrSame(DayOfWeek.MONDAY))
                 .withHour(5).withMinute(0).withSecond(0).withNano(0);
-        //2주~1주전 리뷰
-        Timestamp from = Timestamp.valueOf(monday5am.minusWeeks(2));
-        Timestamp to = Timestamp.valueOf(monday5am.minusWeeks(1));
-        //테스트
-//        Timestamp from = Timestamp.valueOf(LocalDateTime.now().minusMinutes(3));
-//        Timestamp to = Timestamp.valueOf(LocalDateTime.now());
+        Timestamp from2WeeksAgo = Timestamp.valueOf(everyMonday5am.minusWeeks(2));
+        Timestamp to1WeeksAgo = Timestamp.valueOf(everyMonday5am.minusWeeks(1));
 
-        List<MemberDto> rb = jpaQueryFactory.select(
-                        Projections.constructor(MemberDto.class, reviewBuyer.buyer.memId, reviewBuyer.totalScore.sum()))
+        List<MemberDto> buyerReviewScoreList = jpaQueryFactory.select(
+                   new QMemberDto(reviewBuyer.buyer.memId, reviewBuyer.totalScore.sum()))
                 .from(reviewBuyer)
                 .groupBy(reviewBuyer.buyer.memId)
-                .where(reviewBuyer.createdTime.between(from, to))
+                .where(reviewBuyer.createdTime.between(from2WeeksAgo, to1WeeksAgo))
                 .fetch();
-        List<MemberDto> rs = jpaQueryFactory.select(
-                        Projections.constructor(MemberDto.class, reviewSeller.seller.memId, reviewSeller.totalScore.sum()))
+        List<MemberDto> sellerReviewScoreList = jpaQueryFactory.select(
+                        new QMemberDto(reviewSeller.seller.memId, reviewSeller.totalScore.sum()))
                 .from(reviewSeller)
                 .groupBy(reviewSeller.seller.memId)
-                .where(reviewSeller.createdTime.between(from, to))
+                .where(reviewSeller.createdTime.between(from2WeeksAgo, to1WeeksAgo))
                 .fetch();
-        return Stream.concat(rb.stream(), rs.stream())
-                .collect(Collectors.groupingBy(MemberDto::getMemId, Collectors.summingDouble(MemberDto::getMannerScore)))
+        List<MemberDto> allReviewScoreList = Stream.concat(buyerReviewScoreList.stream(), sellerReviewScoreList.stream())
+                .collect(Collectors.groupingBy(MemberDto::getMemId,
+                        Collectors.summingDouble(MemberDto::getMannerScore)))
                 .entrySet().stream()
                 .map(entry -> new MemberDto(entry.getKey(), entry.getValue()))
                 .collect(Collectors.toList());
+
+        return allReviewScoreList;
     }
 
 
