@@ -116,8 +116,6 @@ public class Member extends BaseEntity {
     }
 
     public boolean isPwdMatch(String plainPwd) {
-        System.out.println("plainPwd = " + plainPwd);
-        System.out.println("this.memPwd = " + this.memPwd);
         return SecurityUtils.isSamePlainPwdAndHashedPwd(plainPwd, this.memPwd);
     }
 }
