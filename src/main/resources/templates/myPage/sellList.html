@@ -38,7 +38,7 @@
                                     <!--지역, 시간-->
                                     <h6 class="fs-7 fw-normal text-secondary">[[${post.loc.locName}]] ∙ [[${post.createdTime}]]</h6>
                                     <!-- 가격-->
-                                    <h6 class="fw-bolder" th:if="${post.price}!=0" th:text="|${post.price}원|">가격</h6>
+                                    <h6 class="fw-bolder" th:if="${post.price}!=0" th:text="|${#numbers.formatInteger(post.price, 0, 'COMMA')}원|">가격</h6>
                                     <h6 class="fw-bolder" th:if="${post.price} == 0">가격없음</h6>
 
                                     <!--예약중 배지-->
@@ -76,7 +76,7 @@
                                     <!--지역, 시간-->
                                     <h6 class="fs-7 fw-normal text-secondary">[[${soldPost.postDto.loc.locName}]] ∙ [[${soldPost.postDto.createdTime}]]</h6>
                                     <!-- 가격-->
-                                    <h6 class="fw-bolder" th:if="${soldPost.postDto.price}!=0" th:text="|${soldPost.postDto.price}원|">가격</h6>
+                                    <h6 class="fw-bolder" th:if="${soldPost.postDto.price}!=0" th:text="|${#numbers.formatInteger(soldPost.postDto.price, 0, 'COMMA')}원|">가격</h6>
                                     <h6 class="fw-bolder" th:if="${soldPost.postDto.price} == 0">가격없음</h6>
 
                                 </div>
@@ -113,7 +113,7 @@
                                     <!--지역, 시간-->
                                     <h6 class="fs-7 fw-normal text-secondary">[[${hidePost.loc.locName}]]∙ [[${hidePost.createdTime}]]</h6>
                                     <!-- 가격-->
-                                    <h6 class="fw-bolder" th:if="${hidePost.price}!=0" th:text="|${hidePost.price}원|">가격</h6>
+                                    <h6 class="fw-bolder" th:if="${hidePost.price}!=0" th:text="|${#numbers.formatInteger(hidePost.price,0,'COMMA')}원|">가격</h6>
                                     <h6 class="fw-bolder" th:if="${hidePost.price} == 0">가격없음</h6>
                                     <!--예약중,판매완료 배지-->
                                     <span class="badge bg-success" th:if="${hidePost.sellState.getSellStateName().equals('예약중')}">예약중</span>

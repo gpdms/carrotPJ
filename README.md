@@ -3,8 +3,7 @@
 
 
 ## 🍋 프로젝트 소개
-
-> http://15.164.25.45:8888/
+> http://15.164.25.45:8888/ &nbsp;|&nbsp;  http://3.37.98.151:8888/
 
 * 중고거래 플랫폼
     * 중고거래 사이트에 필요한 기능이 포집되어있는 기존 플랫폼(당근마켓)을 참고하여 제작하였습니다.
@@ -24,7 +23,7 @@
 
 ## 기술 스택
 
-* Frontend : Thymeleaf, Bootstrap
+* Frontend : Thymeleaf, Bootstrap, HTML, CSS, Javascript
 * Backend 
   * Java 11
   * Framework : Spring Boot 2.7.2
@@ -33,6 +32,10 @@
   * IDE : IntelliJ
   * Distribution : Amazon EC2(Linux/UNIX), Amazon RDS
   * API/Library : Kakao 로그인 Rest API & Kakao 맵 API, QueryDSL
+
+
+## 🪄 ERD
+<img width="100%" alt="스크린샷 2023-05-25 오후 6 17 32" src="https://github.com/gpdms/carrotPJ/assets/109894921/75240980-e9d9-4763-a7c1-0298ee60c6f8">
 
 
 ## 주요 기능
@@ -46,8 +49,8 @@
 4. 차단
 
 #### &nbsp;상품 게시판
-1. 게시글(글,사진,지도) 업로드 / 수정 / 삭제
-2. 판매 상태 변경(예약중, 판매중, 판매완료)
+1. 게시글(글,사진,지도) 업로드, 수정, 삭제
+2. 판매 상태 변경(예약중/판매중/판매완료)
 3. 게시판
 4. 게시글 상세보기
 5. 조회수
@@ -63,9 +66,8 @@
 1. 리뷰 작성 / 삭제
 2. 리뷰 지표 합산
 
-
-## 화면
-
+---
+## 🪄 화면
 
 <table>
     <tr>
@@ -156,4 +158,37 @@
        </td>
     </tr>
 </table>
+
+
+
+
+
+## 🔎 소스코드 바로가기
+
+#### 회원
+  * [DTO, Entity, Repository, Service](https://github.com/gpdms/carrotPJ/tree/main/src/main/java/com/exercise/carrotproject/domain/member)
+  *  [Controller](https://github.com/gpdms/carrotPJ/tree/main/src/main/java/com/exercise/carrotproject/web/member/controller)
+  *  [Interceptor](https://github.com/gpdms/carrotPJ/tree/main/src/main/java/com/exercise/carrotproject/web/interceptor)
+
+#### 게시글
+   * [DTO, Entity, Repository, Service](https://github.com/gpdms/carrotPJ/tree/main/src/main/java/com/exercise/carrotproject/domain/post)
+   * [Controller](https://github.com/gpdms/carrotPJ/tree/main/src/main/java/com/exercise/carrotproject/web/post/controller)
+   
+#### 채팅
+   * [DTO, Entity, Repository, Service](https://github.com/gpdms/carrotPJ/tree/main/src/main/java/com/exercise/carrotproject/domain/chat)
+   * [Controller](https://github.com/gpdms/carrotPJ/tree/main/src/main/java/com/exercise/carrotproject/web/chat/controller)
+   
+#### 리뷰
+   * [DTO, Entity, Repository, Service](https://github.com/gpdms/carrotPJ/tree/main/src/main/java/com/exercise/carrotproject/domain/review)
+   * [Controller](https://github.com/gpdms/carrotPJ/tree/main/src/main/java/com/exercise/carrotproject/web/review/controller)
+
+#### HTML
+   * [Layout, nav, 홈, 회원, 게시글, 채팅 HTML](https://github.com/gpdms/carrotPJ/tree/NewNewHyeeun/src/main/resources/templates)
+
+#### CSS
+   * [Bootstrap, 직접 제작CSS](https://github.com/gpdms/carrotPJ/tree/NewNewHyeeun/src/main/resources/static/css)
+
+## ✂️ 업데이트 내용
+* 5.26 : 원화 천 단위 절삭추가
+
 
