@@ -3,14 +3,16 @@ package com.exercise.carrotproject.web.post.controller;
 import com.exercise.carrotproject.domain.chat.dto.ChatRoomDto;
 import com.exercise.carrotproject.domain.chat.service.ChatServiceImpl;
 import com.exercise.carrotproject.domain.enumList.Category;
-import com.exercise.carrotproject.domain.member.MemberEntityDtoMapper;
+import com.exercise.carrotproject.domain.member.util.MemberEntityDtoMapper;
 import com.exercise.carrotproject.domain.member.entity.Member;
+import com.exercise.carrotproject.domain.member.service.BlockService;
 import com.exercise.carrotproject.domain.member.service.MemberService;
 import com.exercise.carrotproject.domain.post.dto.MtPlaceDto;
 
 import com.exercise.carrotproject.domain.post.entity.Trade;
 import com.exercise.carrotproject.domain.post.service.PostService;
 import com.exercise.carrotproject.domain.post.service.TradeService;
+import com.exercise.carrotproject.web.argumentresolver.Login;
 import com.exercise.carrotproject.web.common.SessionConst;
 import com.exercise.carrotproject.domain.member.dto.MemberDto;
 import com.exercise.carrotproject.domain.post.dto.PostDto;
@@ -50,6 +52,7 @@ public class PostController {
     private final TradeService tradeService;
     private final ChatServiceImpl chatService;
     private final MemberService memberService;
+    private final BlockService blockService;
 
     @Value("${default.postImg}")
     private String defaultPostImg;
@@ -130,7 +133,7 @@ public class PostController {
         //Post하나 불러오기
         PostDto postDto = postService.selectOnePost(postId);
         if(postDto != null && memId != null) {
-            boolean hasBlock = memberService.existBlockByMemIds(postDto.getMember().getMemId(), memId);
+            boolean hasBlock = blockService.hasBlockByMemIds(postDto.getMember().getMemId(), memId);
             if(hasBlock) {
                 return "redirect:/";
             }
@@ -394,7 +397,6 @@ public class PostController {
         return "관심목록에서 제거되었습니다.";
     }
 
-
     //한 판매자가 판매중인 상품
     @GetMapping("/post/onSale/{memId}")
     public String onSalePost(@PathVariable String memId, Model model, @PageableDefault(page = 0, size = 20)Pageable pageable){
@@ -412,19 +414,17 @@ public class PostController {
         return "post/sellerSellList";
     }
 
-    //검색
     @GetMapping("/post/search")
     public String searchPost(@RequestParam String word,
-                           HttpSession session,
-                           @PageableDefault(page = 0, size = 12) Pageable pageable,
-                           Model model) {
-        MemberDto loginMember = (MemberDto) session.getAttribute(SessionConst.LOGIN_MEMBER);
+                             @PageableDefault(page = 0, size = 12) Pageable pageable,
+                             @Login MemberDto loginMember, Model model) {
         String loginMemId = "";
-        if(loginMember != null) {
+        if (loginMember != null) {
             loginMemId = loginMember.getMemId();
         }
-        List<PostDto> postList = postService.searchPost(loginMemId, word);
-        model.addAttribute("postList", postService.paging(postList, pageable));
+        List<PostDto> postList = postService.searchPostList(loginMemId, word);
+        Page<PostDto> paginatedPostList = postService.paging(postList, pageable);
+        model.addAttribute("postList", paginatedPostList);
         model.addAttribute("searchedWord", word);
         return "post/searchList";
     }

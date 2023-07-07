@@ -10,9 +10,10 @@ import java.util.List;
 
 public interface CustomPostRepository {
     long updateHideState(Long postId);
-    List<SoldPostDto> getSoldList(String memId);
-    List<Post> selectBoardPost(String loginMemId, Loc loginMemLoc);
-    List<Post> selectBoardPostByCategory(String loginMemId, Loc loginMemLoc, Category category);
+
+    List<SoldPostDto> findSoldPostListByMemId(String memId);
+    List<Post> selectPostForBoard(String loginMemId, Loc loginMemLoc);
+    List<Post> selectPostForBoardByCategory(String loginMemId, Loc loginMemLoc, Category category);
     List<Post> searchPost(String loginMemId, String searchWord);
-    List<Post> postListByLimit(int limit, String memId);
+    List<Post> postListByLimit(String memId, int limit);
 }
