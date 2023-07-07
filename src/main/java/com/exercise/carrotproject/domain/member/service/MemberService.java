@@ -17,9 +17,9 @@ public interface MemberService {
     Member findMemberByMemId(String memId);
     Member findMemberByEmail(String email);
     Member findMemberByEmailAndRole(String email, Role role);
-    boolean hasDuplicatedMemId(String memId);
-    boolean hasDuplicatedEmail(String email);
-    boolean hasDuplicatedEmailAndRole(String email, Role role);
+    boolean hasMemId(String memId);
+    boolean hasEmail(String email);
+    boolean hasEmailAndRole(String email, Role role);
 
     Member login(String loginId, String loginPwd);
     void insertMember(Member member);

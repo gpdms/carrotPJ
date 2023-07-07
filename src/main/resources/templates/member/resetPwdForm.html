@@ -51,15 +51,20 @@
     $('#sendPwd').click(function() {
       $.ajax({
         type: "POST",
-        url: "members/pwd/find",
-        data: {
+        url: "members/pwd/reset",
+        contentType: 'application/json; charset=utf-8',
+        data: JSON.stringify({
           "email": $('#email').val()
-        }
+        })
       }).done(function (data) {
         alert("해당 이메일로 임시번호가 발급되었습니다.")
         location.href ="/members/login";
       }).fail(function (err) {
         const message = err.responseJSON;
+        $('#email').addClass('field-error-border');
+        const str = `<div class="field-error" id="email-error">이메일 형식에 맞지 않습니다.</div>`
+        $('#email-error').replaceWith(str);
+        return false;
         console.log(message);
         if (message.email) {
           console.log(message.email)

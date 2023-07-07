@@ -22,13 +22,10 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
-import javax.mail.MessagingException;
 import javax.validation.Valid;
-import java.io.UnsupportedEncodingException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -52,10 +49,10 @@ public class MemberController {
     @PostMapping("/signup")
     @ResponseBody
     public ResponseEntity signup(@Valid @RequestBody final SignupForm form) {
-        if (memberService.hasDuplicatedMemId(form.getMemId())) {
+        if (memberService.hasMemId(form.getMemId())) {
             return ResponseEntity.status(HttpStatus.CONFLICT).body(ErrorResponse.of(ErrorCode.DUPLICATED_MEM_ID));
         }
-        if (memberService.hasDuplicatedMemId(form.getEmail())) {
+        if (memberService.hasEmail(form.getEmail())) {
             return ResponseEntity.status(HttpStatus.CONFLICT).body(ErrorResponse.of(ErrorCode.DUPLICATED_EMAIL));
         }
         Member member = Member.builder().memId(form.getMemId())
@@ -71,7 +68,7 @@ public class MemberController {
     @GetMapping("/signup/memId/{memId}")
     @ResponseBody
     public ResponseEntity memIdDuplicateCheck(@PathVariable(required = true) String memId) {
-        if(memberService.hasDuplicatedMemId(memId)) {
+        if(memberService.hasMemId(memId)) {
             return ResponseEntity.status(HttpStatus.CONFLICT).body(ErrorResponse.of(ErrorCode.DUPLICATED_MEM_ID));
         }
         return ResponseEntity.ok().build();
@@ -80,7 +77,7 @@ public class MemberController {
     @GetMapping("/signup/email/{email}")
     @ResponseBody
     public ResponseEntity emailDuplicateCheck(@PathVariable(required = true) String email) {
-        if(memberService.hasDuplicatedEmail(email)) {
+        if(memberService.hasEmail(email)) {
             return ResponseEntity.status(HttpStatus.CONFLICT).body(ErrorResponse.of(ErrorCode.DUPLICATED_EMAIL));
         }
         return ResponseEntity.ok().build();
@@ -89,40 +86,31 @@ public class MemberController {
     @PostMapping("signup/email/auth-code")
     @ResponseBody
     public ResponseEntity sendAuthCodeByEmail(@Valid @RequestBody EmailRequestForm form) {
-        if(memberService.hasDuplicatedEmail(form.getEmail())) {
+        if(memberService.hasEmail(form.getEmail())) {
             return ResponseEntity.status(HttpStatus.CONFLICT).body(ErrorResponse.of(ErrorCode.DUPLICATED_EMAIL));
         }
         String authCode = memberService.sendAuthCodeByEmail(form.getEmail());
         return ResponseEntity.ok().body(authCode);
     }
 
-    @GetMapping("pwd/find")
-    public String toFindForm (){
-        return "member/findPwd";
+    @GetMapping("pwd/reset")
+    public String toResetPwdForm (){
+        return "member/resetPwdForm";
     }
 
-    @PostMapping("pwd/find")
+    @PostMapping("pwd/reset")
     @ResponseBody
-    public ResponseEntity sendTemporaryPwdByEmail (@Valid EmailRequestForm emailRequestForm,
-                                                    BindingResult bindingResult) {
-        Map<String, String> resultMap = new HashMap<>();
-        if(bindingResult.hasErrors()) {
-            String errorMessage = bindingResult.getFieldError("email").getDefaultMessage();
-            resultMap.put("email", errorMessage);
-            return ResponseEntity.badRequest().body(resultMap);
+    public ResponseEntity resetPwd(@Valid @RequestBody EmailRequestForm form) {
+        boolean notFoundEmail = !memberService.hasEmail(form.getEmail());
+        if (notFoundEmail) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(ErrorResponse.of(ErrorCode.NOT_FOUND_EMAIL));
         }
-        boolean hasEmail = memberService.hasDuplicatedEmail(emailRequestForm.getEmail());
-        if (!hasEmail) {
-            resultMap.put("no-email", "가입하지 않은 이메일입니다.");
-            return ResponseEntity.badRequest().body(resultMap);
-        }
-        memberService.issueTemporaryPwdByEmail(emailRequestForm.getEmail());
-        resultMap.put("success", "임시 비밀번호 발급");
-        return ResponseEntity.ok().body(resultMap);
+        memberService.issueTemporaryPwdByEmail(form.getEmail());
+        return ResponseEntity.ok().build();
     }
 
     @GetMapping("/settings/pwd")
-    public String pwdUpdateForm() {
+    public String toPwdUpdateForm() {
         return "myPage/pwdUpdate";
     }
 
@@ -130,8 +118,8 @@ public class MemberController {
     @ResponseBody
     public ResponseEntity pwdUpdate(@PathVariable String memId,
                             @Valid @RequestBody final PwdUpdateForm form) {
-        boolean isSamePwdAndPwdConfirm = form.getPwd().equals(form.getPwdConfirm());
-        if (!isSamePwdAndPwdConfirm) {
+        boolean isCorrectPwdConfirm = form.getPwd().equals(form.getPwdConfirm());
+        if (!isCorrectPwdConfirm) {
             return ResponseEntity.badRequest().body(ErrorResponse.of(ErrorCode.NOT_CORRECT_PWD_CONFIRM));
         }
         memberService.changePwdByMemId(form.getPwd(), memId);
@@ -139,7 +127,7 @@ public class MemberController {
     }
 
     @GetMapping("/settings/profile")
-    public String profileEditForm(@Login MemberDto loginMember,
+    public String toProfileUpdateForm(@Login MemberDto loginMember,
                                   @ModelAttribute("profileForm") ProfileForm form) {
         form.setMemId(loginMember.getMemId());
         form.setNickname(loginMember.getNickname());

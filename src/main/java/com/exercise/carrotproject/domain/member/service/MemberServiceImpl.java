@@ -1,12 +1,11 @@
 package com.exercise.carrotproject.domain.member.service;
 
 import com.exercise.carrotproject.domain.enumList.Role;
-import com.exercise.carrotproject.domain.member.MemberEntityDtoMapper;
+import com.exercise.carrotproject.domain.member.util.GenerateUtils;
+import com.exercise.carrotproject.domain.member.util.MemberEntityDtoMapper;
 import com.exercise.carrotproject.domain.member.dto.MemberDto;
 import com.exercise.carrotproject.domain.member.entity.Member;
-import com.exercise.carrotproject.domain.member.repository.BlockRepository;
 import com.exercise.carrotproject.domain.member.repository.MemberRepository;
-import com.exercise.carrotproject.domain.member.util.SecurityUtils;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -15,11 +14,9 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.imageio.ImageIO;
-import javax.mail.MessagingException;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
-import java.io.UnsupportedEncodingException;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.time.LocalDate;
@@ -52,15 +49,15 @@ public class MemberServiceImpl implements MemberService{
     }
 
     @Override
-    public boolean hasDuplicatedMemId(String memId) {
+    public boolean hasMemId(String memId) {
         return memberRepository.existsById(memId);
     }
     @Override
-    public boolean hasDuplicatedEmail(String email) {
+    public boolean hasEmail(String email) {
         return memberRepository.existsByEmail(email);
     }
     @Override
-    public boolean hasDuplicatedEmailAndRole(String email, Role role) {
+    public boolean hasEmailAndRole(String email, Role role) {
         return memberRepository.existsByEmailAndRole(email, role);
     }
 
@@ -68,14 +65,13 @@ public class MemberServiceImpl implements MemberService{
     public Member login(String loginId, String loginPwd) {
         Member member = findMemberByMemId(loginId);
         boolean pwdMatch = member.isPwdMatch(loginPwd);
-        System.out.println("pwdMatch !!!= " + pwdMatch);
         return member.isPwdMatch(loginPwd) ? member : null;
     }
 
     @Override
     @Transactional
     public String sendAuthCodeByEmail(String email) {
-        String authCode = emailService.generateAuthCode();
+        String authCode = GenerateUtils.generateEmailAuthCode();
         emailService.sendAuthCodeByEmail(authCode, email);
         return authCode;
     }
@@ -90,14 +86,12 @@ public class MemberServiceImpl implements MemberService{
     @Transactional
     public Map<String, Object> insertSocialMember(MemberDto memberDto) {
         HashMap<String, Object> resultMap = new HashMap<>();
-
         String url = memberDto.getProfPath();
         if(!url.isEmpty()) {
             String savePath = saveUrlImgToServer(url);
             memberDto.setProfPath(savePath);
         }
-
-        memberDto.setMemId(createUniqueMemId());
+        memberDto.setMemId(GenerateUtils.generateUniqueMemId());
         memberDto.setRole(Role.SOCIAL_KAKAO);
         Member member = MemberEntityDtoMapper.toSocialMemberEntity(memberDto);
         memberRepository.save(member);
@@ -105,12 +99,6 @@ public class MemberServiceImpl implements MemberService{
         return resultMap;
     }
 
-    private String createUniqueMemId() {
-        String uniqueId = UUID.randomUUID().toString();
-        uniqueId = uniqueId.replace("-", "");
-        uniqueId = uniqueId.substring(0, 16);
-        return uniqueId;
-    }
 
     private String saveUrlImgToServer(String url) {
         String savePath;
@@ -171,11 +159,11 @@ public class MemberServiceImpl implements MemberService{
 
     @Override
     @Transactional
-    public Map<String, Object> changeProfile (Member updateMember, MultipartFile profImg) {
+    public Map<String, Object> changeProfile(Member updateMember, MultipartFile profImg) {
         Map<String, Object> updateResult = new HashMap<>();
 
         Member member = findMemberByMemId(updateMember.getMemId());
-        String profPathForUdpate = member.getProfPath();
+        String newProfPath = member.getProfPath();
         //프로필 이미지를 변경한다면,
         if(!profImg.isEmpty()) {
             boolean isImageType = profImg.getContentType().startsWith("image");
@@ -183,7 +171,7 @@ public class MemberServiceImpl implements MemberService{
                 updateResult.put("fail", "image");
                 return updateResult;
             } else {
-                profPathForUdpate = createProfPath(profImg);
+                newProfPath = createProfPath(profImg);
                 saveImgToServer(profImg) ;
             }
         }
@@ -196,10 +184,9 @@ public class MemberServiceImpl implements MemberService{
     @Override
     @Transactional
     public void issueTemporaryPwdByEmail (String email) {
-        String tempPwd = emailService.generateAuthCode();
-        String hashedTempPwd = SecurityUtils.encrpytPwd(tempPwd);
-        Member member = memberRepository.findByEmail(email).orElseThrow();
-        member.updateMemPwd(hashedTempPwd);
+        String tempPwd = GenerateUtils.generateTempPwd();
+        Member member = findMemberByEmail(email);
+        member.updateMemPwd(tempPwd);
         emailService.sendTemporaryPwdByEmail(tempPwd, email);
     }
 }

@@ -19,27 +19,6 @@ public class EmailServiceImpl {
     private final SpringTemplateEngine templateEngine;
     private final String setFrom = "jk65333@gmail.com";
 
-    public String generateAuthCode() {
-        String authCode;
-        Random random = new Random();
-        StringBuffer key = new StringBuffer();
-        for(int i=0;i<8;i++) {
-            int index = random.nextInt(3);
-            switch (index) {
-                case 0 :
-                    key.append((char) ((int)random.nextInt(26) + 97));
-                    break;
-                case 1:
-                    key.append((char) ((int)random.nextInt(26) + 65));
-                    break;
-                case 2:
-                    key.append(random.nextInt(9));
-                    break;
-            }
-        }
-        authCode = key.toString();
-        return authCode;
-    }
 
     //회원가입 : 인증 코드 보내기
     public void sendAuthCodeByEmail(String authCode, String toEmail){
