@@ -34,24 +34,20 @@ public class MannerScoreBatchConfig {
 
     @Bean
     public Job job() {
-        Job job = jobBuilderFactory.get("mannerScoreUpdateJob")
-                .start(step1(null))
-                .next(step2(null))
+        Job job = jobBuilderFactory.get("updateMannerScoreJob")
+                .start(updateMannerScoreFromReviewScore(null))
+                .next(updateMannerScoreDown(null))
                 .build();
         return job;
     }
 
     @Bean
     @JobScope
-    public Step step1(@Value("#{jobParameters[date]}") String date) {
-        return stepBuilderFactory.get("step1")
+    public Step updateMannerScoreFromReviewScore(@Value("#{jobParameters[date]}") String date) {
+        return stepBuilderFactory.get("updateMannerScoreStep1")
                 .tasklet((contribution, chunkContext) -> {
-                    List<MemberDto> memberDtos = reviewCustomRepository.sumScoreForUpdateMannerScore();
-                    //test
-                    /*MemberDto tester2 = MemberDto.builder().mannerScore(5000000.0).memId("tester2").build();
-                    MemberDto tester3 = MemberDto.builder().mannerScore(15000.0).memId("tester3").build();
-                    List<MemberDto> memberDtos = new ArrayList<>(Arrays.asList(tester3));*/
-                    mannerScoreRepository.updateMannerScore(memberDtos);
+                    List<MemberDto> reviewScoreList = reviewCustomRepository.combineReviewScoreForUpdateMannerScore();
+                    mannerScoreRepository.updateMannerScore(reviewScoreList);
                     return RepeatStatus.FINISHED;
                 })
                 .build();
@@ -59,22 +55,19 @@ public class MannerScoreBatchConfig {
 
     @Bean
     @JobScope
-    public Step step2(@Value("#{jobParameters[date]}") String date) {
-        return stepBuilderFactory.get("step2")
+    public Step updateMannerScoreDown(@Value("#{jobParameters[date]}") String date) {
+        return stepBuilderFactory.get("updateMannerScoreStep2")
                 .tasklet((contribution, chunkContext) -> {
-                    long result = mannerScoreRepository.updateMannerScoreDown();
+                    long updateResult = mannerScoreRepository.updateMannerScoreDown();
                     return RepeatStatus.FINISHED;
                 })
                 .build();
     }
 
-    /**
-     * JobRegistryBeanPostProcessor
-     */
     @Bean
     public BeanPostProcessor jobRegistryBeanPostProcessor() throws Exception {
         JobRegistryBeanPostProcessor postProcessor = new JobRegistryBeanPostProcessor();
-        postProcessor.setJobRegistry(jobRegistry); // 빈 셋팅
+        postProcessor.setJobRegistry(jobRegistry);
         return postProcessor;
     }
 }

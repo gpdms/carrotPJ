@@ -41,7 +41,7 @@ public class ReviewController {
     @GetMapping("/{memId}")
     public String toPublicReviewMessagesDetail(@PathVariable String memId, Model model) {
         model.addAttribute("messageMap",reviewService.goodReviewMessagesDetail(memId));
-        model.addAttribute("nickname", memberService.getNicknameByMemId(memId));
+        model.addAttribute("nickname", memberService.findMemberByMemId(memId).getNickname());
         return "/review/publicReviews";
     }
 
@@ -173,7 +173,7 @@ public class ReviewController {
     public String toMannerDetail(@PathVariable String memId, Model model) {
         model.addAttribute("positiveMannerMap", reviewService.getPositiveMannerDetails(memId));
         model.addAttribute("negativeMannerMap", reviewService.getNegativeMannerDetails(memId));
-        model.addAttribute("nickname", memberService.getNicknameByMemId(memId));
+        model.addAttribute("nickname", memberService.findMemberByMemId(memId).getNickname());
         return  "review/mannerDetail";
     }
 

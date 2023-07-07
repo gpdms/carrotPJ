@@ -45,9 +45,8 @@ public class ReviewBuyerServiceImpl implements ReviewBuyerService {
     }
     @Override
     public ReviewBuyer findOneReviewBuyer(Long reviewBuyerId){
-        reviewBuyerRepository.findById(reviewBuyerId);
         return reviewBuyerRepository.findById(reviewBuyerId)
-                .orElseThrow(() -> new NoSuchElementException("reviewBuyer Not Found"));
+                .orElseThrow(() -> new NoSuchElementException("ReviewBuyer Not Found"));
     }
 
     @Override
