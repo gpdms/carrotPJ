@@ -9,9 +9,13 @@ import java.util.NoSuchElementException;
 @Getter
 @AllArgsConstructor
 public enum ErrorCode {
-    //Common
-    INVALID_INPUT_VALUE(400,"C001", "invalid input value"),
-    NO_SUCH_ELEMENT(404, "C002", "no such element"),
+    //Global
+    INVALID_INPUT_VALUE(400,"G001", "invalid input value"),
+    NO_SUCH_ELEMENT(404, "G002", "no such element"),
+
+    //Custom
+    NOT_IMG_TYPE(400, "C001","not image type"),
+//    OVER_SIZE_IMG(415, "C002","image size exceeded"),
 
     //Member
     NOT_CORRECT_PWD_CONFIRM(400, "M001","not correct pwdConfirm"),

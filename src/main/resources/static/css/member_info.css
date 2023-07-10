@@ -123,26 +123,44 @@ hr{
 .info-container .info-content .edit-form .pf-input {
     margin: 10px;
 }
-.info-container .info-content .edit-form  .img-form {
+.info-container .info-content .edit-form .img-form {
     position: relative;
 }
 .info-container .info-content .edit-form .img-form .profile-img {
     display: inline-block;
 }
 
-.info-container .info-content .edit-form  .img-form .input-file-btn{
+.info-container .info-content .edit-form .img-form .input-file-btn{
     display: inline-block;
     position: absolute;
     top: 25px;
     left: 80px;
+    color: #ff9d0a;
+    text-decoration: underline;
+    cursor: pointer;
+    font-size: 15px;
+}
+
+.info-container .info-content .edit-form  .img-form .del-file-btn{
+    display: inline-block;
+    position: absolute;
+    top: 25px;
+    left: 160px;
     color: #999;
     text-decoration: underline;
     cursor: pointer;
     font-size: 15px;
 }
-.info-container .info-content .edit-form  .img-form .input-file-btn:hover, .input-file-btn:active{
-    color: #333;
+
+.info-container .info-content .edit-form  .img-form
+ .input-file-btn:hover, .input-file-btn:active{
+    color: #c97d08;
 }
+.info-container .info-content .edit-form  .img-form
+ .del-file-btn:hover, .del-file-btn:active{
+    color: #555;
+}
+
 .info-container .info-content .edit-form .pf-input .form-control {
     font-size: 15px;
 }

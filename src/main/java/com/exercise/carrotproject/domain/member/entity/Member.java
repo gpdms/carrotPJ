@@ -115,6 +115,10 @@ public class Member extends BaseEntity {
         this.loc = updateMember.getLoc();
     }
 
+    public void resetProfPath() {
+        this.profPath = null;
+    }
+
     public boolean isPwdMatch(String plainPwd) {
         return SecurityUtils.isSamePlainPwdAndHashedPwd(plainPwd, this.memPwd);
     }
