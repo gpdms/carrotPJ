@@ -1,5 +1,6 @@
 package com.exercise.carrotproject.domain.member.repository;
 
+import com.exercise.carrotproject.domain.member.dto.MannerUpdateDto;
 import com.exercise.carrotproject.domain.member.dto.MemberDto;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
@@ -28,9 +29,9 @@ public class  MannerScoreRepository {
     private int batchSize;
 
     @Transactional
-    public void updateMannerScore(List<MemberDto> memberDtos) {
+    public void updateMannerScore(List<MannerUpdateDto> memberDtos) {
         int batchCount = 0;
-        List<MemberDto> subMemberDtos = new ArrayList<>();
+        List<MannerUpdateDto> subMemberDtos = new ArrayList<>();
         for (int i = 0; i < memberDtos.size(); i++) {
             subMemberDtos.add(memberDtos.get(i));
             if ((i + 1) % batchSize == 0) {
@@ -42,7 +43,7 @@ public class  MannerScoreRepository {
         }
     }
     @Transactional
-    public int updateMannerScoreSub(int batchCount, List<MemberDto> subMemberDtos) {
+    public int updateMannerScoreSub(int batchCount, List<MannerUpdateDto> subMemberDtos) {
         LocalDateTime monday5am = LocalDateTime.now().with(TemporalAdjusters.previousOrSame(DayOfWeek.MONDAY))
                 .withHour(5).withMinute(0).withSecond(0).withNano(0);
         Timestamp updatedTimeManner = Timestamp.valueOf(monday5am.minusDays(7));
@@ -53,11 +54,11 @@ public class  MannerScoreRepository {
                         " and manner_score + ? between 0 and 1200000",
                 new BatchPreparedStatementSetter() {
                     public void setValues(PreparedStatement ps, int i) throws SQLException {
-                        MemberDto memberDto = subMemberDtos.get(i);
-                        ps.setDouble(1, memberDto.getMannerScore());
+                        MannerUpdateDto memberDto = subMemberDtos.get(i);
+                        ps.setDouble(1, memberDto.getReviewScore());
                         ps.setTimestamp(2, updatedTimeManner);
                         ps.setString(3, memberDto.getMemId());
-                        ps.setDouble(4, memberDto.getMannerScore());
+                        ps.setDouble(4, memberDto.getReviewScore());
                     }
                     public int getBatchSize() {
                         return subMemberDtos.size();
@@ -68,19 +69,25 @@ public class  MannerScoreRepository {
         return batchCount;
     }
 
-    //최근 활동 없으면 매너온도 down
-    //최근 받은 리뷰가 없어 매너온도 업데이트가 되지 않았다면, 최근 활동이 없는 것이다.
+    //1. 최근 활동 없으면 매너온도 0.25 down (36.5도 까지만)
+    //최근 받은 리뷰가 없어 매너온도 업데이트가 되지 않았다면, 최근 활동이 없는 것.
     @Transactional
-    public long updateMannerScoreDown() {
+    public void updateMannerScoreDown() {
         LocalDateTime now = LocalDateTime.now();
         LocalDateTime monday5am = now.with(TemporalAdjusters.previousOrSame(DayOfWeek.MONDAY))
                 .withHour(5).withMinute(0).withSecond(0).withNano(0);
         Timestamp updatedTimeManner = Timestamp.valueOf(monday5am);
         Timestamp nowTime = Timestamp.valueOf(now);
-        return jpaQueryFactory.update(member)
+        jpaQueryFactory.update(member)
+                .set(member.mannerScore, 365000.0)
+                .where(member.updatedTimeManner.notBetween(updatedTimeManner, nowTime),
+                        member.mannerScore.lt(367500),
+                        member.mannerScore.gt(365000))
+                .execute();
+        jpaQueryFactory.update(member)
                 .set(member.mannerScore, member.mannerScore.subtract(2500))
                 .where(member.updatedTimeManner.notBetween(updatedTimeManner, nowTime),
-                        member.mannerScore.gt(365000))
+                        member.mannerScore.goe(367500))
                 .execute();
     }
 
