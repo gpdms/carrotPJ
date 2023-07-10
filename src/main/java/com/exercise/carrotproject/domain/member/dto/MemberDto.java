@@ -9,10 +9,9 @@ import lombok.*;
 import java.sql.Timestamp;
 import java.util.Date;
 
-
-@AllArgsConstructor(access = AccessLevel.PRIVATE)
-@Builder
 @Getter
+@Builder
+@AllArgsConstructor(access = AccessLevel.PRIVATE)
 public class MemberDto {
     private final String memId;
     private String nickname;

@@ -9,25 +9,22 @@ import javax.validation.constraints.NotNull;
 import java.sql.Timestamp;
 
 @Entity
-@NoArgsConstructor
-@AllArgsConstructor
+@NoArgsConstructor (access = AccessLevel.PROTECTED)
+@AllArgsConstructor (access = AccessLevel.PRIVATE)
 @Builder
 @ToString
 public class Block {
     @Id
     @GeneratedValue(strategy= GenerationType.IDENTITY)
     private Long blockId;
-
     @NotNull
     @ManyToOne
     @JoinColumn(name="from_mem")
     private Member fromMem;
-
     @NotNull
     @ManyToOne
     @JoinColumn(name="to_mem")
     private Member toMem;
-
     @CreationTimestamp
     @Column(updatable = false)
     private Timestamp createdTime;

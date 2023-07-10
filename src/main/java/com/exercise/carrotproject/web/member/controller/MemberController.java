@@ -2,6 +2,7 @@ package com.exercise.carrotproject.web.member.controller;
 
 
 import com.exercise.carrotproject.domain.member.dto.MemberDto;
+import com.exercise.carrotproject.domain.member.entity.Block;
 import com.exercise.carrotproject.domain.member.service.MemberService;
 import com.exercise.carrotproject.domain.post.dto.BuyPostDto;
 import com.exercise.carrotproject.domain.post.dto.PostDto;
@@ -26,7 +27,6 @@ import org.springframework.web.multipart.MultipartFile;
 import javax.validation.Valid;
 import java.util.List;
 import java.util.Map;
-
 
 @Slf4j
 @Controller

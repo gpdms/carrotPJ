@@ -23,13 +23,16 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 
+import static com.exercise.carrotproject.domain.member.util.SecurityUtils.*;
+import static org.springframework.util.StringUtils.hasText;
+
 @Entity
+@DynamicInsert
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
+@AllArgsConstructor(access = AccessLevel.PRIVATE)
 @Builder
 @JsonIgnoreProperties({"blockfromMemList", "blocktoMemList", "reviewBuyerList", "reviewSellerList"})
 @ToString (exclude = {"blockfromMemList", "blocktoMemList", "reviewBuyerList", "reviewSellerList"})
-@DynamicInsert
-@NoArgsConstructor(access = AccessLevel.PROTECTED)
-@AllArgsConstructor
 public class Member extends BaseEntity {
     @Id
     @Size(min = 6, max = 12)
@@ -63,7 +66,6 @@ public class Member extends BaseEntity {
     private List<ReviewBuyer> reviewBuyerList = new ArrayList<>();
     @OneToMany(mappedBy="seller", fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)
     private List<ReviewSeller> reviewSellerList = new ArrayList<>();
-
 
     public String getMemId() {
         return memId;
@@ -101,12 +103,12 @@ public class Member extends BaseEntity {
 
     @PrePersist
     private void prePersistMember() {
-        String hashedPwd = StringUtils.hasText(this.memPwd) ? SecurityUtils.encrpytPwd(this.memPwd) : null;
+        String hashedPwd = hasText(this.memPwd) ? encrpytPwd(this.memPwd) : null;
         this.memPwd = hashedPwd;
     }
 
     public void updateMemPwd(String memPwd) {
-        this.memPwd = SecurityUtils.encrpytPwd(memPwd);
+        this.memPwd = encrpytPwd(memPwd);
     }
 
     public void updateProfile(Member updateMember) {
@@ -120,7 +122,7 @@ public class Member extends BaseEntity {
     }
 
     public boolean isPwdMatch(String plainPwd) {
-        return SecurityUtils.isSamePlainPwdAndHashedPwd(plainPwd, this.memPwd);
+        return isSamePlainPwdAndHashedPwd(plainPwd, this.memPwd);
     }
 }
 

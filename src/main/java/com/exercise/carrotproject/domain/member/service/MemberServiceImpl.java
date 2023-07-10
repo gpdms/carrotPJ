@@ -140,6 +140,7 @@ public class MemberServiceImpl implements MemberService{
             throw new RuntimeException(e);
         }
     }
+
     private String createProfPath(String url) {
         String profDirPath = makeProfDir();
         String extension = url.substring(url.lastIndexOf("."));
@@ -157,6 +158,7 @@ public class MemberServiceImpl implements MemberService{
         String savePath = profDirPath + File.separator + saveName;
         return savePath;
     }
+
     private String makeProfDir() {
         String profDirPath = rootImgDir + File.separator + "member" + File.separator + LocalDate.now();
         new File(profDirPath).mkdir();
