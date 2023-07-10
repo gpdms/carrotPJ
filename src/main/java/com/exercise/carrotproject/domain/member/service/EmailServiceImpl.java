@@ -30,7 +30,7 @@ public class EmailServiceImpl {
         try {
             return tryToMakeSignupEmailForm(authCode, email);
         } catch (MessagingException e) {
-            log.error(e.getMessage());
+            log.error("EmailService makeSignupEmailForm() : {}", e);
             throw new RuntimeException(e);
         }
     }
@@ -63,8 +63,7 @@ public class EmailServiceImpl {
         try {
             return tryToMakePwdEmailForm(TempPwd, email);
         } catch (MessagingException e) {
-            log.error(e.getMessage());
-            log.error("Service Layer MessagingException {}", e.getMessage(), e);
+            log.error("EmailService makePwdEmailForm() : {}", e);
             throw new RuntimeException(e);
         }
     }
