@@ -184,7 +184,7 @@ public class ChatServiceImpl implements ChatService {
 
     @Override
     public int getNotReadChatCnt(MemberDto memberDto) {
-        Member memberEntity = MemberEntityDtoMapper.toMemberEntity(memberDto);
+        Member memberEntity = MemberEntityDtoMapper.toEntity(memberDto);
         List<Chat> chatList = chatRepository.findByToAndReadState(memberEntity, ReadState.NOTREAD);//미확인 메세지 조회
         return chatList.size();
     }
@@ -192,7 +192,7 @@ public class ChatServiceImpl implements ChatService {
     @Override
     public List<ChatRoomDto> getChatRoomListByPost(MemberDto memberDto, Long postId) {
 
-        Member memberEntity = MemberEntityDtoMapper.toMemberEntity(memberDto);
+        Member memberEntity = MemberEntityDtoMapper.toEntity(memberDto);
 
         List<Long> ids = jpaQueryFactory.select(QChat.chat.chatId.max())
                 .from(QChat.chat)
@@ -238,7 +238,7 @@ public class ChatServiceImpl implements ChatService {
     @Override
     public List<ChatRoomDto> getChatRoomList(MemberDto memberDto) {
 
-        Member memberEntity = MemberEntityDtoMapper.toMemberEntity(memberDto);
+        Member memberEntity = MemberEntityDtoMapper.toEntity(memberDto);
 
         List<Long> ids = jpaQueryFactory.select(QChat.chat.chatId.max())
                 .from(QChat.chat)
@@ -283,7 +283,7 @@ public class ChatServiceImpl implements ChatService {
     @Override
     public ChatRoomDto getChatRoom(MemberDto memberDto, Long roomId) {
 
-        Member memberEntity = MemberEntityDtoMapper.toMemberEntity(memberDto);
+        Member memberEntity = MemberEntityDtoMapper.toEntity(memberDto);
 
         Long maxChatId = jpaQueryFactory.select(QChat.chat.chatId.max())
                 .from(QChat.chat)

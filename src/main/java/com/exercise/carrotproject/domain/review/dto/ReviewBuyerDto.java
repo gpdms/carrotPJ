@@ -37,7 +37,7 @@ public class ReviewBuyerDto {
     @QueryProjection
     public ReviewBuyerDto(Long reviewBuyerId, Member seller, String message, Timestamp createdTime) {
         this.reviewBuyerId = reviewBuyerId;
-        this.seller = MemberEntityDtoMapper.toMemberDto(seller);
+        this.seller = MemberEntityDtoMapper.toDto(seller);
         this.message = message;
         this.createdTime = createdTime;
     }

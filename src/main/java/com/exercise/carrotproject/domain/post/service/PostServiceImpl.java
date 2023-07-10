@@ -411,7 +411,7 @@ public class PostServiceImpl implements PostService{
 
     @Override
     public List<ChatRoomDto> selectBuyersByPost(MemberDto memberDto, Long postId){
-        Member memberEntity = MemberEntityDtoMapper.toMemberEntity(memberDto);
+        Member memberEntity = MemberEntityDtoMapper.toEntity(memberDto);
 
         List<Long> ids = jpaQueryFactory.select(QChat.chat.chatId.max())
                 .from(QChat.chat)

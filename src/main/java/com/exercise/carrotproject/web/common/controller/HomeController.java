@@ -9,7 +9,6 @@ import com.exercise.carrotproject.domain.member.entity.Member;
 import com.exercise.carrotproject.domain.member.repository.MemberRepository;
 import com.exercise.carrotproject.domain.member.service.BlockService;
 import com.exercise.carrotproject.domain.member.service.MemberService;
-import com.exercise.carrotproject.domain.member.util.SecurityUtils;
 import com.exercise.carrotproject.domain.post.dto.PostDto;
 import com.exercise.carrotproject.domain.post.repository.PostRepository;
 import com.exercise.carrotproject.domain.post.service.PostService;
@@ -45,7 +44,7 @@ public class HomeController {
         Member loginMember = memberRepository.findById("tester2").orElse(null);
         MemberDto loginMemberDto = MemberDto.builder().memId(loginMember.getMemId())
                 .nickname(loginMember.getNickname())
-                .role(Role.USER)
+                .role(Role.NORMAL)
                 .mannerScore(loginMember.getMannerScore())
                 .loc(loginMember.getLoc()).build();
         HttpSession session = request.getSession();
@@ -79,7 +78,7 @@ public class HomeController {
         Map<ReviewIndicator, Long> positiveMannerBrief = reviewService.getPositiveMannerDetailsBrief(memId, 3L);
         List<ReviewMessageDto> reviewMessageBrief =reviewService.goodReviewMessagesBrief(memId, 3L);
 
-        model.addAttribute("member", MemberEntityDtoMapper.toMemberDto(member));
+        model.addAttribute("member", MemberEntityDtoMapper.toDto(member));
         model.addAttribute("isBlocked", isBlocked);
         model.addAttribute("postList", postListBrief);
         model.addAttribute("positiveMannerBrief", positiveMannerBrief);

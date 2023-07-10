@@ -11,7 +11,7 @@ public class WishEnityDtoMapper {
     public static Wish dtoToEntity(WishDto wishDto){
         return Wish.builder()
                 .post(PostEntityDtoMapper.dtoToEntity(wishDto.getPost()))
-                .member(MemberEntityDtoMapper.toMemberEntity(wishDto.getMember()))
+                .member(MemberEntityDtoMapper.toEntity(wishDto.getMember()))
                 .build();
 
     }
@@ -20,7 +20,7 @@ public class WishEnityDtoMapper {
     public static WishDto entityToDto (Wish wish){
         return WishDto.builder()
                 .post(PostEntityDtoMapper.entityToDto(wish.getPost()))
-                .member(MemberEntityDtoMapper.toMemberDto(wish.getMember()))
+                .member(MemberEntityDtoMapper.toDto(wish.getMember()))
                 .build();
     }
 

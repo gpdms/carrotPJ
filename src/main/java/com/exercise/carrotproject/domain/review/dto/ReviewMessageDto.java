@@ -29,14 +29,14 @@ public class ReviewMessageDto {
     //seller
     public ReviewMessageDto(Long reviewBuyerId, Member seller, String message, Timestamp createdTime) {
         this.reviewBuyerId = reviewBuyerId;
-        this.seller = MemberEntityDtoMapper.toMemberDto(seller);
+        this.seller = MemberEntityDtoMapper.toDto(seller);
         this.message = message;
         this.createdTime = createdTime;
     }
 
     //buyer
     public ReviewMessageDto(Member buyer, Long reviewSellerId, String message, Timestamp createdTime) {
-        this.buyer = MemberEntityDtoMapper.toMemberDto(buyer);
+        this.buyer = MemberEntityDtoMapper.toDto(buyer);
         this.reviewSellerId = reviewSellerId;
         this.message = message;
         this.createdTime = createdTime;

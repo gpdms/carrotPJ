@@ -402,7 +402,7 @@ public class PostController {
     public String onSalePost(@PathVariable String memId, Model model, @PageableDefault(page = 0, size = 20)Pageable pageable){
         //판매자 정보
         Member member = memberService.findMemberByMemId(memId);
-        MemberDto seller = MemberEntityDtoMapper.toMemberDto(member);
+        MemberDto seller = MemberEntityDtoMapper.toDto(member);
         //판매중,예약중 게시글
         Map map = postService.selectPostBySellState(memId);
         List<PostDto> onSaleAndRsvList = (List) map.get("onSaleAndRsvList");

@@ -6,7 +6,7 @@ import com.exercise.carrotproject.domain.member.entity.Member;
 
 public class MemberEntityDtoMapper {
     //memberDto -> memberEntity
-    public static Member toMemberEntity(MemberDto memberDto){
+    public static Member toEntity(MemberDto memberDto){
         return Member.builder()
                 .memId(memberDto.getMemId())
                 .nickname(memberDto.getNickname())
@@ -14,28 +14,40 @@ public class MemberEntityDtoMapper {
                 .role(memberDto.getRole())
                 .build();
     }
+
     //memberEntity -> memberDto
-    public static MemberDto toMemberDto(Member member){
+    public static MemberDto toDto(Member member){
         double roundedMannerScore = Math.round(member.getMannerScore() / 10000.0 * 10) / 10.0;
         return MemberDto.builder()
                 .memId(member.getMemId())
+                .email(member.getEmail())
                 .nickname(member.getNickname())
                 .mannerScore(
                         roundedMannerScore >= 99.9 ? 99.9 : roundedMannerScore)
                 .loc(member.getLoc())
                 .role(member.getRole())
-                .email(member.getEmail())
+
                 .build();
     }
 
-    public static Member toSocialMemberEntity(MemberDto memberDto) {
+    public static Member toSignupSocialEntity(MemberDto memberDto) {
         return Member.builder()
                 .memId(memberDto.getMemId())
                 .email(memberDto.getEmail())
-                .profPath(memberDto.getProfPath())
-                .loc(memberDto.getLoc())
                 .nickname(memberDto.getNickname())
+                .loc(memberDto.getLoc())
+                .profPath(memberDto.getProfPath())
                 .role(memberDto.getRole())
                 .build();
+    }
+
+    public static Member toSignupNomalEntity(MemberDto memberDto) {
+        return Member.builder()
+                .memId(memberDto.getMemId())
+                .email(memberDto.getEmail())
+                .nickname(memberDto.getNickname())
+                .loc(memberDto.getLoc())
+                .memPwd(memberDto.getMemPwd())
+                .role(Role.NORMAL).build();
     }
 }
