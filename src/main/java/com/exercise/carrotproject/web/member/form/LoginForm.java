@@ -1,18 +1,15 @@
 package com.exercise.carrotproject.web.member.form;
 
-import lombok.Data;
-import lombok.Getter;
-import lombok.Setter;
-import lombok.ToString;
+import lombok.*;
 
 import javax.validation.constraints.NotEmpty;
 
 @Getter
-@Setter
 @ToString
+@AllArgsConstructor
 public class LoginForm {
     @NotEmpty
-    private String loginId;
+    private final String loginId;
     @NotEmpty
-    private String pwd;
+    private final String pwd;
 }
