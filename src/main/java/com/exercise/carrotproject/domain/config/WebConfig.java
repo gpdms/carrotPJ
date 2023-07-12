@@ -31,7 +31,7 @@ public class WebConfig implements WebMvcConfigurer {
                         "/css/**", "/*.ico", "/error");*/
         registry.addInterceptor(new LoginCheckInterceptor())
                 .order(1)
-                .addPathPatterns("/members/**", "/reviews/**", "/post/**", "/chat/**")
+                .addPathPatterns("/members/**", "/reviews/**", "/post/**", "/chat/**", "/blocks/**")
                 .excludePathPatterns("/members/signup/**",  "/members/**/profileImg", "/members/pwd/reset",
                         "/members/css/**","/members/js/**","/members/assets/**", "/members/error",
                         "/reviews/css/**","/reviews/js/**","/reviews/assets/**", "/reviews/error",
@@ -40,11 +40,11 @@ public class WebConfig implements WebMvcConfigurer {
                         "/post/board/**", "/post/firstImg/**","post/img/**","post/onSale/**", "post/search");
         registry.addInterceptor(new MemberInfoCheckInterceptor())
                 .order(2)
-                .addPathPatterns("/members/**")
+                .addPathPatterns("/members/**", "/blocks/**")
                 .excludePathPatterns("/members/signup/**", "/members/**/profileImg",
-                        "/members/pwd/reset", "/members/settings/**",
-                        "/members/css/**","/members/js/**","/members/assets/**",
-                        "/members/error");
+                        "/members/pwd/reset", "/members/settings/**",  "/blocks",
+                        "/members/css/**","/members/js/**","/members/assets/**", "/members/error",
+                        "/blocks/css/**","/blocks/js/**","/blocks/assets/**", "/blocks/error");
         registry.addInterceptor(postMemberCheckInterceptor())
                 .order(2)
                 .addPathPatterns("/post/**")

@@ -2,7 +2,6 @@ package com.exercise.carrotproject.domain.member.entity;
 
 import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
-import org.hibernate.annotations.DynamicInsert;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
@@ -10,8 +9,6 @@ import java.sql.Timestamp;
 
 @Entity
 @NoArgsConstructor (access = AccessLevel.PROTECTED)
-@AllArgsConstructor (access = AccessLevel.PRIVATE)
-@Builder
 @ToString
 public class Block {
     @Id
@@ -28,6 +25,12 @@ public class Block {
     @CreationTimestamp
     @Column(updatable = false)
     private Timestamp createdTime;
+
+    @Builder
+    private Block(Member fromMem, Member toMem) {
+        this.fromMem = fromMem;
+        this.toMem = toMem;
+    }
 
     public Long getBlockId() {
         return blockId;
