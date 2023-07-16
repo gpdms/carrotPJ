@@ -1,8 +1,8 @@
-.signup-container {
+.join-container {
     max-width: 560px;
     margin: 90px;
 }
-.signup-container .signup-border {
+.join-container .join-border {
     height: auto;
     width: 450px;
     border: 1px solid #f1f3f5;
@@ -19,7 +19,7 @@
 .field-error-border {
     border-color: #dc3545;
 }
-.signup-container .input {
+.join-container .input {
     margin: 10px 0;
     font-size: 15px;
 }
@@ -60,7 +60,4 @@
     color: #333;
     background-color: transparent;
     border-color: #333;
-}
-.signup-btn {
-
 }

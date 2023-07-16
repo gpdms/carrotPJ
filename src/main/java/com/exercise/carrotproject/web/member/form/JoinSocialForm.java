@@ -8,7 +8,7 @@ import javax.validation.constraints.*;
 @Getter
 @ToString
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
-public class SignupSocialForm {
+public class JoinSocialForm {
     @Pattern(regexp = "^[a-zA-Z0-9가-힣]{2,15}$",
             message = "닉네임은 2~15자의 영문, 한글, 숫자만 사용가능합니다.")
     private final String nickname;
@@ -19,5 +19,5 @@ public class SignupSocialForm {
     @NotNull
     private final Loc loc;
 
-    private final String profPath;
+    private final String profImgUrl;
 }

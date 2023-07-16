@@ -15,15 +15,9 @@ import java.util.Date;
 public class MemberDto {
     private final String memId;
     private String nickname;
-    private String email;
     private Loc loc;
-    private String profPath;
     private final Double mannerScore;
     private Role role;
-    private Timestamp createdTime;
-    private Timestamp updatedTime;
-    private Date updatedTimeManner;
-    private String memPwd;
 
     public void setNickname(String nickname) {
         this.nickname = nickname;

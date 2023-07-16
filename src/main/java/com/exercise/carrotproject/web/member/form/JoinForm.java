@@ -11,7 +11,7 @@ import javax.validation.constraints.*;
 @Getter
 @ToString
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
-public class SignupForm {
+public class JoinForm {
     @Pattern(regexp = "^(?=.*[a-zA-Z])[a-zA-Z0-9]{6,12}$",
             message = "아이디는 6~12자의 영문 대/소문자, 숫자만 사용가능합니다.")
     private final String memId;

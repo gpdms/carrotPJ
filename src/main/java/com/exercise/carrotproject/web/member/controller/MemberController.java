@@ -1,8 +1,8 @@
 package com.exercise.carrotproject.web.member.controller;
 
 
+import com.exercise.carrotproject.domain.member.dto.JoinNormalMemberDto;
 import com.exercise.carrotproject.domain.member.dto.MemberDto;
-import com.exercise.carrotproject.domain.member.entity.Block;
 import com.exercise.carrotproject.domain.member.service.MemberService;
 import com.exercise.carrotproject.domain.post.dto.BuyPostDto;
 import com.exercise.carrotproject.domain.post.dto.PostDto;
@@ -37,30 +37,30 @@ public class MemberController {
     private final PostService postService;
     private final TradeCustomRepositoryImpl tradeCustomRepository;
 
-    @GetMapping("/signup")
-    public String signupForm(Model model) {
+    @GetMapping("/join")
+    public String joinForm(Model model) {
         model.addAttribute("isSocial", false);
-        return "member/signupForm";
+        return "member/joinForm";
     }
 
-    @PostMapping("/signup")
-    public ResponseEntity signup(@Valid @RequestBody final SignupForm form) {
+    @PostMapping("/join")
+    public ResponseEntity join(@Valid @RequestBody final JoinForm form) {
         if (memberService.hasMemId(form.getMemId())) {
             return ResponseEntity.status(HttpStatus.CONFLICT).body(ErrorResponse.of(ErrorCode.DUPLICATED_MEM_ID));
         }
         if (memberService.hasEmail(form.getEmail())) {
             return ResponseEntity.status(HttpStatus.CONFLICT).body(ErrorResponse.of(ErrorCode.DUPLICATED_EMAIL));
         }
-        MemberDto member = MemberDto.builder().memId(form.getMemId())
+        JoinNormalMemberDto member = JoinNormalMemberDto.builder().memId(form.getMemId())
                 .memPwd(form.getPwd())
                 .email(form.getEmail())
                 .nickname(form.getNickname())
                 .loc(form.getLoc()).build();
-        memberService.insertNormalMember(member);
+        memberService.joinNormalMember(member);
         return ResponseEntity.ok().build();
     }
 
-    @GetMapping("/signup/memId/{memId}")
+    @GetMapping("/join/memId/{memId}")
     public ResponseEntity memIdDuplicateCheck(@PathVariable(required = true) String memId) {
         if(memberService.hasMemId(memId)) {
             return ResponseEntity.status(HttpStatus.CONFLICT).body(ErrorResponse.of(ErrorCode.DUPLICATED_MEM_ID));
@@ -68,7 +68,7 @@ public class MemberController {
         return ResponseEntity.ok().build();
     }
 
-    @GetMapping("/signup/email/{email}")
+    @GetMapping("/join/email/{email}")
     public ResponseEntity emailDuplicateCheck(@PathVariable(required = true) String email) {
         if(memberService.hasEmail(email)) {
             return ResponseEntity.status(HttpStatus.CONFLICT).body(ErrorResponse.of(ErrorCode.DUPLICATED_EMAIL));
@@ -76,7 +76,7 @@ public class MemberController {
         return ResponseEntity.ok().build();
     }
 
-    @PostMapping("signup/email/auth-code")
+    @PostMapping("join/email/auth-code")
     public ResponseEntity issueAuthCodeByEmail(@Valid @RequestBody final EmailRequestForm form) {
         if(memberService.hasEmail(form.getEmail())) {
             return ResponseEntity.status(HttpStatus.CONFLICT).body(ErrorResponse.of(ErrorCode.DUPLICATED_EMAIL));
@@ -107,7 +107,7 @@ public class MemberController {
 
     @PatchMapping("/{memId}/pwd")
     public ResponseEntity pwdUpdate(@PathVariable String memId,
-                            @Valid @RequestBody final PwdUpdateForm form) {
+                                    @Valid @RequestBody final PwdUpdateForm form) {
         boolean isCorrectPwdConfirm = form.getPwd().equals(form.getPwdConfirm());
         if (!isCorrectPwdConfirm) {
             return ResponseEntity.badRequest().body(ErrorResponse.of(ErrorCode.NOT_CORRECT_PWD_CONFIRM));
@@ -125,7 +125,7 @@ public class MemberController {
     public ResponseEntity profileUpdate(@Valid final ProfileForm form,
                                         @RequestParam("profImg") final MultipartFile profImg,
                                         @Login MemberDto loginMember) {
-        if (!memberService.isImageFile(profImg)) {
+        if (!memberService.isEmptyOrImageFile(profImg)) {
             return ResponseEntity.badRequest().body(ErrorResponse.of(ErrorCode.NOT_IMG_TYPE));
         }
 

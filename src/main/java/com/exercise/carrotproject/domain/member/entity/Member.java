@@ -4,7 +4,6 @@ import com.exercise.carrotproject.domain.common.entity.BaseEntity;
 import com.exercise.carrotproject.domain.enumList.Loc;
 import com.exercise.carrotproject.domain.converter.LocAttributeConverter;
 import com.exercise.carrotproject.domain.enumList.Role;
-import com.exercise.carrotproject.domain.member.util.SecurityUtils;
 import com.exercise.carrotproject.domain.review.entity.ReviewBuyer;
 import com.exercise.carrotproject.domain.review.entity.ReviewSeller;
 
@@ -13,7 +12,6 @@ import lombok.*;
 import org.hibernate.annotations.ColumnDefault;
 import org.hibernate.annotations.DynamicInsert;
 import org.hibernate.validator.constraints.Range;
-import org.springframework.util.StringUtils;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
@@ -31,13 +29,14 @@ import static org.springframework.util.StringUtils.hasText;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
 @Builder
-@JsonIgnoreProperties({"blockfromMemList", "blocktoMemList", "reviewBuyerList", "reviewSellerList"})
-@ToString (exclude = {"blockfromMemList", "blocktoMemList", "reviewBuyerList", "reviewSellerList"})
+@JsonIgnoreProperties({"blockFromMemList", "blockToMemList", "reviewBuyerList", "reviewSellerList"})
+@ToString (exclude = {"blockFromMemList", "blockToMemList", "reviewBuyerList", "reviewSellerList"})
 public class Member extends BaseEntity {
     @Id
     @Size(min = 6, max = 12)
     private String memId;
     private String memPwd;
+    @Column(nullable = false)
     private String email;
     @Size(min = 2, max = 15)
     private String nickname;
@@ -48,24 +47,23 @@ public class Member extends BaseEntity {
     @Column(columnDefinition = "double precision CHECK (manner_score >= 0 AND manner_score <= 1200000)")
     @Builder.Default
     private Double mannerScore = 365000.0;
-    @NotNull
+    @Column(nullable = false)
     @Convert(converter = LocAttributeConverter.class)
     private Loc loc;
-    @NotNull
+    @Column(nullable = false)
     @Enumerated(EnumType.STRING)
     private Role role;
     @Column(insertable = false)
     @Temporal(TemporalType.TIMESTAMP)
     private Date updatedTimeManner;
 
-    @OneToMany(mappedBy="fromMem", fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)
+    @OneToMany(mappedBy="fromMem", fetch = FetchType.LAZY, cascade = CascadeType.REMOVE,
+              orphanRemoval = true)
     private List<Block> blockFromMemList = new ArrayList<>();
-    @OneToMany(mappedBy="toMem", fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)
+    @OneToMany(mappedBy="toMem", fetch = FetchType.LAZY, cascade = CascadeType.REMOVE,
+            orphanRemoval = true)
     private List<Block> blockToMemList = new ArrayList<>();
-    @OneToMany(mappedBy="buyer", fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)
-    private List<ReviewBuyer> reviewBuyerList = new ArrayList<>();
-    @OneToMany(mappedBy="seller", fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)
-    private List<ReviewSeller> reviewSellerList = new ArrayList<>();
+
 
     public String getMemId() {
         return memId;
@@ -90,15 +88,6 @@ public class Member extends BaseEntity {
     }
     public List<Block> getBlockFromMemList() {
         return Collections.unmodifiableList(blockFromMemList);
-    }
-    public List<Block> getBlockToMemList() {
-        return Collections.unmodifiableList(blockToMemList);
-    }
-    public List<ReviewBuyer> getReviewBuyerList() {
-        return Collections.unmodifiableList(reviewBuyerList);
-    }
-    public List<ReviewSeller> getReviewSellerList() {
-        return Collections.unmodifiableList(reviewSellerList);
     }
 
     @PrePersist

@@ -32,7 +32,7 @@ public class WebConfig implements WebMvcConfigurer {
         registry.addInterceptor(new LoginCheckInterceptor())
                 .order(1)
                 .addPathPatterns("/members/**", "/reviews/**", "/post/**", "/chat/**", "/blocks/**")
-                .excludePathPatterns("/members/signup/**",  "/members/**/profileImg", "/members/pwd/reset",
+                .excludePathPatterns("/members/join/**",  "/members/**/profileImg", "/members/pwd/reset",
                         "/members/css/**","/members/js/**","/members/assets/**", "/members/error",
                         "/reviews/css/**","/reviews/js/**","/reviews/assets/**", "/reviews/error",
                         "/post/css/**","/post/js/**","/post/assets/**", "/post/error",
@@ -41,7 +41,7 @@ public class WebConfig implements WebMvcConfigurer {
         registry.addInterceptor(new MemberInfoCheckInterceptor())
                 .order(2)
                 .addPathPatterns("/members/**", "/blocks/**")
-                .excludePathPatterns("/members/signup/**", "/members/**/profileImg",
+                .excludePathPatterns("/members/join/**", "/members/**/profileImg",
                         "/members/pwd/reset", "/members/settings/**",  "/blocks",
                         "/members/css/**","/members/js/**","/members/assets/**", "/members/error",
                         "/blocks/css/**","/blocks/js/**","/blocks/assets/**", "/blocks/error");
