@@ -3,7 +3,7 @@ package com.exercise.carrotproject.web.post.controller;
 import com.exercise.carrotproject.domain.chat.dto.ChatRoomDto;
 import com.exercise.carrotproject.domain.chat.service.ChatServiceImpl;
 import com.exercise.carrotproject.domain.enumList.Category;
-import com.exercise.carrotproject.domain.member.util.MemberEntityDtoMapper;
+import com.exercise.carrotproject.domain.member.dto.MemberEntityDtoMapper;
 import com.exercise.carrotproject.domain.member.entity.Member;
 import com.exercise.carrotproject.domain.member.service.BlockService;
 import com.exercise.carrotproject.domain.member.service.MemberService;

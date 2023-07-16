@@ -1,7 +1,7 @@
 package com.exercise.carrotproject.domain.review.dto;
 
 import com.exercise.carrotproject.domain.enumList.ReviewState;
-import com.exercise.carrotproject.domain.member.util.MemberEntityDtoMapper;
+import com.exercise.carrotproject.domain.member.dto.MemberEntityDtoMapper;
 import com.exercise.carrotproject.domain.member.dto.MemberDto;
 import com.exercise.carrotproject.domain.member.entity.Member;
 import com.querydsl.core.annotations.QueryProjection;

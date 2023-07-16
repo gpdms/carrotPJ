@@ -3,7 +3,7 @@ package com.exercise.carrotproject.web.common.controller;
 
 import com.exercise.carrotproject.domain.enumList.ReviewIndicator;
 import com.exercise.carrotproject.domain.enumList.Role;
-import com.exercise.carrotproject.domain.member.util.MemberEntityDtoMapper;
+import com.exercise.carrotproject.domain.member.dto.MemberEntityDtoMapper;
 import com.exercise.carrotproject.domain.member.dto.MemberDto;
 import com.exercise.carrotproject.domain.member.entity.Member;
 import com.exercise.carrotproject.domain.member.repository.MemberRepository;

@@ -1,6 +1,6 @@
 package com.exercise.carrotproject.domain.post.entity;
 
-import com.exercise.carrotproject.domain.member.util.MemberEntityDtoMapper;
+import com.exercise.carrotproject.domain.member.dto.MemberEntityDtoMapper;
 import com.exercise.carrotproject.domain.post.dto.WishDto;
 
 import java.util.List;

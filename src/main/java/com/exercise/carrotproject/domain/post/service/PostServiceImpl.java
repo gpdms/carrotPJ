@@ -4,7 +4,7 @@ import com.exercise.carrotproject.domain.chat.dto.ChatRoomDto;
 import com.exercise.carrotproject.domain.chat.entity.QChat;
 import com.exercise.carrotproject.domain.chat.entity.QChatRoom;
 import com.exercise.carrotproject.domain.enumList.*;
-import com.exercise.carrotproject.domain.member.util.MemberEntityDtoMapper;
+import com.exercise.carrotproject.domain.member.dto.MemberEntityDtoMapper;
 import com.exercise.carrotproject.domain.member.dto.MemberDto;
 import com.exercise.carrotproject.domain.member.entity.Member;
 import com.exercise.carrotproject.domain.member.repository.MemberRepository;
