@@ -1,17 +1,18 @@
 package com.exercise.carrotproject.domain.member.service;
 
 import com.exercise.carrotproject.domain.enumList.Role;
+import com.exercise.carrotproject.domain.member.dto.JoinNormalMemberDto;
+import com.exercise.carrotproject.domain.member.dto.JoinSocialMemberDto;
 import com.exercise.carrotproject.domain.member.dto.MemberDto;
+import com.exercise.carrotproject.domain.member.dto.ProfileImgInfo;
 import com.exercise.carrotproject.domain.member.util.GenerateUtils;
-import com.exercise.carrotproject.domain.member.util.MemberEntityDtoMapper;
+import com.exercise.carrotproject.domain.member.dto.MemberEntityDtoMapper;
 import com.exercise.carrotproject.domain.member.entity.Member;
 import com.exercise.carrotproject.domain.member.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.imageio.ImageIO;
@@ -19,11 +20,9 @@ import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
-import java.nio.file.DirectoryNotEmptyException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.time.LocalDate;
 import java.util.*;
 
 import static org.springframework.util.StringUtils.hasText;
@@ -35,14 +34,12 @@ public class MemberServiceImpl implements MemberService{
     private final MemberRepository memberRepository;
     private final EmailServiceImpl emailService;
 
-    @Value("${file.postImg}")
-    private String rootImgDir;
-
     @Override
     public Member findMemberByMemId(String memId) {
         return memberRepository.findById(memId)
-               .orElseThrow(() -> new NoSuchElementException("Member Not Found"));
+                .orElseThrow(() -> new NoSuchElementException("Member Not Found"));
     }
+
     @Override
     public Member findMemberByEmail(String email) {
         return memberRepository.findByEmail(email)
@@ -64,7 +61,7 @@ public class MemberServiceImpl implements MemberService{
 
     @Override
     public MemberDto login(String loginId, String loginPwd) {
-        Member member = findMemberByMemId(loginId);
+        Member member = this.findMemberByMemId(loginId);
         return member.isPwdMatch(loginPwd) ? MemberEntityDtoMapper.toDto(member) : null;
     }
 
@@ -73,13 +70,13 @@ public class MemberServiceImpl implements MemberService{
         Member member = findMemberByEmailAndRole(email, role);
         return MemberEntityDtoMapper.toDto(member);
     }
+
     private Member findMemberByEmailAndRole(String email, Role role) {
         return memberRepository.findByEmailAndRole(email, role)
-                .orElseThrow(() -> new NoSuchElementException(role.name() + "Member Not Found"));
+                .orElseThrow(() -> new NoSuchElementException("Member Not Found"));
     }
 
     @Override
-    @Transactional
     public String issueAuthCodeByEmail(String email) {
         String authCode = GenerateUtils.generateEmailAuthCode();
         emailService.sendAuthCodeByEmail(authCode, email);
@@ -88,7 +85,7 @@ public class MemberServiceImpl implements MemberService{
 
     @Override
     @Transactional
-    public void insertNormalMember(MemberDto memberDto) {
+    public void joinNormalMember(JoinNormalMemberDto memberDto) {
         Member member = Member.builder()
                 .memId(memberDto.getMemId())
                 .email(memberDto.getEmail())
@@ -101,22 +98,28 @@ public class MemberServiceImpl implements MemberService{
 
     @Override
     @Transactional
-    public void insertSocialMember(MemberDto memberDto) {
-        String imgUrl = memberDto.getProfPath();
-        String savePath = "";
-        if(!hasText(imgUrl)) {
-            savePath = createProfPath(imgUrl);
-            saveImgToServer(imgUrl, savePath);
-        }
+    public void joinSocialMember(JoinSocialMemberDto memberDto) {
+        ProfileImgInfo profImgInfo = processProfileImg(memberDto.getProfImgUrl());
+        String fullProfPath = profImgInfo == null ? null : profImgInfo.getFullProfPath();
         Member member = Member.builder()
                 .memId(GenerateUtils.generateUniqueMemId())
                 .email(memberDto.getEmail())
                 .nickname(memberDto.getNickname())
                 .loc(memberDto.getLoc())
                 .role(memberDto.getRole())
-                .profPath(savePath)
+                .profPath(fullProfPath)
                 .build();
         memberRepository.save(member);
+    }
+
+    private ProfileImgInfo processProfileImg(String imgUrl) {
+        if(!hasText(imgUrl)) {
+            return null;
+        }
+        ProfileImgInfo profImgInfo = ProfileImgInfo.of(imgUrl);
+        profImgInfo.mkProfImgDir();
+        saveImgToServer(imgUrl, profImgInfo.getFullProfPath());
+        return profImgInfo;
     }
 
     private void saveImgToServer(String imgUrl, String savePath) {
@@ -128,9 +131,37 @@ public class MemberServiceImpl implements MemberService{
             ImageIO.write(image, extension, file);
         } catch (IOException e) {
             log.error("MemberService saveImgToServer() : " + e);
-            throw new RuntimeException(e);
         }
     }
+
+    @Override
+    public boolean isEmptyOrImageFile(MultipartFile profImg) {
+        return profImg.isEmpty() || profImg.getContentType().startsWith("image");
+    }
+
+    @Override
+    @Transactional
+    public void changeProfile(MemberDto memberDto, MultipartFile profImg) {
+        ProfileImgInfo profImgInfo = processProfileImg(profImg);
+        String fullProfPath = profImgInfo == null ? null : profImgInfo.getFullProfPath();
+        Member member = this.findMemberByMemId(memberDto.getMemId());
+        Member updateMember = Member.builder().memId(memberDto.getMemId())
+                .nickname(memberDto.getNickname())
+                .loc(memberDto.getLoc())
+                .profPath(fullProfPath).build();
+        member.updateProfile(updateMember);
+    }
+
+    private ProfileImgInfo processProfileImg(MultipartFile file) {
+        if(file.isEmpty()) {
+            return null;
+        }
+        ProfileImgInfo profImgInfo = ProfileImgInfo.of(file);
+        profImgInfo.mkProfImgDir();
+        saveImgToServer(file, profImgInfo.getFullProfPath());
+        return profImgInfo;
+    }
+
     private void saveImgToServer(MultipartFile profImg, String savePath){
         File file = new File(savePath);
         try {
@@ -141,55 +172,10 @@ public class MemberServiceImpl implements MemberService{
         }
     }
 
-    private String createProfPath(String url) {
-        String profDirPath = makeProfDir();
-        String extension = url.substring(url.lastIndexOf("."));
-        String uuid = UUID.randomUUID().toString();
-        String saveName = uuid + extension;
-        String savePath = profDirPath + File.separator + saveName;
-        return savePath;
-    }
-    private String createProfPath(MultipartFile profImg) {
-        String profDirPath = makeProfDir();
-        String originName = profImg.getOriginalFilename();
-        String extension = originName.substring(originName.lastIndexOf("."));
-        String uuid = UUID.randomUUID().toString();
-        String saveName = uuid + extension;
-        String savePath = profDirPath + File.separator + saveName;
-        return savePath;
-    }
-
-    private String makeProfDir() {
-        String profDirPath = rootImgDir + File.separator + "member" + File.separator + LocalDate.now();
-        new File(profDirPath).mkdir();
-        return profDirPath;
-    }
-
-    @Override
-    public boolean isImageFile(MultipartFile profImg) {
-        return  profImg.isEmpty() || profImg.getContentType().startsWith("image");
-    }
-
-    @Override
-    @Transactional
-    public void changeProfile(MemberDto memberDto, MultipartFile profImg) {
-        Member member = findMemberByMemId(memberDto.getMemId());
-        String profPath = member.getProfPath();
-        if(!profImg.isEmpty()) {
-            profPath = createProfPath(profImg);
-            saveImgToServer(profImg, profPath);
-        }
-        Member updateMember = Member.builder().memId(memberDto.getMemId())
-                .nickname(memberDto.getNickname())
-                .loc(memberDto.getLoc())
-                .profPath(profPath).build();
-        member.updateProfile(updateMember);
-    }
-
     @Override
     @Transactional
     public void deleteProfImg(String memId) {
-        Member member = findMemberByMemId(memId);
+        Member member = this.findMemberByMemId(memId);
         String oldSavePath = member.getProfPath();
         if (!hasText(oldSavePath)) {
             return;
@@ -210,7 +196,7 @@ public class MemberServiceImpl implements MemberService{
     @Override
     @Transactional
     public void changePwdByMemId(String newPwd, String memId) {
-        Member member = findMemberByMemId(memId);
+        Member member = this.findMemberByMemId(memId);
         if (member.isPwdMatch(newPwd)) {
             return;
         }
