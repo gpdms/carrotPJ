@@ -11,6 +11,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.NoSuchElementException;
+import java.util.stream.Collectors;
 
 @Slf4j
 @Service
@@ -41,9 +42,11 @@ public class BlockServiceImpl implements BlockService{
     @Override
     @Transactional
     public void insertBlock(String fromMemId, String toMemId) {
+        Member fromMem = memberService.findMemberByMemId(fromMemId);
+        Member toMem = memberService.findMemberByMemId(toMemId);
         Block newBlock = Block.builder()
-                .fromMem(memberService.findMemberByMemId(fromMemId))
-                .toMem(memberService.findMemberByMemId(toMemId)).build();
+                .fromMem(fromMem)
+                .toMem(toMem).build();
         blockRepository.save(newBlock);
     }
 
@@ -55,7 +58,12 @@ public class BlockServiceImpl implements BlockService{
     }
 
     @Override
-    public List<MyBlockDto> blockListByFromMemId(String fromMemId) {
-        return blockRepository.findBlocksByFromMemId(fromMemId);
+    @Transactional(readOnly = true)
+    public List<MyBlockDto> getMyBlocks(String fromMemId) {
+        Member fromMem = memberService.findMemberByMemId(fromMemId);
+        return fromMem.getBlockFromMemList()
+                .stream()
+                .map(block -> MyBlockDto.of(block))
+                .collect(Collectors.toList());
     }
 }

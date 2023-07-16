@@ -1,8 +1,8 @@
 package com.exercise.carrotproject.web.member.controller;
 
 import com.exercise.carrotproject.domain.member.dto.MyBlockDto;
-import com.exercise.carrotproject.domain.member.entity.Block;
 import com.exercise.carrotproject.domain.member.service.BlockService;
+import com.exercise.carrotproject.web.member.error.ErrorCode;
 import com.exercise.carrotproject.web.member.form.memberInfo.BlockForm;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -23,6 +23,10 @@ public class BlockController {
 
     @PostMapping
     public ResponseEntity block(@RequestBody final BlockForm form){
+        boolean hasBlock = blockService.hasBlockByFromMemToMem(form.getFromMemId(), form.getToMemId());
+        if(hasBlock) {
+            return new ResponseEntity<>(ErrorCode.EXISTS_BLOCK, HttpStatus.CONFLICT);
+        }
         blockService.insertBlock(form.getFromMemId(), form.getToMemId());
         return new ResponseEntity<>(HttpStatus.OK);
     }
@@ -34,8 +38,8 @@ public class BlockController {
     }
 
     @GetMapping("/{memId}")
-    public String myBlocks(@PathVariable String memId, Model model){
-        List<MyBlockDto> myBlocks = blockService.blockListByFromMemId(memId);
+    public String myBlocks(@PathVariable final String memId, Model model){
+        List<MyBlockDto> myBlocks = blockService.getMyBlocks(memId);
         model.addAttribute("myBlocks", myBlocks);
         return "myPage/blockList";
     }

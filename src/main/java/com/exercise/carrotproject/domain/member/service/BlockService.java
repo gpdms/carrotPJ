@@ -13,7 +13,8 @@ public interface BlockService {
     Block findBlockByFromMemToMem (String fromMemId, String toMemId);
     boolean hasBlockByFromMemToMem (String fromMemId, String toMemId);
     boolean hasBlockByMemIds (String memId1, String memId2);
+
     void insertBlock(String fromMemId, String toMemId);
     void deleteBlock(String fromMemId, String toMemId);
-    List<MyBlockDto> blockListByFromMemId(String fromMemId);
+    List<MyBlockDto> getMyBlocks(String fromMemId);
 }

@@ -21,7 +21,9 @@ public enum ErrorCode {
     NOT_CORRECT_PWD_CONFIRM(400, "M001","not correct pwdConfirm"),
     DUPLICATED_MEM_ID(409, "M002","duplicated memId"),
     DUPLICATED_EMAIL(409, "M003","duplicated email"),
-    NOT_FOUND_EMAIL(404,"M003", "not found email");
+    NOT_FOUND_EMAIL(404,"M003", "not found email"),
+    //Block
+    EXISTS_BLOCK(409, "B001", "exists block by fromMember and toMember");
 
     private final int status;
     private final String divisionCode;

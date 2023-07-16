@@ -38,13 +38,4 @@ public class BlockCustomRepositoryImpl implements BlockCustomRepository{
                 .fetchFirst();
         return result != null ? true : false;
     }
-
-    public List<MyBlockDto> findBlocksByFromMemId(String fromMemId) {
-        return jpaQueryFactory.select(
-                        new QMyBlockDto(block.blockId, block.toMem))
-                .from(block)
-                .where(block.fromMem.memId.eq(fromMemId))
-                .orderBy(block.createdTime.desc())
-                .fetch();
-    }
 }
