@@ -2,7 +2,6 @@ package com.exercise.carrotproject.domain.config.batch;
 
 
 import com.exercise.carrotproject.domain.member.dto.MannerUpdateDto;
-import com.exercise.carrotproject.domain.member.dto.MemberDto;
 import com.exercise.carrotproject.domain.member.repository.MannerScoreRepository;
 import com.exercise.carrotproject.domain.review.repository.ReviewCustomRepository;
 import lombok.RequiredArgsConstructor;
