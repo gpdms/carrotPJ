@@ -21,7 +21,7 @@
                     <p class="loc"> [[${member.loc.locName}]] </p>
                     <div class="setting" id="pf-setting">
                         <a id="profile_edit_btn" class="pf-btn" th:if="${session.loginMember?.memId == member.memId}"
-                           th:href="@{/members/{memId}/profile(memId=${session.loginMember.memId})}"> 프로필 편집 </a>
+                           th:href="@{/members/settings/profile}"> 프로필 편집 </a>
                         <a id="block_btn" class="pf-btn" th:if="${session.loginMember != null && session.loginMember.memId != member.memId && !isBlocked}" type="button">
                             차단하기</a>
                         <a id="block_cancel_btn" class="pf-btn" th:if="${isBlocked}" type="button">
@@ -237,14 +237,22 @@
 
         $("#block_btn").on("click", block);
         function block() {
-            if (!blockConfirm()) {
+            const blockConfirm = confirm("차단시 서로의 게시글을 확인하거나 채팅을 할 수 없어요. 차단하실래요?");
+            if (!blockConfirm) {
                 return;
             }
-            let blockWho = [[${member.memId}]];
+            requestBlock();
+        }
+        function requestBlock() {
+            let data = {
+                fromMemId : [[${session.loginMember.memId}]],
+                toMemId : [[${member.memId}]]
+            }
             $.ajax({
                 type: 'post',
-                url: '/block/'+blockWho,
-                data: {blockWho: blockWho},
+                url: '/blocks',
+                data: JSON.stringify(data),
+                contentType: "application/json; charset=utf-8",
                 success: function (data) {
                     alert("차단에 성공했습니다.");
                     $('#postList').load(location.href+' #postList');
@@ -252,22 +260,23 @@
                     $('#pf-setting').append( `<a id="block_cancel_btn" class="pf-btn" type="button">차단해제</a>`)
                 },
                 error: function (err) {
-                    console.log(err);
+                    console.err(err.responseJSON);
                     alert("차단에 실패했습니다.");
                 }
             })
-
         }
 
-        // $('#block_cancel_btn').ready(function(){
-            $("#block_cancel_btn").on("click", cancelBlock);
-        // });
+        $("#block_cancel_btn").on("click", cancelBlock);
         function cancelBlock(){
-            let blockCancelWho = [[${member.memId}]];
+            let data = {
+                fromMemId : [[${session.loginMember.memId}]],
+                toMemId : [[${member.memId}]]
+            }
             $.ajax({
                 type: 'delete',
-                url: '/block/'+blockCancelWho,
-                data: {blockWho: blockCancelWho},
+                url: '/blocks',
+                data: JSON.stringify(data),
+                contentType: "application/json; charset=utf-8",
                 success: function (data) {
                     alert("차단을 해제했습니다");
                     $('#postList').load(location.href+' #postList');
@@ -275,14 +284,9 @@
                     $('#pf-setting').append( `<a id="block_btn" class="pf-btn" type="button">차단하기</a>`)
                 },
                 error: function (err) {
-                    console.log(err);
                     alert("차단에 실패했습니다.");
                 }
             })
         }
-        function blockConfirm() {
-            return confirm("차단시 서로의 게시글을 확인하거나 채팅을 할 수 없어요. 차단하실래요?");
-        }
     </script>
-
 </div>

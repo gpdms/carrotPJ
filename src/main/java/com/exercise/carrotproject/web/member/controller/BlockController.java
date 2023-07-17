@@ -1,37 +1,46 @@
 package com.exercise.carrotproject.web.member.controller;
 
-import com.exercise.carrotproject.domain.member.dto.MemberDto;
+import com.exercise.carrotproject.domain.member.dto.MyBlockDto;
 import com.exercise.carrotproject.domain.member.service.BlockService;
-import com.exercise.carrotproject.domain.member.service.MemberService;
-import com.exercise.carrotproject.web.argumentresolver.Login;
+import com.exercise.carrotproject.web.member.error.ErrorCode;
+import com.exercise.carrotproject.web.member.form.memberInfo.BlockForm;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
-import java.util.Collections;
-import java.util.Map;
+
+import java.util.List;
 
 @Slf4j
-@RestController
+@Controller
+@RequestMapping("/blocks")
 @RequiredArgsConstructor
 public class BlockController {
     private final BlockService blockService;
 
-    @PostMapping("/block/{memId}")
-    public ResponseEntity<Map<String, Object>> blockMember(@PathVariable String memId,
-                                                           @Login MemberDto loginMember){
-        Map<String, Object> resultMap = blockService.insertBlock(loginMember.getMemId(), memId);
-        if(resultMap.containsValue("fail")) {
-            return new ResponseEntity<>(resultMap, HttpStatus.BAD_REQUEST);
+    @PostMapping
+    public ResponseEntity block(@RequestBody final BlockForm form){
+        boolean hasBlock = blockService.hasBlockByFromMemToMem(form.getFromMemId(), form.getToMemId());
+        if(hasBlock) {
+            return new ResponseEntity<>(ErrorCode.EXISTS_BLOCK, HttpStatus.CONFLICT);
         }
-        return new ResponseEntity<>(resultMap, HttpStatus.OK);
+        blockService.insertBlock(form.getFromMemId(), form.getToMemId());
+        return new ResponseEntity<>(HttpStatus.OK);
     }
 
-    @DeleteMapping("/block/{memId}")
-    public ResponseEntity<Map<String, String>> cancelBlockMember(@PathVariable String memId,
-                                                                 @Login MemberDto loginMember){
-        blockService.deleteBlock(loginMember.getMemId(), memId);
-        return new ResponseEntity<>(Collections.singletonMap("message", "취소에 성공했습니다."), HttpStatus.OK);
+    @DeleteMapping
+    public ResponseEntity cancelBlock(@RequestBody final BlockForm form){
+        blockService.deleteBlock(form.getFromMemId(), form.getToMemId());
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
+
+    @GetMapping("/{memId}")
+    public String myBlocks(@PathVariable final String memId, Model model){
+        List<MyBlockDto> myBlocks = blockService.getMyBlocks(memId);
+        model.addAttribute("myBlocks", myBlocks);
+        return "myPage/blockList";
     }
 }

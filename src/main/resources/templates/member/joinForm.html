@@ -5,14 +5,14 @@
 
 <head layout:fragment="head">
     <title>회원가입 폼</title>
-    <link href="/css/signup.css" rel="stylesheet">
+    <link href="/css/join.css" rel="stylesheet">
     <link href="/css/login.css" rel="stylesheet">
 </head>
 
 <div layout:fragment="content">
 <section class="px-md-5 mt-5 d-flex justify-content-center">
-    <div class="signup-container">
-        <div class="signup-border">
+    <div class="join-container">
+        <div class="join-border">
             <div th:if="${isSocial}">
                 <div class="py-4 text-center">
                     <h2 class="mb-0">소셜 회원가입</h2>
@@ -20,7 +20,7 @@
                 <h6 class="mt-3 mb-4 text-center">[[${platform}]]계정으로 망고마켓 가입이 필요합니다.</h6>
                 <form id="socialForm">
                     <input type="hidden" id="emailSocial" th:value="${userInfo.get('email')}">
-                    <input type="hidden" id="profPath" th:value="${userInfo.get('profPath')}">
+                    <input type="hidden" id="profImgUrl" th:value="${userInfo.get('profPath')}">
                     <div class="input">
                         <label for="locSocial">내 동네</label>
                         <select id="locSocial" name="locSocial" class="form-select">
@@ -39,7 +39,7 @@
                     <div class="bottom-sec">
                         <div class="bottom-btn">
                             <button class="w-100 btn-orange btn-lg"
-                                    th:onclick="signupSocialMember([[${platform}]])"
+                                    th:onclick="joinSocialMember([[${platform}]])"
                                     type="button"> 회원 가입 </button>
                         </div>
                     </div>
@@ -51,7 +51,7 @@
                 <div class="py-4 text-center">
                     <h2 class="mb-0">회원가입</h2>
                 </div>
-                <form action="" id="signupForm">
+                <form action="" id="joinForm">
                     <h4 class="mb-3 text-center">회원 정보 입력</h4>
                     <div class="input">
                         <label for="memId">아이디</label>
@@ -102,7 +102,7 @@
                     <div class="bottom-sec">
                         <div class="bottom-btn">
                             <button class="w-100 btn btn-orange btn-lg" disabled
-                                    type="submit" id="signup-btn">회원가입</button>
+                                    type="submit" id="join-btn">회원가입</button>
                         </div>
                         <div class="bottom-social" id="kakao" th:onclick="|location.href='@{/login/getKakaoLoginURL}'|">
                             <button class="btn-kakao" type="button">
@@ -114,8 +114,8 @@
                 </form>
             </div> <!--role:user form-->
 
-        </div> <!--signup-border-->
-    </div> <!--signup-container-->
+        </div> <!--join-border-->
+    </div> <!--join-container-->
 </section>
 </div>
 
@@ -124,11 +124,11 @@
         let isPassedEmail = false;
         let isPassedId = false;
         function activeSignupBtn () {
-            const signupBtn = document.getElementById('signup-btn');
+            const joinBtn = document.getElementById('join-btn');
             if (isPassedId && isPassedEmail) {
-                signupBtn.disabled = false;
+                joinBtn.disabled = false;
             } else if (~isPassedId || ~isPassedEmail) {
-                signupBtn.disabled = true;
+                joinBtn.disabled = true;
             }
         }
 
@@ -151,13 +151,13 @@
             const pattern = /^[a-zA-Z0-9]{6,12}$/;
             if (pattern.test(memId)) {
                 isPassedId = true;
-                activeSignupBtn();
+                activeJoinBtn();
                 memIdInput.classList.remove('field-error-border');
                 $('#memId-error').empty()
                 return true;
             } else {
                 isPassedId = false;
-                activeSignupBtn();
+                activeJoinBtn();
                 memIdInput.classList.add('field-error-border');
                 const str = `<div class="field-error" id="memId-error">아이디는 영문 대/소문자이나 숫자로 6~12자로 구성되어야합니다. </div>`
                 $('#memId-error').replaceWith(str)
@@ -168,15 +168,15 @@
         function isDuplicatedMemId(memId) {
             $.ajax({
                 type: "GET",
-                url: `signup/memId/${memId}`
+                url: `join/memId/${memId}`
             }).done(function (data) {
                 isPassedId = true;
-                activeSignupBtn();
+                activeJoinBtn();
                 memIdInput.classList.remove('field-error-border');
                 $('#memId-error').empty();
             }).fail(function (err) {
                 isPassedId = false;
-                activeSignupBtn();
+                activeJoinBtn();
                 memIdInput.classList.add('field-error-border');
                 $('#memId-error').replaceWith(`<div class="field-error" id="memId-error">사용할 수 없는 아이디입니다.</div>`)
             })
@@ -193,13 +193,13 @@
             const emailPattern = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
             if (emailPattern.test(email)) {
                 isPassedEmail = false;
-                activeSignupBtn();
+                activeJoinBtn();
                 emailInput.classList.remove('field-error-border');
                 $('#email-error').empty();
                 return true;
             } else {
                 isPassedEmail = false;
-                activeSignupBtn();
+                activeJoinBtn();
                 emailInput.classList.add('field-error-border');
                 const str = `<div class="field-error" id="email-error">이메일 형식에 맞지 않습니다.</div>`
                 $('#email-error').replaceWith(str);
@@ -210,14 +210,14 @@
         function isDuplicatedEmail(email) {
             $.ajax({
                 type: "GET",
-                url: `signup/email/${email}`
+                url: `join/email/${email}`
             }).done(function (data) {
                 emailInput.classList.remove('field-error-border');
                 $('#email-error').empty();
                 return false;
             }).fail(function (err) {
                 isPassedEmail = false;
-                activeSignupBtn();
+                activeJoinBtn();
                 emailInput.classList.add('field-error-border');
                 $('#email-error').replaceWith(`<div class="field-error" id="email-error">이미 사용중인 이메일입니다.</div>`);
                 return true;
@@ -278,7 +278,7 @@
         function sendEmailCode() {
             $.ajax({
                 type: "POST",
-                url: "signup/email/auth-code",
+                url: "join/email/auth-code",
                 contentType: "application/json; charset=utf-8",
                 data: JSON.stringify({
                     email : emailInput.value
@@ -312,7 +312,7 @@
                         "font-size" : "12px"
                     })
                     isPassedEmail = false;
-                    activeSignupBtn()
+                    activeJoinBtn()
                 } else {
                     emailConfirmTxt.html("<span id='checkTxt'>인증번호 확인 완료</span>")
                     $("#checkTxt").css({
@@ -321,16 +321,16 @@
                         "font-size" : "12px"
                     })
                     isPassedEmail = true;
-                    activeSignupBtn()
+                    activeJoinBtn()
                 }
             })
         }
 
         //회원가입 버튼 클릭시
-        $('#signupForm').on('submit', function(e) {
+        $('#joinForm').on('submit', function(e) {
             e.preventDefault();
-            let url = 'signup';
-            const signupData = {
+            let url = 'join';
+            const joinData = {
                 memId : memIdInput.value,
                 pwd : pwdInput.value,
                 pwdConfirm : pwdConfirmInput.value,
@@ -338,15 +338,15 @@
                 nickname: nicknameInput.value,
                 loc : locSelect.value
             };
-            signupRequest(url, signupData);
+            joinRequest(url, joinData);
         })
 
-        function signupRequest(url, signupData) {
+        function joinRequest(url, joinData) {
             $.ajax({
                 type: 'post',
-                url: 'signup',
+                url: 'join',
                 contentType: "application/json; charset=utf-8",
-                data:  JSON.stringify(signupData),
+                data:  JSON.stringify(joinData),
                 success: function (data) {
                     alert("회원가입에 성공했습니다. 로그인해주세요.");
                     location.href="/login"
@@ -358,16 +358,16 @@
             })
         }
 
-        function signupSocialMember(platform) {
+        function joinSocialMember(platform) {
             $.ajax({
                 type: 'post',
-                url: '/signup/'+platform,
+                url: '/join/'+platform,
                 contentType: "application/json; charset=utf-8",
                 data:  JSON.stringify({
                     loc : $("select[name=locSocial]").val(),
                     nickname : $('#nicknameSocial').val(),
                     email : $('#emailSocial').val(),
-                    profPath : $('#profPath').val(),
+                    profImgUrl : $('#profImgUrl').val(),
                 }),
                 success: function (data) {
                     alert("회원가입에 성공했습니다. 로그인해주세요");

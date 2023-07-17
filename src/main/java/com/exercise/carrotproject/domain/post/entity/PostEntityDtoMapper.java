@@ -1,6 +1,6 @@
 package com.exercise.carrotproject.domain.post.entity;
 
-import com.exercise.carrotproject.domain.member.util.MemberEntityDtoMapper;
+import com.exercise.carrotproject.domain.member.dto.MemberEntityDtoMapper;
 import com.exercise.carrotproject.domain.post.dto.PostDto;
 
 import java.util.List;
@@ -14,7 +14,7 @@ public class PostEntityDtoMapper {
         return Post.builder()
                 .postId(postDto.getPostId())
                 .title(postDto.getTitle())
-                .member(MemberEntityDtoMapper.toMemberEntity(postDto.getMember()))
+                .member(MemberEntityDtoMapper.toEntity(postDto.getMember()))
                 .price(postDto.getPrice())
                 .content(postDto.getContent())
                 .loc(postDto.getLoc())
@@ -30,7 +30,7 @@ public class PostEntityDtoMapper {
         return PostDto.builder()
                 .postId(post.getPostId())
                 .title(post.getTitle())
-                .member(MemberEntityDtoMapper.toMemberDto(post.getMember()))
+                .member(MemberEntityDtoMapper.toDto(post.getMember()))
                 .price(post.getPrice())
                 .content(post.getContent())
                 .loc(post.getLoc())

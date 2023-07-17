@@ -1,7 +1,7 @@
 package com.exercise.carrotproject.domain.config.batch;
 
 
-import com.exercise.carrotproject.domain.member.dto.MemberDto;
+import com.exercise.carrotproject.domain.member.dto.MannerUpdateDto;
 import com.exercise.carrotproject.domain.member.repository.MannerScoreRepository;
 import com.exercise.carrotproject.domain.review.repository.ReviewCustomRepository;
 import lombok.RequiredArgsConstructor;
@@ -46,7 +46,7 @@ public class MannerScoreBatchConfig {
     public Step updateMannerScoreFromReviewScore(@Value("#{jobParameters[date]}") String date) {
         return stepBuilderFactory.get("updateMannerScoreStep1")
                 .tasklet((contribution, chunkContext) -> {
-                    List<MemberDto> reviewScoreList = reviewCustomRepository.combineReviewScoreForUpdateMannerScore();
+                    List<MannerUpdateDto> reviewScoreList = reviewCustomRepository.combineReviewScoreForUpdateMannerScore();
                     mannerScoreRepository.updateMannerScore(reviewScoreList);
                     return RepeatStatus.FINISHED;
                 })
@@ -58,7 +58,7 @@ public class MannerScoreBatchConfig {
     public Step updateMannerScoreDown(@Value("#{jobParameters[date]}") String date) {
         return stepBuilderFactory.get("updateMannerScoreStep2")
                 .tasklet((contribution, chunkContext) -> {
-                    long updateResult = mannerScoreRepository.updateMannerScoreDown();
+                    mannerScoreRepository.updateMannerScoreDown();
                     return RepeatStatus.FINISHED;
                 })
                 .build();

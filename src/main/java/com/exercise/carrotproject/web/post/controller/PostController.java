@@ -3,7 +3,7 @@ package com.exercise.carrotproject.web.post.controller;
 import com.exercise.carrotproject.domain.chat.dto.ChatRoomDto;
 import com.exercise.carrotproject.domain.chat.service.ChatServiceImpl;
 import com.exercise.carrotproject.domain.enumList.Category;
-import com.exercise.carrotproject.domain.member.util.MemberEntityDtoMapper;
+import com.exercise.carrotproject.domain.member.dto.MemberEntityDtoMapper;
 import com.exercise.carrotproject.domain.member.entity.Member;
 import com.exercise.carrotproject.domain.member.service.BlockService;
 import com.exercise.carrotproject.domain.member.service.MemberService;
@@ -402,7 +402,7 @@ public class PostController {
     public String onSalePost(@PathVariable String memId, Model model, @PageableDefault(page = 0, size = 20)Pageable pageable){
         //판매자 정보
         Member member = memberService.findMemberByMemId(memId);
-        MemberDto seller = MemberEntityDtoMapper.toMemberDto(member);
+        MemberDto seller = MemberEntityDtoMapper.toDto(member);
         //판매중,예약중 게시글
         Map map = postService.selectPostBySellState(memId);
         List<PostDto> onSaleAndRsvList = (List) map.get("onSaleAndRsvList");

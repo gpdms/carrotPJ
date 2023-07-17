@@ -9,7 +9,6 @@ import org.thymeleaf.spring5.SpringTemplateEngine;
 
 import javax.mail.MessagingException;
 import javax.mail.internet.MimeMessage;
-import java.util.Random;
 
 @Slf4j
 @Service
@@ -22,34 +21,34 @@ public class EmailServiceImpl {
 
     //회원가입 : 인증 코드 보내기
     public void sendAuthCodeByEmail(String authCode, String toEmail){
-        MimeMessage emailForm = makeSignupEmailForm(authCode, toEmail);
+        MimeMessage emailForm = makeJoinEmailForm(authCode, toEmail);
         emailSender.send(emailForm);
     }
 
-    private MimeMessage makeSignupEmailForm(String authCode, String email) {
+    private MimeMessage makeJoinEmailForm(String authCode, String email) {
         try {
-            return tryToMakeSignupEmailForm(authCode, email);
+            return tryToMakeJoinEmailForm(authCode, email);
         } catch (MessagingException e) {
-            log.error(e.getMessage());
+            log.error("EmailService makeJoinEmailForm() : {}", e);
             throw new RuntimeException(e);
         }
     }
 
-    private MimeMessage tryToMakeSignupEmailForm(String authCode, String email) throws MessagingException {
+    private MimeMessage tryToMakeJoinEmailForm(String authCode, String email) throws MessagingException {
         String toEmail = email;
         String title = "망고마켓, 회원가입 인증 번호입니다";
         MimeMessage message = emailSender.createMimeMessage();
         message.addRecipients(MimeMessage.RecipientType.TO, email);
         message.setSubject(title);
         message.setFrom(setFrom);
-        message.setText(setSignupContext(authCode), "utf-8", "html");
+        message.setText(setJoinContext(authCode), "utf-8", "html");
         return message;
     }
 
-    private String setSignupContext(String authCode) {
+    private String setJoinContext(String authCode) {
         Context context = new Context();
         context.setVariable("code", authCode);
-        return templateEngine.process("member/mail/signupMail", context);
+        return templateEngine.process("member/mail/joinMail", context);
     }
 
 
@@ -63,8 +62,7 @@ public class EmailServiceImpl {
         try {
             return tryToMakePwdEmailForm(TempPwd, email);
         } catch (MessagingException e) {
-            log.error(e.getMessage());
-            log.error("Service Layer MessagingException {}", e.getMessage(), e);
+            log.error("EmailService makePwdEmailForm() : {}", e);
             throw new RuntimeException(e);
         }
     }

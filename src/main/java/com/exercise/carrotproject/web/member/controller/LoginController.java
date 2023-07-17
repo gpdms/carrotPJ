@@ -1,10 +1,8 @@
 package com.exercise.carrotproject.web.member.controller;
 
-import com.exercise.carrotproject.domain.member.util.MemberEntityDtoMapper;
 import com.exercise.carrotproject.domain.member.service.MemberService;
 import com.exercise.carrotproject.web.common.SessionConst;
 import com.exercise.carrotproject.domain.member.dto.MemberDto;
-import com.exercise.carrotproject.domain.member.entity.Member;
 import com.exercise.carrotproject.web.member.form.LoginForm;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
@@ -33,14 +31,13 @@ public class LoginController {
         if (bindingResult.hasErrors()) {
             return "member/loginForm";
         }
-        Member member = memberService.login(form.getLoginId(), form.getPwd());
+        MemberDto member = memberService.login(form.getLoginId(), form.getPwd());
         if (member == null) {
             bindingResult.reject("loginFail", "아이디 또는 비밀번호가 맞지 않습니다.");
             return "member/loginForm";
         }
-        MemberDto loginMemberDto = MemberEntityDtoMapper.toMemberDto(member);
         HttpSession session = request.getSession();
-        session.setAttribute(SessionConst.LOGIN_MEMBER, loginMemberDto);
+        session.setAttribute(SessionConst.LOGIN_MEMBER, member);
         return "redirect:" + redirectURL;
     }
 

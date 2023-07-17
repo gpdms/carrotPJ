@@ -49,7 +49,7 @@
                 <button  class="custom-btn" type="button"
                          th:onclick="|location.href='@{/members/settings/profile}'|">
                     회원정보 </button>
-                <button  th:if="${session.loginMember.role.name().equals('USER')}"
+                <button  th:if="${session.loginMember.role.name().equals('NORMAL')}"
                          class="custom-btn" type="submit"> 로그아웃 </button>
                 <button  th:if="${session.loginMember.role.name().contains('SOCIAL')}"
                          class="custom-btn" type="button"

@@ -1,14 +1,13 @@
 package com.exercise.carrotproject.web.member.controller;
 
 import com.exercise.carrotproject.domain.enumList.Role;
-import com.exercise.carrotproject.domain.member.util.MemberEntityDtoMapper;
+import com.exercise.carrotproject.domain.member.dto.JoinSocialMemberDto;
 import com.exercise.carrotproject.domain.member.dto.MemberDto;
-import com.exercise.carrotproject.domain.member.entity.Member;
 import com.exercise.carrotproject.domain.member.ouath.KaKaoOauth;
 import com.exercise.carrotproject.domain.member.ouath.KakaoServiceImpl;
 import com.exercise.carrotproject.domain.member.service.MemberService;
 import com.exercise.carrotproject.web.common.SessionConst;
-import com.exercise.carrotproject.web.member.form.SignupSocialForm;
+import com.exercise.carrotproject.web.member.form.JoinSocialForm;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
@@ -21,7 +20,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 import javax.validation.Valid;
 import java.util.HashMap;
-import java.util.Map;
 
 @Slf4j
 @Controller
@@ -43,7 +41,7 @@ public class OauthController {
     public String kakaoLogin(@RequestParam String code, Model model,
                              HttpServletRequest request) throws Throwable {
         HttpSession session = request.getSession();
-        //해당 페이지에서 새로고침시 : 인증 code가 파기되어 오류페이지가 뜨지 않도록, login페이지로 이동한다
+        //해당 페이지에서 새로고침시 : 인증 code가 파기되어 오류페이지가 뜨지 않도록, login페이지로 이동
         String revokedCode = (String) session.getAttribute(SessionConst.KAKAO_REVOKED_CODE);
         if (revokedCode!= null && revokedCode.equals(code)) {
             session.removeAttribute(SessionConst.KAKAO_ACCESS_TOKEN);
@@ -58,17 +56,16 @@ public class OauthController {
         log.info("userInfo 닉네임 = {} ", userInfo.get("nickname").toString());
         log.info("userInfo 이메일 = {} ", userInfo.get("email").toString());
         String email = userInfo.get("email").toString();
-
         boolean hasKakaoMember = memberService.hasEmailAndRole(email, Role.SOCIAL_KAKAO);
         if(!hasKakaoMember) {
             session.setAttribute(SessionConst.KAKAO_ACCESS_TOKEN, accessToken);
             model.addAttribute("userInfo",userInfo);
             model.addAttribute("platform", "kakao");
             model.addAttribute("isSocial", true);
-            return "member/signupForm";
+            return "member/joinForm";
         }
-        Member socialMember = memberService.findMemberByEmailAndRole(email, Role.SOCIAL_KAKAO);
-        session.setAttribute(SessionConst.LOGIN_MEMBER, MemberEntityDtoMapper.toMemberDto(socialMember));
+        MemberDto memberDto = memberService.login(email, Role.SOCIAL_KAKAO);
+        session.setAttribute(SessionConst.LOGIN_MEMBER, memberDto);
         session.removeAttribute(SessionConst.KAKAO_REVOKED_CODE);
         return "redirect:/";
     }
@@ -82,27 +79,26 @@ public class OauthController {
         return "성공";
     }
 
-    @PostMapping("/signup/kakao")
+    @PostMapping("/join/kakao")
     @ResponseBody
-    public ResponseEntity kakaoSignup(@Valid @RequestBody SignupSocialForm signupSocialForm,
+    public ResponseEntity kakaoJoin(@Valid @RequestBody JoinSocialForm joinSocialForm,
                                       BindingResult result,
-                                      HttpSession session,
-                                      Model model) throws Throwable {
+                                      HttpSession session){
         HashMap<String, Object> errorMap = new HashMap<>();
         if(result.hasErrors()) {
             errorMap.put("nickname", result.getFieldError("nickname").getDefaultMessage());
             return ResponseEntity.badRequest().body(errorMap);
         }
-
-        MemberDto memberDto = MemberDto.builder()
-                .email(signupSocialForm.getEmail())
-                .profPath(signupSocialForm.getProfPath())
-                .loc(signupSocialForm.getLoc())
-                .nickname(signupSocialForm.getNickname())
+        JoinSocialMemberDto member = JoinSocialMemberDto.builder()
+                .email(joinSocialForm.getEmail())
+                .profImgUrl(joinSocialForm.getProfImgUrl())
+                .loc(joinSocialForm.getLoc())
+                .nickname(joinSocialForm.getNickname())
+                .role(Role.SOCIAL_KAKAO)
                 .build();
-        Map<String, Object> saveResult= memberService.insertSocialMember(memberDto);
-
-        session.setAttribute(SessionConst.LOGIN_MEMBER, saveResult.get("memberDto"));
+        memberService.joinSocialMember(member);
+        MemberDto memberDto = memberService.login(member.getEmail(), Role.SOCIAL_KAKAO);
+        session.setAttribute(SessionConst.LOGIN_MEMBER, memberDto);
         session.removeAttribute(SessionConst.KAKAO_REVOKED_CODE);
         return ResponseEntity.ok().build();
     }

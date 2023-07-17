@@ -18,40 +18,39 @@
             <div class="edit-form">
                 <h4 class="edit-title"> 프로필 변경 </h4>
                 <form id="profileEditForm" style="width:300px">
-                    <input type="hidden" name="memId" th:value="${profileForm.memId}">
+                    <input type="hidden" name="memId" th:value="${session.loginMember.memId}">
                     <div class="pf-input img-form">
                         <div class="profile-img" id="profile-img">
-                            <img th:src="@{|/members/${profileForm.memId}/profileImg|}" alt="프로필이미지">
+                            <img th:src="@{|/members/${session.loginMember.memId}/profileImg|}" alt="프로필이미지">
                         </div>
-                        <label class="input-file-btn" for="inputImg">
+                        <label class="input-file-btn" for="profImg">
                             이미지 선택
                         </label>
-                        <input type="file" id="inputImg"  name="profImg"
-                               style="display: none"
-                               th:onchange="pfEditBtnActive()">
-                        <div id="image-error"></div>
+                        <input type="file" id="profImg" name="profImg" accept="image/*" style="display:none;">
+                        <p class="del-file-btn" th:onclick="requestDeleteProfImg()">
+                            이미지 삭제
+                        </p>
                     </div>
                     <div class="pf-input">
                         <label for="nickname">닉네임</label>
                         <input type="text" id="nickname" name="nickname"
-                               class="form-control" th:value="${profileForm.nickname}"
-                               th:oninput="pfEditBtnActive()">
+                               class="form-control"
+                               th:value="${session.loginMember.nickname}">
                         <div id="nick-error"></div>
                     </div>
                     <div class="pf-input">
                         <label for="loc">내 동네</label>
                         <select id="loc" name="loc" class="form-select" th:onchange="pfEditBtnActive()">
                             <th:block th:each="locValue:${T(com.exercise.carrotproject.domain.enumList.Loc).values()}">
-                                <option th:value="${locValue}" th:if="${!locValue.locCode.equals(profileForm.loc.locCode)}">
+                                <option th:value="${locValue}" th:if="${!locValue.locCode.equals(session.loginMember.loc.locCode)}">
                                     [[${locValue.locName}]]</option>
-                                <option th:value="${locValue}" th:if="${locValue.locCode.equals(profileForm.loc.locCode)}" selected>
+                                <option th:value="${locValue}" th:if="${locValue.locCode.equals(session.loginMember.loc.locCode)}" selected>
                                     [[${locValue.locName}]]</option>
                             </th:block>
                         </select>
-                        <!--<div class="field-error" th:errors="*{profileForm.loc}" />-->
                     </div>
-                    <button class="edit-btn w-50 btn-orange btn-group-sm"
-                            id="pfEditBtn" disabled type="submit">프로필 수정</button>
+                    <button class="edit-btn w-50 btn-orange btn-group-sm font-weight-bold"
+                            id="pfEditBtn" type="submit">프로필 수정</button>
                 </form>
             </div>
         </div> <!-- /form-container -->
@@ -60,26 +59,33 @@
 
 <div layout:fragment="script">
 <script th:inline="javascript">
-    function pfEditBtnActive() {
-        const target = document.getElementById('pfEditBtn');
-        target.disabled = false;
-    }
-    $("#inputImg").change(function(e){
+    //프로필 이미지 검증
+    $("#profImg").change(function(e){
         let file = e.target.files[0];
-        if(!checkSize(file.size)){
-            return false;
+        if(!isImageFile(file) || !checkImgSize(file.size)){
+            return;
         }
         preview(file);
     });
-    function checkSize(fileSize){
-        var maxSize = 1 * 1024 * 1024; // 1MB
+
+    function isImageFile(file) {
+       if(!file.type.startsWith('image/')) {
+           alert('이미지 파일만 업로드 가능합니다.');
+           return false;
+       }
+       return true;
+    }
+
+    function checkImgSize(fileSize){
+        const maxSize = 1 * 1024 * 1024; // 1MB
         if(fileSize >= maxSize){
-            alert('파일 크기가 초과되었습니다. 1MB 이하 크기의 이미지만 가능합니다.');
-            $("#inputImage").val("");  //파일 초기화
+            alert('파일 크기가 초과되었습니다. 1MB 이하 크기의 이미지만 업로드 가능합니다.');
+            $("#profImg").val("");  //파일 초기화
             return false;
         }
         return true;
     }
+
     function preview(f){
         //파일을 읽기 위한 FileReader객체 생성
         const reader = new FileReader();
@@ -93,9 +99,44 @@
         reader.readAsDataURL(f); //reader에게 e.target.files[0](업로드된 파일)를 URL로 읽으라고 명령
     }
 
+    //닉네임 유효성 검증
+    const nicknameInput = document.getElementById("nickname");
+    nicknameInput.addEventListener("input", function(event) {
+        isValidNickname();
+    });
+    function isValidNickname() {
+        const pattern = /^[a-zA-Z0-9가-힣]{2,15}$/;
+        let nick = nicknameInput.value;
+        if (nick.length < 2 || nick.length > 15) {
+            nicknameInput.classList.add('field-error-border');
+            const str = `<div class="field-error" id="nick-error">닉네임은 2~15자여야 합니다.</div>`
+            $('#nick-error').replaceWith(str);
+            return false;
+        } else if (!pattern.test(nick)) {
+            nicknameInput.classList.add('field-error-border');
+            const str = `<div class="field-error" id="nick-error">사용할 수 없는 닉네임입니다.</div>`
+            $('#nick-error').replaceWith(str);
+            return false;
+        } else {
+            nicknameInput.classList.remove('field-error-border');
+            $('#nick-error').empty();
+            return true;
+        }
+    }
+
+    //프로필 변경
+    const profImgInput = document.getElementById("profImg")
     $('#profileEditForm').on('submit', function(e) {
         e.preventDefault();
-        let memId = [[${profileForm.memId}]];
+        let file = profImgInput.files[0];
+        if(!isValidNickname() && !isImageFile(file) && !checkImgSize(file.size)) {
+            return;
+        }
+        requestProfileUpdate();
+    })
+
+    function requestProfileUpdate() {
+        let memId = [[${session.loginMember.memId}]];
         let url = `/members/${memId}/profile`;
         const formData = new FormData($('#profileEditForm')[0]);
         $.ajax({
@@ -110,25 +151,31 @@
             }
         })
             .done(function (data) {
-                console.log(data.member);
                 alert('프로필 변경에 성공했습니다');
-                 location.reload($('#nav-pf-img'));
+                location.reload($('#nav-pf-img'));
             })
             .fail(function (err) {
                 alert('프로필 변경에 실패했습니다');
-                const message = err.responseJSON;
-                if (message.detail) {
-                    $('#nick-error').replaceWith(`<div id="nick-error" class="field-error">${message.detail}</div>`)
-                    $('#nickname').addClass("field-error-border");
-                }
-                if ('fail' in message) {
-                    $('#image-error').replaceWith(`<div id="image-error" class="field-error">
-                                    프로필 사진이 이미지 파일이 아닙니다. .jpg, .png, .gif의 이미지 파일만 업로드 가능합니다.
-                                    </div>`)
-                }
-                if (!message.nickname && !'fail' in message)
-                    alert('프로필 변경에 실패했습니다');
+                console.error(err.responseJSON);
             });
-    })
+    }
+
+    //프로필 이미지 삭제
+    function requestDeleteProfImg() {
+        let memId = [[${session.loginMember.memId}]];
+        let url = `/members/${memId}/profImg`;
+        $.ajax({
+            url: url,
+            type: "DELETE",
+        })
+            .done(function (data) {
+                alert('프로필 이미지를 삭제했습니다.');
+                location.reload($('#nav-pf-img'));
+            })
+            .fail(function (err) {
+                alert('프로필 이미지 삭제에 실패했습니다');
+                console.error(err.responseJSON);
+            });
+    }
 </script>
 </div>

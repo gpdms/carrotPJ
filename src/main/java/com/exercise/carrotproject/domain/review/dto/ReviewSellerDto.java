@@ -1,7 +1,7 @@
 package com.exercise.carrotproject.domain.review.dto;
 
 import com.exercise.carrotproject.domain.enumList.ReviewState;
-import com.exercise.carrotproject.domain.member.util.MemberEntityDtoMapper;
+import com.exercise.carrotproject.domain.member.dto.MemberEntityDtoMapper;
 import com.exercise.carrotproject.domain.member.dto.MemberDto;
 import com.exercise.carrotproject.domain.member.entity.Member;
 import com.querydsl.core.annotations.QueryProjection;
@@ -36,7 +36,7 @@ public class ReviewSellerDto {
     @QueryProjection
     public ReviewSellerDto(Long reviewSellerId, Member buyer, String message, Timestamp createdTime) {
         this.reviewSellerId = reviewSellerId;
-        this.buyer = MemberEntityDtoMapper.toMemberDto(buyer);
+        this.buyer = MemberEntityDtoMapper.toDto(buyer);
         this.message = message;
         this.createdTime = createdTime;
     }

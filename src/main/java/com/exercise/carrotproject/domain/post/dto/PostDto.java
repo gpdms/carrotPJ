@@ -6,12 +6,7 @@ import com.exercise.carrotproject.domain.enumList.Loc;
 
 import com.exercise.carrotproject.domain.enumList.SellState;
 import com.exercise.carrotproject.domain.member.dto.MemberDto;
-import com.exercise.carrotproject.domain.member.entity.Member;
 import lombok.*;
-
-import java.sql.Timestamp;
-import java.util.List;
-import java.util.stream.Collectors;
 
 @Getter
 @Setter
@@ -32,5 +27,4 @@ public class PostDto {
     private Integer hits;
     private String wishPlace;
     private String createdTime;
-
 }
