@@ -1,8 +1,8 @@
 package com.exercise.carrotproject.domain.member.service;
 
 import com.exercise.carrotproject.domain.enumList.Role;
-import com.exercise.carrotproject.domain.member.dto.JoinNormalMemberDto;
-import com.exercise.carrotproject.domain.member.dto.JoinSocialMemberDto;
+import com.exercise.carrotproject.domain.member.dto.JoinNormalMemberRequest;
+import com.exercise.carrotproject.domain.member.dto.JoinSocialMemberRequest;
 import com.exercise.carrotproject.domain.member.dto.MemberDto;
 import com.exercise.carrotproject.domain.member.dto.ProfileImgInfo;
 import com.exercise.carrotproject.domain.member.util.GenerateUtils;
@@ -85,7 +85,7 @@ public class MemberServiceImpl implements MemberService{
 
     @Override
     @Transactional
-    public void joinNormalMember(JoinNormalMemberDto memberDto) {
+    public void joinNormalMember(JoinNormalMemberRequest memberDto) {
         Member member = Member.builder()
                 .memId(memberDto.getMemId())
                 .email(memberDto.getEmail())
@@ -98,7 +98,7 @@ public class MemberServiceImpl implements MemberService{
 
     @Override
     @Transactional
-    public void joinSocialMember(JoinSocialMemberDto memberDto) {
+    public void joinSocialMember(JoinSocialMemberRequest memberDto) {
         ProfileImgInfo profImgInfo = processProfileImg(memberDto.getProfImgUrl());
         String fullProfPath = profImgInfo == null ? null : profImgInfo.getFullProfPath();
         Member member = Member.builder()
