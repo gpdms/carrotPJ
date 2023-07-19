@@ -9,5 +9,4 @@ import java.util.List;
 public interface BlockCustomRepository  {
     boolean existsBlockByFromMemToMem(String fromMemId, String toMemId);
     boolean existsBlockByMemIds(String memId1, String memId2);
-    List<MyBlockDto> findBlocksByFromMemId(String fromMemId);
 }

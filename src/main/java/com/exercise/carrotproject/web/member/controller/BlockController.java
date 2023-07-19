@@ -22,7 +22,7 @@ public class BlockController {
     private final BlockService blockService;
 
     @PostMapping
-    public ResponseEntity block(@RequestBody final BlockForm form){
+    public ResponseEntity addBlock(@RequestBody final BlockForm form){
         boolean hasBlock = blockService.hasBlockByFromMemToMem(form.getFromMemId(), form.getToMemId());
         if(hasBlock) {
             return new ResponseEntity<>(ErrorCode.EXISTS_BLOCK, HttpStatus.CONFLICT);

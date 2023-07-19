@@ -9,7 +9,6 @@ plugins {
     id 'war'
     id 'org.springframework.boot' version '2.7.2'
     id 'io.spring.dependency-management' version '1.1.0'
-    // querydsl 플러그인 추가
     id "com.ewerk.gradle.plugins.querydsl" version "1.0.10"
 }
 
@@ -38,10 +37,6 @@ dependencies {
     annotationProcessor 'org.projectlombok:lombok'
     providedRuntime 'org.springframework.boot:spring-boot-starter-tomcat'
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
-/*    testImplementation("org.junit.vintage:junit-vintage-engine") {
-        exclude group: "org.hamcrest", module: "hamcrest-core"
-    }*/
-//    testImplementation 'org.springframework.security:spring-security-test'
     implementation group: 'nz.net.ultraq.thymeleaf', name: 'thymeleaf-layout-dialect', version: '3.1.0'
     //validation
     implementation 'org.springframework.boot:spring-boot-starter-validation'
@@ -56,8 +51,6 @@ dependencies {
     implementation "com.querydsl:querydsl-sql-spring:${queryDslVersion}"
     //batch
     implementation 'org.springframework.boot:spring-boot-starter-batch'
-    //oauth
-//    implementation 'org.springframework.boot:spring-boot-starter-oauth2-client'
     // https://mvnrepository.com/artifact/io.github.pityka/fileutils
     implementation group: 'io.github.pityka', name: 'fileutils_2.11', version: '1.0.0'
     // https://mvnrepository.com/artifact/commons-io/commons-io
@@ -66,30 +59,21 @@ dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-mail'
 }
 
-/*test {
-    useJUnitPlatform()
-}*/
-
-// querydsl 사용할 경로 지정합니다. 현재 지정한 부분(build폴더)은 .gitignore에 포함되므로 git에 올라가지 않습니다.
 def querydslDir = "$buildDir/generated/'querydsl'"
 
-// JPA 사용여부 및 사용 경로 설정
 querydsl {
     jpa = true
     querydslSourcesDir = querydslDir
 }
 
-// build시 사용할 sourceSet 추가 설정
 sourceSets {
     main.java.srcDir querydslDir
 }
 
-// querydsl 컴파일 시 사용할 옵션 설정
 compileQuerydsl {
     options.annotationProcessorPath = configurations.querydsl
 }
 
-// querydsl이 compileClassPath를 상속하도록 설정
 configurations {
     compileOnly {
         extendsFrom annotationProcessor
@@ -97,7 +81,6 @@ configurations {
     querydsl.extendsFrom compileClasspath
 }
 
-//Querydsl 추가, 자동 생성된 Q클래스 gradle clean으로 제거
 clean {
     delete file(querydslDir)
 }

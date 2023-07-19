@@ -24,7 +24,6 @@ public class MemberInfoCheckInterceptor implements HandlerInterceptor {
             return true;
         } else {
             log.info("권한 없는 사용자 요청");
-            //홈으로 redirect
             response.sendRedirect("/");
             return false;
         }

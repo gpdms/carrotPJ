@@ -1,18 +1,12 @@
 package com.exercise.carrotproject.domain.member.repository;
 
-import com.exercise.carrotproject.domain.member.dto.MyBlockDto;
-import com.exercise.carrotproject.domain.member.dto.QMannerUpdateDto;
-import com.exercise.carrotproject.domain.member.dto.QMyBlockDto;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Repository;
 
-import java.util.List;
-
 import static com.exercise.carrotproject.domain.member.entity.QBlock.block;
-import static com.exercise.carrotproject.domain.review.entity.QReviewBuyer.reviewBuyer;
 
 @Slf4j
 @Repository

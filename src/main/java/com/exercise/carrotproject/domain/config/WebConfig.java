@@ -52,10 +52,12 @@ public class WebConfig implements WebMvcConfigurer {
                                     "/post/board/**", "/post/firstImg/**","post/img/**","post/onSale/**", "post/search",
                         "/post/detail/**", "/post/addWish", "/post/rmvWish", "/post/uploadPage/**");
     }
+
     @Bean
     public PostMemberCheckInterceptor postMemberCheckInterceptor() {
         return new PostMemberCheckInterceptor();
     }
+
     @Bean
     public ServletContextInitializer clearJsession() {
         return new ServletContextInitializer() {
