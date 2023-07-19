@@ -24,16 +24,17 @@ public class LoginController {
     }
 
     @PostMapping("/login")
-    public String login(@Valid @ModelAttribute("loginForm") LoginForm form,
+    public String login(@Valid @ModelAttribute("loginForm") final LoginForm form,
                           BindingResult bindingResult,
-                          @RequestParam(defaultValue = "/") String redirectURL,
+                          @RequestParam(defaultValue = "/") final String redirectURL,
                           HttpServletRequest request) {
-        if (bindingResult.hasErrors()) {
+        if(bindingResult.hasErrors()) {
+            bindingResult.reject("loginFail", "아이디 또는 비밀번호를 다시 확인해주세요.");
             return "member/loginForm";
         }
         MemberDto member = memberService.login(form.getLoginId(), form.getPwd());
         if (member == null) {
-            bindingResult.reject("loginFail", "아이디 또는 비밀번호가 맞지 않습니다.");
+            bindingResult.reject("loginFail", "아이디 또는 비밀번호를 다시 확인해주세요.");
             return "member/loginForm";
         }
         HttpSession session = request.getSession();
