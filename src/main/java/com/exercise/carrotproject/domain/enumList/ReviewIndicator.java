@@ -1,14 +1,13 @@
 package com.exercise.carrotproject.domain.enumList;
 
+import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
-import java.util.Arrays;
 import java.util.List;
-import java.util.NoSuchElementException;
 import java.util.stream.Collectors;
 
-@AllArgsConstructor
+@AllArgsConstructor(access = AccessLevel.PRIVATE)
 @Getter
 public enum ReviewIndicator {
     N1("시간약속을 안 지켜요."),
@@ -34,4 +33,15 @@ public enum ReviewIndicator {
 
     private final String description;
 
+    public static List<ReviewIndicator> fromBuyerIndicatorList(List<ReviewBuyerIndicator> buyerIndicatorList) {
+        return buyerIndicatorList.stream()
+                .map(buyerIndicator -> ReviewIndicator.valueOf(buyerIndicator.name()))
+                .collect(Collectors.toList());
+    }
+
+    public static List<ReviewIndicator> fromSellerIndicatorList(List<ReviewSellerIndicator> sellerIndicatorList) {
+        return sellerIndicatorList.stream()
+                .map(sellerIndicator -> ReviewIndicator.valueOf(sellerIndicator.name()))
+                .collect(Collectors.toList());
+    }
 }
