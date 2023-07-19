@@ -16,6 +16,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.NoSuchElementException;
+
 @Service
 @RequiredArgsConstructor
 @Slf4j
@@ -26,6 +28,12 @@ public class TradeServiceImpl implements TradeService{
     private final JPAQueryFactory jpaQueryFactory;
     private final ReviewBuyerRepository reviewBuyerRepository;
     private final ReviewSellerRepository reviewSellerRepository;
+
+    @Override
+    public Trade findTradeByPostId(Long postId) {
+        return tradeRepository.findTradeByPostPostId(postId)
+                .orElseThrow(() -> new NoSuchElementException("Trade Not found"));
+    }
 
     @Override
     public Trade selectTradeByPost(Long postId){
@@ -52,7 +60,6 @@ public class TradeServiceImpl implements TradeService{
     @Transactional
     public void updateTrade(Long postId, String buyerId){
         Member buyer = memberRepository.findById(buyerId).orElseThrow();
-
         QTrade qTrade = QTrade.trade;
         jpaQueryFactory
                 .update(qTrade)

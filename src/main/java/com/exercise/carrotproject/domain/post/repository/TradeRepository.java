@@ -7,10 +7,11 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 public interface TradeRepository extends JpaRepository<Trade,Long>{
-    //for review
     Trade findByPost(Post post);
     void deleteByPost (Post post);
+    Optional<Trade> findTradeByPostPostId(Long postId);
 }
