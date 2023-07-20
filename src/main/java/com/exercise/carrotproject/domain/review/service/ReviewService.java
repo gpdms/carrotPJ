@@ -9,10 +9,11 @@ import java.util.Map;
 
 @Service
 public interface ReviewService {
-    Map<ReviewIndicator, Long> getPositiveMannerDetailsBrief(String memId, long limitSize);
-    Map<ReviewIndicator, Long> getPositiveMannerDetails (String memId);
-    Map<ReviewIndicator, Long> getNegativeMannerDetails (String memId);
-    Long countGoodReviewMessage(String memId);
-    Map<String, List<ReviewMessageDto>> goodReviewMessagesDetail(String memId);
-    List<ReviewMessageDto> goodReviewMessagesBrief(String memId, long limitSize);
+    Map<ReviewIndicator, Long> getPositiveReviewIndicators(String memId, long limitSize);
+    Map<ReviewIndicator, Long> getPositiveReviewIndicators(String memId);
+    Map<ReviewIndicator, Long> getNegativeReviewIndicators(String memId);
+
+    Long countGoodReviewMessages(String memId);
+    Map<String, List<ReviewMessageDto>> collectGoodReviewMessages(String memId);
+    List<ReviewMessageDto> getGoodReviewMessageListByLimit(String memId, long limitSize);
 }
