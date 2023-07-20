@@ -10,29 +10,24 @@ import javax.persistence.*;
 import java.sql.Timestamp;
 
 @Entity
-@NoArgsConstructor
-@AllArgsConstructor
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
+@AllArgsConstructor(access = AccessLevel.PRIVATE)
 @Builder
-@ToString
 @Getter
-@Table(name = "REVIEW_SELLER_DETAIL")
+@ToString
 public class ReviewSellerDetail {
     @Id
     @GeneratedValue(strategy= GenerationType.IDENTITY)
     private Long reviewSellerDetailId;
-
     @ManyToOne
-    @JoinColumn(name="review_seller_id")
+    @JoinColumn(name="review_seller_id", nullable = false)
     private ReviewSeller reviewSeller;
-
     @ManyToOne
-    @JoinColumn(name="seller_id")
+    @JoinColumn(name="seller_id", nullable = false)
     private Member seller;
-
     @Enumerated(value = EnumType.STRING)
     private ReviewSellerIndicator reviewSellerIndicator;
-
     @CreationTimestamp
-    @Column(updatable = false)
+    @Column(updatable = false, nullable = false)
     private Timestamp createdTime;
 }

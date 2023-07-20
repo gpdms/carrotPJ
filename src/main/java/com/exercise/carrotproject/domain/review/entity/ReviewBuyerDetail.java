@@ -11,24 +11,24 @@ import javax.validation.constraints.NotNull;
 import java.sql.Timestamp;
 
 @Entity
-@NoArgsConstructor
-@AllArgsConstructor
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
+@AllArgsConstructor(access = AccessLevel.PRIVATE)
 @Builder
 @ToString
 @Getter
-@Table(name = "REVIEW_BUYER_DETAIL")
 public class ReviewBuyerDetail {
-    @Id @GeneratedValue(strategy= GenerationType.IDENTITY)
+    @Id
+    @GeneratedValue(strategy= GenerationType.IDENTITY)
     private Long reviewBuyerDetailId;
-
-    @NotNull @ManyToOne @JoinColumn(name="review_buyer_id")
+    @ManyToOne
+    @JoinColumn(name="review_buyer_id", nullable = false)
     private ReviewBuyer reviewBuyer;
-    @NotNull @ManyToOne @JoinColumn(name="buyer_id")
+    @ManyToOne
+    @JoinColumn(name="buyer_id", nullable = false)
     private Member buyer;
-
     @Enumerated(value = EnumType.STRING)
     private ReviewBuyerIndicator reviewBuyerIndicator;
-
-    @CreationTimestamp @Column(updatable = false)
+    @CreationTimestamp
+    @Column(updatable = false, nullable = false)
     private Timestamp createdTime;
 }
