@@ -225,7 +225,7 @@
                 success: function (data) {
                     alert("리뷰가 등록되었습니다.");
                     let me =  [[${reviewForm.buyerId}]] ;
-                    window.location.href= `/members/${me}/trade/buyList`
+                    window.location.href= `/members/${me}/trade/buy-list`
                 },
                 error: function (err) {
                     console.log(err);
@@ -248,7 +248,7 @@
                 success: function (data) {
                     alert("리뷰가 등록되었습니다.");
                     let me =  [[${reviewForm.sellerId}]] ;
-                    window.location.href= `/members/${me}/trade/sellList`
+                    window.location.href= `/members/${me}/trade/sell-list`
                 },
                 error: function (err) {
                     console.log(err);

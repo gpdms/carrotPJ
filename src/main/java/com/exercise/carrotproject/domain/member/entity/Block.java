@@ -24,7 +24,7 @@ public class Block {
     @JoinColumn(name="to_mem")
     private Member toMem;
     @CreationTimestamp
-    @Column(updatable = false)
+    @Column(updatable = false, nullable = false)
     private Timestamp createdTime;
 
     @Builder
