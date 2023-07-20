@@ -12,6 +12,7 @@ public enum ErrorCode {
     //Global
     INVALID_INPUT_VALUE(400,"G001", "invalid input value"),
     NO_SUCH_ELEMENT(404, "G002", "no such element"),
+    TYPE_MISMATCH(400, "G003", "must request with number value"),
 
     //Custom
     NOT_IMG_TYPE(400, "C001","not image type"),
