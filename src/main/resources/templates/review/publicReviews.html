@@ -25,14 +25,14 @@
     </div>
     <!--전체 후기-->
     <div id="allReviews">
-        <div class="no_review" th:if="${messageMap['allMessages'].isEmpty()}">
+        <div class="no_review" th:if="${messageMap['allMessageList'].isEmpty()}">
            받은 거래 후기가 없습니다.
         </div>
-        <div th:unless="${messageMap['allMessages'].isEmpty()}" class="content">
+        <div th:unless="${messageMap['allMessageList'].isEmpty()}" class="content">
             <div class="review-count">
-                <p th:text="|전체 후기 ${messageMap['allMessages'].size()}개|" id="count"></p>
+                <p th:text="|전체 후기 ${messageMap['allMessageList'].size()}개|" id="count"></p>
             </div>
-            <div class="message-one" th:each="review:${messageMap['allMessages']}">
+            <div class="message-one" th:each="review:${messageMap['allMessageList']}">
                 <div class="profile-line">
                     <div class="message-profile-img">
                         <a th:if="${review.buyer != null}"
@@ -102,14 +102,14 @@
 
     <!--구매자 후기-->
     <div id="sellerReviews">
-        <div class="no_review" th:if="${messageMap['sellerMessages'].isEmpty()}">
+        <div class="no_review" th:if="${messageMap['sellerMessageList'].isEmpty()}">
             구매자 후기가 없습니다.
         </div>
-        <div th:unless="${messageMap['sellerMessages'].isEmpty()}">
+        <div th:unless="${messageMap['sellerMessageList'].isEmpty()}">
             <div class="review-count">
-                <p th:text="|구매자 후기 ${messageMap['sellerMessages'].size()}개|"></p>
+                <p th:text="|구매자 후기 ${messageMap['sellerMessageList'].size()}개|"></p>
             </div>
-            <div class="message-one" th:each="review:${messageMap['sellerMessages']}">
+            <div class="message-one" th:each="review:${messageMap['sellerMessageList']}">
                 <div class="profile-line">
                     <div class="message-profile-img">
                         <a th:href="@{/home/{memId}(memId=${review.buyer.memId})}">
@@ -153,14 +153,14 @@
 
     <!-- 판매자 리뷰-->
     <div id="buyerReviews">
-        <div class="no_review" th:if="${messageMap['buyerMessages'].isEmpty()}">
+        <div class="no_review" th:if="${messageMap['buyerMessageList'].isEmpty()}">
             판매자 후기가 없습니다.
         </div>
-        <div th:unless="${messageMap['buyerMessages'].isEmpty()}" class="content">
+        <div th:unless="${messageMap['buyerMessageList'].isEmpty()}" class="content">
             <div class="review-count">
-                <p th:text="|판매자 후기 ${messageMap['buyerMessages'].size()}개|"></p>
+                <p th:text="|판매자 후기 ${messageMap['buyerMessageList'].size()}개|"></p>
             </div>
-            <div class="message-one" th:each="review:${messageMap['buyerMessages']}">
+            <div class="message-one" th:each="review:${messageMap['buyerMessageList']}">
                 <div class="profile-line">
                     <div class="message-profile-img">
                         <a th:href="@{/home/{memId}(memId=${review.seller.memId})}">

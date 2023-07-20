@@ -1,28 +1,30 @@
 package com.exercise.carrotproject.web.review.controller;
 
-import com.exercise.carrotproject.domain.enumList.*;
 import com.exercise.carrotproject.domain.member.dto.MemberDto;
+import com.exercise.carrotproject.domain.member.entity.Member;
 import com.exercise.carrotproject.domain.member.service.MemberService;
-import com.exercise.carrotproject.domain.post.entity.Post;
 import com.exercise.carrotproject.domain.post.entity.Trade;
-import com.exercise.carrotproject.domain.post.repository.PostRepository;
-import com.exercise.carrotproject.domain.post.repository.TradeRepository;
+import com.exercise.carrotproject.domain.post.service.TradeService;
+import com.exercise.carrotproject.domain.review.dto.AddReviewRequest;
+import com.exercise.carrotproject.domain.review.dto.ReviewMessageDto;
 import com.exercise.carrotproject.domain.review.entity.ReviewBuyer;
 import com.exercise.carrotproject.domain.review.entity.ReviewSeller;
 import com.exercise.carrotproject.domain.review.service.*;
 import com.exercise.carrotproject.web.argumentresolver.Login;
-import com.exercise.carrotproject.web.review.form.ReviewDetailForm;
 import com.exercise.carrotproject.web.review.form.ReviewForm;
+import com.exercise.carrotproject.web.review.response.ReviewResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-import java.util.*;
+import java.util.List;
+import java.util.Map;
+
 
 @Slf4j
 @Controller
@@ -30,170 +32,146 @@ import java.util.*;
 @RequiredArgsConstructor
 public class ReviewController {
     private final MemberService memberService;
+    private final TradeService tradeService;
     private final ReviewSellerService reviewSellerService;
     private final ReviewBuyerService reviewBuyerService;
     private final ReviewService reviewService;
 
-    private final PostRepository postRepository;
-    private final TradeRepository tradeRepository;
-
-
     @GetMapping("/{memId}")
-    public String toPublicReviewMessagesDetail(@PathVariable String memId, Model model) {
-        model.addAttribute("messageMap",reviewService.goodReviewMessagesDetail(memId));
-        model.addAttribute("nickname", memberService.findMemberByMemId(memId).getNickname());
+    public String toPublicReviewMessagesDetail(@PathVariable final String memId, Model model) {
+        Map<String, List<ReviewMessageDto>> messageMap = reviewService.collectGoodReviewMessages(memId);
+        model.addAttribute("messageMap", messageMap);
+        model.addAttribute("nickname",  memberService.findMemberByMemId(memId).getNickname());
         return "/review/publicReviews";
     }
 
     @GetMapping("/buyer")
-    public String toBuyerReviewForm(@RequestParam String postId, @Login MemberDto loginMember, RedirectAttributes redirectAttributes, Model model){
-        Post post = postRepository.findById(Long.valueOf(postId)).orElseThrow(() -> new NoSuchElementException("Post Not Found"));
-/*        if(reviewBuyerService.findReviewBuyerIdByPost(post) != 0L) { //이미 등록된 판매자 리뷰가 있으면 판매완료 페이지로
+    public String toReviewBuyerForm(@RequestParam final Long postId,
+                                    @Login final MemberDto loginMember,
+                                    RedirectAttributes redirectAttributes, Model model){
+        if(reviewBuyerService.existsReviewBuyerByPostId(postId)) { //이미 등록된 판매자 리뷰가 있으면 판매완료 페이지로
             redirectAttributes.addAttribute("me", loginMember.getMemId());
-            return "redirect:/members/{me}/trade/sellList";
-        }*/
-        Trade sellOne = tradeRepository.findByPost(post);
-        ReviewForm reviewForm = ReviewForm.builder().sellerId(loginMember.getMemId()).sellerNick(sellOne.getSeller().getNickname())
-                .buyerId(sellOne.getBuyer().getMemId()).buyerNick(sellOne.getBuyer().getNickname())
-                .postId(Long.valueOf(postId))
+            return "redirect:/members/{me}/trade/sell-list";
+        }
+        Trade sellOne = tradeService.findTradeByPostId(postId);
+        Member seller = sellOne.getSeller();
+        Member buyer = sellOne.getBuyer();
+        ReviewForm reviewForm = ReviewForm.builder()
+                .sellerId(seller.getMemId())
+                .sellerNick(seller.getNickname())
+                .buyerId(buyer.getMemId())
+                .buyerNick(buyer.getNickname())
+                .postId(postId)
                 .build();
         model.addAttribute("reviewForm", reviewForm);
         return "review/reviewForm";
     }
+
     @PostMapping("/buyer")
-    @ResponseBody
-    public String addBuyerReview(@RequestBody ReviewForm reviewForm,
-                                 RedirectAttributes redirectAttributes) {
-        Post post = postRepository.findById(reviewForm.getPostId()).orElseThrow(() -> new NoSuchElementException("Post Not Found"));
-       /*if(reviewBuyerService.findReviewBuyerIdByPost(post) != 0L) { //이미 등록된 판매자 리뷰가 있으면 판매완료 페이지로
-            redirectAttributes.addAttribute("me", reviewForm.getSellerId());
-            return "redirect:/members/{me}/trade/sellList";
-        }*/
-        List<ReviewBuyerIndicator> indicatorList = ReviewBuyerIndicator.findAllByEnumName(reviewForm.getIndicators());
-        reviewForm.setMessage(reviewForm.getMessage().replace("\r\n","<br>"));
-        ReviewBuyer reviewBuyer = ReviewBuyer.builder()
-                .seller(memberService.findMemberByMemId(reviewForm.getSellerId()))
-                .buyer(memberService.findMemberByMemId(reviewForm.getBuyerId()))
-                .post(postRepository.findById(reviewForm.getPostId()).orElse(null))
-                .reviewState(ReviewState.findByStateCode(reviewForm.getReviewStateCode()))
-                .totalScore(ReviewBuyerIndicator.sumScore(indicatorList))
-                .message(reviewForm.getMessage())
+    public ResponseEntity addBuyerReview(@RequestBody final ReviewForm form) {
+        AddReviewRequest addReviewRequest = AddReviewRequest.builder()
+                .sellerId(form.getSellerId())
+                .buyerId(form.getBuyerId())
+                .postId(form.getPostId())
+                .reviewStateCode(form.getReviewStateCode())
+                .indicatorNames(form.getIndicators())
+                .message(form.getMessage())
                 .build();
-        reviewBuyerService.insertReviewBuyer(reviewBuyer, indicatorList);
-        return "성공";
+        reviewBuyerService.insertReviewBuyer(addReviewRequest);
+        return ResponseEntity.ok().build();
     }
+
     @GetMapping("/buyer/{reviewBuyerId}")
-    public String reviewBuyerDetail (@PathVariable String reviewBuyerId,
-                                     @Login MemberDto loginMember,
+    @Transactional(readOnly = true)
+    public String viewOneReviewBuyer (@PathVariable final Long reviewBuyerId,
+                                     @Login final MemberDto loginMember,
                                      Model model) {
-       ReviewBuyer reviewBuyer = reviewBuyerService.findOneReviewBuyer(Long.valueOf(reviewBuyerId));
-        ReviewDetailForm detailForm = ReviewDetailForm.builder()
-                .postTitle(reviewBuyer.getPost().getTitle())
-                .reviewState(reviewBuyer.getReviewState())
-                .buyerId(reviewBuyer.getBuyer().getMemId())
-                .sellerId(reviewBuyer.getSeller().getMemId())
-                .reviewBuyerId(Long.valueOf(reviewBuyerId))
-                .buyerIndicatorList(reviewBuyerService.getReviewBuyerIndicatorsByReview(reviewBuyer))
-                .message(reviewBuyer.getMessage())
-                .build();
-        model.addAttribute("isReviewer", loginMember.getMemId().equals(detailForm.getBuyerId())? false : true);
-        model.addAttribute("reviewDetailForm", detailForm);
-        return "review/reviewDetail";
+       ReviewBuyer reviewBuyer = reviewBuyerService.findReviewBuyerById(reviewBuyerId);
+       ReviewResponse reviewResponse = ReviewResponse.of(reviewBuyer);
+       boolean isReviewer = loginMember.getMemId().equals(reviewResponse.getBuyerId()) ? false : true;
+       model.addAttribute("isReviewer", isReviewer);
+       model.addAttribute("review", reviewResponse);
+       return "review/oneReview";
     }
+
     @DeleteMapping("/buyer/{reviewBuyerId}")
-    public ResponseEntity deleteBuyerReview(@PathVariable String reviewBuyerId) {
-        reviewBuyerService.deleteReviewBuyer(Long.valueOf(reviewBuyerId));
-        return new ResponseEntity<>(Collections.singletonMap("message", "삭제에 성공했습니다."), HttpStatus.OK);
+    public ResponseEntity deleteReviewBuyer(@PathVariable final Long reviewBuyerId) {
+        reviewBuyerService.deleteReviewBuyerById(reviewBuyerId);
+        return ResponseEntity.ok().build();
     }
 
     @GetMapping("/seller")
-    public String toSellerReviewForm(@RequestParam String postId, @Login MemberDto loginMember,
+    public String toReviewSellerForm(@RequestParam final Long postId,
+                                     @Login final MemberDto loginMember,
                                      RedirectAttributes redirectAttributes, Model model){
-        Post post = postRepository.findById(Long.valueOf(postId)).orElseThrow(() -> new NoSuchElementException("Post Not Found"));
-        if(reviewSellerService.findReviewSellerIdByPost(post) != 0L) { //이미 등록한 구매자 리뷰가 있으면 나의 구매 목록으로
+        if(reviewSellerService.existsReviewSellerByPostId(postId)) { //이미 등록한 구매자 리뷰가 있으면 나의 구매 목록으로
             redirectAttributes.addAttribute("me", loginMember.getMemId());
-            return "redirect:/members/{me}/trade/buyList";
+            return "redirect:/members/{me}/trade/buy-list";
         }
-        Trade buyOne = tradeRepository.findByPost(post);
-       ReviewForm reviewForm= ReviewForm.builder().sellerId(buyOne.getSeller().getMemId()).sellerNick(buyOne.getSeller().getNickname())
-                .buyerId(loginMember.getMemId()).buyerNick(buyOne.getBuyer().getNickname())
-                .postId(Long.valueOf(postId))
+        Trade trade = tradeService.findTradeByPostId(postId);
+        Member seller = trade.getSeller();
+        Member buyer = trade.getBuyer();
+        ReviewForm reviewForm = ReviewForm.builder()
+                .sellerId(seller.getMemId())
+                .sellerNick(seller.getNickname())
+                .buyerId(buyer.getMemId())
+                .buyerNick(buyer.getNickname())
+                .postId(postId)
                 .build();
-
        model.addAttribute("reviewForm", reviewForm);
         return "review/reviewForm";
     }
+
     @PostMapping("/seller")
-    @ResponseBody
-    public String addSellerReview(@RequestBody ReviewForm reviewForm, RedirectAttributes redirectAttributes) {
-        Post post = postRepository.findById(reviewForm.getPostId()).orElseThrow(() -> new NoSuchElementException("Post Not Found"));
-        if(reviewSellerService.findReviewSellerIdByPost(post) != 0L) { //이미 등록한 구매자 리뷰가 있으면 나의 구매 목록으로
-            redirectAttributes.addAttribute("me", reviewForm.getBuyerId());
-            return "redirect:/members/{me}/trade/buyList";
-        }
-        List<ReviewSellerIndicator> indicatorList = ReviewSellerIndicator.findAllByEnumName(reviewForm.getIndicators());
-        reviewForm.setMessage(reviewForm.getMessage().replace("\r\n","<br>")); //줄개행);
-        ReviewSeller reviewSeller = ReviewSeller.builder()
-                .seller(memberService.findMemberByMemId(reviewForm.getSellerId()))
-                .buyer(memberService.findMemberByMemId(reviewForm.getBuyerId()))
-                .post(postRepository.findById(reviewForm.getPostId()).orElse(null))
-                .reviewState(ReviewState.findByStateCode(reviewForm.getReviewStateCode()))
-                .totalScore(ReviewSellerIndicator.sumScore(indicatorList))
-                .message(reviewForm.getMessage())
+    public ResponseEntity addReviewSeller(@RequestBody final ReviewForm form) {
+        AddReviewRequest reviewSellerRequest = AddReviewRequest.builder()
+                .sellerId(form.getSellerId())
+                .buyerId(form.getBuyerId())
+                .postId(form.getPostId())
+                .reviewStateCode(form.getReviewStateCode())
+                .indicatorNames(form.getIndicators())
+                .message(form.getMessage())
                 .build();
-        reviewSellerService.insertReviewSeller(reviewSeller, indicatorList);
-        return "성공";
+        reviewSellerService.insertReviewSeller(reviewSellerRequest);
+        return ResponseEntity.ok().build(); //add후 해당 리뷰로 리다이렉트
     }
+
+    @Transactional(readOnly = true)
     @GetMapping("/seller/{reviewSellerId}")
-    public String reviewSellerDetail (@PathVariable String reviewSellerId,
-                                      @Login MemberDto loginMember,
+    public String viewOneReviewSeller (@PathVariable final Long reviewSellerId,
+                                      @Login final MemberDto loginMember,
                                       Model model) {
-        ReviewSeller reviewSeller = reviewSellerService.findOneReviewSeller(Long.valueOf(reviewSellerId));
-        ReviewDetailForm detailForm = ReviewDetailForm.builder()
-                .postTitle(reviewSeller.getPost().getTitle())
-                .reviewState(reviewSeller.getReviewState())
-                .buyerId(reviewSeller.getBuyer().getMemId())
-                .sellerId(reviewSeller.getSeller().getMemId())
-                .reviewSellerId(Long.valueOf(reviewSellerId))
-                .sellerIndicatorList(reviewSellerService.getReviewSellerIndicatorsByReview(reviewSeller))
-                .message(reviewSeller.getMessage())
-                .build();
-        model.addAttribute("isReviewer", loginMember.getMemId().equals(detailForm.getSellerId())? false : true);
-        model.addAttribute("reviewDetailForm", detailForm);
-        return "review/reviewDetail";
+        ReviewSeller reviewSeller = reviewSellerService.findReviewSellerById(reviewSellerId);
+        ReviewResponse reviewResponse = ReviewResponse.of(reviewSeller);
+        boolean isReviewer = loginMember.getMemId().equals(reviewResponse.getSellerId()) ? false : true;
+        model.addAttribute("isReviewer", isReviewer);
+        model.addAttribute("review", reviewResponse);
+        return "review/oneReview";
     }
+
     @DeleteMapping("/seller/{reviewSellerId}")
-    public ResponseEntity<Map<String, Object>> deleteSellerReview(@PathVariable String reviewSellerId) {
-       reviewSellerService.deleteReviewSeller(Long.valueOf(reviewSellerId));
-       return new ResponseEntity<>(Collections.singletonMap("message", "삭제에 성공했습니다."), HttpStatus.OK);
+    public ResponseEntity deleteSellerReview(@PathVariable final Long reviewSellerId) {
+       reviewSellerService.deleteReviewSellerById(reviewSellerId);
+       return ResponseEntity.ok().build();
     }
 
-    //매너 디테일 지표 + 보임
     @GetMapping("/manner/{memId}")
-    public String toMannerDetail(@PathVariable String memId, Model model) {
-        model.addAttribute("positiveMannerMap", reviewService.getPositiveMannerDetails(memId));
-        model.addAttribute("negativeMannerMap", reviewService.getNegativeMannerDetails(memId));
+    public String toMannerDetail(@PathVariable final String memId, Model model) {
+        model.addAttribute("positiveMannerMap", reviewService.getPositiveReviewIndicators(memId));
+        model.addAttribute("negativeMannerMap", reviewService.getNegativeReviewIndicators(memId));
         model.addAttribute("nickname", memberService.findMemberByMemId(memId).getNickname());
-        return  "review/mannerDetail";
+        return "review/mannerDetail";
     }
 
-    //숨김 기능
     @PostMapping("/seller/hide")
-    @ResponseBody
-    public ResponseEntity<Map<String, String>> hideSellerReviewMessage(@RequestParam String reviewSellerId) {
-        Map<String, String> resultMap = reviewSellerService.hideReviewSeller(Long.valueOf(reviewSellerId));
-        if(resultMap.containsKey("fail")) {
-            return new ResponseEntity<>(resultMap, HttpStatus.BAD_REQUEST);
-        }
-            return new ResponseEntity<>(resultMap, HttpStatus.OK);
+    public ResponseEntity hideSellerReviewMessage(@RequestParam Long reviewSellerId) {
+        reviewSellerService.hideReviewSeller(reviewSellerId);
+        return ResponseEntity.ok().build();
     }
+
     @PostMapping("/buyer/hide")
-    @ResponseBody
-    public ResponseEntity<Map<String, String>> hideBuyerReviewMessage(@RequestParam String reviewBuyerId) {
-        Map<String, String> resultMap = reviewBuyerService.hideReviewBuyer(Long.valueOf(reviewBuyerId));
-        if(resultMap.containsKey("fail")) {
-            return new ResponseEntity<>(resultMap, HttpStatus.BAD_REQUEST);
-        }
-        return new ResponseEntity<>(resultMap, HttpStatus.OK);
+    public ResponseEntity hideBuyerReviewMessage(@RequestParam Long reviewBuyerId) {
+        reviewBuyerService.hideReviewBuyer(reviewBuyerId);
+        return ResponseEntity.ok().build();
     }
 }
