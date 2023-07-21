@@ -19,7 +19,7 @@ public class ReviewDetailCustomRepository {
     @PersistenceContext
     private EntityManager em;
 
-    public List<String[]> getPositiveIndicatorListByMemId(String memId) {
+    public List<Object[]> getPositiveIndicatorListByMemId(String memId) {
         String sql = "SELECT REVIEW_INDICATOR, SUM(COUNT_INDICATOR) AS TOTAL_COUNT " +
                 "FROM ( " +
                 "       SELECT REVIEW_SELLER_INDICATOR AS REVIEW_INDICATOR, COUNT(REVIEW_SELLER_INDICATOR) AS COUNT_INDICATOR " +
@@ -42,12 +42,12 @@ public class ReviewDetailCustomRepository {
         return query.getResultList();
     }
 
-    public  List<String[]> getNegativeIndicatorListByMemId(String memId) {
+    public  List<Object[]> getNegativeIndicatorListByMemId(String memId) {
         String sql = "SELECT REVIEW_INDICATOR, SUM(COUNT_INDICATOR) AS TOTAL_COUNT " +
                 "FROM ( " +
                 "       SELECT REVIEW_SELLER_INDICATOR AS REVIEW_INDICATOR, COUNT(REVIEW_SELLER_INDICATOR) AS COUNT_INDICATOR " +
                 "       FROM review_seller_detail " +
-                "       WHERE REVIEW_SELLER_INDICATOR LIKE :indicatorName AND seller_id= :sellerId " +
+                "       WHERE REVIEW_SELLER_INDICATOR LIKE '%N%' AND seller_id= :sellerId " +
                 "       GROUP BY REVIEW_SELLER_INDICATOR " +
                 "       UNION ALL " +
                 "       SELECT REVIEW_BUYER_INDICATOR, COUNT(REVIEW_BUYER_INDICATOR) " +

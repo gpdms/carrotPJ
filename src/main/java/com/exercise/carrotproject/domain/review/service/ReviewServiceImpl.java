@@ -30,8 +30,8 @@ public class ReviewServiceImpl implements ReviewService{
                 .stream()
                 .limit(limitSize)
                 .collect(Collectors.toMap(
-                        row -> ReviewIndicator.valueOf(row[0]),
-                        row -> Long.valueOf(row[1]),
+                        row -> ReviewIndicator.valueOf(String.valueOf(row[0])),
+                        row -> Long.valueOf(String.valueOf(row[1])),
                         (e1, e2) -> e1,
                         LinkedHashMap::new
                 ));
@@ -42,8 +42,8 @@ public class ReviewServiceImpl implements ReviewService{
       return reviewDetailCustomRepository.getPositiveIndicatorListByMemId(memId)
                 .stream()
                 .collect(Collectors.toMap(
-                        row -> ReviewIndicator.valueOf(row[0]),
-                        row -> Long.valueOf(row[1]),
+                        row -> ReviewIndicator.valueOf(String.valueOf(row[0])),
+                        row -> Long.valueOf(String.valueOf(row[1])),
                         (e1, e2) -> e1,
                         LinkedHashMap::new
                 ));
@@ -54,8 +54,8 @@ public class ReviewServiceImpl implements ReviewService{
        return reviewDetailCustomRepository.getNegativeIndicatorListByMemId(memId)
                 .stream()
                 .collect(Collectors.toMap(
-                        row -> ReviewIndicator.valueOf(row[0]),
-                        row -> Long.valueOf(row[1]),
+                        row -> ReviewIndicator.valueOf(String.valueOf(row[0])),
+                        row -> Long.valueOf(String.valueOf(row[1])),
                         (e1, e2) -> e1,
                         LinkedHashMap::new
                 ));
