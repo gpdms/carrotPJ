@@ -9,7 +9,7 @@ public interface ReviewBuyerService {
     ReviewBuyer findReviewBuyerById(Long reviewBuyerId);
     boolean existsReviewBuyerByPostId(Long postId);
 
-    void insertReviewBuyer(AddReviewRequest request);
+    Long insertReviewBuyer(AddReviewRequest request);
     void deleteReviewBuyerById(Long reviewBuyerId);
     void hideReviewBuyer(Long reviewSellerId);
 }

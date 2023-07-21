@@ -3,25 +3,19 @@ package com.exercise.carrotproject.domain.review.service;
 
 import com.exercise.carrotproject.domain.enumList.HideState;
 import com.exercise.carrotproject.domain.enumList.ReviewBuyerIndicator;
-import com.exercise.carrotproject.domain.enumList.ReviewSellerIndicator;
 import com.exercise.carrotproject.domain.enumList.ReviewState;
-import com.exercise.carrotproject.domain.post.entity.Post;
 import com.exercise.carrotproject.domain.post.entity.Trade;
-import com.exercise.carrotproject.domain.post.repository.PostRepository;
 import com.exercise.carrotproject.domain.post.service.TradeService;
 import com.exercise.carrotproject.domain.review.dto.AddReviewRequest;
 import com.exercise.carrotproject.domain.review.entity.ReviewBuyer;
 import com.exercise.carrotproject.domain.review.entity.ReviewBuyerDetail;
-import com.exercise.carrotproject.domain.review.entity.ReviewSeller;
 import com.exercise.carrotproject.domain.review.repository.detail.ReviewBuyerDetailRepository;
 import com.exercise.carrotproject.domain.review.repository.ReviewBuyerRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.NoSuchElementException;
 import java.util.stream.Collectors;
 
@@ -47,12 +41,14 @@ public class ReviewBuyerServiceImpl implements ReviewBuyerService {
 
     @Transactional
     @Override
-    public void insertReviewBuyer(AddReviewRequest req) {
+    public Long insertReviewBuyer(AddReviewRequest req) {
         ReviewBuyer reviewBuyer = processReviewBuyer(req);
         ReviewBuyer newReviewBuyer = reviewBuyerRepository.save(reviewBuyer);
 
         List<ReviewBuyerDetail> reviewBuyerDetailList = processReviewBuyerDetailList(newReviewBuyer, req.getIndicatorNames());
         reviewBuyerDetailRepository.saveAll(reviewBuyerDetailList);
+
+        return newReviewBuyer.getReviewBuyerId();
     }
 
     private ReviewBuyer processReviewBuyer(AddReviewRequest req) {

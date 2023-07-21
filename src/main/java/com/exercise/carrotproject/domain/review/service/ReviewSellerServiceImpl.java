@@ -4,7 +4,6 @@ package com.exercise.carrotproject.domain.review.service;
 import com.exercise.carrotproject.domain.enumList.HideState;
 import com.exercise.carrotproject.domain.enumList.ReviewSellerIndicator;
 import com.exercise.carrotproject.domain.enumList.ReviewState;
-import com.exercise.carrotproject.domain.post.entity.Post;
 import com.exercise.carrotproject.domain.post.entity.Trade;
 import com.exercise.carrotproject.domain.post.service.TradeService;
 import com.exercise.carrotproject.domain.review.dto.AddReviewRequest;
@@ -41,12 +40,14 @@ public class ReviewSellerServiceImpl implements ReviewSellerService {
 
     @Transactional
     @Override
-    public void insertReviewSeller(AddReviewRequest req) {
+    public Long insertReviewSeller(AddReviewRequest req) {
         ReviewSeller reviewSeller = this.processReviewSeller(req);
         ReviewSeller newReviewSeller = reviewSellerRepository.save(reviewSeller);
 
         List<ReviewSellerDetail> reviewSellerDetails = this.processReviewSellerDetailList(newReviewSeller, req.getIndicatorNames());
         reviewSellerDetailRepository.saveAll(reviewSellerDetails);
+
+        return newReviewSeller.getReviewSellerId();
     }
 
     private ReviewSeller processReviewSeller(AddReviewRequest req) {
@@ -71,7 +72,7 @@ public class ReviewSellerServiceImpl implements ReviewSellerService {
                 .map(reviewSellerIndicator -> ReviewSellerDetail.builder()
                         .reviewSeller(newReviewSeller)
                         .reviewSellerIndicator(reviewSellerIndicator)
-                        .seller(newReviewSeller.getBuyer())
+                        .seller(newReviewSeller.getSeller())
                         .build())
                 .collect(Collectors.toList());
     }

@@ -24,8 +24,9 @@ public enum ErrorCode {
     DUPLICATED_EMAIL(409, "M003","duplicated email"),
     NOT_FOUND_EMAIL(404,"M003", "not found email"),
     //Block
-    EXISTS_BLOCK(409, "B001", "exists block by fromMember and toMember");
-
+    EXISTS_BLOCK(409, "B001", "exists block by fromMember and toMember"),
+    //REVIEW
+    EXISTS_REVIEW(409, "R001", "exists review by post");
     private final int status;
     private final String divisionCode;
     private final String message;

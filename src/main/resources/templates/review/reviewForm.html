@@ -224,12 +224,17 @@
                 contentType: "application/json",
                 success: function (data) {
                     alert("리뷰가 등록되었습니다.");
-                    let me =  [[${reviewForm.buyerId}]] ;
-                    window.location.href= `/members/${me}/trade/buy-list`
+                    window.location.href= `/reviews/seller/${data}`
                 },
-                error: function (err) {
-                    console.log(err);
-                    alert("리뷰를 등록할 수 없습니다.");
+                error: function (jqXHR) {
+                    let err = jqXHR.responseJSON;
+                    if(err.divisionCode == 'R001') {
+                        alert("이미 존재하는 리뷰입니다.");
+                        let me =  [[${reviewForm.buyerId}]] ;
+                        window.location.href= `/members/${me}/trade/buy-list`
+                    } else {
+                        alert("리뷰를 등록할 수 없습니다.");
+                    }
                 }
             })
         }
@@ -247,12 +252,17 @@
                 contentType: "application/json",
                 success: function (data) {
                     alert("리뷰가 등록되었습니다.");
-                    let me =  [[${reviewForm.sellerId}]] ;
-                    window.location.href= `/members/${me}/trade/sell-list`
+                    window.location.href= `/reviews/buyer/${data}`
                 },
-                error: function (err) {
-                    console.log(err);
-                    alert("리뷰를 등록할 수 없습니다.");
+                error: function (jqXHR) {
+                    let err = jqXHR.responseJSON;
+                    if(err.divisionCode == 'R001') {
+                        alert("이미 존재하는 리뷰입니다.");
+                        let me =  [[${reviewForm.sellerId}]] ;
+                        window.location.href= `/members/${me}/trade/sell-list`
+                    } else {
+                        alert("리뷰를 등록할 수 없습니다.");
+                    }
                 }
             })
         }

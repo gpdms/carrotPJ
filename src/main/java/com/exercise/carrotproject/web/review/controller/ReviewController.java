@@ -11,10 +11,13 @@ import com.exercise.carrotproject.domain.review.entity.ReviewBuyer;
 import com.exercise.carrotproject.domain.review.entity.ReviewSeller;
 import com.exercise.carrotproject.domain.review.service.*;
 import com.exercise.carrotproject.web.argumentresolver.Login;
+import com.exercise.carrotproject.web.member.error.ErrorCode;
+import com.exercise.carrotproject.web.member.error.ErrorResponse;
 import com.exercise.carrotproject.web.review.form.ReviewForm;
 import com.exercise.carrotproject.web.review.response.ReviewResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.transaction.annotation.Transactional;
@@ -69,6 +72,10 @@ public class ReviewController {
 
     @PostMapping("/buyer")
     public ResponseEntity addBuyerReview(@RequestBody final ReviewForm form) {
+        boolean hasReview = reviewBuyerService.existsReviewBuyerByPostId(form.getPostId());
+        if(hasReview) {
+            return ResponseEntity.status(HttpStatus.CONFLICT).body(ErrorResponse.of(ErrorCode.EXISTS_REVIEW));
+        }
         AddReviewRequest addReviewRequest = AddReviewRequest.builder()
                 .sellerId(form.getSellerId())
                 .buyerId(form.getBuyerId())
@@ -77,8 +84,8 @@ public class ReviewController {
                 .indicatorNames(form.getIndicators())
                 .message(form.getMessage())
                 .build();
-        reviewBuyerService.insertReviewBuyer(addReviewRequest);
-        return ResponseEntity.ok().build();
+        Long reviewBuyerId = reviewBuyerService.insertReviewBuyer(addReviewRequest);
+        return ResponseEntity.ok(reviewBuyerId);
     }
 
     @GetMapping("/buyer/{reviewBuyerId}")
@@ -124,6 +131,10 @@ public class ReviewController {
 
     @PostMapping("/seller")
     public ResponseEntity addReviewSeller(@RequestBody final ReviewForm form) {
+        boolean hasReview = reviewSellerService.existsReviewSellerByPostId(form.getPostId());
+        if(hasReview) {
+            return ResponseEntity.status(HttpStatus.CONFLICT).body(ErrorResponse.of(ErrorCode.EXISTS_REVIEW));
+        }
         AddReviewRequest reviewSellerRequest = AddReviewRequest.builder()
                 .sellerId(form.getSellerId())
                 .buyerId(form.getBuyerId())
@@ -132,8 +143,8 @@ public class ReviewController {
                 .indicatorNames(form.getIndicators())
                 .message(form.getMessage())
                 .build();
-        reviewSellerService.insertReviewSeller(reviewSellerRequest);
-        return ResponseEntity.ok().build(); //add후 해당 리뷰로 리다이렉트
+        Long reviewSellerId = reviewSellerService.insertReviewSeller(reviewSellerRequest);
+        return ResponseEntity.ok(reviewSellerId);
     }
 
     @Transactional(readOnly = true)
