@@ -1,7 +1,7 @@
 package com.exercise.carrotproject.web.member.controller;
 
 import com.exercise.carrotproject.domain.enumList.Role;
-import com.exercise.carrotproject.domain.member.dto.JoinSocialMemberDto;
+import com.exercise.carrotproject.domain.member.dto.JoinSocialMemberRequest;
 import com.exercise.carrotproject.domain.member.dto.MemberDto;
 import com.exercise.carrotproject.domain.member.ouath.KaKaoOauth;
 import com.exercise.carrotproject.domain.member.ouath.KakaoServiceImpl;
@@ -89,7 +89,7 @@ public class OauthController {
             errorMap.put("nickname", result.getFieldError("nickname").getDefaultMessage());
             return ResponseEntity.badRequest().body(errorMap);
         }
-        JoinSocialMemberDto member = JoinSocialMemberDto.builder()
+        JoinSocialMemberRequest member = JoinSocialMemberRequest.builder()
                 .email(joinSocialForm.getEmail())
                 .profImgUrl(joinSocialForm.getProfImgUrl())
                 .loc(joinSocialForm.getLoc())

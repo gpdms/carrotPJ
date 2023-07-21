@@ -3,6 +3,7 @@ package com.exercise.carrotproject.web.member.controller;
 import com.exercise.carrotproject.domain.member.dto.MyBlockDto;
 import com.exercise.carrotproject.domain.member.service.BlockService;
 import com.exercise.carrotproject.web.member.error.ErrorCode;
+import com.exercise.carrotproject.web.member.error.ErrorResponse;
 import com.exercise.carrotproject.web.member.form.memberInfo.BlockForm;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -22,10 +23,10 @@ public class BlockController {
     private final BlockService blockService;
 
     @PostMapping
-    public ResponseEntity block(@RequestBody final BlockForm form){
+    public ResponseEntity addBlock(@RequestBody final BlockForm form){
         boolean hasBlock = blockService.hasBlockByFromMemToMem(form.getFromMemId(), form.getToMemId());
         if(hasBlock) {
-            return new ResponseEntity<>(ErrorCode.EXISTS_BLOCK, HttpStatus.CONFLICT);
+            return ResponseEntity.status(HttpStatus.CONFLICT).body(ErrorResponse.of(ErrorCode.EXISTS_BLOCK));
         }
         blockService.insertBlock(form.getFromMemId(), form.getToMemId());
         return new ResponseEntity<>(HttpStatus.OK);
@@ -34,7 +35,7 @@ public class BlockController {
     @DeleteMapping
     public ResponseEntity cancelBlock(@RequestBody final BlockForm form){
         blockService.deleteBlock(form.getFromMemId(), form.getToMemId());
-        return new ResponseEntity<>(HttpStatus.OK);
+        return ResponseEntity.ok().build();
     }
 
     @GetMapping("/{memId}")

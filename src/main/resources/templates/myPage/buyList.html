@@ -37,10 +37,10 @@
                                     </div>
                                 </div>
                                 <div class="d-flex">
-                                    <span class="span-inner font-orange fw-bold" th:if="${buyOne.reviewSellerId == 0}"
+                                    <span class="span-inner font-orange fw-bold" th:if="${buyOne.reviewSellerId == null}"
                                           th:onclick="|location.href='@{/reviews/seller(postId=${buyOne.postDto.postId})}'|">
                                         리뷰 남기기</span>
-                                    <span class="span-inner" th:if="${buyOne.reviewSellerId != 0}"
+                                    <span class="span-inner" th:if="${buyOne.reviewSellerId != null}"
                                           th:onclick="|location.href='@{/reviews/seller/{reviewSellerId}(reviewSellerId=${buyOne.reviewSellerId})}'|">
                                         리뷰 보기</span>
                                 </div>

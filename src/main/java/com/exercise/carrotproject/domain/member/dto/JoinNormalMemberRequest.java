@@ -9,7 +9,7 @@ import lombok.Getter;
 @Getter
 @Builder
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
-public class JoinNormalMemberDto {
+public class JoinNormalMemberRequest {
     private final String memId;
     private final String memPwd;
     private final String email;

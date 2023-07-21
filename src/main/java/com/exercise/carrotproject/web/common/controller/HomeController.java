@@ -38,20 +38,6 @@ public class HomeController {
     private final PostService postService;
     private final PostRepository postRepository;
 
-
-    //@GetMapping("/init")
-    public String init(HttpServletRequest request) {
-        Member loginMember = memberRepository.findById("tester2").orElse(null);
-        MemberDto loginMemberDto = MemberDto.builder().memId(loginMember.getMemId())
-                .nickname(loginMember.getNickname())
-                .role(Role.NORMAL)
-                .mannerScore(loginMember.getMannerScore())
-                .loc(loginMember.getLoc()).build();
-        HttpSession session = request.getSession();
-        session.setAttribute(SessionConst.LOGIN_MEMBER, loginMemberDto);
-        return "redirect:/";
-    }
-
     @GetMapping("/")
     public String home(@Login MemberDto loginMember,
                        Model model) {
@@ -63,29 +49,30 @@ public class HomeController {
     public String toMemberHome(@PathVariable String memId,
                                @Login MemberDto loginMember,
                                Model model){
-        Member member = memberService.findMemberByMemId(memId);
-
         boolean isBlocked= false;
         if(loginMember != null) {
             isBlocked = blockService.hasBlockByFromMemToMem(loginMember.getMemId(), memId);
         }
+
         Long countAllPost = 0L;
         List<PostDto> postListBrief = new ArrayList<>();
+        Member homeMember = memberService.findMemberByMemId(memId);
         if(isBlocked == false) {
-            countAllPost = postRepository.countByMember(member);
+            countAllPost = postRepository.countByMember(homeMember);
             postListBrief = postService.postListBrief(memId,6);
         }
-        Map<ReviewIndicator, Long> positiveMannerBrief = reviewService.getPositiveMannerDetailsBrief(memId, 3L);
-        List<ReviewMessageDto> reviewMessageBrief =reviewService.goodReviewMessagesBrief(memId, 3L);
 
-        model.addAttribute("member", MemberEntityDtoMapper.toDto(member));
+        Map<ReviewIndicator, Long> positiveMannerBrief = reviewService.getPositiveReviewIndicators(memId, 3L);
+        List<ReviewMessageDto> reviewMessageBrief = reviewService.getGoodReviewMessageListByLimit(memId, 3L);
+        Long countAllMessages = reviewService.countGoodReviewMessages(memId);
+
+        model.addAttribute("member", MemberEntityDtoMapper.toDto(homeMember));
         model.addAttribute("isBlocked", isBlocked);
         model.addAttribute("postList", postListBrief);
         model.addAttribute("positiveMannerBrief", positiveMannerBrief);
         model.addAttribute("reviewMessageBrief", reviewMessageBrief);
         model.addAttribute("countAllPost", countAllPost);
-        model.addAttribute("countAllMessages", reviewService.countGoodReviewMessage(memId));
+        model.addAttribute("countAllMessages", countAllMessages);
         return "memberHome";
     }
-
 }

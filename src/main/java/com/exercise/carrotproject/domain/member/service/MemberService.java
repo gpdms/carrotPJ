@@ -2,8 +2,8 @@ package com.exercise.carrotproject.domain.member.service;
 
 
 import com.exercise.carrotproject.domain.enumList.Role;
-import com.exercise.carrotproject.domain.member.dto.JoinNormalMemberDto;
-import com.exercise.carrotproject.domain.member.dto.JoinSocialMemberDto;
+import com.exercise.carrotproject.domain.member.dto.JoinNormalMemberRequest;
+import com.exercise.carrotproject.domain.member.dto.JoinSocialMemberRequest;
 import com.exercise.carrotproject.domain.member.dto.MemberDto;
 import com.exercise.carrotproject.domain.member.entity.Member;
 import org.springframework.stereotype.Service;
@@ -20,8 +20,8 @@ public interface MemberService {
     MemberDto login(String loginId, String loginPwd);
     MemberDto login(String email, Role role);
 
-    void joinNormalMember(JoinNormalMemberDto member);
-    void joinSocialMember(JoinSocialMemberDto member);
+    void joinNormalMember(JoinNormalMemberRequest member);
+    void joinSocialMember(JoinSocialMemberRequest member);
 
     String issueAuthCodeByEmail(String email);
     void resetAndSendTemporaryPwdByEmail(String email);

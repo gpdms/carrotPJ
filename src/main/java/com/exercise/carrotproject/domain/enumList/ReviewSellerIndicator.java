@@ -42,14 +42,8 @@ public enum ReviewSellerIndicator {
 
     public static List<ReviewSellerIndicator> findAllByEnumName(List<String> searchNames){
         return searchNames.stream()
-                .map(ReviewSellerIndicator::findOneByEnumName)
+                .map(ReviewSellerIndicator::valueOf)
                 .collect(Collectors.toList());
-    }
-    public static ReviewSellerIndicator findOneByEnumName(String enumName){
-        return Arrays.stream(values())
-                .filter(value -> value.name().equals(enumName))
-                .findAny()
-                .orElseThrow(() -> new NoSuchElementException("Invalid SellerIndicator Name"));
     }
 
    public static double sumScore(List<ReviewSellerIndicator> indicatorList) {

@@ -13,23 +13,14 @@ import javax.validation.constraints.NotNull;
 import java.sql.Timestamp;
 
 
-@NoArgsConstructor
 @Getter
 @Builder
 @ToString
 public class ReviewSellerDetailDto {
     private Long reviewSellerReviewId;
-
-    //private ReviewSeller reviewSeller;
     private String reviewSellerId;
-
-    //private Member seller;
     private String sellerId;
-
-    //@Enumerated(value = EnumType.STRING)
     private ReviewSellerIndicator reviewSellerIndicator;
-
-    //private Timestamp createdTime;
 
     @QueryProjection
     public ReviewSellerDetailDto(Long reviewSellerReviewId, String reviewSellerId, String sellerId, ReviewSellerIndicator reviewSellerIndicator) {

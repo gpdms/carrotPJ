@@ -1,9 +1,12 @@
 package com.exercise.carrotproject.domain.review.service;
 
 
+import com.exercise.carrotproject.domain.enumList.HideState;
 import com.exercise.carrotproject.domain.enumList.ReviewBuyerIndicator;
-import com.exercise.carrotproject.domain.post.entity.Post;
-import com.exercise.carrotproject.domain.review.dto.ReviewBuyerDto;
+import com.exercise.carrotproject.domain.enumList.ReviewState;
+import com.exercise.carrotproject.domain.post.entity.Trade;
+import com.exercise.carrotproject.domain.post.service.TradeService;
+import com.exercise.carrotproject.domain.review.dto.AddReviewRequest;
 import com.exercise.carrotproject.domain.review.entity.ReviewBuyer;
 import com.exercise.carrotproject.domain.review.entity.ReviewBuyerDetail;
 import com.exercise.carrotproject.domain.review.repository.detail.ReviewBuyerDetailRepository;
@@ -12,79 +15,78 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.NoSuchElementException;
 import java.util.stream.Collectors;
 
 
 @Service
 @RequiredArgsConstructor
+@Transactional(readOnly = true)
 public class ReviewBuyerServiceImpl implements ReviewBuyerService {
+    private final TradeService tradeService;
     private final ReviewBuyerRepository reviewBuyerRepository;
     private final ReviewBuyerDetailRepository reviewBuyerDetailRepository;
 
-    @Transactional
     @Override
-    public void insertReviewBuyer(ReviewBuyer reviewBuyer, List<ReviewBuyerIndicator> indicatorList) {
-        ReviewBuyer newReviewBuyer = reviewBuyerRepository.save(reviewBuyer);
-        insertReviewBuyerDetail(newReviewBuyer, indicatorList);
-    }
-    @Transactional
-    @Override
-    public void insertReviewBuyerDetail(ReviewBuyer newReviewBuyer, List<ReviewBuyerIndicator> indicatorList) {
-        for (ReviewBuyerIndicator reviewBuyerIndicator : indicatorList) {
-            ReviewBuyerDetail reviewBuyerDetail = ReviewBuyerDetail.builder()
-                    .reviewBuyer(newReviewBuyer)
-                    .reviewBuyerIndicator(reviewBuyerIndicator)
-                    .buyer(newReviewBuyer.getBuyer())
-                    .build();
-            reviewBuyerDetailRepository.save(reviewBuyerDetail);
-        }
-    }
-    @Override
-    public ReviewBuyer findOneReviewBuyer(Long reviewBuyerId){
+    public ReviewBuyer findReviewBuyerById(Long reviewBuyerId){
         return reviewBuyerRepository.findById(reviewBuyerId)
                 .orElseThrow(() -> new NoSuchElementException("ReviewBuyer Not Found"));
     }
 
     @Override
-    public Long findReviewBuyerIdByPost(Post post) {
-        ReviewBuyer reviewBuyer = reviewBuyerRepository.findByPost(post);
-        return reviewBuyerRepository.findByPost(post) != null? reviewBuyer.getReviewBuyerId() : 0L;
-    }
-
-    @Override
-    public List<ReviewBuyerIndicator> getReviewBuyerIndicatorsByReview(ReviewBuyer reviewBuyer){
-        List<ReviewBuyerDetail> reviewBuyerDetails = reviewBuyerDetailRepository.findByReviewBuyer(reviewBuyer);
-        return reviewBuyerDetails.stream()
-                .map(ReviewBuyerDetail::getReviewBuyerIndicator)
-                .collect(Collectors.toList());
+    public boolean existsReviewBuyerByPostId(Long postId) {
+        return reviewBuyerRepository.existsByPostPostId(postId);
     }
 
     @Transactional
     @Override
-    public void deleteReviewBuyer(Long reviewBuyerId) {
-        ReviewBuyer oneReviewBuyer = findOneReviewBuyer(reviewBuyerId);
+    public Long insertReviewBuyer(AddReviewRequest req) {
+        ReviewBuyer reviewBuyer = processReviewBuyer(req);
+        ReviewBuyer newReviewBuyer = reviewBuyerRepository.save(reviewBuyer);
+
+        List<ReviewBuyerDetail> reviewBuyerDetailList = processReviewBuyerDetailList(newReviewBuyer, req.getIndicatorNames());
+        reviewBuyerDetailRepository.saveAll(reviewBuyerDetailList);
+
+        return newReviewBuyer.getReviewBuyerId();
+    }
+
+    private ReviewBuyer processReviewBuyer(AddReviewRequest req) {
+        Trade trade = tradeService.findTradeByPostId(req.getPostId());
+        List<ReviewBuyerIndicator> indicatorList = ReviewBuyerIndicator.findAllByEnumName(req.getIndicatorNames());
+        String message = req.getMessage().replace("\r\n", "<br>");
+        return ReviewBuyer.builder()
+                .seller(trade.getSeller())
+                .buyer(trade.getBuyer())
+                .post(trade.getPost())
+                .reviewState(ReviewState.findByStateCode(req.getReviewStateCode()))
+                .totalScore(ReviewBuyerIndicator.sumScore(indicatorList))
+                .message(message)
+                .build();
+    }
+
+   private List<ReviewBuyerDetail> processReviewBuyerDetailList(ReviewBuyer newReviewBuyer,
+                                                                List<String> indicatorNames) {
+       List<ReviewBuyerIndicator> indicators = ReviewBuyerIndicator.findAllByEnumName(indicatorNames);
+        return indicators.stream()
+               .map(reviewBuyerIndicator -> ReviewBuyerDetail.builder()
+                       .reviewBuyer(newReviewBuyer)
+                       .reviewBuyerIndicator(reviewBuyerIndicator)
+                       .buyer(newReviewBuyer.getBuyer())
+                       .build())
+               .collect(Collectors.toList());
+   }
+
+    @Transactional
+    @Override
+    public void deleteReviewBuyerById(Long reviewBuyerId) {
         reviewBuyerRepository.deleteById(reviewBuyerId);
     }
 
     @Transactional
     @Override
-    public Map<String, String> hideReviewBuyer(Long reviewSellerId) {
-        long result = reviewBuyerRepository.hideReviewBuyerById(reviewSellerId);
-        Map<String, String> resultMap = new HashMap<>();
-        if(result>0) {
-            resultMap.put("success", "숨김에 성공했습니다");
-        } else {
-            resultMap.put("fail", "숨김에 성공했습니다");
-        }
-        return resultMap;
-    }
-
-    @Override
-    public List<ReviewBuyerDto> findReviewsByPostId(List<Long> postIds) {
-       return reviewBuyerRepository.getReviewIdsByPostIds(postIds);
+    public void hideReviewBuyer(Long reviewBuyerId) {
+        ReviewBuyer reviewBuyer = findReviewBuyerById(reviewBuyerId);
+        reviewBuyer.updateHideState(HideState.HIDE);
     }
 }

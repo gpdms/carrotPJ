@@ -5,6 +5,7 @@ import org.springframework.stereotype.Service;
 
 @Service
 public interface TradeService {
+    Trade findTradeByPostId(Long postId);
     Trade selectTradeByPost(Long postId);
     void insertTrade(Long postId, String buyerId);
     void updateTrade(Long postId, String buyerId);

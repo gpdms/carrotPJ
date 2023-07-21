@@ -4,11 +4,13 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindException;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.InitBinder;
+import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 import org.springframework.web.servlet.NoHandlerFoundException;
 
 import javax.servlet.http.HttpServletRequest;
@@ -23,31 +25,34 @@ public class GlobalControllerAdvice{
     }*/
 
     /**
-     * validation 에러 (@ModelAttribute)
-     * @param e
-     * @param request
-     * @return
+     * validation 실패
+     * @ModelAttribute
      */
     @ExceptionHandler({BindException.class})
-    public ResponseEntity<?> handleBindException(BindException e,
+    public ResponseEntity<ErrorResponse> handleBindException(BindException e,
                                                       HttpServletRequest request) {
-        log.warn("BindException 발생 url:{}, trace:{}", request.getRequestURI(), e.getStackTrace());
+        log.warn("fail Validation, url:{}, trace:{}", request.getRequestURI(), e.getStackTrace());
         ErrorResponse errorResponse = ErrorResponse.of(ErrorCode.INVALID_INPUT_VALUE, e.getBindingResult());
-        return new ResponseEntity<>(errorResponse, HttpStatus.BAD_REQUEST);
+        return ResponseEntity.badRequest().body(errorResponse);
     }
-
     /**
-     * validation 에러 (@RequestBody)
-     * @param e
-     * @param request
-     * @return
+     * validation 실패
+     * @RequestBody
      */
     @ExceptionHandler({MethodArgumentNotValidException.class})
-    public ResponseEntity<?> handleNotValidException(MethodArgumentNotValidException e,
-                                                    HttpServletRequest request) {
-        log.warn("MethodArgumentNotValidException 발생 url:{}, trace:{}", request.getRequestURI(), e.getStackTrace());
+    public ResponseEntity<ErrorResponse> handleFailedValidation(MethodArgumentNotValidException e,
+                                                                HttpServletRequest request) {
+        log.warn("fail Validation, url:{}, trace:{}", request.getRequestURI(), e.getStackTrace());
         ErrorResponse errorResponse = ErrorResponse.of(ErrorCode.INVALID_INPUT_VALUE, e.getBindingResult());
-        return new ResponseEntity<>(errorResponse, HttpStatus.BAD_REQUEST);
+        return ResponseEntity.badRequest().body(errorResponse);
+    }
+
+    @ExceptionHandler({MethodArgumentTypeMismatchException.class})
+    public ResponseEntity<ErrorResponse> handleMethodArgumentTypeMismatchException(NumberFormatException e,
+                                                                                   HttpServletRequest request) {
+        log.warn("MethodArgumentTypeMismatchException발생 url:{}, trace:{}", request.getRequestURI(), e.getStackTrace());
+        ErrorResponse errorResponse = ErrorResponse.of(ErrorCode.TYPE_MISMATCH);
+        return ResponseEntity.badRequest().body(errorResponse);
     }
 
     @ExceptionHandler(NoHandlerFoundException.class)
@@ -63,4 +68,5 @@ public class GlobalControllerAdvice{
         log.warn("NoSuchElementException발생 url:{}, trace:{}", request.getRequestURI(), e.getStackTrace());
         return "redirect:/";
     }
+
 }

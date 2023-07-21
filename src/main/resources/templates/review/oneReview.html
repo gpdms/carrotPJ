@@ -17,46 +17,46 @@
             </div>
             <hr class="my-4">
 
-            <div th:if="${reviewDetailForm.buyerIndicatorList != null}">
-                <div th:if="${reviewDetailForm.reviewState.stateCode == '0' && isReviewer}">
-                    <p class="fs-3 fw-bold" th:text="|${reviewDetailForm.buyerId}님에게 아쉬운 후기를 남겼어요|"></p>
-                    <p class="fs-6 fw-normal" th:text="|${reviewDetailForm.buyerId}님과 ''${reviewDetailForm.postTitle}''을 거래했어요|"> </p>
+            <div th:if="${review.reviewBuyerId != null}">
+                <div th:if="${review.reviewState.stateCode == '0' && isReviewer}">
+                    <p class="fs-3 fw-bold" th:text="|${review.buyerId}님에게 아쉬운 후기를 남겼어요|"></p>
+                    <p class="fs-6 fw-normal" th:text="|${review.buyerId}님과 ''${review.postTitle}''을 거래했어요|"> </p>
                     <hr class="my-4">
-                    <p class="fs-5 fw-bold">메시지는 운영 팀에게만 전달돼요</p>
+                    <p class="fs-5 fw-bold">메시지는 운영 팀에게만 전달돼요.</p>
                     <div class="rv-box">
-                        <p class="fs-5 fw-normal" th:text="${reviewDetailForm.message}"> </p>
+                        <p class="fs-5 fw-normal" th:text="${review.message}"> </p>
                         <br/>
                         <ul>
-                            <th:block th:each="buyerIndicator : ${reviewDetailForm.buyerIndicatorList}">
+                            <th:block th:each="buyerIndicator : ${review.indicatorList}">
                                 <li class="fs-5 fw-normal" th:text="${buyerIndicator.description}"></li>
                             </th:block>
                         </ul>
                     </div>
                 </div>
-                <div th:if="${reviewDetailForm.reviewState.stateCode != '0'}">
+                <div th:if="${review.reviewState.stateCode != '0'}">
                     <div th:if="${isReviewer}">
-                        <p class="fs-3 fw-bold" th:text="|${reviewDetailForm.buyerId}님에게 따뜻한 거래후기를 보냈어요|"></p>
-                        <p class="fs-6 fw-normal" th:text="|${reviewDetailForm.buyerId}님과 ''${reviewDetailForm.postTitle}''을 거래했어요|"> </p>
+                        <p class="fs-3 fw-bold" th:text="|${review.buyerId}님에게 따뜻한 거래후기를 남겼어요|"></p>
+                        <p class="fs-6 fw-normal" th:text="|${review.buyerId}님과 ''${review.postTitle}''을 거래했어요  |"> </p>
                         <hr class="my-4">
                         <div class="rv-box">
-                            <p class="fs-5 fw-normal" th:text="${reviewDetailForm.message}"> </p>
+                            <p class="fs-5 fw-normal" th:text="${review.message}"> </p>
                             <br/>
                             <ul>
-                                <th:block th:each="buyerIndicator : ${reviewDetailForm.buyerIndicatorList}">
+                                <th:block th:each="buyerIndicator : ${review.indicatorList}">
                                     <li class="fs-5 fw-normal" th:text="${buyerIndicator.description}"></li>
                                 </th:block>
                             </ul>
                         </div>
                     </div>
                     <div th:unless="${isReviewer}">
-                        <p class="fs-3 fw-bold" th:text="|${reviewDetailForm.sellerId}님이 보낸 따뜻한 후기가 도착했어요|"></p>
-                        <p class="fs-6 fw-normal" th:text="|${reviewDetailForm.sellerId}님과 ''${reviewDetailForm.postTitle}''을 거래했어요|"> </p>
+                        <p class="fs-3 fw-bold" th:text="|${review.sellerId}님이 보낸 따뜻한 후기가 도착했어요|"></p>
+                        <p class="fs-6 fw-normal" th:text="|${review.sellerId}님과 ''${review.postTitle}''을 거래했어요|"> </p>
                         <hr class="my-4">
                         <div class="rv-box">
-                            <p class="fs-5 fw-normal" th:text="${reviewDetailForm.message}"> </p>
+                            <p class="fs-5 fw-normal" th:text="${review.message}"> </p>
                             <br/>
                             <ul>
-                                <th:block th:each="sellerIndicator : ${reviewDetailForm.sellerIndicatorList}">
+                                <th:block th:each="sellerIndicator : ${review.indicatorList}">
                                     <li class="fs-5 fw-normal" th:text="${sellerIndicator.description}"></li>
                                 </th:block>
                             </ul>
@@ -68,43 +68,43 @@
                         id="buyerDelBtn"> 삭제하기 </button>
             </div>
 
-            <div th:if="${reviewDetailForm.sellerIndicatorList != null}">
-                <div th:if="${reviewDetailForm.reviewState.stateCode == '0' && isReviewer}">
-                    <p class="fs-3 fw-bold" th:text="|${reviewDetailForm.sellerId}님에게 아쉬운 후기를 남겼어요|"></p>
-                    <p class="fs-6 fw-normal" th:text="|${reviewDetailForm.sellerId}님과 ''${reviewDetailForm.postTitle}''을 거래했어요|"> </p>
+            <div th:if="${review.reviewSellerId != null}">
+                <div th:if="${review.reviewState.stateCode == '0' && isReviewer}">
+                    <p class="fs-3 fw-bold" th:text="|${review.sellerId}님에게 아쉬운 후기를 남겼어요|"></p>
+                    <p class="fs-6 fw-normal" th:text="|${review.sellerId}님과 ''${review.postTitle}''을 거래했어요|"> </p>
                     <hr class="my-4">
-                    <p class="fs-5 fw-bold">메시지는 운영 팀에게만 전달돼요</p>
+                    <p class="fs-5 fw-bold">메시지는 운영 팀에게만 전달돼요.</p>
                     <div class="rv-box">
-                        <p class="fs-5 fw-normal" th:text="${reviewDetailForm.message}"> </p>
+                        <p class="fs-5 fw-normal" th:text="${review.message}"> </p>
                         <ul>
-                            <th:block th:each="sellerIndicator : ${reviewDetailForm.sellerIndicatorList}">
+                            <th:block th:each="sellerIndicator : ${review.indicatorList}">
                                 <li class="fs-5 fw-normal" th:text="${sellerIndicator.description}"></li>
                             </th:block>
                         </ul>
                     </div>
                 </div>
-                <div th:if="${reviewDetailForm.reviewState.stateCode != '0'}">
+                <div th:if="${review.reviewState.stateCode != '0'}">
                     <div th:if="${isReviewer}">
-                        <p class="fs-3 fw-bold" th:text="|${reviewDetailForm.sellerId}님에게 따뜻한 거래후기를 보냈어요|"></p>
-                        <p class="fs-6 fw-normal" th:text="|${reviewDetailForm.sellerId}님과 ''${reviewDetailForm.postTitle}''을 거래했어요|"> </p>
+                        <p class="fs-3 fw-bold" th:text="|${review.sellerId}님에게 따뜻한 거래후기를 남겼어요|"></p>
+                        <p class="fs-6 fw-normal" th:text="|${review.sellerId}님과 ''${review.postTitle}''을 거래했어요|"> </p>
                         <hr class="my-4">
                         <div class="rv-box">
-                            <p class="fs-5 fw-normal" th:text="${reviewDetailForm.message}"> </p>
+                            <p class="fs-5 fw-normal" th:text="${review.message}"> </p>
                             <ul>
-                                <th:block th:each="sellerIndicator : ${reviewDetailForm.sellerIndicatorList}">
+                                <th:block th:each="sellerIndicator : ${review.indicatorList}">
                                     <li class="fs-5 fw-normal" th:text="${sellerIndicator.description}"></li>
                                 </th:block>
                             </ul>
                         </div>
                     </div>
                     <div th:unless="${isReviewer}">
-                        <p class="fs-3 fw-bold" th:text="|${reviewDetailForm.buyerId}님이 보낸 따뜻한 후기가 도착했어요|"></p>
-                        <p class="fs-6 fw-normal" th:text="|${reviewDetailForm.buyerId}님과 ''${reviewDetailForm.postTitle}''을 거래했어요|"> </p>
+                        <p class="fs-3 fw-bold" th:text="|${review.buyerId}님이 보낸 따뜻한 후기가 도착했어요|"></p>
+                        <p class="fs-6 fw-normal" th:text="|${review.buyerId}님과 ''${review.postTitle}''을 거래했어요|"> </p>
                         <hr class="my-4">
                         <div class="rv-box">
-                            <p class="fs-5 fw-normal" th:text="${reviewDetailForm.message}"> </p>
+                            <p class="fs-5 fw-normal" th:text="${review.message}"> </p>
                             <ul>
-                                <th:block th:each="sellerIndicator : ${reviewDetailForm.sellerIndicatorList}">
+                                <th:block th:each="sellerIndicator : ${review.indicatorList}">
                                     <li class="fs-5 fw-normal" th:text="${sellerIndicator.description}"></li>
                                 </th:block>
                             </ul>
@@ -115,10 +115,6 @@
                         class="w-100 btn btn-secondary btn-lg mt-5"
                         id="sellerDelBtn"> 삭제하기 </button>
             </div>
-
-            <button class="w-100 btn bg-orange btn-lg mt-3"
-                    onclick="history.go(-1); return false;"
-                    type="button">이전으로</button>
         </div> <!-- form-continer-->
     </div>
 </section>
@@ -128,26 +124,26 @@
     <script th:inline="javascript" >
         const buyerDelBtn =document.getElementById('buyerDelBtn')
         if(buyerDelBtn) {
-            buyerDelBtn.addEventListener("click", deleteBuyer);
+            buyerDelBtn.addEventListener('click', deleteBuyer);
         }
+
         function deleteBuyer() {
             if (!delConfirm()) { return; }
-            let reviewBuyerId = [[${reviewDetailForm.reviewBuyerId}]];
+            let reviewBuyerId = [[${review.reviewBuyerId}]];
             let url = '/reviews/buyer/' + reviewBuyerId
             fetch(url, {
                 method: 'DELETE'
             }).then(response => {
                 if (response.ok) {
-                    return response.json();  // HTTP 응답 객체를 JSON으로 변환하여 반환
+                    return response;  // HTTP 응답 객체를 JSON으로 변환하여 반환
                 } else {
                     throw new Error('서버로부터 응답을 받지 못했습니다.');  // 예외 발생
                 }
             }).then(data => {
-                alert(data.message);
-                let me = [[${reviewDetailForm.sellerId}]];
-                window.location.href = `/members/${me}/trade/sellList`;
+                alert('삭제에 성공했습니다.');
+                let me = [[${review.sellerId}]];
+                window.location.href = `/members/${me}/trade/sell-list`;
             }).catch(err => {
-                console.log(err);
                 alert('삭제에 실패했습니다.');
             })
         }
@@ -156,31 +152,32 @@
         if(sellerDelBtn) {
             sellerDelBtn.addEventListener("click", deleteSeller);
         }
+
         function deleteSeller(){
             if (!delConfirm()) {
                 return;
             }
-            let reviewSellerId = [[${reviewDetailForm.reviewSellerId}]];
+            let reviewSellerId = [[${review.reviewSellerId}]];
             let url = '/reviews/seller/' + reviewSellerId
             fetch(url, {
                 method: 'DELETE'
             }).then(response => {
                 if (response.ok) {
-                    return response.json();
+                    return response;
                 } else {
                     throw new Error('서버로부터 응답을 받지 못했습니다.');  // 예외 발생
                 }
             }).then(data => {
-                    alert(data.message);
-                    let me = [[${reviewDetailForm.buyerId}]];
-                    window.location.href = `/members/${me}/trade/buyList`
+                    alert('삭제에 성공했습니다.');
+                    let me = [[${review.buyerId}]];
+                    window.location.href = `/members/${me}/trade/buy-list`;
             }).catch(err => {
-                    console.log(err);
-                    alert("삭제에 실패했습니다.")
+                    alert('삭제에 실패했습니다.');
             });
         }
+
         function delConfirm() {
-            return confirm("리뷰를 삭제하시겠습니까?");
+            return confirm('리뷰를 삭제하시겠습니까?');
         }
     </script>
 

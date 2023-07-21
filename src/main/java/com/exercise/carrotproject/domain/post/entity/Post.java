@@ -71,10 +71,13 @@ public class Post extends BaseEntity {
     private List<ChatRoom> chatRoomList = new ArrayList<>();
     @OneToMany(mappedBy = "post", cascade = CascadeType.REMOVE)
     private List<Wish> wishList = new ArrayList<>();
+    @ToString.Exclude
     @OneToMany(mappedBy = "post", cascade = CascadeType.REMOVE)
     private List<Trade> tradeList = new ArrayList<>();
+    @ToString.Exclude
     @OneToMany(mappedBy = "post", cascade = CascadeType.REMOVE)
     private List<ReviewBuyer> reviewBuyerList = new ArrayList<>();
+    @ToString.Exclude
     @OneToMany(mappedBy = "post", cascade = CascadeType.REMOVE)
     private List<ReviewSeller> reviewSellerList = new ArrayList<>();
 

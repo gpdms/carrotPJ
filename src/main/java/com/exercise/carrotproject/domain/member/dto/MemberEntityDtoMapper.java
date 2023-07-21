@@ -5,7 +5,6 @@ import com.exercise.carrotproject.domain.member.dto.MemberDto;
 import com.exercise.carrotproject.domain.member.entity.Member;
 
 public class MemberEntityDtoMapper {
-    //memberDto -> memberEntity
     public static Member toEntity(MemberDto memberDto){
         return Member.builder()
                 .memId(memberDto.getMemId())
@@ -15,7 +14,6 @@ public class MemberEntityDtoMapper {
                 .build();
     }
 
-    //memberEntity -> memberDto
     public static MemberDto toDto(Member member){
         double roundedMannerScore = Math.round(member.getMannerScore() / 10000.0 * 10) / 10.0;
         return MemberDto.builder()

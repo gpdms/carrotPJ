@@ -19,7 +19,7 @@ import static org.springframework.util.StringUtils.hasText;
 public class ReviewSellerCustomRepositoryImpl implements ReviewSellerCustomRepository{
     private final JPAQueryFactory queryFactory;
     @Override
-    public Long countMessageBySeller(String memId) {
+    public Long countGoodMessagesBySellerId(String memId) {
         return queryFactory
                 .select(reviewSeller.message.count())
                 .from(reviewSeller)
@@ -29,7 +29,7 @@ public class ReviewSellerCustomRepositoryImpl implements ReviewSellerCustomRepos
                 .fetchOne();
     }
     @Override
-    public List<ReviewMessageDto> reviewMessageBySeller(String memId) {
+    public List<ReviewMessageDto> getGoodMessageListBySellerId(String memId) {
         return queryFactory
                 .select(Projections.constructor(ReviewMessageDto.class,
                         reviewSeller.buyer,
@@ -42,13 +42,6 @@ public class ReviewSellerCustomRepositoryImpl implements ReviewSellerCustomRepos
                         reviewSeller.reviewState.ne(ReviewState.BAD),
                         reviewSeller.hideState.eq(HideState.SHOW))
                 .fetch();
-    }
-    @Override
-    public long hideReviewSellerById(Long reviewSellerId) {
-        return queryFactory.update(reviewSeller)
-                .set(reviewSeller.hideState, HideState.HIDE)
-                .where(reviewSeller.reviewSellerId.eq(reviewSellerId))
-                .execute();
     }
 
     private BooleanExpression sellerIdEq(String sellerId) {

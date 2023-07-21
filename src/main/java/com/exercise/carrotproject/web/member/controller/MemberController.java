@@ -1,7 +1,7 @@
 package com.exercise.carrotproject.web.member.controller;
 
 
-import com.exercise.carrotproject.domain.member.dto.JoinNormalMemberDto;
+import com.exercise.carrotproject.domain.member.dto.JoinNormalMemberRequest;
 import com.exercise.carrotproject.domain.member.dto.MemberDto;
 import com.exercise.carrotproject.domain.member.service.MemberService;
 import com.exercise.carrotproject.domain.post.dto.BuyPostDto;
@@ -51,7 +51,7 @@ public class MemberController {
         if (memberService.hasEmail(form.getEmail())) {
             return ResponseEntity.status(HttpStatus.CONFLICT).body(ErrorResponse.of(ErrorCode.DUPLICATED_EMAIL));
         }
-        JoinNormalMemberDto member = JoinNormalMemberDto.builder().memId(form.getMemId())
+        JoinNormalMemberRequest member = JoinNormalMemberRequest.builder().memId(form.getMemId())
                 .memPwd(form.getPwd())
                 .email(form.getEmail())
                 .nickname(form.getNickname())
@@ -157,9 +157,9 @@ public class MemberController {
         //판매중,예약중 게시글
         Map map = postService.selectPostBySellState(memId);
         List<PostDto> onSaleAndRsvList = (List) map.get("onSaleAndRsvList");
+        model.addAttribute("onSaleAndRsv", onSaleAndRsvList);
         //판매완료
         List<SoldPostDto> soldList = (List) map.get("soldList");
-        model.addAttribute("onSaleAndRsv", onSaleAndRsvList);
         model.addAttribute("soldList", soldList);
         //숨김 게시글
         List<PostDto> hidePostList = postService.selectHidePost(memId);
@@ -168,7 +168,7 @@ public class MemberController {
     }
 
     @GetMapping("/{memId}/wish-list")
-    public String wishList(@PathVariable String memId, Model model){
+    public String myWishList(@PathVariable String memId, Model model){
         List<PostDto> postList = postService.selectPostListFromWish(memId);
         model.addAttribute("postList", postList);
         return "myPage/wishList";
