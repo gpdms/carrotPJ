@@ -40,7 +40,7 @@ public class ReviewCustomRepository {
         Timestamp to1WeeksAgo = Timestamp.valueOf(everyMonday5am.minusWeeks(1));
 
         List<MannerUpdateDto> buyerReviewScoreList = jpaQueryFactory.select(
-                   new QMannerUpdateDto(reviewBuyer.buyer.memId, reviewBuyer.totalScore.sum()))
+                        new QMannerUpdateDto(reviewBuyer.buyer.memId, reviewBuyer.totalScore.sum()))
                 .from(reviewBuyer)
                 .groupBy(reviewBuyer.buyer.memId)
                 .where(reviewBuyer.createdTime.between(from2WeeksAgo, to1WeeksAgo))
@@ -51,7 +51,9 @@ public class ReviewCustomRepository {
                 .groupBy(reviewSeller.seller.memId)
                 .where(reviewSeller.createdTime.between(from2WeeksAgo, to1WeeksAgo))
                 .fetch();
-        List<MannerUpdateDto> allReviewScoreList = Stream.concat(buyerReviewScoreList.stream(), sellerReviewScoreList.stream())
+
+        List<MannerUpdateDto> allReviewScoreList = Stream
+                .concat(buyerReviewScoreList.stream(), sellerReviewScoreList.stream())
                 .collect(Collectors.groupingBy(MannerUpdateDto::getMemId,
                         Collectors.summingDouble(MannerUpdateDto::getReviewScore)))
                 .entrySet().stream()
@@ -60,6 +62,4 @@ public class ReviewCustomRepository {
 
         return allReviewScoreList;
     }
-
-
 }
