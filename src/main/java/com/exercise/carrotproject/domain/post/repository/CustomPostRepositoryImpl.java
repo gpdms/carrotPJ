@@ -9,6 +9,7 @@ import com.exercise.carrotproject.domain.post.dto.QSoldPostDto;
 import com.exercise.carrotproject.domain.post.dto.SoldPostDto;
 import com.exercise.carrotproject.domain.post.entity.Post;
 
+import com.exercise.carrotproject.domain.post.entity.QMtPlace;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.jpa.JPAExpressions;
 import com.querydsl.jpa.impl.JPAQueryFactory;
@@ -18,6 +19,7 @@ import org.springframework.stereotype.Repository;
 import java.util.List;
 //QPost를 static import함으로써, QPost에 미리 정의된 Q 타입 인스턴스 상수를 사용
 import static com.exercise.carrotproject.domain.member.entity.QBlock.block;
+import static com.exercise.carrotproject.domain.post.entity.QMtPlace.mtPlace;
 import static com.exercise.carrotproject.domain.post.entity.QPost.post;
 import static com.exercise.carrotproject.domain.review.entity.QReviewBuyer.reviewBuyer;
 import static org.springframework.util.StringUtils.hasText;
@@ -47,6 +49,8 @@ public class CustomPostRepositoryImpl implements CustomPostRepository{
                         post.member.memId.eq(memId))
                 .leftJoin(reviewBuyer)
                 .on(reviewBuyer.post.postId.eq(post.postId))
+                .leftJoin(post.mtPlace, mtPlace)
+                .fetchJoin()
                 .orderBy(post.postId.desc())
                 .fetch();
     }
@@ -58,6 +62,8 @@ public class CustomPostRepositoryImpl implements CustomPostRepository{
                 .where(post.hideState.eq(HideState.SHOW),
                         memIdEq(memId))
                 .limit(limit)
+                .leftJoin(post.mtPlace, mtPlace)
+                .fetchJoin()
                 .orderBy(post.postId.desc())
                 .fetch();
     }
@@ -70,6 +76,8 @@ public class CustomPostRepositoryImpl implements CustomPostRepository{
                         locEq(loginMemLoc),
                         notExistsBlock(loginMemId)
                 )
+                .leftJoin(post.mtPlace, mtPlace)
+                .fetchJoin()
                 .orderBy(post.postId.desc())
                 .fetch();
     }
@@ -83,6 +91,8 @@ public class CustomPostRepositoryImpl implements CustomPostRepository{
                         locEq(loginMemLoc),
                         notExistsBlock(loginMemId)
                 )
+                .leftJoin(post.mtPlace, mtPlace)
+                .fetchJoin()
                 .orderBy(post.postId.desc())
                 .fetch();
     }
@@ -96,6 +106,8 @@ public class CustomPostRepositoryImpl implements CustomPostRepository{
                         ),
                         notExistsBlock(loginMemId)
                 )
+                .leftJoin(post.mtPlace, mtPlace)
+                .fetchJoin()
                 .fetch();
     }
 
