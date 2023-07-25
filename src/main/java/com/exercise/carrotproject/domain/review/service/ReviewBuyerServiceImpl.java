@@ -42,16 +42,16 @@ public class ReviewBuyerServiceImpl implements ReviewBuyerService {
     @Transactional
     @Override
     public Long insertReviewBuyer(AddReviewRequest req) {
-        ReviewBuyer reviewBuyer = processReviewBuyer(req);
+        ReviewBuyer reviewBuyer = createReviewBuyer(req);
         ReviewBuyer newReviewBuyer = reviewBuyerRepository.save(reviewBuyer);
 
-        List<ReviewBuyerDetail> reviewBuyerDetailList = processReviewBuyerDetailList(newReviewBuyer, req.getIndicatorNames());
+        List<ReviewBuyerDetail> reviewBuyerDetailList = createReviewBuyerDetailList(newReviewBuyer, req.getIndicatorNames());
         reviewBuyerDetailRepository.saveAll(reviewBuyerDetailList);
 
         return newReviewBuyer.getReviewBuyerId();
     }
 
-    private ReviewBuyer processReviewBuyer(AddReviewRequest req) {
+    private ReviewBuyer createReviewBuyer(AddReviewRequest req) {
         Trade trade = tradeService.findTradeByPostId(req.getPostId());
         List<ReviewBuyerIndicator> indicatorList = ReviewBuyerIndicator.findAllByEnumName(req.getIndicatorNames());
         String message = req.getMessage().replace("\r\n", "<br>");
@@ -65,8 +65,8 @@ public class ReviewBuyerServiceImpl implements ReviewBuyerService {
                 .build();
     }
 
-   private List<ReviewBuyerDetail> processReviewBuyerDetailList(ReviewBuyer newReviewBuyer,
-                                                                List<String> indicatorNames) {
+   private List<ReviewBuyerDetail> createReviewBuyerDetailList(ReviewBuyer newReviewBuyer,
+                                                               List<String> indicatorNames) {
        List<ReviewBuyerIndicator> indicators = ReviewBuyerIndicator.findAllByEnumName(indicatorNames);
         return indicators.stream()
                .map(reviewBuyerIndicator -> ReviewBuyerDetail.builder()
