@@ -96,11 +96,7 @@ public class ReviewController {
     public String viewOneReviewBuyer (@PathVariable final Long reviewBuyerId,
                                      @Login final MemberDto loginMember,
                                      Model model) {
-//        ReviewResponse reviewResponse = reviewBuyerService.getReviewResponseById(reviewBuyerId);
-        ReviewBuyer reviewBuyer = reviewBuyerRepository.findById(reviewBuyerId)
-                .orElseThrow(() -> new NoSuchElementException("ReviewBuyer Not Found"));
-        ReviewResponse reviewResponse = ReviewResponse.of(reviewBuyer);
-
+        ReviewResponse reviewResponse = reviewBuyerService.getReviewResponseById(reviewBuyerId);
         boolean isReviewer = loginMember.getMemId().equals(reviewResponse.getBuyerId()) ? false : true;
         model.addAttribute("isReviewer", isReviewer);
         model.addAttribute("review", reviewResponse);
