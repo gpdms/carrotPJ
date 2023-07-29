@@ -7,26 +7,29 @@ import com.exercise.carrotproject.domain.post.entity.Trade;
 import com.exercise.carrotproject.domain.post.service.TradeService;
 import com.exercise.carrotproject.domain.review.dto.AddReviewRequest;
 import com.exercise.carrotproject.domain.review.dto.ReviewMessageDto;
+import com.exercise.carrotproject.domain.review.dto.ReviewResponse;
 import com.exercise.carrotproject.domain.review.entity.ReviewBuyer;
 import com.exercise.carrotproject.domain.review.entity.ReviewSeller;
+import com.exercise.carrotproject.domain.review.repository.ReviewBuyerRepository;
 import com.exercise.carrotproject.domain.review.service.*;
 import com.exercise.carrotproject.web.argumentresolver.Login;
 import com.exercise.carrotproject.web.member.error.ErrorCode;
 import com.exercise.carrotproject.web.member.error.ErrorResponse;
 import com.exercise.carrotproject.web.review.form.ReviewForm;
-import com.exercise.carrotproject.web.review.response.ReviewResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.transaction.support.TransactionSynchronizationManager;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.util.List;
 import java.util.Map;
+import java.util.NoSuchElementException;
 
 
 @Slf4j
@@ -39,6 +42,7 @@ public class ReviewController {
     private final ReviewSellerService reviewSellerService;
     private final ReviewBuyerService reviewBuyerService;
     private final ReviewService reviewService;
+    private final ReviewBuyerRepository reviewBuyerRepository;
 
     @GetMapping("/{memId}")
     public String toPublicReviewMessagesDetail(@PathVariable final String memId, Model model) {
@@ -89,15 +93,17 @@ public class ReviewController {
     }
 
     @GetMapping("/buyer/{reviewBuyerId}")
-    @Transactional(readOnly = true)
     public String viewOneReviewBuyer (@PathVariable final Long reviewBuyerId,
                                      @Login final MemberDto loginMember,
                                      Model model) {
-       ReviewBuyer reviewBuyer = reviewBuyerService.findReviewBuyerById(reviewBuyerId);
-       ReviewResponse reviewResponse = ReviewResponse.of(reviewBuyer);
-       boolean isReviewer = loginMember.getMemId().equals(reviewResponse.getBuyerId()) ? false : true;
-       model.addAttribute("isReviewer", isReviewer);
-       model.addAttribute("review", reviewResponse);
+//        ReviewResponse reviewResponse = reviewBuyerService.getReviewResponseById(reviewBuyerId);
+        ReviewBuyer reviewBuyer = reviewBuyerRepository.findById(reviewBuyerId)
+                .orElseThrow(() -> new NoSuchElementException("ReviewBuyer Not Found"));
+        ReviewResponse reviewResponse = ReviewResponse.of(reviewBuyer);
+
+        boolean isReviewer = loginMember.getMemId().equals(reviewResponse.getBuyerId()) ? false : true;
+        model.addAttribute("isReviewer", isReviewer);
+        model.addAttribute("review", reviewResponse);
        return "review/oneReview";
     }
 
@@ -147,13 +153,11 @@ public class ReviewController {
         return ResponseEntity.ok(reviewSellerId);
     }
 
-    @Transactional(readOnly = true)
     @GetMapping("/seller/{reviewSellerId}")
     public String viewOneReviewSeller (@PathVariable final Long reviewSellerId,
                                       @Login final MemberDto loginMember,
                                       Model model) {
-        ReviewSeller reviewSeller = reviewSellerService.findReviewSellerById(reviewSellerId);
-        ReviewResponse reviewResponse = ReviewResponse.of(reviewSeller);
+        ReviewResponse reviewResponse = reviewSellerService.getReviewResponseById(reviewSellerId);
         boolean isReviewer = loginMember.getMemId().equals(reviewResponse.getSellerId()) ? false : true;
         model.addAttribute("isReviewer", isReviewer);
         model.addAttribute("review", reviewResponse);
