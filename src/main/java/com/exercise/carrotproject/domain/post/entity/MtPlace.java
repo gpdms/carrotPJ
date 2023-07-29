@@ -14,7 +14,7 @@ public class MtPlace {
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long mtPlaceId;
 
-    @OneToOne(fetch = FetchType.LAZY)
+    @OneToOne
     private Post post;
     private Double lat; //위도
     private Double lon; //경도

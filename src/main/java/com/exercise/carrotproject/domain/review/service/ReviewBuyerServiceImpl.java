@@ -7,10 +7,8 @@ import com.exercise.carrotproject.domain.enumList.ReviewState;
 import com.exercise.carrotproject.domain.post.entity.Trade;
 import com.exercise.carrotproject.domain.post.service.TradeService;
 import com.exercise.carrotproject.domain.review.dto.AddReviewRequest;
-import com.exercise.carrotproject.domain.review.dto.ReviewResponse;
 import com.exercise.carrotproject.domain.review.entity.ReviewBuyer;
 import com.exercise.carrotproject.domain.review.entity.ReviewBuyerDetail;
-import com.exercise.carrotproject.domain.review.entity.ReviewSeller;
 import com.exercise.carrotproject.domain.review.repository.detail.ReviewBuyerDetailRepository;
 import com.exercise.carrotproject.domain.review.repository.ReviewBuyerRepository;
 import lombok.RequiredArgsConstructor;
@@ -37,12 +35,6 @@ public class ReviewBuyerServiceImpl implements ReviewBuyerService {
     }
 
     @Override
-    public ReviewResponse getReviewResponseById(Long reviewBuyerId) {
-        ReviewBuyer reviewBuyer = findReviewBuyerById(reviewBuyerId);
-        return ReviewResponse.of(reviewBuyer);
-    }
-
-    @Override
     public boolean existsReviewBuyerByPostId(Long postId) {
         return reviewBuyerRepository.existsByPostPostId(postId);
     }
@@ -50,16 +42,16 @@ public class ReviewBuyerServiceImpl implements ReviewBuyerService {
     @Transactional
     @Override
     public Long insertReviewBuyer(AddReviewRequest req) {
-        ReviewBuyer reviewBuyer = createReviewBuyer(req);
+        ReviewBuyer reviewBuyer = processReviewBuyer(req);
         ReviewBuyer newReviewBuyer = reviewBuyerRepository.save(reviewBuyer);
 
-        List<ReviewBuyerDetail> reviewBuyerDetailList = createReviewBuyerDetailList(newReviewBuyer, req.getIndicatorNames());
+        List<ReviewBuyerDetail> reviewBuyerDetailList = processReviewBuyerDetailList(newReviewBuyer, req.getIndicatorNames());
         reviewBuyerDetailRepository.saveAll(reviewBuyerDetailList);
 
         return newReviewBuyer.getReviewBuyerId();
     }
 
-    private ReviewBuyer createReviewBuyer(AddReviewRequest req) {
+    private ReviewBuyer processReviewBuyer(AddReviewRequest req) {
         Trade trade = tradeService.findTradeByPostId(req.getPostId());
         List<ReviewBuyerIndicator> indicatorList = ReviewBuyerIndicator.findAllByEnumName(req.getIndicatorNames());
         String message = req.getMessage().replace("\r\n", "<br>");
@@ -73,8 +65,8 @@ public class ReviewBuyerServiceImpl implements ReviewBuyerService {
                 .build();
     }
 
-   private List<ReviewBuyerDetail> createReviewBuyerDetailList(ReviewBuyer newReviewBuyer,
-                                                               List<String> indicatorNames) {
+   private List<ReviewBuyerDetail> processReviewBuyerDetailList(ReviewBuyer newReviewBuyer,
+                                                                List<String> indicatorNames) {
        List<ReviewBuyerIndicator> indicators = ReviewBuyerIndicator.findAllByEnumName(indicatorNames);
         return indicators.stream()
                .map(reviewBuyerIndicator -> ReviewBuyerDetail.builder()

@@ -1,8 +1,12 @@
 package com.exercise.carrotproject.domain.member.service;
 
 import com.exercise.carrotproject.domain.enumList.Role;
-import com.exercise.carrotproject.domain.member.dto.*;
+import com.exercise.carrotproject.domain.member.dto.JoinNormalMemberRequest;
+import com.exercise.carrotproject.domain.member.dto.JoinSocialMemberRequest;
+import com.exercise.carrotproject.domain.member.dto.MemberDto;
+import com.exercise.carrotproject.domain.member.dto.ProfileImgInfo;
 import com.exercise.carrotproject.domain.member.util.GenerateUtils;
+import com.exercise.carrotproject.domain.member.dto.MemberEntityDtoMapper;
 import com.exercise.carrotproject.domain.member.entity.Member;
 import com.exercise.carrotproject.domain.member.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
@@ -35,6 +39,7 @@ public class MemberServiceImpl implements MemberService{
         return memberRepository.findById(memId)
                 .orElseThrow(() -> new NoSuchElementException("Member Not Found"));
     }
+
     @Override
     public Member findMemberByEmail(String email) {
         return memberRepository.findByEmail(email)
@@ -62,7 +67,7 @@ public class MemberServiceImpl implements MemberService{
 
     @Override
     public MemberDto login(String email, Role role) {
-        Member member = this.findMemberByEmailAndRole(email, role);
+        Member member = findMemberByEmailAndRole(email, role);
         return MemberEntityDtoMapper.toDto(member);
     }
 
@@ -80,28 +85,28 @@ public class MemberServiceImpl implements MemberService{
 
     @Override
     @Transactional
-    public void joinNormalMember(JoinNormalMemberRequest request) {
+    public void joinNormalMember(JoinNormalMemberRequest memberDto) {
         Member member = Member.builder()
-                .memId(request.getMemId())
-                .email(request.getEmail())
-                .nickname(request.getNickname())
-                .loc(request.getLoc())
-                .memPwd(request.getMemPwd())
+                .memId(memberDto.getMemId())
+                .email(memberDto.getEmail())
+                .nickname(memberDto.getNickname())
+                .loc(memberDto.getLoc())
+                .memPwd(memberDto.getMemPwd())
                 .role(Role.NORMAL).build();
         memberRepository.save(member);
     }
 
     @Override
     @Transactional
-    public void joinSocialMember(JoinSocialMemberRequest request) {
-        ProfileImgInfo profImgInfo = processProfileImg(request.getProfImgUrl());
+    public void joinSocialMember(JoinSocialMemberRequest memberDto) {
+        ProfileImgInfo profImgInfo = processProfileImg(memberDto.getProfImgUrl());
         String fullProfPath = profImgInfo == null ? null : profImgInfo.getFullProfPath();
         Member member = Member.builder()
                 .memId(GenerateUtils.generateUniqueMemId())
-                .email(request.getEmail())
-                .nickname(request.getNickname())
-                .loc(request.getLoc())
-                .role(request.getRole())
+                .email(memberDto.getEmail())
+                .nickname(memberDto.getNickname())
+                .loc(memberDto.getLoc())
+                .role(memberDto.getRole())
                 .profPath(fullProfPath)
                 .build();
         memberRepository.save(member);
@@ -136,13 +141,13 @@ public class MemberServiceImpl implements MemberService{
 
     @Override
     @Transactional
-    public void changeProfile(UpdateProfileRequest request, MultipartFile profImg) {
+    public void changeProfile(MemberDto memberDto, MultipartFile profImg) {
         ProfileImgInfo profImgInfo = processProfileImg(profImg);
         String fullProfPath = profImgInfo == null ? null : profImgInfo.getFullProfPath();
-        Member member = this.findMemberByMemId(request.getMemId());
-        Member updateMember = Member.builder().memId(request.getMemId())
-                .nickname(request.getNickname())
-                .loc(request.getLoc())
+        Member member = this.findMemberByMemId(memberDto.getMemId());
+        Member updateMember = Member.builder().memId(memberDto.getMemId())
+                .nickname(memberDto.getNickname())
+                .loc(memberDto.getLoc())
                 .profPath(fullProfPath).build();
         member.updateProfile(updateMember);
     }
@@ -192,6 +197,9 @@ public class MemberServiceImpl implements MemberService{
     @Transactional
     public void changePwdByMemId(String newPwd, String memId) {
         Member member = this.findMemberByMemId(memId);
+        if (member.isPwdMatch(newPwd)) {
+            return;
+        }
         member.updateMemPwd(newPwd);
     }
 
@@ -199,7 +207,7 @@ public class MemberServiceImpl implements MemberService{
     @Transactional
     public void resetAndSendTemporaryPwdByEmail(String email) {
         String tempPwd = GenerateUtils.generateTempPwd();
-        Member member = this.findMemberByEmail(email);
+        Member member = findMemberByEmail(email);
         member.updateMemPwd(tempPwd);
         emailService.sendTemporaryPwdByEmail(tempPwd, email);
     }
