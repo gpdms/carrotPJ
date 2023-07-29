@@ -3,6 +3,7 @@ package com.exercise.carrotproject.web.member.controller;
 
 import com.exercise.carrotproject.domain.member.dto.JoinNormalMemberRequest;
 import com.exercise.carrotproject.domain.member.dto.MemberDto;
+import com.exercise.carrotproject.domain.member.dto.UpdateProfileRequest;
 import com.exercise.carrotproject.domain.member.service.MemberService;
 import com.exercise.carrotproject.domain.post.dto.BuyPostDto;
 import com.exercise.carrotproject.domain.post.dto.PostDto;
@@ -129,14 +130,15 @@ public class MemberController {
             return ResponseEntity.badRequest().body(ErrorResponse.of(ErrorCode.NOT_IMG_TYPE));
         }
 
-        MemberDto updateMember = MemberDto.builder().memId(form.getMemId())
+        UpdateProfileRequest updateRequest = UpdateProfileRequest.builder()
+                .memId(form.getMemId())
                 .nickname(form.getNickname())
                 .loc(form.getLoc()).build();
-        memberService.changeProfile(updateMember, profImg);
+        memberService.changeProfile(updateRequest, profImg);
 
-        loginMember.setNickname(updateMember.getNickname());
-        loginMember.setLoc(updateMember.getLoc());
-        return ResponseEntity.ok().body(updateMember);
+        loginMember.setNickname(updateRequest.getNickname());
+        loginMember.setLoc(updateRequest.getLoc());
+        return ResponseEntity.ok().body(updateRequest);
     }
 
     @DeleteMapping("/{memId}/profImg")

@@ -5,6 +5,7 @@ import com.exercise.carrotproject.domain.enumList.Role;
 import com.exercise.carrotproject.domain.member.dto.JoinNormalMemberRequest;
 import com.exercise.carrotproject.domain.member.dto.JoinSocialMemberRequest;
 import com.exercise.carrotproject.domain.member.dto.MemberDto;
+import com.exercise.carrotproject.domain.member.dto.UpdateProfileRequest;
 import com.exercise.carrotproject.domain.member.entity.Member;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -20,14 +21,14 @@ public interface MemberService {
     MemberDto login(String loginId, String loginPwd);
     MemberDto login(String email, Role role);
 
-    void joinNormalMember(JoinNormalMemberRequest member);
-    void joinSocialMember(JoinSocialMemberRequest member);
+    void joinNormalMember(JoinNormalMemberRequest request);
+    void joinSocialMember(JoinSocialMemberRequest request);
 
     String issueAuthCodeByEmail(String email);
     void resetAndSendTemporaryPwdByEmail(String email);
 
     boolean isEmptyOrImageFile(MultipartFile profImg);
-    void changeProfile(MemberDto updateMember, MultipartFile profImg);
+    void changeProfile(UpdateProfileRequest request, MultipartFile profImg);
     void changePwdByMemId(String newPwd, String memId);
     void deleteProfImg(String memId);
 }

@@ -61,14 +61,19 @@ public class Post extends BaseEntity {
     @ColumnDefault("0") @Column(nullable = false)
     private Integer hits;
 
+    @ToString.Exclude
     @OneToMany(mappedBy = "post", cascade = CascadeType.REMOVE)
     private List<PostImg> postImgList = new ArrayList<>();
-    @OneToOne(mappedBy = "post", cascade = CascadeType.REMOVE)
+    @ToString.Exclude
+    @OneToOne(mappedBy = "post", cascade = CascadeType.REMOVE, fetch = FetchType.LAZY)
     private MtPlace mtPlace;
+    @ToString.Exclude
     @OneToMany(mappedBy = "post", cascade = CascadeType.REMOVE)
     private List<Chat> chatList = new ArrayList<>();
+    @ToString.Exclude
     @OneToMany(mappedBy = "post", cascade = CascadeType.REMOVE)
     private List<ChatRoom> chatRoomList = new ArrayList<>();
+    @ToString.Exclude
     @OneToMany(mappedBy = "post", cascade = CascadeType.REMOVE)
     private List<Wish> wishList = new ArrayList<>();
     @ToString.Exclude
