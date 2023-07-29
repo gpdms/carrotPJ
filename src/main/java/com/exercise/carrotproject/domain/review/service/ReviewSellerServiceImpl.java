@@ -7,6 +7,7 @@ import com.exercise.carrotproject.domain.enumList.ReviewState;
 import com.exercise.carrotproject.domain.post.entity.Trade;
 import com.exercise.carrotproject.domain.post.service.TradeService;
 import com.exercise.carrotproject.domain.review.dto.AddReviewRequest;
+import com.exercise.carrotproject.domain.review.dto.ReviewResponse;
 import com.exercise.carrotproject.domain.review.entity.ReviewSeller;
 import com.exercise.carrotproject.domain.review.entity.ReviewSellerDetail;
 import com.exercise.carrotproject.domain.review.repository.detail.ReviewSellerDetailRepository;
@@ -14,6 +15,7 @@ import com.exercise.carrotproject.domain.review.repository.ReviewSellerRepositor
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.transaction.support.TransactionSynchronizationManager;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -34,6 +36,12 @@ public class ReviewSellerServiceImpl implements ReviewSellerService {
     }
 
     @Override
+    public ReviewResponse getReviewResponseById(Long reviewSellerId) {
+        ReviewSeller reviewSeller = findReviewSellerById(reviewSellerId);
+        return ReviewResponse.of(reviewSeller);
+    }
+
+    @Override
     public boolean existsReviewSellerByPostId(Long postId) {
         return reviewSellerRepository.existsByPostPostId(postId);
     }
@@ -41,16 +49,16 @@ public class ReviewSellerServiceImpl implements ReviewSellerService {
     @Transactional
     @Override
     public Long insertReviewSeller(AddReviewRequest req) {
-        ReviewSeller reviewSeller = this.processReviewSeller(req);
+        ReviewSeller reviewSeller = this.createReviewSeller(req);
         ReviewSeller newReviewSeller = reviewSellerRepository.save(reviewSeller);
 
-        List<ReviewSellerDetail> reviewSellerDetails = this.processReviewSellerDetailList(newReviewSeller, req.getIndicatorNames());
+        List<ReviewSellerDetail> reviewSellerDetails = this.createReviewSellerDetailList(newReviewSeller, req.getIndicatorNames());
         reviewSellerDetailRepository.saveAll(reviewSellerDetails);
 
         return newReviewSeller.getReviewSellerId();
     }
 
-    private ReviewSeller processReviewSeller(AddReviewRequest req) {
+    private ReviewSeller createReviewSeller(AddReviewRequest req) {
         Trade trade = tradeService.findTradeByPostId(req.getPostId());
         List<ReviewSellerIndicator> indicatorList = ReviewSellerIndicator
                 .findAllByEnumName(req.getIndicatorNames());
@@ -65,8 +73,8 @@ public class ReviewSellerServiceImpl implements ReviewSellerService {
                 .build();
     }
 
-    private List<ReviewSellerDetail> processReviewSellerDetailList(ReviewSeller newReviewSeller,
-                                                                 List<String> indicatorNames) {
+    private List<ReviewSellerDetail> createReviewSellerDetailList(ReviewSeller newReviewSeller,
+                                                                  List<String> indicatorNames) {
         List<ReviewSellerIndicator> indicatorList = ReviewSellerIndicator.findAllByEnumName(indicatorNames);
         return indicatorList.stream()
                 .map(reviewSellerIndicator -> ReviewSellerDetail.builder()
