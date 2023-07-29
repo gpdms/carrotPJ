@@ -7,8 +7,10 @@ import com.exercise.carrotproject.domain.enumList.ReviewState;
 import com.exercise.carrotproject.domain.post.entity.Trade;
 import com.exercise.carrotproject.domain.post.service.TradeService;
 import com.exercise.carrotproject.domain.review.dto.AddReviewRequest;
+import com.exercise.carrotproject.domain.review.dto.ReviewResponse;
 import com.exercise.carrotproject.domain.review.entity.ReviewBuyer;
 import com.exercise.carrotproject.domain.review.entity.ReviewBuyerDetail;
+import com.exercise.carrotproject.domain.review.entity.ReviewSeller;
 import com.exercise.carrotproject.domain.review.repository.detail.ReviewBuyerDetailRepository;
 import com.exercise.carrotproject.domain.review.repository.ReviewBuyerRepository;
 import lombok.RequiredArgsConstructor;
@@ -32,6 +34,12 @@ public class ReviewBuyerServiceImpl implements ReviewBuyerService {
     public ReviewBuyer findReviewBuyerById(Long reviewBuyerId){
         return reviewBuyerRepository.findById(reviewBuyerId)
                 .orElseThrow(() -> new NoSuchElementException("ReviewBuyer Not Found"));
+    }
+
+    @Override
+    public ReviewResponse getReviewResponseById(Long reviewBuyerId) {
+        ReviewBuyer reviewBuyer = findReviewBuyerById(reviewBuyerId);
+        return ReviewResponse.of(reviewBuyer);
     }
 
     @Override

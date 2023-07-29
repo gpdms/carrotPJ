@@ -7,6 +7,7 @@ import com.exercise.carrotproject.domain.enumList.ReviewState;
 import com.exercise.carrotproject.domain.post.entity.Trade;
 import com.exercise.carrotproject.domain.post.service.TradeService;
 import com.exercise.carrotproject.domain.review.dto.AddReviewRequest;
+import com.exercise.carrotproject.domain.review.dto.ReviewResponse;
 import com.exercise.carrotproject.domain.review.entity.ReviewSeller;
 import com.exercise.carrotproject.domain.review.entity.ReviewSellerDetail;
 import com.exercise.carrotproject.domain.review.repository.detail.ReviewSellerDetailRepository;
@@ -14,6 +15,7 @@ import com.exercise.carrotproject.domain.review.repository.ReviewSellerRepositor
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.transaction.support.TransactionSynchronizationManager;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -31,6 +33,12 @@ public class ReviewSellerServiceImpl implements ReviewSellerService {
     public ReviewSeller findReviewSellerById(Long reviewSellerId){
         return reviewSellerRepository.findById(reviewSellerId)
                 .orElseThrow(() -> new NoSuchElementException("ReviewSeller Not Found"));
+    }
+
+    @Override
+    public ReviewResponse getReviewResponseById(Long reviewSellerId) {
+        ReviewSeller reviewSeller = findReviewSellerById(reviewSellerId);
+        return ReviewResponse.of(reviewSeller);
     }
 
     @Override
