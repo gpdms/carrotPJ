@@ -14,8 +14,6 @@ import org.springframework.stereotype.Repository;
 
 import java.util.List;
 
-import static com.exercise.carrotproject.domain.post.entity.QMtPlace.mtPlace;
-import static com.exercise.carrotproject.domain.post.entity.QPost.post;
 import static com.exercise.carrotproject.domain.post.entity.QTrade.trade;
 import static com.exercise.carrotproject.domain.review.entity.QReviewBuyer.reviewBuyer;
 import static com.exercise.carrotproject.domain.review.entity.QReviewSeller.reviewSeller;
@@ -40,8 +38,6 @@ public class TradeCustomRepositoryImpl {
                 .on(trade.post.postId.eq(reviewSeller.post.postId))
                 .where(reviewBuyer.buyer.memId.eq(memId),
                         trade.hideStateBuyer.eq(HideState.SHOW))
-                .leftJoin(trade.post.mtPlace, mtPlace)
-                .fetchJoin()
                 .orderBy(reviewBuyer.createdTime.desc(), reviewBuyer.reviewBuyerId.desc())
                 .fetch();
     }

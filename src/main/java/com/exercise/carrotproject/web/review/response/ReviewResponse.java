@@ -1,4 +1,4 @@
-package com.exercise.carrotproject.domain.review.dto;
+package com.exercise.carrotproject.web.review.response;
 
 import com.exercise.carrotproject.domain.enumList.ReviewBuyerIndicator;
 import com.exercise.carrotproject.domain.enumList.ReviewIndicator;
@@ -27,7 +27,7 @@ public class ReviewResponse {
 
     /**
      * 둘중 하나의 Id는 null
-     * null이 아닐 때, 해당 리뷰
+     * null이 아닐 때, 해당 리뷰가 존재
      * reviewSellerId - 판매자에 대한 리뷰
      * reviewBuyerId - 구매자에 대한 리뷰
      */

@@ -57,10 +57,13 @@ public class Member extends BaseEntity {
     @Temporal(TemporalType.TIMESTAMP)
     private Date updatedTimeManner;
 
-    @OneToMany(mappedBy="fromMem", fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)
+    @OneToMany(mappedBy="fromMem", fetch = FetchType.LAZY, cascade = CascadeType.REMOVE,
+              orphanRemoval = true)
     private List<Block> blockFromMemList = new ArrayList<>();
-    @OneToMany(mappedBy="toMem", fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)
+    @OneToMany(mappedBy="toMem", fetch = FetchType.LAZY, cascade = CascadeType.REMOVE,
+            orphanRemoval = true)
     private List<Block> blockToMemList = new ArrayList<>();
+
 
     public String getMemId() {
         return memId;
