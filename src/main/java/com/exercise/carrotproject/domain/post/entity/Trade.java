@@ -17,7 +17,7 @@ import javax.persistence.*;
 public class Trade {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long TradeId;
+    private Long tradeId;
     @ManyToOne @JoinColumn(name = "post_id")
     private Post post;
     @ManyToOne @JoinColumn(name = "buyer_id")

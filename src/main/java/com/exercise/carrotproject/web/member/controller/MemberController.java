@@ -18,6 +18,9 @@ import com.exercise.carrotproject.web.member.form.memberInfo.ProfileForm;
 import com.exercise.carrotproject.web.member.form.memberInfo.PwdUpdateForm;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
@@ -38,13 +41,13 @@ public class MemberController {
     private final PostService postService;
     private final TradeCustomRepositoryImpl tradeCustomRepository;
 
-    @GetMapping("/join")
+    @GetMapping("join")
     public String joinForm(Model model) {
         model.addAttribute("isSocial", false);
         return "member/joinForm";
     }
 
-    @PostMapping("/join")
+    @PostMapping("join")
     public ResponseEntity join(@Valid @RequestBody final JoinForm form) {
         if (memberService.hasMemId(form.getMemId())) {
             return ResponseEntity.status(HttpStatus.CONFLICT).body(ErrorResponse.of(ErrorCode.DUPLICATED_MEM_ID));
@@ -61,16 +64,16 @@ public class MemberController {
         return ResponseEntity.ok().build();
     }
 
-    @GetMapping("/join/memId/{memId}")
-    public ResponseEntity memIdDuplicateCheck(@PathVariable(required = true) String memId) {
+    @GetMapping("join/memId/{memId}")
+    public ResponseEntity memIdDuplicateCheck(@PathVariable String memId) {
         if(memberService.hasMemId(memId)) {
             return ResponseEntity.status(HttpStatus.CONFLICT).body(ErrorResponse.of(ErrorCode.DUPLICATED_MEM_ID));
         }
         return ResponseEntity.ok().build();
     }
 
-    @GetMapping("/join/email/{email}")
-    public ResponseEntity emailDuplicateCheck(@PathVariable(required = true) String email) {
+    @GetMapping("join/email/{email}")
+    public ResponseEntity emailDuplicateCheck(@PathVariable String email) {
         if(memberService.hasEmail(email)) {
             return ResponseEntity.status(HttpStatus.CONFLICT).body(ErrorResponse.of(ErrorCode.DUPLICATED_EMAIL));
         }
@@ -148,8 +151,8 @@ public class MemberController {
     }
 
     @GetMapping("/{memId}/trade/buy-list")
-    public String myBuyList(@PathVariable String memId, Model model) {
-        List<BuyPostDto> myBuyList = tradeCustomRepository.findBuyListByMemId(memId);
+    public String myBuyList(@PathVariable String memId, Model model, @PageableDefault(page = 0, size = 15) Pageable pageable) {
+        Page<BuyPostDto> myBuyList = tradeCustomRepository.getBuyListPageByMemId(memId, pageable);
         model.addAttribute("buyList", myBuyList);
         return "myPage/buyList";
     }

@@ -48,6 +48,50 @@
                         </th:block>
                     </div>
                 </div>
+
+            <!-- 페이징 -->
+            <div th:if="${!buyList.isEmpty()}">
+                <!-- 전역 변수 선언 -->
+                <nav th:with="pageNumber = ${buyList.pageable.pageNumber}, pageSize = ${buyList.pageable.pageSize},
+                            totalPages = ${buyList.totalPages}, startPage = ${T(java.lang.Math).floor(pageNumber / 10) * 10 + 1},
+                            tempEndPage = ${startPage + 10 - 1}, endPage = (${tempEndPage < totalPages ? tempEndPage : totalPages})"
+                     aria-label="Page navigation">
+                    <ul class="pagination">
+                        <!-- 처음으로 이동 -->
+                        <li th:classappend="${pageNumber +1 == 1} ? 'disabled'" class="page-item">
+                            <a class="page-link" th:href="@{/members/{memId}/trade/buy-list(memId=${session.loginMember.memId}, page=0)}">
+                                <span>&laquo; </span>
+                                <!--                                <span class="sr-only">First</span>-->
+                            </a>
+                        </li>
+                        <!-- 이전으로 이동 -->
+                        <li th:classappend="${buyList.first} ? 'disabled'" class="page-item">
+                            <a class="page-link" th:href="${buyList.first} ? '#' : @{/members/{memId}/trade/buy-list(memId=${session.loginMember.memId}, page=${pageNumber - 1})}" aria-label="Previous">
+                                <span aria-hidden="true">&lt;</span>
+                                <!--                                <span class="sr-only">Previous</span>-->
+                            </a>
+                        </li>
+                        <!-- 특정 페이지로 이동 -->
+                        <li th:each="page: ${#numbers.sequence(startPage, endPage)}" th:classappend="${page == pageNumber + 1} ? 'active'" class="page-item">
+                            <a th:text="${page}" class="page-link" th:href="@{/members/{memId}/trade/buy-list(memId=${session.loginMember.memId}, page=${page - 1})}"></a>
+                        </li>
+                        <!-- 다음으로 이동 -->
+                        <li th:classappend="${buyList.last} ? 'disabled'" class="page-item">
+                            <a class="page-link" th:href="${buyList.last} ? '#' : @{/members/{memId}/trade/buy-list(memId=${session.loginMember.memId}, page=${pageNumber + 1})}" aria-label="Next">
+                                <span aria-hidden="true">&gt;</span>
+                                <!--                                <span class="sr-only">Next</span>-->
+                            </a>
+                        </li>
+                        <!-- 마지막으로 이동 -->
+                        <li th:classappend=" ${pageNumber +1 == totalPages} ? 'disabled'" class="page-item">
+                            <a class="page-link" th:href="@{/members/{memId}/trade/buy-list(memId=${session.loginMember.memId}, page=${totalPages - 1})}">
+                                <span>&raquo; </span>
+                                <!--                                <span class="sr-only">Last</span>-->
+                            </a>
+                        </li>
+                    </ul>
+                </nav>
+            </div> <!-- /페이징 -->
         </div>
     </div>
 </div>
