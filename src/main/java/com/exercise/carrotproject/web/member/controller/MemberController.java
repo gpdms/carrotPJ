@@ -8,6 +8,8 @@ import com.exercise.carrotproject.domain.member.service.MemberService;
 import com.exercise.carrotproject.domain.post.dto.BuyPostDto;
 import com.exercise.carrotproject.domain.post.dto.PostDto;
 import com.exercise.carrotproject.domain.post.dto.SoldPostDto;
+import com.exercise.carrotproject.domain.post.entity.Post;
+import com.exercise.carrotproject.domain.post.repository.PostRepository;
 import com.exercise.carrotproject.domain.post.repository.TradeCustomRepositoryImpl;
 import com.exercise.carrotproject.domain.post.service.PostService;
 import com.exercise.carrotproject.web.argumentresolver.Login;
@@ -39,6 +41,7 @@ import java.util.Map;
 public class MemberController {
     private final MemberService memberService;
     private final PostService postService;
+    private final PostRepository postRepository;
     private final TradeCustomRepositoryImpl tradeCustomRepository;
 
     @GetMapping("join")
@@ -151,24 +154,27 @@ public class MemberController {
     }
 
     @GetMapping("/{memId}/trade/buy-list")
-    public String myBuyList(@PathVariable String memId, Model model, @PageableDefault(page = 0, size = 15) Pageable pageable) {
+    public String myBuyList(@PathVariable String memId, Model model,
+                            @PageableDefault(page = 0, size = 15) Pageable pageable) {
         Page<BuyPostDto> myBuyList = tradeCustomRepository.getBuyListPageByMemId(memId, pageable);
         model.addAttribute("buyList", myBuyList);
         return "myPage/buyList";
     }
 
     @GetMapping("/{memId}/trade/sell-list")
-    public String mySellList(@PathVariable String memId, Model model){
+    public String mySellList(@PathVariable String memId, Model model,
+                             @PageableDefault(page = 0, size = 15) Pageable pageable,
+                             @RequestParam(defaultValue = "onSale") String status){
         //판매중,예약중 게시글
-        Map map = postService.selectPostBySellState(memId);
-        List<PostDto> onSaleAndRsvList = (List) map.get("onSaleAndRsvList");
-        model.addAttribute("onSaleAndRsv", onSaleAndRsvList);
+        Page<PostDto> onSaleAndRsvList = postRepository.getOnSalePostPageByMemId(memId, pageable);
+        model.addAttribute("onSaleAndRsvList", onSaleAndRsvList);
         //판매완료
-        List<SoldPostDto> soldList = (List) map.get("soldList");
+        Page<SoldPostDto> soldList = postRepository.getSoldPostPageByMemId(memId, pageable);
         model.addAttribute("soldList", soldList);
         //숨김 게시글
-        List<PostDto> hidePostList = postService.selectHidePost(memId);
-        model.addAttribute("hidePostList", hidePostList);
+        Page<PostDto> hideList = postRepository.getHiddenPostPageByMemId(memId, pageable);
+        model.addAttribute("hideList", hideList);
+        model.addAttribute("status", status);
         return "myPage/sellList";
     }
 

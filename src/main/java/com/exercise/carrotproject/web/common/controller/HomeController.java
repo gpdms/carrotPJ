@@ -2,11 +2,9 @@ package com.exercise.carrotproject.web.common.controller;
 
 
 import com.exercise.carrotproject.domain.enumList.ReviewIndicator;
-import com.exercise.carrotproject.domain.enumList.Role;
 import com.exercise.carrotproject.domain.member.dto.MemberEntityDtoMapper;
 import com.exercise.carrotproject.domain.member.dto.MemberDto;
 import com.exercise.carrotproject.domain.member.entity.Member;
-import com.exercise.carrotproject.domain.member.repository.MemberRepository;
 import com.exercise.carrotproject.domain.member.service.BlockService;
 import com.exercise.carrotproject.domain.member.service.MemberService;
 import com.exercise.carrotproject.domain.post.dto.PostDto;
@@ -15,7 +13,6 @@ import com.exercise.carrotproject.domain.post.service.PostService;
 import com.exercise.carrotproject.domain.review.dto.ReviewMessageDto;
 import com.exercise.carrotproject.domain.review.service.ReviewService;
 import com.exercise.carrotproject.web.argumentresolver.Login;
-import com.exercise.carrotproject.web.common.SessionConst;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Controller;
@@ -23,15 +20,12 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpSession;
 import java.util.*;
 
 @Controller
 @RequiredArgsConstructor
 @Slf4j
 public class HomeController {
-    private final MemberRepository memberRepository;
     private final MemberService memberService;
     private final BlockService blockService;
     private final ReviewService reviewService;
@@ -39,9 +33,9 @@ public class HomeController {
     private final PostRepository postRepository;
 
     @GetMapping("/")
-    public String home(@Login MemberDto loginMember,
-                       Model model) {
-        model.addAttribute("list", postService.selectAllPost(loginMember));
+    public String home(@Login MemberDto loginMember, Model model) {
+        List<PostDto> posts = postService.postListBrief(loginMember, 8);
+        model.addAttribute("list", posts);
         return "home";
     }
 
@@ -49,8 +43,8 @@ public class HomeController {
     public String toMemberHome(@PathVariable String memId,
                                @Login MemberDto loginMember,
                                Model model){
-        boolean isBlocked= false;
-        if(loginMember != null) {
+        boolean isBlocked = false;
+        if(loginMember != null && loginMember.getMemId() != memId) {
             isBlocked = blockService.hasBlockByFromMemToMem(loginMember.getMemId(), memId);
         }
 
@@ -59,7 +53,7 @@ public class HomeController {
         Member homeMember = memberService.findMemberByMemId(memId);
         if(isBlocked == false) {
             countAllPost = postRepository.countByMember(homeMember);
-            postListBrief = postService.postListBrief(memId,6);
+            postListBrief = postService.postListBrief(loginMember, 6);
         }
 
         Map<ReviewIndicator, Long> positiveMannerBrief = reviewService.getPositiveReviewIndicators(memId, 3L);

@@ -2,9 +2,7 @@ package com.exercise.carrotproject.domain.post.service;
 
 import com.exercise.carrotproject.domain.chat.dto.ChatRoomDto;
 import com.exercise.carrotproject.domain.enumList.Category;
-import com.exercise.carrotproject.domain.enumList.Loc;
 import com.exercise.carrotproject.domain.member.dto.MemberDto;
-import com.exercise.carrotproject.domain.member.entity.Member;
 import com.exercise.carrotproject.domain.post.dto.MtPlaceDto;
 import com.exercise.carrotproject.domain.post.dto.PostDto;
 import com.exercise.carrotproject.domain.post.dto.PostImgDto;
@@ -34,9 +32,9 @@ public interface PostService {
     void deleteOnePostImg(Long imgId);
     void updatePost(PostDto postDto, MultipartFile[] uploadFiles) throws IOException;
     void deletePost(Long postId);
+    Map selectPostBySellState(String memId);
     String updateHideState(Long postId, String hideStateName);
     String updateSellState(Long postId, String sellStateName);
-    Map selectPostBySellState(String memId);
     List<PostDto> selectHidePost(String memId);
     List<ChatRoomDto> selectBuyersByPost(MemberDto memberDto, Long postId);
     void insertWish(Long postId, String memId);
@@ -48,5 +46,6 @@ public interface PostService {
 
     List<PostDto> searchPostList(String loginMemId, String searchWord);
     List<PostDto> selectPostListByCategory(MemberDto memberDto, Category category);
-    List<PostDto> postListBrief(String memId, int limit);
+    List<PostDto> myPostListBrief(String memId, int limit);
+    List<PostDto> postListBrief(MemberDto loginMember, int limit);
 }

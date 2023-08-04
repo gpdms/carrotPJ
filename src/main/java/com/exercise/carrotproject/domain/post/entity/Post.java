@@ -62,7 +62,7 @@ public class Post extends BaseEntity {
     private Integer hits;
 
     @ToString.Exclude
-    @OneToMany(mappedBy = "post", cascade = CascadeType.REMOVE)
+    @OneToMany(mappedBy = "post", cascade = CascadeType.REMOVE, fetch = FetchType.LAZY)
     private List<PostImg> postImgList = new ArrayList<>();
     @ToString.Exclude
     @OneToOne(mappedBy = "post", cascade = CascadeType.REMOVE, fetch = FetchType.LAZY)
