@@ -213,7 +213,6 @@ public class PostServiceImpl implements PostService{
 
     @Override
     public Page<PostDto> paging(List<PostDto> postList, Pageable pageable){
-
         //페이징
         final int start = (int) pageable.getOffset();
         final int end = Math.min((start + pageable.getPageSize()), postList.size());
@@ -382,11 +381,10 @@ public class PostServiceImpl implements PostService{
     @Override
     public Map selectPostBySellState(String memId){
         Member member = memberRepository.findById(memId).orElseThrow();
-
         //판매중,예약중
-        List<Post> onSalePostList = postRepository.findByMemberAndHideStateAndSellStateOrSellStateOrderByPostIdDesc(member, HideState.SHOW, SellState.ON_SALE,SellState.RESERVATION);
+        List<Post> onSalePostList = postRepository.findByMemberAndHideStateAndSellStateOrSellStateOrderByPostIdDesc(member, HideState.SHOW, SellState.ON_SALE, SellState.RESERVATION);
         //판매완료
-        List<SoldPostDto> soldPostDtoList= postRepository.findSoldPostListByMemId(memId);
+        List<SoldPostDto> soldPostDtoList= postRepository.getSoldPostListByMemId(memId);
         //entity리스트->dto리스트
         List<PostDto> postDtoOnSaleList = PostEntityDtoMapper.toDtoList(onSalePostList);
 
@@ -522,6 +520,8 @@ public class PostServiceImpl implements PostService{
                 .execute();
     }
 
+
+
     @Override
     public List<PostDto> searchPostList(String loginMemId, String searchWord) {
         List<Post> postList = postRepository.searchPost(loginMemId, searchWord);
@@ -541,8 +541,21 @@ public class PostServiceImpl implements PostService{
     }
 
     @Override
-    public List<PostDto> postListBrief(String memId, int limit) {
-        List<Post> posts = postRepository.postListByLimit(memId, limit);
+    public List<PostDto> myPostListBrief(String memId, int limit) {
+        List<Post> posts = postRepository.getMyPostListByLimit(memId, limit);
+        return PostEntityDtoMapper.toDtoList(posts);
+    }
+
+    @Override
+    public List<PostDto> postListBrief(MemberDto loginMember, int limit) {
+        String loginMemId = null;
+        Loc loginMemLoc = null;
+        if (loginMember != null) {
+            loginMemId = loginMember.getMemId();
+            loginMemLoc = loginMember.getLoc();
+        }
+        List<Post> posts = postRepository
+                .getPostListByLimit(loginMemId, loginMemLoc, limit);
         return PostEntityDtoMapper.toDtoList(posts);
     }
 }

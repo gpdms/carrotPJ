@@ -56,8 +56,10 @@ public class MemberServiceImpl implements MemberService{
 
     @Override
     public MemberDto login(String loginId, String loginPwd) {
-        Member member = this.findMemberByMemId(loginId);
-        return member.isPwdMatch(loginPwd) ? MemberEntityDtoMapper.toDto(member) : null;
+       return memberRepository.findById(loginId)
+               .filter(member -> member.isPwdMatch(loginPwd))
+               .map(MemberEntityDtoMapper::toDto)
+               .orElse(null);
     }
 
     @Override
