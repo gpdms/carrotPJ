@@ -3,7 +3,6 @@ package com.exercise.carrotproject.domain.review.dto;
 import com.exercise.carrotproject.domain.member.dto.MemberEntityDtoMapper;
 import com.exercise.carrotproject.domain.member.dto.MemberDto;
 import com.exercise.carrotproject.domain.member.entity.Member;
-import com.querydsl.core.annotations.QueryProjection;
 import lombok.*;
 
 import java.sql.Timestamp;
@@ -14,34 +13,23 @@ import static com.exercise.carrotproject.domain.common.util.DateUtil.CALCULATE_T
 @Getter
 @ToString
 public class ReviewMessageDto {
-    private Long reviewBuyerId;
-    private MemberDto seller;
-
-    private Long reviewSellerId;
-    private MemberDto buyer;
-
+    private Long reviewId;
+    //"seller", "buyer" 둘 중 하나
+    private String senderType;
+    private MemberDto sender;
     private String message;
     private Timestamp createdTime;
 
-    //to buyer Message
-    @QueryProjection
-    public ReviewMessageDto(Long reviewBuyerId, Member seller, String message, Timestamp createdTime) {
-        this.reviewBuyerId = reviewBuyerId;
-        this.seller = MemberEntityDtoMapper.toDto(seller);
+    ReviewMessageDto(Long reviewId, String senderType, Member sender, String message, Timestamp createdTime) {
+        this.reviewId = reviewId;
+        this.senderType = senderType;
+        this.sender = MemberEntityDtoMapper.toDto(sender);
         this.message = message;
         this.createdTime = createdTime;
     }
 
-    //to seller Message
-    @QueryProjection
-    public ReviewMessageDto(Member buyer, Long reviewSellerId, String message, Timestamp createdTime) {
-        this.reviewSellerId = reviewSellerId;
-        this.buyer = MemberEntityDtoMapper.toDto(buyer);
-        this.message = message;
-        this.createdTime = createdTime;
-    }
-
-    public String getCalculatedTimeForReview() {
+    public String getCalculatedTimeForView() {
         return CALCULATE_TIME(this.createdTime);
     }
 }
+

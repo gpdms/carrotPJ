@@ -56,9 +56,9 @@ public class HomeController {
             postListBrief = postService.postListBrief(loginMember, 6);
         }
 
-        Map<ReviewIndicator, Long> positiveMannerBrief = reviewService.getPositiveReviewIndicators(memId, 3L);
-        List<ReviewMessageDto> reviewMessageBrief = reviewService.getGoodReviewMessageListByLimit(memId, 3L);
-        Long countAllMessages = reviewService.countGoodReviewMessages(memId);
+        Map<ReviewIndicator, Long> positiveMannerBrief = reviewService.getPositiveReviewIndicatorsByLimit(memId, 3);
+        List<ReviewMessageDto> reviewMessageBrief = reviewService.getAllRecentGoodReviewMessageListByLimit(memId, 3);
+        long countAllMessages = reviewService.countAllGoodReviewMessages(memId);
 
         model.addAttribute("member", MemberEntityDtoMapper.toDto(homeMember));
         model.addAttribute("isBlocked", isBlocked);

@@ -26,7 +26,7 @@ import java.util.stream.Collectors;
 @NoArgsConstructor (access = AccessLevel.PROTECTED)
 @ToString (exclude = "reviewSellerDetailList")
 @DynamicInsert
-public class ReviewSeller extends BaseEntity {
+public class ReviewSeller{
     @Id
     @GeneratedValue(strategy= GenerationType.IDENTITY)
     private Long reviewSellerId;
@@ -49,6 +49,9 @@ public class ReviewSeller extends BaseEntity {
     @Column(nullable = false)
     @Convert(converter = HideStateConverter.class)
     private HideState hideState;
+    @Column(updatable = false, nullable = false,
+            columnDefinition = "TIMESTAMP(6) DEFAULT now(6)")
+    private Timestamp createdTime;
 
     @OneToMany(mappedBy="reviewSeller", fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)
     private List<ReviewSellerDetail> reviewSellerDetailList = new ArrayList<>();
@@ -88,6 +91,9 @@ public class ReviewSeller extends BaseEntity {
     }
     public HideState getHideState() {
         return hideState;
+    }
+    public Timestamp getCreatedTime() {
+        return createdTime;
     }
     public List<ReviewSellerDetail> getReviewSellerDetailList() {
         return Collections.unmodifiableList(reviewSellerDetailList);

@@ -109,6 +109,7 @@
                 </div>
             </div>
             <hr/>
+
             <!--거래 후기-->
             <div class="fourth-container">
                 <div class="title">
@@ -124,63 +125,62 @@
                     <div class="message-one" th:each="review:${reviewMessageBrief}">
                         <div class="profile-line">
                             <div class="message-profile-img">
-                                <a th:if="${review.buyer != null}"
-                                    th:href="@{/home/{memId}(memId=${review.buyer?.memId})}">
-                                    <img th:src="|/members/${review.buyer?.memId}/profileImg|" alt="프로필이미지">
+                                <a th:if="${review.getSenderType().equals('buyer')}"
+                                    th:href="@{/home/{memId}(memId=${review.sender.memId})}">
+                                    <img th:src="|/members/${review.sender.memId}/profileImg|" alt="프로필이미지">
                                 </a>
-                                <a th:if="${review.seller != null}"
-                                    th:href="@{/home/{memId}(memId=${review.seller.memId})}">
-                                    <img th:src="|/members/${review.seller.memId}/profileImg|" alt="프로필이미지">
+                                <a th:if="${review.getSenderType().equals('seller')}"
+                                    th:href="@{/home/{memId}(memId=${review.sender.memId})}">
+                                    <img th:src="|/members/${review.sender.memId}/profileImg|" alt="프로필이미지">
                                 </a>
                             </div>
                             <div class="message-info">
-                                <div th:if="${review.buyer != null}">
-                                    <a th:href="@{/home/{memId}(memId=${review.buyer?.memId})}"
-                                       class="nickname" th:text="|${review.buyer.nickname}|"> </a>
-                                    <p class="loc" th:text="|${review.buyer.loc.locName} &#183; 구매자|"></p>
+                                <div th:if="${review.getSenderType().equals('buyer')}">
+                                    <a th:href="@{/home/{memId}(memId=${review.sender.memId})}"
+                                       class="nickname" th:text="|${review.sender.nickname}|"> </a>
+                                    <p class="loc" th:text="|${review.sender.loc.locName} &#183; 구매자|"></p>
                                 </div>
-                                <div th:if="${review.seller != null}">
-                                    <a  th:if="${review.seller != null}"
-                                        th:href="@{/home/{memId}(memId=${review.seller.memId})}"
-                                        class="nickname" th:text="|${review.seller.nickname}|"></a>
-                                    <p class="loc" th:text="|${review.seller.loc.locName} &#183; 판매자|"></p>
+                                <div th:if="${review.getSenderType().equals('seller')}">
+                                    <a th:href="@{/home/{memId}(memId=${review.sender.memId})}"
+                                       class="nickname" th:text="|${review.sender.nickname}|"></a>
+                                    <p class="loc" th:text="|${review.sender.loc.locName} &#183; 판매자|"></p>
                                 </div>
                             </div>
                         </div>
                         <div class="content-line">
-                            <div th:if="${review.buyer != null}" >  <p th:utext="${review.message}"></p> </div>
-                            <div th:if="${review.seller != null}">  <p th:utext="${review.message}"></p> </div>
+                            <div th:if="${review.getSenderType().equals('buyer')}" >  <p th:utext="${review.message}"></p> </div>
+                            <div th:if="${review.getSenderType().equals('seller')}">  <p th:utext="${review.message}"></p> </div>
                         </div>
                         <div class="time-line">
-                            <div th:if="${review.buyer != null}" > <p th:utext="${review.getCalculatedTimeForReview()}"></p> </div>
-                            <div th:if="${review.seller != null}"> <p th:utext="${review.getCalculatedTimeForReview()}"></p> </div>
+                            <div th:if="${review.getSenderType().equals('buyer')}" > <p th:utext="${review.getCalculatedTimeForView()}"></p> </div>
+                            <div th:if="${review.getSenderType().equals('seller')}"> <p th:utext="${review.getCalculatedTimeForView()}"></p> </div>
                         </div>
                         <div class="setting-bar">
-                            <div th:if="${session.loginMember != null && review.buyer != null}">
+                            <div th:if="${session.loginMember != null && review.getSenderType().equals('buyer')}">
                                 <a class="review_modal_btn"
                                    th:if="${session.loginMember.memId.equals(memId)}"
                                    th:data-reviewedWho="seller"
-                                   th:data-reviewId="${review.reviewSellerId}">
+                                   th:data-reviewId="${review.reviewId}">
                                     <i class="fa-solid fa-ellipsis-vertical fa-xs"></i>
                                 </a>
                                 <a class="review_modal_btn"
-                                   th:if="${session.loginMember.memId.equals(review.buyer.memId)}"
+                                   th:if="${session.loginMember.memId.equals(review.sender.memId)}"
                                    th:data-reviewedWho="seller"
                                    th:data-reviewId="${review.reviewSellerId}">
                                     <i class="fa-solid fa-ellipsis-vertical fa-xs"></i>
                                 </a>
                             </div>
-                            <div th:if="${session.loginMember != null && review.seller != null}">
+                            <div th:if="${session.loginMember != null && review.getSenderType().equals('seller')}">
                                 <a class="review_modal_btn"
                                    th:if="${session.loginMember.memId.equals(memId)}"
                                    th:data-reviewedWho="buyer"
-                                   th:data-reviewId="${review.reviewBuyerId}">
+                                   th:data-reviewId="${review.reviewId}">
                                     <i class="fa-solid fa-ellipsis-vertical fa-xs"></i>
                                 </a>
                                 <a class="review_modal_btn"
-                                   th:if="${session.loginMember.memId.equals(review.seller.memId)}"
+                                   th:if="${session.loginMember.memId.equals(review.sender.memId)}"
                                    th:data-reviewedWho="buyer"
-                                   th:data-reviewId="${review.reviewBuyerId}">
+                                   th:data-reviewId="${review.reviewId}">
                                     <i class="fa-solid fa-ellipsis-vertical fa-xs"></i>
                                 </a>
                             </div>
@@ -245,7 +245,7 @@
         }
         function requestBlock() {
             let data = {
-                fromMemId : [[${session.loginMember.memId}]],
+                fromMemId : [[${session.loginMember?.memId}]],
                 toMemId : [[${member.memId}]]
             }
             $.ajax({
@@ -269,7 +269,7 @@
         $("#block_cancel_btn").on("click", cancelBlock);
         function cancelBlock(){
             let data = {
-                fromMemId : [[${session.loginMember.memId}]],
+                fromMemId : [[${session.loginMember?.memId}]],
                 toMemId : [[${member.memId}]]
             }
             $.ajax({
