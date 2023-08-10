@@ -16,6 +16,7 @@ hr {
 .review-container {
      width: 700px;
      padding-top: 20px;
+    padding-bottom: 50px;
  }
 .no_review {
     padding: 100px 0 0 10px;
