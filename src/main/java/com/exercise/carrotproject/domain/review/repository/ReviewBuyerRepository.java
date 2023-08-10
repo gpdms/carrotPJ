@@ -6,9 +6,12 @@ import com.exercise.carrotproject.domain.review.repository.ReviewBuyerCustomRepo
 import com.exercise.carrotproject.domain.review.repository.ReviewBuyerCustomRepositoryImpl;
 import org.springframework.data.jpa.repository.JpaRepository;
 
+import java.sql.Timestamp;
 import java.util.Optional;
 
 public interface ReviewBuyerRepository extends JpaRepository<ReviewBuyer, Long>, ReviewBuyerCustomRepository {
  void deleteByPost(Post post);
  boolean existsByPostPostId(Long postId);
+ boolean existsByReviewBuyerIdLessThan(Long reviewBuyerId);
+ boolean existsByCreatedTimeBefore(Timestamp timestamp);
 }

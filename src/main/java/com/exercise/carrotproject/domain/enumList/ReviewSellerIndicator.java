@@ -19,12 +19,12 @@ public enum ReviewSellerIndicator {
     N6( "거래 시간과 장소를 정한 후 거래 직전 취소했어요.", getNScore()),
     N7( "약속장소에 나타나지 않았어요.", getNScore()),
     N8( "반말을 사용해요.", getNScore()),
-    N9( "불친절해요.", getNScore()), //공통
+    N9( "불친절해요.", getNScore()), //공통 지표
     NS1("상품상태가 설명과 달라요.", getNScore()),
 
     P1("응답이 빨라요.", getPScore()),
     P2("친절하고 매너가 좋아요.", getPScore()),
-    P3("시간 약속을 잘 지켜요.", getPScore()),//공통
+    P3("시간 약속을 잘 지켜요.", getPScore()),//공통 지표
     PS1("상품 상태가 설명한 것과 같아요.", getPScore()),
     PS2("좋은 상품을 저렴하게 판매해요.", getPScore()),
     PS3("상품 설명이 자세해요.", getPScore()),
@@ -33,11 +33,15 @@ public enum ReviewSellerIndicator {
     private final String description;
     private double score;
 
-    private static double getNScore(){
-        return -(5000/10);
-    }
+    private final static int STANDARD_TOTAL_SCORE = 5000;
+    private final static int POSITIVE_INDICATOR_COUNT = 7;
+    private final static int NEGATIVE_INDICATOR_COUNT = 10;
+
     private static double getPScore () {
-        return 5000/7;
+        return STANDARD_TOTAL_SCORE/POSITIVE_INDICATOR_COUNT;
+    }
+    private static double getNScore(){
+        return -(STANDARD_TOTAL_SCORE/NEGATIVE_INDICATOR_COUNT);
     }
 
     public static List<ReviewSellerIndicator> findAllByEnumName(List<String> searchNames){

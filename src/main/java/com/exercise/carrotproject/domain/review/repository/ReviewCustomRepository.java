@@ -32,6 +32,9 @@ import static org.springframework.util.StringUtils.hasText;
 public class ReviewCustomRepository {
     private final JPAQueryFactory jpaQueryFactory;
 
+    @PersistenceContext
+    private EntityManager em;
+
     public List<MannerUpdateDto> combineReviewScoreForUpdateMannerScore() {
         LocalDateTime everyMonday5am = LocalDateTime.now()
                 .with(TemporalAdjusters.previousOrSame(DayOfWeek.MONDAY))
@@ -62,4 +65,5 @@ public class ReviewCustomRepository {
 
         return allReviewScoreList;
     }
+
 }

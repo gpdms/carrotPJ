@@ -1,35 +1,33 @@
 package com.exercise.carrotproject.web.review.controller;
 
+import com.exercise.carrotproject.domain.enumList.Loc;
 import com.exercise.carrotproject.domain.member.dto.MemberDto;
 import com.exercise.carrotproject.domain.member.entity.Member;
 import com.exercise.carrotproject.domain.member.service.MemberService;
 import com.exercise.carrotproject.domain.post.entity.Trade;
 import com.exercise.carrotproject.domain.post.service.TradeService;
-import com.exercise.carrotproject.domain.review.dto.AddReviewRequest;
-import com.exercise.carrotproject.domain.review.dto.ReviewMessageDto;
-import com.exercise.carrotproject.domain.review.dto.ReviewResponse;
-import com.exercise.carrotproject.domain.review.entity.ReviewBuyer;
-import com.exercise.carrotproject.domain.review.entity.ReviewSeller;
+import com.exercise.carrotproject.domain.review.dto.*;
 import com.exercise.carrotproject.domain.review.repository.ReviewBuyerRepository;
+import com.exercise.carrotproject.domain.review.repository.ReviewSellerRepository;
 import com.exercise.carrotproject.domain.review.service.*;
 import com.exercise.carrotproject.web.argumentresolver.Login;
 import com.exercise.carrotproject.web.member.error.ErrorCode;
 import com.exercise.carrotproject.web.member.error.ErrorResponse;
 import com.exercise.carrotproject.web.review.form.ReviewForm;
+import com.exercise.carrotproject.web.review.response.CursorResult;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
-import org.springframework.transaction.annotation.Transactional;
-import org.springframework.transaction.support.TransactionSynchronizationManager;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import java.sql.Timestamp;
 import java.util.List;
 import java.util.Map;
-import java.util.NoSuchElementException;
 
 
 @Slf4j
@@ -42,14 +40,47 @@ public class ReviewController {
     private final ReviewSellerService reviewSellerService;
     private final ReviewBuyerService reviewBuyerService;
     private final ReviewService reviewService;
-    private final ReviewBuyerRepository reviewBuyerRepository;
+
+    private static final String DEFAULT_MESSAGE_SIZE = "5";
 
     @GetMapping("/{memId}")
-    public String toPublicReviewMessagesDetail(@PathVariable final String memId, Model model) {
-        Map<String, List<ReviewMessageDto>> messageMap = reviewService.collectGoodReviewMessages(memId);
-        model.addAttribute("messageMap", messageMap);
+    public String toPublicReviewMessagesDetail(@PathVariable final String memId,
+                                               @RequestParam(defaultValue = DEFAULT_MESSAGE_SIZE) final int size,
+                                               Model model) {
+        Map<String, CursorResult<ReviewMessageDto>> resultMap = reviewService.collectRecentGoodReviewMessagesByLimit(memId, size);
+        model.addAttribute("resultMap", resultMap);
         model.addAttribute("nickname",  memberService.findMemberByMemId(memId).getNickname());
         return "/review/publicReviews";
+    }
+
+    @GetMapping("/{memId}/messages")
+    @ResponseBody
+    public ResponseEntity allReviewMessagesMore(@PathVariable final String memId,
+                                                @RequestParam (defaultValue = DEFAULT_MESSAGE_SIZE) final int size,
+                                                @RequestParam final Timestamp cursor)  {
+        ReviewMessageCondition condition = ReviewMessageCondition.of(memId, ReviewTargetType.ALL, cursor);
+        CursorResult<ReviewMessageDto> result = reviewService.getCursorResult(condition, size);
+        return ResponseEntity.ok().body(result);
+    }
+
+    @GetMapping("/{memId}/messages/seller")
+    @ResponseBody
+    public ResponseEntity reviewSellerMessagesMore(@PathVariable final String memId,
+                                                  @RequestParam (defaultValue = DEFAULT_MESSAGE_SIZE) final int size,
+                                                  @RequestParam final Long cursor)  {
+        ReviewMessageCondition condition = ReviewMessageCondition.of(memId, ReviewTargetType.SELLER, cursor);
+        CursorResult<ReviewMessageDto> result = reviewService.getCursorResult(condition, size);
+        return ResponseEntity.ok().body(result);
+    }
+
+    @GetMapping("/{memId}/messages/buyer")
+    @ResponseBody
+    public ResponseEntity reviewBuyerMessagesMore(@PathVariable final String memId,
+                                                  @RequestParam (defaultValue = DEFAULT_MESSAGE_SIZE) final int size,
+                                                  @RequestParam final Long cursor)  {
+        ReviewMessageCondition condition = ReviewMessageCondition.of(memId, ReviewTargetType.BUYER, cursor);
+        CursorResult<ReviewMessageDto> result = reviewService.getCursorResult(condition, size);
+        return ResponseEntity.ok().body(result);
     }
 
     @GetMapping("/buyer")

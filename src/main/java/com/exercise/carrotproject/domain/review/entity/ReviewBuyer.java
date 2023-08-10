@@ -10,10 +10,12 @@ import com.exercise.carrotproject.domain.post.entity.Post;
 import com.exercise.carrotproject.domain.enumList.ReviewState;
 import lombok.*;
 import org.hibernate.annotations.ColumnDefault;
+import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.DynamicInsert;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
+import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -23,7 +25,7 @@ import java.util.stream.Collectors;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @ToString (exclude = "reviewBuyerDetailList")
 @DynamicInsert
-public class ReviewBuyer extends BaseEntity {
+public class ReviewBuyer {
     @Id
     @GeneratedValue(strategy= GenerationType.IDENTITY)
     private Long reviewBuyerId;
@@ -46,6 +48,8 @@ public class ReviewBuyer extends BaseEntity {
     @Column(nullable = false)
     @Convert(converter = ReviewStateConverter.class)
     private ReviewState reviewState;
+    @Column(updatable = false, nullable = false, columnDefinition = "TIMESTAMP(6) DEFAULT now(6)")
+    private Timestamp createdTime;
 
     @OneToMany(mappedBy="reviewBuyer", fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)
     private List<ReviewBuyerDetail> reviewBuyerDetailList = new ArrayList<>();
@@ -86,6 +90,10 @@ public class ReviewBuyer extends BaseEntity {
     public ReviewState getReviewState() {
         return reviewState;
     }
+    public Timestamp getCreatedTime() {
+        return createdTime;
+    }
+
     public List<ReviewBuyerDetail> getReviewBuyerDetailList() {
         return Collections.unmodifiableList(reviewBuyerDetailList);
     }
