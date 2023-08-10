@@ -1,14 +1,10 @@
  //------리뷰 숨김, 삭제 모달-----//
   const body = document.querySelector("body");
   const reviewModal= document.querySelector(".reviewModal");
-  const rvModalBtn = document.querySelectorAll(".review_modal_btn");
-  const rvCloseBtn = document.getElementById("review_close_btn");
+  // const rvModalBtn = document.querySelectorAll(".review_modal_btn");
+  const rvCloseBtn = document.getElementById("review_close_btn");;
 
-  let reviewedWho = null;
-  let reviewId = 0;
   function modalOpen() {
-    reviewedWho = this.getAttribute('data-reviewedWho');
-    reviewId = this.getAttribute('data-reviewId');
     reviewModal.style.display = "block";
     body.style.overflow = "hidden";
   }
@@ -16,10 +12,7 @@
     reviewModal.style.display = "none";
     body.style.overflow = "auto";
   }
-  // 클릭시 모달오픈
- rvModalBtn.forEach(function(button) {
-     button.addEventListener('click', modalOpen);
- });
+
   // 외부 클릭시 모달창닫음
   window.addEventListener('click', (e) => {
     e.target === reviewModal ? modalClose() : false
@@ -27,34 +20,44 @@
   //클릭시 창닫음
   rvCloseBtn.addEventListener('click', modalClose);
 
-
  //------리뷰 숨김, 보기, 삭제 기능-----//
  const detailBtn = document.getElementById("review_detail_btn");
- detailBtn.addEventListener('click', () => {
-     if(reviewedWho=="seller") {
-         location.href=`/reviews/seller/${reviewId}`;
-     } else if(reviewedWho=="buyer") {
-         location.href=`/reviews/buyer/${reviewId}`;
-     }
- })
-
  const hideBtn = document.getElementById("review_hide_btn");
- if(hideBtn) {
-     hideBtn.addEventListener('click', hideReview);
- }
  const delBtn = document.getElementById("review_del_btn");
- if(delBtn) {
-     delBtn.addEventListener('click', deleteReview);
+
+ if(hideBtn){
+     hideBtn.addEventListener('click', function() {
+         hideReview(review);
+     });
  }
- function hideReview() {
+ if(delBtn){
+     delBtn.addEventListener('click', function() {
+         deleteReview(review);
+     });
+ }
+ if(detailBtn){
+     detailBtn.addEventListener('click', function() {
+         detailReview(review);
+     });
+ }
+
+ function detailReview(review) {
+     if(review.reviewedWho=="seller") {
+         location.href=`/reviews/seller/${review.reviewId}`;
+     } else if(review.reviewedWho=="buyer") {
+         location.href=`/reviews/buyer/${review.reviewId}`;
+     }
+ }
+
+ function hideReview(review) {
      if (!hideConfirm()) {
          return;
      }
-     if(reviewedWho=="seller") {
+     if(review.reviewedWho=="seller") {
          $.ajax({
              type: 'post',
              url: '/reviews/seller/hide',
-             data: {reviewSellerId : reviewId},
+             data: {reviewSellerId : review.reviewId},
              success: function (data) {
                  alert("숨김에 성공했습니다");
                  location.reload();
@@ -64,11 +67,11 @@
                  alert("리뷰를 숨길 수 없습니다.");
              }
          })
-     } else if (reviewedWho=="buyer"){
+     } else if (review.reviewedWho=="buyer"){
          $.ajax({
              type: 'post',
              url: '/reviews/buyer/hide',
-             data:  {reviewBuyerId : reviewId},
+             data:  {reviewBuyerId : review.reviewId},
              success: function (data) {
                  alert("숨김에 성공했습니다.");
                  location.reload();
@@ -80,11 +83,12 @@
          })
      }
  }
- function deleteReview() {
+
+ function deleteReview(review) {
      if (!deleteConfirm()) {
          return;
      }
-     if (reviewedWho == "seller") {
+     if (review.reviewedWho == "seller") {
          $.ajax({
              type: 'delete',
              url: '/reviews/seller/' + reviewId,
@@ -97,10 +101,10 @@
                  alert("리뷰를 삭제할 수 없습니다");
              }
          })
-     } else if (reviewedWho == "buyer") {
+     } else if (review.reviewedWho == "buyer") {
          $.ajax({
              type: 'delete',
-             url: '/reviews/buyer/' + reviewId,
+             url: '/reviews/buyer/' + review.reviewId,
              success: function (data) {
                  alert("삭제에 성공했습니다");
                  location.reload();
