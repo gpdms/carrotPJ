@@ -31,5 +31,8 @@ public class ReviewMessageDto {
     public String getCalculatedTimeForView() {
         return CALCULATE_TIME(this.createdTime);
     }
+    public String getCreatedTimeToString() {
+        return String.valueOf(createdTime);
+    }
 }
 
