@@ -1,14 +1,7 @@
-package com.exercise.carrotproject.domain.member.dto;
+package com.exercise.carrotproject.domain.img;
 
-import com.exercise.carrotproject.web.argumentresolver.LoginMemberArgumentResolver;
-import lombok.AccessLevel;
 import lombok.Getter;
-import lombok.Setter;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.context.annotation.Bean;
-import org.springframework.stereotype.Component;
-import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
@@ -17,16 +10,15 @@ import java.util.UUID;
 
 @Getter
 public class ProfileImgInfo {
+    @Value("${file.postImg}")
     private String rootImgDir;
-    private String profImgDir;
-    private String extension;
-    private String saveName;
-    private String fullProfPath;
+    private final String profImgDir;
+    private final String extension;
+    private final String saveName;
+    private final String fullProfPath;
 
-    private ProfileImgInfo() {}
-    private ProfileImgInfo(String rootImgDir, String extension) {
-        this.rootImgDir = rootImgDir;
-        this.profImgDir = generateProfImgDir(rootImgDir);
+    private ProfileImgInfo(String extension) {
+        this.profImgDir = generateProfImgDir(this.rootImgDir);
         this.extension = extension;
         this.saveName = UUID.randomUUID() + "." + this.extension;
         this.fullProfPath = this.profImgDir + File.separator + this.saveName;
@@ -41,15 +33,15 @@ public class ProfileImgInfo {
         return builder.toString();
     }
 
-    public static ProfileImgInfo of(String rootImgDir, MultipartFile file) {
+    public static ProfileImgInfo of(MultipartFile file) {
         String originName = file.getOriginalFilename();
         String extension = originName.substring(originName.lastIndexOf(".") + 1);
-        return new ProfileImgInfo(rootImgDir, extension);
+        return new ProfileImgInfo(extension);
     }
 
-    public static ProfileImgInfo of(String rootImgDir, String url) {
+    public static ProfileImgInfo of(String url) {
         String extension = url.substring(url.lastIndexOf(".")+1);
-        return new ProfileImgInfo(rootImgDir, extension);
+        return new ProfileImgInfo(extension);
     }
 
     public void mkProfImgDir() {

@@ -7,6 +7,7 @@ import com.exercise.carrotproject.domain.member.entity.Member;
 import com.exercise.carrotproject.domain.member.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -27,6 +28,8 @@ import static org.springframework.util.StringUtils.hasText;
 @Service
 @RequiredArgsConstructor
 public class MemberServiceImpl implements MemberService{
+    @Value("${file.postImg}")
+    private String rootImgDir;
     private final MemberRepository memberRepository;
     private final EmailServiceImpl emailService;
 
@@ -113,7 +116,7 @@ public class MemberServiceImpl implements MemberService{
         if(!hasText(imgUrl)) {
             return null;
         }
-        ProfileImgInfo profImgInfo = ProfileImgInfo.of(imgUrl);
+        ProfileImgInfo profImgInfo = ProfileImgInfo.of(rootImgDir, imgUrl);
         profImgInfo.mkProfImgDir();
         saveImgToServer(imgUrl, profImgInfo.getFullProfPath());
         return profImgInfo;
@@ -153,7 +156,7 @@ public class MemberServiceImpl implements MemberService{
         if(file.isEmpty()) {
             return null;
         }
-        ProfileImgInfo profImgInfo = ProfileImgInfo.of(file);
+        ProfileImgInfo profImgInfo = ProfileImgInfo.of(rootImgDir, file);
         profImgInfo.mkProfImgDir();
         saveImgToServer(file, profImgInfo.getFullProfPath());
         return profImgInfo;
