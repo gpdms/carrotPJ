@@ -42,18 +42,37 @@
             <div class="bottom-login">
               <button class="btn-orange" type="submit">로그인</button>
             </div>
-            <div class="bottom-social" id="kakao" th:onclick="|location.href='@{/login/getKakaoLoginURL}'|">
+            <div class="bottom-social" id="kakao" th:onclick="|location.href='@{/oauth?platform=kakao}'|">
               <button class="btn-kakao" type="button">
                 <img class="kakao-img" src="/css/images/login/kakao_login_mini.png">
-                <p class="kakao-text">카카오톡으로 로그인하기</p>
+                <p class="kakao-text">카카오 로그인</p>
+              </button>
+            </div>
+            <div class="bottom-social" id="naver" th:onclick="|location.href='@{/oauth?platform=naver}'|">
+              <button class="btn-naver" type="button">
+                <img class="naver-img" src="/css/images/login/naver_login_green.png">
               </button>
             </div>
           </div>
         </form>
       </div>
     </div> <!-- /form-container -->
+    <div th:if="${joinedRole}" id="existsMember" th:data-joinedRole="${joinedRole}"></div>
   </section>
 </div>
 
-
+<div layout:fragment="script" >
+  <script th:inline="javascript">
+    $(document).ready(function() {
+      const existsMember = document.getElementById('existsMember');
+      if(existsMember) {
+        const joinedRole = existsMember.getAttribute('data-joinedRole');
+        let phrases = joinedRole == 'NORMAL' ? '일반 회원으로 ' :
+                joinedRole == 'SOCIAL_KAKAO' ? '카카오로 ' :
+                        joinedRole == 'SOCIAL_NAVER' ? '네이버로 ' : '';
+        alert(`이미 ${phrases}가입된 계정입니다.`);
+      }
+    });
+  </script>
+</div>
 </html>

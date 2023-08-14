@@ -42,7 +42,7 @@ public class GenerateUtils {
     public static String generateUniqueMemId() {
         String uniqueId = UUID.randomUUID().toString();
         uniqueId = uniqueId.replace("-", "");
-        uniqueId = uniqueId.substring(0, 16);
+        uniqueId = uniqueId.substring(0, 12);
         return uniqueId;
     }
 }

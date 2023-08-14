@@ -3,9 +3,10 @@ package com.exercise.carrotproject.web.member.controller;
 import com.exercise.carrotproject.domain.enumList.Role;
 import com.exercise.carrotproject.domain.member.dto.JoinSocialMemberRequest;
 import com.exercise.carrotproject.domain.member.dto.MemberDto;
-import com.exercise.carrotproject.domain.member.ouath.KaKaoOauth;
-import com.exercise.carrotproject.domain.member.ouath.KakaoServiceImpl;
+import com.exercise.carrotproject.domain.member.ouath.*;
+import com.exercise.carrotproject.domain.member.ouath.kakao.KaKaoOauth;
 import com.exercise.carrotproject.domain.member.service.MemberService;
+import com.exercise.carrotproject.web.argumentresolver.LoginType;
 import com.exercise.carrotproject.web.common.SessionConst;
 import com.exercise.carrotproject.web.member.form.JoinSocialForm;
 import lombok.RequiredArgsConstructor;
@@ -16,101 +17,119 @@ import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
-import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 import javax.validation.Valid;
 import java.util.HashMap;
+import java.util.Map;
 
 @Slf4j
 @Controller
 @RequiredArgsConstructor
 public class OauthController {
     private final KaKaoOauth kaKaoOauth;
-    private final KakaoServiceImpl kakaoService;
+    private final OauthServiceFactory oauthServiceFactory;
     private final MemberService memberService;
 
-    @GetMapping("/login/getKakaoLoginURL")
-    public String toKakaoLoginForm() {
-        String kakaoUrl = kaKaoOauth.getKakaoLoginUrl()
-                + "/oauth/authorize?client_id=" + kaKaoOauth.getKakaoClientId()
-                + "&redirect_uri=" + kaKaoOauth.getKakaoLoginRedirectUri() + "&response_type=code";
-        return "redirect:"+kakaoUrl;
+    @GetMapping("/oauth")
+    public String toOauthLoginForm(@LoginType final Role role) {
+        OauthService oauthService = oauthServiceFactory.find(role);
+        String authorizeUrl = oauthService.getAuthorizeUrl();
+        return "redirect:"+ authorizeUrl;
     }
 
-    @GetMapping("/login/kakao")
-    public String kakaoLogin(@RequestParam String code, Model model,
-                             HttpServletRequest request) throws Throwable {
-        HttpSession session = request.getSession();
-        //해당 페이지에서 새로고침시 : 인증 code가 파기되어 오류페이지가 뜨지 않도록, login페이지로 이동
-        String revokedCode = (String) session.getAttribute(SessionConst.KAKAO_REVOKED_CODE);
-        if (revokedCode!= null && revokedCode.equals(code)) {
-            session.removeAttribute(SessionConst.KAKAO_ACCESS_TOKEN);
+    @GetMapping("/login-social")
+    public String socialLogin(@LoginType final Role role,
+                              @ModelAttribute final OauthCallback callback,
+                              HttpSession session, Model model) {
+        if (callback.getError() != null) {
             return "redirect:/login";
         }
 
-        //새로고침이 아니라 해당 url로 처음 진입하는 경우
-        session.setAttribute(SessionConst.KAKAO_REVOKED_CODE, code);
-        String accessToken = kakaoService.getAccessToken(code);
-        HashMap<String, Object> userInfo = kakaoService.getUserInfo(accessToken);
-        log.info("userInfo 프로필 이미지 = {} ", userInfo.get("profPath").toString());
-        log.info("userInfo 닉네임 = {} ", userInfo.get("nickname").toString());
-        log.info("userInfo 이메일 = {} ", userInfo.get("email").toString());
-        String email = userInfo.get("email").toString();
-        boolean hasKakaoMember = memberService.hasEmailAndRole(email, Role.SOCIAL_KAKAO);
-        if(!hasKakaoMember) {
-            session.setAttribute(SessionConst.KAKAO_ACCESS_TOKEN, accessToken);
-            model.addAttribute("userInfo",userInfo);
-            model.addAttribute("platform", "kakao");
+        //해당 페이지에서 새로고침시 : 인증 code가 파기되어 오류페이지가 뜨지 않도록, login페이지로 이동
+        String revokedCode = (String) session.getAttribute(SessionConst.REVOKED_CODE);
+        if (revokedCode != null && revokedCode.equals(callback.getCode())) {
+            session.removeAttribute(SessionConst.ACCESS_TOKEN);
+            return "redirect:/login";
+        }
+
+        //새로고침이 아니라 해당 url로 처음(정상적으로) 진입하는 경우
+        session.setAttribute(SessionConst.REVOKED_CODE, callback.getCode());
+
+        OauthService oauthService = oauthServiceFactory.find(role);
+        OauthToken token = oauthService.getOauthToken(callback);
+        OauthUserInfo userInfo = oauthService.getUserInfoByToken(token);
+
+        String email = userInfo.getEmail();
+        boolean hasMember = memberService.hasEmail(email);
+        if(!hasMember) {
+            session.setAttribute(SessionConst.ACCESS_TOKEN, token.getAccess_token());
+            String platform = role == Role.SOCIAL_KAKAO ? "kakao" : "naver";
+            model.addAttribute("userInfo", userInfo);
+            model.addAttribute("platform", platform);
             model.addAttribute("isSocial", true);
             return "member/joinForm";
         }
-        MemberDto memberDto = memberService.login(email, Role.SOCIAL_KAKAO);
-        session.setAttribute(SessionConst.LOGIN_MEMBER, memberDto);
-        session.removeAttribute(SessionConst.KAKAO_REVOKED_CODE);
+
+        Role memberRole = memberService.findMemberByEmail(email).getRole();
+        if (role == memberRole) {
+            MemberDto memberDto = memberService.login(email, role);
+            session.setAttribute(SessionConst.LOGIN_MEMBER, memberDto);
+        } else { //같은 이메일이 존재하지만, 다른 타입으로 가입한 경우
+            model.addAttribute("joinedRole", memberRole);
+            return "member/loginForm";
+        }
+        session.removeAttribute(SessionConst.REVOKED_CODE);
         return "redirect:/";
     }
 
-    @GetMapping("/unlink/kakao")
+    @PostMapping("members/join-social")
     @ResponseBody
-    public String unlink(HttpSession session) throws Throwable {
-        String accessToken = (String) session.getAttribute(SessionConst.KAKAO_ACCESS_TOKEN);
-        kakaoService.kakaoUnlink(accessToken);
-        session.removeAttribute(SessionConst.KAKAO_REVOKED_CODE);
-        return "성공";
-    }
-
-    @PostMapping("/join/kakao")
-    @ResponseBody
-    public ResponseEntity kakaoJoin(@Valid @RequestBody JoinSocialForm joinSocialForm,
-                                      BindingResult result,
-                                      HttpSession session){
-        HashMap<String, Object> errorMap = new HashMap<>();
+    public ResponseEntity socialJoin(@Valid @RequestBody final JoinSocialForm joinSocialForm,
+                                     @LoginType final Role role,
+                                     BindingResult result,
+                                     HttpSession session){
         if(result.hasErrors()) {
+            Map<String, Object> errorMap = new HashMap<>();
             errorMap.put("nickname", result.getFieldError("nickname").getDefaultMessage());
             return ResponseEntity.badRequest().body(errorMap);
         }
+
         JoinSocialMemberRequest member = JoinSocialMemberRequest.builder()
                 .email(joinSocialForm.getEmail())
                 .profImgUrl(joinSocialForm.getProfImgUrl())
                 .loc(joinSocialForm.getLoc())
                 .nickname(joinSocialForm.getNickname())
-                .role(Role.SOCIAL_KAKAO)
+                .role(role)
                 .build();
         memberService.joinSocialMember(member);
-        MemberDto memberDto = memberService.login(member.getEmail(), Role.SOCIAL_KAKAO);
+
+        MemberDto memberDto = memberService.login(member.getEmail(), role);
         session.setAttribute(SessionConst.LOGIN_MEMBER, memberDto);
-        session.removeAttribute(SessionConst.KAKAO_REVOKED_CODE);
+        session.removeAttribute(SessionConst.REVOKED_CODE);
         return ResponseEntity.ok().build();
     }
 
-    @GetMapping("/logout/getKakaoLogoutURL")
+    @GetMapping("logout-social")
     @ResponseBody
-    public String toKakaoLogoutForm(HttpSession session) {
-        String kakaoUrl = kaKaoOauth.getKakaoLoginUrl()
-                + "/oauth/logout?client_id=" + kaKaoOauth.getKakaoClientId()
-                + "&logout_redirect_uri=" + kaKaoOauth.getKakaoLogoutRedirectUri();
-        return kakaoUrl;
+    public String socialLogout(@RequestParam final String platform) {
+        if (platform.equals("kakao")) {
+            String kakaoUrl = kaKaoOauth.getBaseUrl()
+                    + "/oauth/logout?client_id=" + kaKaoOauth.getClientId()
+                    + "&logout_redirect_uri=" + kaKaoOauth.getLogoutRedirectUri();
+            return kakaoUrl;
+        }
+        return "/logout";
     }
+
+/*    @GetMapping("/unlink/kakao")
+    @ResponseBody
+    public ResponseEntity unlink(HttpSession session) throws Throwable {
+        String accessToken = (String) session.getAttribute(SessionConst.ACCESS_TOKEN);
+        OauthService oauthService = oauthServiceFactory.find(Role.SOCIAL_KAKAO);
+        oauthService.unlink(accessToken);
+        session.removeAttribute(SessionConst.REVOKED_CODE);
+        return ResponseEntity.ok().build();
+    }*/
 }
 
 

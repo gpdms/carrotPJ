@@ -26,7 +26,7 @@
 
     <!--전체 후기-->
     <div id="allReviews" th:with="cursorResult=${resultMap['allMessageResult']},
-                                  messageList=${cursorResult.values}">
+                                  messageList=${cursorResult.valueList}">
         <div class="no_review" th:if="${messageList.isEmpty()}">
            받은 거래 후기가 없습니다.
         </div>
@@ -110,7 +110,7 @@
     <!--구매자 후기-->
     <div id="sellerReviews"
          th:with="cursorResult=${resultMap['toSellerMessageResult']},
-                  messageList=${cursorResult.values}">
+                  messageList=${cursorResult.valueList}">
         <div class="no_review" th:if="${messageList.isEmpty()}">
             구매자 후기가 없습니다.
         </div>
@@ -168,7 +168,7 @@
     <!-- 판매자 리뷰-->
     <div id="buyerReviews"
          th:with="cursorResult=${resultMap['toBuyerMessageResult']},
-                  messageList=${cursorResult.values}">
+                  messageList=${cursorResult.valueList}">
         <div class="no_review" th:if="${messageList.isEmpty()}">
             판매자 후기가 없습니다.
         </div>

@@ -146,7 +146,7 @@
     }
 
     function addAllReviewHtml(cursorResult) {
-        let reviewList = cursorResult.values;
+        let reviewList = cursorResult.valueList;
         let isReviewed = loginMemId == memId;
         $('#allReviews').append('<hr/>');
         reviewList.forEach(function (review, index){
@@ -223,7 +223,7 @@
     }
 
     function addBuyerReviewHtml(cursorResult) {
-        let reviewList = cursorResult.values;
+        let reviewList = cursorResult.valueList;
         let isReviewed = loginMemId == memId;
         $('#buyerReviews').append('<hr/>');
         reviewList.forEach(function (review, index){
@@ -281,7 +281,7 @@
     }
 
     function addSellerReviewHtml(cursorResult) {
-        let reviewList = cursorResult.values;
+        let reviewList = cursorResult.valueList;
         let isReviewed = loginMemId == memId;
         $('#sellerReviews').append('<hr/>');
         reviewList.forEach(function (review, index){

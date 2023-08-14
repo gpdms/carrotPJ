@@ -6,6 +6,10 @@ import com.exercise.carrotproject.domain.review.dto.*;
 import com.exercise.carrotproject.domain.review.repository.*;
 import com.exercise.carrotproject.domain.review.repository.ReviewBuyerRepository;
 import com.exercise.carrotproject.domain.review.repository.detail.ReviewDetailCustomRepository;
+import com.exercise.carrotproject.domain.review.service.message.ReviewAllMessageService;
+import com.exercise.carrotproject.domain.review.service.message.ReviewBuyerMessageService;
+import com.exercise.carrotproject.domain.review.service.message.ReviewMessageFactory;
+import com.exercise.carrotproject.domain.review.service.message.ReviewMessageService;
 import com.exercise.carrotproject.web.review.response.CursorResult;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -23,6 +27,7 @@ public class ReviewServiceImpl implements ReviewService{
     private final ReviewSellerRepository reviewSellerRepository;
     private final ReviewBuyerRepository reviewBuyerRepository;
     private final ReviewDetailCustomRepository reviewDetailCustomRepository;
+    private final ReviewMessageFactory reviewMessageFactory;
 
     @Override
     public Map<ReviewIndicator, Long> getPositiveReviewIndicatorsByLimit(String memId, int limitSize) {
@@ -73,19 +78,19 @@ public class ReviewServiceImpl implements ReviewService{
                 .receiverId(memId)
                 .reviewTargetType(ReviewTargetType.BUYER)
                 .cursorId(null).build();
-        CursorResult<ReviewMessageDto> toBuyerMessageResult = getCursorResult(buyerCond, limitSize);
+        CursorResult<ReviewMessageDto> toBuyerMessageResult = getReviewMessageCursorResult(buyerCond, limitSize);
 
         ReviewMessageCondition sellerCond = ReviewMessageCondition.builder()
                 .receiverId(memId)
                 .reviewTargetType(ReviewTargetType.SELLER)
                 .cursorId(null).build();
-        CursorResult<ReviewMessageDto> toSellerMessageResult = getCursorResult(sellerCond, limitSize);
+        CursorResult<ReviewMessageDto> toSellerMessageResult = getReviewMessageCursorResult(sellerCond, limitSize);
 
         ReviewMessageCondition allCond = ReviewMessageCondition.builder()
                 .receiverId(memId)
                 .reviewTargetType(ReviewTargetType.ALL)
                 .cursorId(null).build();
-        CursorResult<ReviewMessageDto> allMessageResult = getCursorResult(allCond, limitSize);
+        CursorResult<ReviewMessageDto> allMessageResult = getReviewMessageCursorResult(allCond, limitSize);
 
         Map<String, CursorResult<ReviewMessageDto>> messageMap = new HashMap<>();
         messageMap.put("toBuyerMessageResult", toBuyerMessageResult);
@@ -95,57 +100,11 @@ public class ReviewServiceImpl implements ReviewService{
     }
 
     @Override
-    public CursorResult<ReviewMessageDto> getCursorResult(ReviewMessageCondition cond,
+    public CursorResult<ReviewMessageDto> getReviewMessageCursorResult(ReviewMessageCondition cond,
                                                           int limitSize) {
-        final List<ReviewMessageDto> messages = getReviewMessageList(cond, limitSize);
-        final ReviewMessageDto lastMsg = messages.isEmpty() ? null : messages.get(messages.size() - 1);
-        final boolean hasNext = hasNext(cond, lastMsg);
-        final Long totalElements = getTotalElements(cond);
-        return new CursorResult<>(messages, hasNext, totalElements);
+        ReviewMessageService reviewMessageService = reviewMessageFactory.find(cond.getReviewTargetType());
+        return reviewMessageService.getCursorResult(cond, limitSize);
     }
-
-    private List<ReviewMessageDto> getReviewMessageList(ReviewMessageCondition cond,
-                                                        int limitSize) {
-        ReviewTargetType type = cond.getReviewTargetType();
-        if (type.equals(ReviewTargetType.ALL)) {
-            List<ReviewMessageDto> buyerMsgs = reviewBuyerRepository.findGoodMessageListByBuyerIdAndLimitAndCursorTime(cond.getReceiverId(), limitSize, cond.getCursorTime());
-            List<ReviewMessageDto> sellerMsgs = reviewSellerRepository.findGoodMessageListBySellerIdAndLimitAndCursorTime(cond.getReceiverId(), limitSize, cond.getCursorTime());
-            return this.concatReviewMessageListByLimit(buyerMsgs, sellerMsgs, limitSize);
-        }else if (type.equals(ReviewTargetType.BUYER)) {
-           return reviewBuyerRepository.findGoodMessageListByBuyerIdAndLimitAndCursorId(cond.getReceiverId(), limitSize, cond.getCursorId());
-        }else if (type.equals(ReviewTargetType.SELLER)) {
-            return reviewSellerRepository.findGoodMessageListBySellerIdAndLimitAndCursorId(cond.getReceiverId(), limitSize, cond.getCursorId());
-        }
-        return new ArrayList<>();
-    }
-
-    private boolean hasNext(ReviewMessageCondition cond, ReviewMessageDto lastMsg) {
-        ReviewTargetType type = cond.getReviewTargetType();
-        if (lastMsg == null) {
-            return false;
-        }else if (type.equals(ReviewTargetType.ALL)) {
-            return reviewBuyerRepository.existsByCreatedTimeBefore(lastMsg.getCreatedTime()) ||
-                    reviewSellerRepository.existsByCreatedTimeBefore(lastMsg.getCreatedTime());
-        }else if (type.equals(ReviewTargetType.BUYER)) {
-            return reviewBuyerRepository.existsByReviewBuyerIdLessThan(lastMsg.getReviewId());
-        }else if (type.equals(ReviewTargetType.SELLER)) {
-            return reviewSellerRepository.existsByReviewSellerIdLessThan(lastMsg.getReviewId());
-        }
-        return false;
-    }
-
-    private Long getTotalElements(ReviewMessageCondition cond) {
-        ReviewTargetType type = cond.getReviewTargetType();
-        if (type.equals(ReviewTargetType.ALL)) {
-            return countAllGoodReviewMessages(cond.getReceiverId());
-        }else if (type.equals(ReviewTargetType.BUYER)) {
-            return reviewBuyerRepository.countGoodMessagesByBuyerId(cond.getReceiverId());
-        }else if (type.equals(ReviewTargetType.SELLER)) {
-            return reviewSellerRepository.countGoodMessagesBySellerId(cond.getReceiverId());
-        }
-        return 0L;
-    }
-
 
     @Override
     public List<ReviewMessageDto> getAllRecentGoodReviewMessageListByLimit(String memId, int limitSize) {

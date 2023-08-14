@@ -52,8 +52,8 @@
                 <button  th:if="${session.loginMember.role.name().equals('NORMAL')}"
                          class="custom-btn" type="submit"> 로그아웃 </button>
                 <button  th:if="${session.loginMember.role.name().contains('SOCIAL')}"
-                         class="custom-btn" type="button"
-                         th:onclick="logoutSocial([[${session.loginMember?.role.name()}]])"> 로그아웃 </button>
+                         class="custom-btn" type="button" id="logout-social-btn"
+                         th:data-role="${session.loginMember.role.name()}"> 로그아웃 </button>
             </form>
         </div>
     </div>

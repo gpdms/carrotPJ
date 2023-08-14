@@ -9,7 +9,7 @@ import java.util.List;
 @Getter
 @AllArgsConstructor
 public class CursorResult<T> {
-    private List<T> values = new ArrayList<>();
+    private List<T> valueList;
     private boolean hasNext;
     private long totalElements;
 }

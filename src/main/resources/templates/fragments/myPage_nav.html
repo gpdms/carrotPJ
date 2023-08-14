@@ -36,8 +36,8 @@
             <a th:href="@{/members/settings/profile}">
                 프로필 관리 </a>
         </div>
-        <div class="info-nav-btn">
-            <p>&#183; &nbsp;</p>
+        <div th:if="${session.loginMember?.role.name() == 'NORMAL'}" class="info-nav-btn">
+            <p>&#183; </p>
             <a th:href="@{/members/settings/pwd}">
                 비밀번호 변경 </a>
         </div>
