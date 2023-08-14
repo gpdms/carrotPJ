@@ -108,15 +108,28 @@
             }
         </script>
         <script th:inline="javascript">
-            function logoutSocial(wherePlatform) {
-                if(wherePlatform=='SOCIAL_KAKAO') {wherePlatform = 'Kakao'}
+            $(document).ready(function() {
+                const logoutSocialBtn = document.getElementById('logout-social-btn');
+                if(logoutSocialBtn) {
+                    logoutSocialBtn.addEventListener('click', function(event){
+                        const role = logoutSocialBtn.getAttribute('data-role');
+                        logoutSocial(role)
+                    })
+                }
+            })
+
+            function logoutSocial(role) {
+                let platform;
+                if(role == 'SOCIAL_KAKAO') { platform = 'kakao'}
+                else if(role == 'SOCIAL_NAVER') { platform = 'naver'}
                 $.ajax({
-                    url: `/logout/get${wherePlatform}LogoutURL`,
+                    url: `/logout-social?platform=${platform}`,
                     type: 'get',
                 }).done(function (res) {
                     location.href = res;
                 });
             }
+
             function search() {
                 let input_word = $('.search-input').val();
                 if(!input_word) {

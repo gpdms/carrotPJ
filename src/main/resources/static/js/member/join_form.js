@@ -238,7 +238,7 @@ function joinRequest(url, joinData) {
 function joinSocialMember(platform) {
     $.ajax({
         type: 'post',
-        url: '/join/'+platform,
+        url: `members/join-social?platform=${platform}`,
         contentType: "application/json; charset=utf-8",
         data:  JSON.stringify({
             loc : $("select[name=locSocial]").val(),
