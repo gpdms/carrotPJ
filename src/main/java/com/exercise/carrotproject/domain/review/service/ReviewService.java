@@ -18,5 +18,5 @@ public interface ReviewService {
     Long countAllGoodReviewMessages(String memId);
     List<ReviewMessageDto> getAllRecentGoodReviewMessageListByLimit(String memId, int limitSize);
     Map<String, CursorResult<ReviewMessageDto>> collectRecentGoodReviewMessagesByLimit(String memId, int limitSize);
-    CursorResult<ReviewMessageDto> getCursorResult(ReviewMessageCondition cond, int limitSize);
+    CursorResult<ReviewMessageDto> getReviewMessageCursorResult(ReviewMessageCondition cond, int limitSize);
 }

@@ -47,7 +47,8 @@ public class ReviewController {
     public String toPublicReviewMessagesDetail(@PathVariable final String memId,
                                                @RequestParam(defaultValue = DEFAULT_MESSAGE_SIZE) final int size,
                                                Model model) {
-        Map<String, CursorResult<ReviewMessageDto>> resultMap = reviewService.collectRecentGoodReviewMessagesByLimit(memId, size);
+        Map<String, CursorResult<ReviewMessageDto>> resultMap = reviewService
+                .collectRecentGoodReviewMessagesByLimit(memId, size);
         model.addAttribute("resultMap", resultMap);
         model.addAttribute("nickname",  memberService.findMemberByMemId(memId).getNickname());
         return "/review/publicReviews";
@@ -59,7 +60,7 @@ public class ReviewController {
                                                 @RequestParam (defaultValue = DEFAULT_MESSAGE_SIZE) final int size,
                                                 @RequestParam final Timestamp cursor)  {
         ReviewMessageCondition condition = ReviewMessageCondition.of(memId, ReviewTargetType.ALL, cursor);
-        CursorResult<ReviewMessageDto> result = reviewService.getCursorResult(condition, size);
+        CursorResult<ReviewMessageDto> result = reviewService.getReviewMessageCursorResult(condition, size);
         return ResponseEntity.ok().body(result);
     }
 
@@ -69,7 +70,7 @@ public class ReviewController {
                                                   @RequestParam (defaultValue = DEFAULT_MESSAGE_SIZE) final int size,
                                                   @RequestParam final Long cursor)  {
         ReviewMessageCondition condition = ReviewMessageCondition.of(memId, ReviewTargetType.SELLER, cursor);
-        CursorResult<ReviewMessageDto> result = reviewService.getCursorResult(condition, size);
+        CursorResult<ReviewMessageDto> result = reviewService.getReviewMessageCursorResult(condition, size);
         return ResponseEntity.ok().body(result);
     }
 
@@ -79,7 +80,7 @@ public class ReviewController {
                                                   @RequestParam (defaultValue = DEFAULT_MESSAGE_SIZE) final int size,
                                                   @RequestParam final Long cursor)  {
         ReviewMessageCondition condition = ReviewMessageCondition.of(memId, ReviewTargetType.BUYER, cursor);
-        CursorResult<ReviewMessageDto> result = reviewService.getCursorResult(condition, size);
+        CursorResult<ReviewMessageDto> result = reviewService.getReviewMessageCursorResult(condition, size);
         return ResponseEntity.ok().body(result);
     }
 
