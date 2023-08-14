@@ -67,10 +67,10 @@
       const existsMember = document.getElementById('existsMember');
       if(existsMember) {
         const joinedRole = existsMember.getAttribute('data-joinedRole');
-        let phrases = joinedRole == 'NORMAL' ? '일반 회원으로' :
-                joinedRole == 'SOCIAL_KAKAO' ? '카카오로' :
-                        joinedRole == 'SOCIAL_NAVER' ? '네이버로' : '관리자 계정으로';
-        alert(`이미 ${phrases} 가입된 계정입니다.`);
+        let phrases = joinedRole == 'NORMAL' ? '일반 회원으로 ' :
+                joinedRole == 'SOCIAL_KAKAO' ? '카카오로 ' :
+                        joinedRole == 'SOCIAL_NAVER' ? '네이버로 ' : '';
+        alert(`이미 ${phrases}가입된 계정입니다.`);
       }
     });
   </script>
